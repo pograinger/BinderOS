@@ -84,6 +84,7 @@ Every piece of stored information must encode predictive value about your future
 | IndexedDB/OPFS for storage | Browser-native, local-first, no server dependency, structured data support | — Pending |
 | Five atom types only | Task, Fact, Event, Decision, Insight cover the full "information alphabet" — forces classification, prevents free-form dumping | — Pending |
 | Priority as computed function | `P = f(deadline, importance, recency, dependencies, energy)` avoids stale static labels, reflects real-time life state | — Pending |
+| IndexedDB + in-memory graph | Dexie.js for persistence, Rust petgraph in WASM for graph traversal. Atom links are graph-native; personal scale (hundreds to low thousands of atoms) fits in memory. Avoids browser graph DB complexity/bundle size. Upgradeable later if needed | — Pending |
 
 ---
 *Last updated: 2026-02-21 after initialization*
