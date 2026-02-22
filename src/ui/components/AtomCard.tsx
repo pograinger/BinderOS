@@ -4,7 +4,7 @@
  * LOCKED DECISIONS (CONTEXT.md):
  *   - Swipe LEFT: archive (dispatch UPDATE_ATOM with status='archived')
  *   - Swipe RIGHT: complete (dispatch UPDATE_ATOM with status='done')
- *   - Hybrid density: compact row by default, expand on click
+ *   - Hybrid density: compact row by default; click opens detail panel (Phase 3)
  *   - Visual feedback: card slides with color tint (red for archive, green for complete)
  *   - Velocity threshold: 80px displacement or 0.5 velocity
  *
@@ -12,6 +12,12 @@
  *   - Staleness opacity: reads state.scores[atom.id].opacity (1.0 fresh → 0.6 stale)
  *   - PriorityBadge: shown for Tasks and Events only (not Facts/Decisions/Insights)
  *   - CSS transition on opacity for gradual visual change
+ *
+ * Phase 3 additions:
+ *   - onClick prop: called on click instead of toggling expanded (detail panel opens)
+ *   - tabindex prop: roving tabindex support for keyboard navigation
+ *   - focused prop: visual focus indicator for keyboard nav
+ *   - Due date display: shows due date for tasks, event date for events
  *
  * Uses raw touch handlers since solid-gesture is not installed.
  * Disambiguates horizontal swipe from vertical scroll.
@@ -23,11 +29,24 @@
 import { createSignal, Show } from 'solid-js';
 import { AtomTypeIcon } from './AtomTypeIcon';
 import { PriorityBadge } from './PriorityBadge';
-import { sendCommand, state } from '../signals/store';
+import { sendCommand, state, setSelectedAtomId } from '../signals/store';
 import type { Atom } from '../../types/atoms';
 
 interface AtomCardProps {
   atom: Atom;
+  /** Phase 3: onClick handler (overrides default expand toggle). */
+  onClick?: () => void;
+  /** Phase 3: tabindex for roving keyboard navigation. */
+  tabindex?: 0 | -1;
+  /** Phase 3: whether this card has roving keyboard focus. */
+  focused?: boolean;
+}
+
+/**
+ * Format a Unix ms timestamp as a short date (e.g., "Feb 22").
+ */
+function formatDate(ts: number): string {
+  return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
 /**
@@ -48,7 +67,6 @@ function relativeTime(timestamp: number): string {
 }
 
 export function AtomCard(props: AtomCardProps) {
-  const [expanded, setExpanded] = createSignal(false);
   const [translateX, setTranslateX] = createSignal(0);
   const [swiping, setSwiping] = createSignal(false);
   const [dismissed, setDismissed] = createSignal(false);
@@ -71,6 +89,27 @@ export function AtomCard(props: AtomCardProps) {
   const showPriorityBadge = () =>
     (props.atom.type === 'task' || props.atom.type === 'event') &&
     atomScore()?.priorityTier != null;
+
+  // Phase 3: due date display for tasks
+  const dueDate = (): number | undefined => {
+    if (props.atom.type === 'task' && 'dueDate' in props.atom) {
+      return props.atom.dueDate;
+    }
+    return undefined;
+  };
+
+  // Phase 3: event date display for events
+  const eventDate = (): number | undefined => {
+    if (props.atom.type === 'event' && 'eventDate' in props.atom) {
+      return props.atom.eventDate;
+    }
+    return undefined;
+  };
+
+  const isOverdue = (): boolean => {
+    const d = dueDate();
+    return d !== undefined && d < Date.now();
+  };
 
   const handleTouchStart = (e: TouchEvent) => {
     const touch = e.touches[0];
@@ -177,7 +216,14 @@ export function AtomCard(props: AtomCardProps) {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      onClick={() => setExpanded(!expanded())}
+      tabindex={props.tabindex ?? 0}
+      onClick={() => {
+        if (props.onClick) {
+          props.onClick();
+        } else {
+          setSelectedAtomId(props.atom.id);
+        }
+      }}
     >
       <div class="atom-card-row">
         <AtomTypeIcon type={props.atom.type} size={16} />
@@ -194,13 +240,20 @@ export function AtomCard(props: AtomCardProps) {
         <Show when={statusBadge()}>
           <span class="atom-card-badge">{statusBadge()}</span>
         </Show>
+        {/* Phase 3: due date for tasks */}
+        <Show when={dueDate() !== undefined}>
+          <span class={`atom-card-due${isOverdue() ? ' overdue' : ''}`}>
+            Due {formatDate(dueDate()!)}
+          </span>
+        </Show>
+        {/* Phase 3: event date for events */}
+        <Show when={eventDate() !== undefined}>
+          <span class="atom-card-event-date">
+            {formatDate(eventDate()!)}
+          </span>
+        </Show>
         <span class="atom-card-time">{relativeTime(props.atom.updated_at)}</span>
       </div>
-      <Show when={expanded()}>
-        <div class="atom-card-content">
-          {props.atom.content}
-        </div>
-      </Show>
     </div>
   );
 }

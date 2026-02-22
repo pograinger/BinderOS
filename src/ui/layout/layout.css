@@ -1975,3 +1975,607 @@ body {
   font-size: 12px;
   color: var(--text-muted);
 }
+
+/* ============================================
+   Phase 3: FilterBar Component
+   ============================================ */
+
+.filter-bar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.filter-bar::-webkit-scrollbar { display: none; }
+
+.filter-bar__group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.filter-bar__group--sort {
+  margin-left: auto;
+}
+
+.filter-bar__label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.filter-bar__chips {
+  display: flex;
+  gap: 4px;
+}
+
+.filter-chip {
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.1s, color 0.1s;
+}
+
+.filter-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.filter-chip:hover:not(.active) {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.filter-date-input {
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.filter-bar__date-sep {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.filter-select {
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.filter-sort-direction {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-sort-direction:hover {
+  background: var(--bg-tertiary);
+}
+
+/* ============================================
+   Phase 3: Page Views (TodayPage, etc.)
+   ============================================ */
+
+.page-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px 8px;
+  flex-shrink: 0;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.page-date-range {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.page-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Empty state for page views */
+.page-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 12px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.page-empty-icon {
+  opacity: 0.6;
+}
+
+.page-empty-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.page-empty-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 320px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.page-empty-action {
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: rgba(88, 166, 255, 0.1);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.page-empty-action:hover {
+  background: rgba(88, 166, 255, 0.2);
+}
+
+/* Page-level hints */
+.page-overdue-hint {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--status-error);
+  border-top: 1px solid var(--border-primary);
+}
+
+.page-wait-hint {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--status-warning);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.page-total-hint {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   Phase 3: AtomCard due/event date additions
+   ============================================ */
+
+.atom-card-due {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.atom-card-due.overdue {
+  color: var(--status-error);
+  font-weight: 600;
+}
+
+.atom-card-event-date {
+  font-size: 11px;
+  color: var(--atom-event);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ============================================
+   Phase 3: ActiveProjectsPage
+   ============================================ */
+
+.project-group {
+  margin-bottom: 16px;
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.project-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.project-group-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.project-group-count {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.project-atom-row {
+  position: relative;
+}
+
+.next-action-badge {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(88, 166, 255, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================
+   Phase 3: WaitingPage
+   ============================================ */
+
+.waiting-atom-row {
+  position: relative;
+}
+
+.long-wait-badge {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(210, 153, 34, 0.15);
+  color: var(--status-warning);
+  border: 1px solid rgba(210, 153, 34, 0.3);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================
+   Phase 3: AtomDetailView — slide-in panel
+   ============================================ */
+
+.atom-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+  cursor: pointer;
+}
+
+.atom-detail-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  max-width: 100vw;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border-primary);
+  z-index: 201;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: slideInFromRight 0.2s ease-out;
+}
+
+@media (max-width: 480px) {
+  .atom-detail-panel {
+    width: 100vw;
+    border-left: none;
+  }
+}
+
+@keyframes slideInFromRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.atom-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-primary);
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.atom-detail-title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 3px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  transition: background 0.1s;
+}
+
+.atom-detail-title:hover {
+  background: var(--bg-tertiary);
+}
+
+.atom-detail-title-input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 600;
+  outline: none;
+}
+
+.atom-detail-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.1s, color 0.1s;
+}
+
+.atom-detail-close:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.atom-detail-score-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border-primary);
+  flex-shrink: 0;
+}
+
+.atom-detail-staleness {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+}
+
+.atom-detail-staleness.high {
+  color: var(--status-warning);
+  background: rgba(210, 153, 34, 0.1);
+}
+
+/* Sections within the panel */
+.atom-detail-section {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.atom-detail-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+/* Status buttons */
+.status-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.status-button {
+  padding: 4px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-primary);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  white-space: nowrap;
+}
+
+.status-button:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.status-button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Read-only status badge for non-tasks */
+.atom-detail-status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+/* Date inputs */
+.atom-detail-dates {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.atom-detail-date-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.atom-detail-date-input {
+  padding: 4px 8px;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.atom-detail-date-input:focus {
+  border-color: var(--accent);
+}
+
+/* Content textarea */
+.atom-detail-content-section {
+  flex: 1;
+}
+
+.atom-detail-content-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s;
+  min-height: 100px;
+}
+
+.atom-detail-content-textarea:focus {
+  border-color: var(--accent);
+}
+
+/* Metadata */
+.atom-detail-meta {
+  gap: 6px;
+}
+
+.atom-detail-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.atom-detail-meta-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.atom-detail-meta-value {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Placeholder sections */
+.atom-detail-placeholder {
+  opacity: 0.4;
+}
+
+.atom-detail-placeholder-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
