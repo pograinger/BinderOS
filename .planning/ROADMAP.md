@@ -46,11 +46,12 @@ Plans:
   3. Entropy health indicator (green/yellow/red) is visible on every view, reflecting open task count, stale item count, zero-link atom count, and inbox length
   4. Attempting to add a 17th inbox item (at 80% of default cap 20) shows a soft warning; attempting to add a 21st item shows a resolution UI (classify, schedule, or discard) and blocks the add
   5. System surfaces a list of compression prompt candidates (stale atoms, zero-link atoms) with archive, delete, or keep options — user decides, nothing is auto-deleted
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 02-01: Rust/WASM core — priority scoring formula, staleness decay engine, entropy score function, panic=abort + catch_unwind, Web Worker integration
-- [ ] 02-02: Cap enforcement UX + entropy UI — inbox cap with soft warning at 80% + resolution UI at 100%, open task cap, per-atom staleness indicator, entropy health badge, compression prompt candidates list
+- [ ] 02-01-PLAN.md — Rust/WASM scoring engine: priority formula + staleness decay + entropy score + compression candidates, TypeScript types, Worker integration, store extension with scores/caps
+- [ ] 02-02-PLAN.md — Per-atom display + cap enforcement: PriorityBadge component, AtomCard staleness opacity, StatusBar entropy/cap indicators, CapEnforcementModal with triage, Worker cap checks
+- [ ] 02-03-PLAN.md — Review page: compression prompt card-by-card triage with Archive/Delete/Keep/Merge actions, merge handler, Review tab integration, human verification checkpoint
 
 ### Phase 3: Pages, Navigation, and Search
 **Goal**: Users can navigate the full system by keyboard, find any atom via search, view their atoms through the built-in query pages, and organize cross-cutting concerns with tags and saved filters
@@ -76,5 +77,5 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-02-22 |
-| 2. Compute Engine | 0/2 | Not started | - |
+| 2. Compute Engine | 0/3 | Not started | - |
 | 3. Pages, Navigation, and Search | 0/2 | Not started | - |
