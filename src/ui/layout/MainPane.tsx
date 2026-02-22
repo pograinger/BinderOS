@@ -17,8 +17,10 @@
  * CRITICAL: Never destructure props or store.
  */
 
-import { Show, Switch, Match } from 'solid-js';
-import { state } from '../signals/store';
+import { Show, Switch, Match, For, createMemo } from 'solid-js';
+import { state, setActivePage } from '../signals/store';
+import { filteredAndSortedAtoms } from '../signals/queries';
+import type { FilterState } from '../signals/queries';
 import { InboxView } from '../views/InboxView';
 import { SectionView } from '../views/SectionView';
 import { ReviewView } from '../views/ReviewView';
@@ -28,6 +30,76 @@ import { ActiveProjectsPage } from '../views/pages/ActiveProjectsPage';
 import { WaitingPage } from '../views/pages/WaitingPage';
 import { InsightsPage } from '../views/pages/InsightsPage';
 import { AtomDetailView } from '../views/AtomDetailView';
+import { AtomCard } from '../components/AtomCard';
+
+// SavedFilterView: renders the filtered atom list for a saved filter page
+function SavedFilterView() {
+  const filterId = createMemo(() => state.activePage.replace('filter-', ''));
+
+  const savedFilter = createMemo(() =>
+    state.savedFilters.find((f) => f.id === filterId()),
+  );
+
+  const filterState = createMemo((): FilterState => {
+    const sf = savedFilter();
+    if (!sf) return {
+      types: [], statuses: [], tags: [], context: null,
+      dateRange: null, sectionId: null, priorityTiers: [],
+      sortBy: 'priority', sortOrder: 'desc',
+    };
+    return {
+      types: sf.filter.types ?? [],
+      statuses: sf.filter.statuses ?? [],
+      tags: sf.filter.tags ?? [],
+      context: sf.filter.context ?? null,
+      dateRange: sf.filter.dateRange ?? null,
+      sectionId: sf.filter.sectionId ?? null,
+      priorityTiers: sf.filter.priorityTiers ?? [],
+      sortBy: (sf.filter.sortBy as FilterState['sortBy']) ?? 'priority',
+      sortOrder: (sf.filter.sortOrder as FilterState['sortOrder']) ?? 'desc',
+    };
+  });
+
+  const filteredAtoms = filteredAndSortedAtoms(
+    () => state.atoms,
+    filterState,
+  );
+
+  return (
+    <Show
+      when={savedFilter()}
+      fallback={
+        <div class="page-empty-state">
+          <p class="page-empty-subtitle">Filter not found. It may have been deleted.</p>
+          <button class="page-empty-action" onClick={() => setActivePage('inbox')}>
+            Go to Inbox
+          </button>
+        </div>
+      }
+    >
+      <div class="page-view">
+        <div class="page-header">
+          <h1 class="page-title">{savedFilter()!.name}</h1>
+          <span class="page-count-badge">{filteredAtoms().length}</span>
+        </div>
+        <div class="atom-list">
+          <Show
+            when={filteredAtoms().length > 0}
+            fallback={
+              <div class="page-empty-state">
+                <p class="page-empty-subtitle">No atoms match this filter.</p>
+              </div>
+            }
+          >
+            <For each={filteredAtoms()}>
+              {(atom) => <AtomCard atom={atom} />}
+            </For>
+          </Show>
+        </div>
+      </div>
+    </Show>
+  );
+}
 
 export function MainPane() {
   const sectionId = (): string | undefined => {
@@ -73,6 +145,9 @@ export function MainPane() {
           </Match>
           <Match when={state.activePage.startsWith('section-')}>
             <SectionView sectionId={sectionId()} />
+          </Match>
+          <Match when={state.activePage.startsWith('filter-')}>
+            <SavedFilterView />
           </Match>
         </Switch>
       </Show>

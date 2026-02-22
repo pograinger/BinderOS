@@ -18,13 +18,14 @@
  * CRITICAL: Never early-return from component body.
  */
 
-import { Show, Switch, Match, createSignal, createMemo, onCleanup, For } from 'solid-js';
+import { Show, Switch, Match, createSignal, createMemo, onCleanup, For, createEffect } from 'solid-js';
 import { state, sendCommand, setSelectedAtomId } from '../signals/store';
 import { AtomTypeIcon } from '../components/AtomTypeIcon';
 import { PriorityBadge } from '../components/PriorityBadge';
 import { TagInput } from '../components/TagInput';
 import { BacklinksPanel } from '../components/BacklinksPanel';
-import type { AtomStatus } from '../../types/atoms';
+import { MentionAutocomplete } from '../components/MentionAutocomplete';
+import type { AtomStatus, AtomLink } from '../../types/atoms';
 
 // --- Date helpers ---
 
@@ -170,17 +171,59 @@ export function AtomDetailView() {
     });
   };
 
-  // --- Content editing ---
-  const handleContentBlur = (e: FocusEvent) => {
+  // --- Content editing with debounce ---
+  // Local signal for the content textarea value — debounces saves at 300ms
+  const [contentDraft, setContentDraft] = createSignal<string | null>(null);
+
+  // Sync draft to atom content when selected atom changes (reset draft on nav)
+  createEffect(() => {
+    const a = atom();
+    if (a) {
+      setContentDraft(a.content);
+    } else {
+      setContentDraft(null);
+    }
+  });
+
+  let contentDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const handleContentChange = (newContent: string) => {
+    setContentDraft(newContent);
+    // Debounce saves by 300ms
+    if (contentDebounceTimer !== null) clearTimeout(contentDebounceTimer);
+    contentDebounceTimer = setTimeout(() => {
+      const a = atom();
+      if (!a) return;
+      if (newContent !== a.content) {
+        sendCommand({
+          type: 'UPDATE_ATOM',
+          payload: { id: a.id, changes: { content: newContent } },
+        });
+      }
+    }, 300);
+  };
+
+  onCleanup(() => {
+    if (contentDebounceTimer !== null) clearTimeout(contentDebounceTimer);
+  });
+
+  const handleLinkCreated = (targetId: string) => {
     const a = atom();
     if (!a) return;
-    const textarea = e.target as HTMLTextAreaElement;
-    if (textarea.value !== a.content) {
-      sendCommand({
-        type: 'UPDATE_ATOM',
-        payload: { id: a.id, changes: { content: textarea.value } },
-      });
-    }
+    const currentLinks = a.links;
+    if (currentLinks.some((l) => l.targetId === targetId)) return; // already linked
+    const newLink: AtomLink = {
+      targetId,
+      relationshipType: 'mentions',
+      direction: 'forward',
+    };
+    sendCommand({
+      type: 'UPDATE_ATOM',
+      payload: {
+        id: a.id,
+        changes: { links: [...currentLinks, newLink] },
+      },
+    });
   };
 
   // --- Resolved section/section item names ---
@@ -361,17 +404,14 @@ export function AtomDetailView() {
           </div>
         </Show>
 
-        {/* Content section — editable textarea */}
+        {/* Content section — MentionAutocomplete textarea with @mention + debounced save */}
         <div class="atom-detail-section atom-detail-content-section">
           <span class="atom-detail-section-label">Content</span>
-          <textarea
-            class="atom-detail-content-textarea"
-            onBlur={handleContentBlur}
-            aria-label="Atom content"
-            rows={6}
-          >
-            {atom()!.content}
-          </textarea>
+          <MentionAutocomplete
+            value={contentDraft() ?? atom()!.content}
+            onValueChange={handleContentChange}
+            onLinkCreated={handleLinkCreated}
+          />
         </div>
 
         {/* Metadata */}

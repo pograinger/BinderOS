@@ -13,7 +13,7 @@
  */
 
 import { For, Show } from 'solid-js';
-import { state, setActivePage } from '../signals/store';
+import { state, setActivePage, sendCommand } from '../signals/store';
 
 interface PageTab {
   id: string;
@@ -62,6 +62,25 @@ export function PageTabStrip() {
             {tab.label}
             <Show when={tab.id === 'review' && reviewCount() > 0}>
               <span class="review-tab-badge">{reviewCount()}</span>
+            </Show>
+            {/* Delete button for saved filter tabs */}
+            <Show when={tab.id.startsWith('filter-')}>
+              <button
+                class="filter-tab-delete"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const filterId = tab.id.replace('filter-', '');
+                  sendCommand({ type: 'DELETE_FILTER', payload: { id: filterId } });
+                  // Navigate away if we're on the deleted filter page
+                  if (state.activePage === tab.id) {
+                    setActivePage('inbox');
+                  }
+                }}
+                title="Remove saved filter"
+                aria-label={`Remove filter tab ${tab.label}`}
+              >
+                ×
+              </button>
             </Show>
           </button>
         )}

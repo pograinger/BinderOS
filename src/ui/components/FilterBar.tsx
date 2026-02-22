@@ -20,8 +20,8 @@
  *   showSort={false}           — hide sort controls
  */
 
-import { For, Show } from 'solid-js';
-import { state } from '../signals/store';
+import { For, Show, createSignal } from 'solid-js';
+import { state, sendCommand } from '../signals/store';
 import type { FilterState } from '../signals/queries';
 
 // --- Props ---
@@ -35,6 +35,8 @@ interface FilterBarProps {
   showSectionFilter?: boolean;
   showPriorityFilter?: boolean;
   showSort?: boolean;
+  /** Phase 3 Plan 04: show "Save as page" button */
+  showSaveFilter?: boolean;
 }
 
 // --- Constants ---
@@ -65,6 +67,39 @@ function tsToDateInput(ts: number | null | undefined): string {
 // --- Component ---
 
 export function FilterBar(props: FilterBarProps) {
+  // --- Save filter state ---
+  const [savingFilter, setSavingFilter] = createSignal(false);
+  const [filterNameDraft, setFilterNameDraft] = createSignal('');
+
+  function handleSaveFilterClick() {
+    setSavingFilter(true);
+    setFilterNameDraft('');
+  }
+
+  function commitSaveFilter() {
+    const name = filterNameDraft().trim();
+    if (name) {
+      const id = crypto.randomUUID();
+      const filterSnapshot = { ...props.filters };
+      sendCommand({
+        type: 'SAVE_FILTER',
+        payload: { id, name, filter: filterSnapshot },
+      });
+    }
+    setSavingFilter(false);
+    setFilterNameDraft('');
+  }
+
+  function handleSaveFilterKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      commitSaveFilter();
+    }
+    if (e.key === 'Escape') {
+      setSavingFilter(false);
+    }
+  }
+
   // Toggle a type chip
   function toggleType(type: string) {
     props.onFilterChange('types', toggleArrayValue(props.filters.types, type));
@@ -244,6 +279,32 @@ export function FilterBar(props: FilterBarProps) {
             {props.filters.sortOrder === 'asc' ? '↑' : '↓'}
           </button>
         </div>
+      </Show>
+
+      {/* Save as page button — Phase 3 Plan 04 */}
+      <Show when={props.showSaveFilter !== false}>
+        <Show when={!savingFilter()}>
+          <button
+            class="save-filter-btn"
+            onClick={handleSaveFilterClick}
+            title="Save current filters as a named page tab"
+          >
+            Save as page
+          </button>
+        </Show>
+        <Show when={savingFilter()}>
+          <input
+            class="save-filter-input"
+            type="text"
+            placeholder="Page name..."
+            value={filterNameDraft()}
+            onInput={(e) => setFilterNameDraft(e.currentTarget.value)}
+            onKeyDown={handleSaveFilterKeyDown}
+            onBlur={commitSaveFilter}
+            autofocus
+            aria-label="Page name"
+          />
+        </Show>
       </Show>
 
     </div>
