@@ -17,9 +17,10 @@
  * CRITICAL: Never destructure props. Use <For> for lists. Use <Show> for conditionals.
  */
 
-import { createSignal, createMemo, For, Show, onCleanup } from 'solid-js';
+import { createSignal, createMemo, createResource, For, Show, onCleanup } from 'solid-js';
 import { state, sendCommand } from '../signals/store';
 import { AtomTypeIcon } from '../components/AtomTypeIcon';
+import { logClassification, suggestTypeFromPatterns } from '../../storage/classification-log';
 import type { AtomType } from '../../types/atoms';
 
 const ATOM_TYPES: AtomType[] = ['task', 'fact', 'event', 'decision', 'insight'];
@@ -92,10 +93,22 @@ export function InboxView() {
 
   const totalItems = createMemo(() => state.inboxItems.length);
 
-  // Compute suggested type when current item changes
-  const suggestedType = createMemo(() => {
+  // Compute suggested type when current item changes.
+  // First tries pattern-based suggestion (async), falls back to content heuristic.
+  const [patternSuggestion] = createResource(
+    () => currentItem()?.content,
+    async (content: string) => {
+      if (!content) return null;
+      return suggestTypeFromPatterns(content);
+    },
+  );
+
+  const suggestedType = createMemo((): AtomType => {
     const item = currentItem();
     if (!item) return 'fact' as AtomType;
+    // Use pattern-based suggestion if available
+    const fromPatterns = patternSuggestion();
+    if (fromPatterns) return fromPatterns;
     return suggestTypeFromContent(item.content);
   });
 
@@ -123,12 +136,29 @@ export function InboxView() {
     // Trigger animation
     setClassifyAnimation(true);
 
+    const chosenType = selectedType();
+    const sectionItemId = selectedSectionItemId();
+
+    // Log classification event for pattern learning
+    const sectionItem = sectionItemId
+      ? state.sectionItems.find((si) => si.id === sectionItemId) ?? null
+      : null;
+    logClassification({
+      inboxItemId: item.id,
+      content: item.content,
+      suggestedType: suggestedType(),
+      chosenType,
+      sectionItemId: sectionItemId,
+      sectionItemName: sectionItem ? sectionItem.name : null,
+      timestamp: Date.now(),
+    });
+
     sendCommand({
       type: 'CLASSIFY_INBOX_ITEM',
       payload: {
         id: item.id,
-        type: selectedType(),
-        sectionItemId: selectedSectionItemId() ?? undefined,
+        type: chosenType,
+        sectionItemId: sectionItemId ?? undefined,
       },
     });
 
