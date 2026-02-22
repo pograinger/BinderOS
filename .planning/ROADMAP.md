@@ -28,12 +28,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can export all stored atoms as JSON and Markdown at any time, and the resulting file contains every atom visible in the UI
   4. System requests persistent storage at first launch and storage grant status is visible in the UI; atoms are never stored outside IndexedDB/OPFS and zero network calls are made for read/write
   5. User can undo a recent atom mutation via Ctrl+Z and the atom returns to its prior state
-**Plans:** 4 plans
+**Plans:** 3/4 plans executed
 
 Plans:
 - [x] 01-01-PLAN.md — Project scaffolding: Vite + SolidJS + TypeScript + ESLint (solid plugin) + Zod, three-step WASM build pipeline, Web Worker bridge skeleton
-- [ ] 01-02-PLAN.md — Atom schema + IndexedDB persistence: Zod-validated five-type schema, Dexie.js with write-queue, schema migrations, change log, sections, storage persistence
-- [ ] 01-03-PLAN.md — Worker handlers + shell frame: Worker command dispatch, SolidJS reactive store, dark theme layout, sidebar, bottom tab bar, page tabs, status bar
+- [x] 01-02-PLAN.md — Atom schema + IndexedDB persistence: Zod-validated five-type schema, Dexie.js with write-queue, schema migrations, change log, sections, storage persistence
+- [x] 01-03-PLAN.md — Worker handlers + shell frame: Worker command dispatch, SolidJS reactive store, dark theme layout, sidebar, bottom tab bar, page tabs, status bar
 - [ ] 01-04-PLAN.md — Views + components + capture: card-by-card triage with swipe/type-ahead/type-suggestion, atom cards with swipe gestures, fast capture overlay, voice, export, storage warning, classification logging
 
 ### Phase 2: Compute Engine
@@ -75,6 +75,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/4 | In progress | - |
+| 1. Foundation | 3/4 | In Progress|  |
 | 2. Compute Engine | 0/2 | Not started | - |
 | 3. Pages, Navigation, and Search | 0/2 | Not started | - |

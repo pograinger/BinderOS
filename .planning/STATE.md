@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 ## Current Position
 
 Phase: 1 of 3 (Foundation)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-22 — Plan 01-02 complete: Atom schema + IndexedDB persistence layer
+Last activity: 2026-02-22 — Plan 01-03 complete: Worker handlers + binder UI shell
 
-Progress: [███░░░░░░░] 25% (2/8 plans complete)
+Progress: [████░░░░░░] 38% (3/8 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 31 min
-- Total execution time: 61 min
+- Total plans completed: 3
+- Average duration: 23 min
+- Total execution time: 70 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Foundation | 2/4 | 61 min | 31 min |
+| 1. Foundation | 3/4 | 70 min | 23 min |
 
 **Recent Trend:**
-- Last 5 plans: 54 min, 7 min
-- Trend: accelerating (schema/storage plan much faster than scaffold)
+- Last 5 plans: 54 min, 7 min, 9 min
+- Trend: accelerating (handler + UI plan fast due to established patterns)
 
 *Updated after each plan completion*
 
@@ -57,6 +57,11 @@ Recent decisions affecting current work:
 - [01-02]: Deterministic UUIDs hardcoded for seed sections (not computed from hash) for simplicity
 - [01-02]: Device ID stored in localStorage (not IndexedDB) so it survives database deletion/recreation
 - [01-02]: WriteQueue includes flushImmediate() for critical writes alongside normal 300ms debounce
+- [01-03]: Undo reverts most recent changelog entry: deletes atom if before=null, restores before snapshot otherwise
+- [01-03]: Status bar polls navigator.storage.estimate() every 30s (not per-update) for performance
+- [01-03]: sendCommand() is the single entry point for all Worker commands from UI code
+- [01-03]: Sidebar/BottomTabBar use _props prefix to avoid SolidJS reactivity warnings when CSS handles visibility
+- [01-03]: PageTabStrip generates section tabs dynamically from store — future phases add query pages
 
 ### Pending Todos
 
@@ -72,5 +77,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 01-02-PLAN.md — Atom schema + IndexedDB persistence layer
+Stopped at: Completed 01-03-PLAN.md — Worker handlers + binder UI shell
 Resume file: None

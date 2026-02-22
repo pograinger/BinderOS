@@ -35,7 +35,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **ORG-06**: User can sort atom lists by date, priority score, last updated, and staleness
 - [ ] **ORG-07**: Tasks have status: open, in-progress, waiting, done, cancelled
 - [ ] **ORG-08**: Tasks support due date and scheduled date; Events are dated by nature
-- [ ] **ORG-09**: UI follows binder metaphor: left sidebar (sections), top tabs (pages), main pane (atom list + detail)
+- [x] **ORG-09**: UI follows binder metaphor: left sidebar (sections), top tabs (pages), main pane (atom list + detail)
 
 ### Entropy Engine
 
@@ -63,9 +63,9 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Trust & Safety
 
 - [x] **TRST-01**: System operates fully offline — zero network calls for core read/write operations
-- [ ] **TRST-02**: User can export all data as JSON and Markdown at any time
+- [x] **TRST-02**: User can export all data as JSON and Markdown at any time
 - [x] **TRST-03**: All atom mutations are logged in an append-only change log
-- [ ] **TRST-04**: User can undo recent changes (Ctrl+Z at minimum, browse change log optionally)
+- [x] **TRST-04**: User can undo recent changes (Ctrl+Z at minimum, browse change log optionally)
 - [x] **TRST-05**: System requests persistent storage (`navigator.storage.persist()`) at first launch
 - [x] **TRST-06**: Storage persistence grant status is visible in the entropy health indicator
 - [x] **TRST-07**: All data is stored locally in IndexedDB/OPFS — never leaves the device unless user explicitly exports
@@ -142,7 +142,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ORG-06 | Phase 3 | Pending |
 | ORG-07 | Phase 3 | Pending |
 | ORG-08 | Phase 3 | Pending |
-| ORG-09 | Phase 1 | Pending |
+| ORG-09 | Phase 1 | Complete |
 | ENTR-01 | Phase 2 | Pending |
 | ENTR-02 | Phase 2 | Pending |
 | ENTR-03 | Phase 2 | Pending |
@@ -161,9 +161,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NAV-06 | Phase 3 | Pending |
 | NAV-07 | Phase 3 | Pending |
 | TRST-01 | Phase 1 | Complete |
-| TRST-02 | Phase 1 | Pending |
+| TRST-02 | Phase 1 | Complete |
 | TRST-03 | Phase 1 | Complete |
-| TRST-04 | Phase 1 | Pending |
+| TRST-04 | Phase 1 | Complete |
 | TRST-05 | Phase 1 | Complete |
 | TRST-06 | Phase 1 | Complete |
 | TRST-07 | Phase 1 | Complete |
@@ -175,4 +175,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-21 — traceability updated after roadmap creation*
+*Last updated: 2026-02-22 — TRST-02, TRST-04, ORG-09 completed in Plan 01-03*
