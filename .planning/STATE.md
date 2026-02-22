@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 2 in progress — Compute Engine
+**Current focus:** Phase 2 complete — moving to Phase 3 Search and Query
 
 ## Current Position
 
-Phase: 2 of 3 (Compute Engine) — IN PROGRESS
-Plan: 2 of 4 in current phase
-Status: Plan 02-02 complete
-Last activity: 2026-02-22 — Plan 02-02 complete: Staleness visualization, priority badges, entropy health, cap enforcement modal
+Phase: 2 of 3 (Compute Engine) — COMPLETE
+Plan: 4 of 4 in current phase
+Status: Plan 02-03 complete
+Last activity: 2026-02-22 — Plan 02-03 complete: ReviewView + MERGE_ATOMS + Review tab integration; Phase 2 fully verified
 
-Progress: [███████░░░] 75% (6/8 plans complete)
+Progress: [█████████░] 88% (7/8 plans complete)
 
 ## Performance Metrics
 
@@ -28,11 +28,11 @@ Progress: [███████░░░] 75% (6/8 plans complete)
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 4/4 | 90 min | 23 min |
-| 2. Compute Engine | 2/4 | 18 min | 9 min |
+| 2. Compute Engine | 4/4 | 33 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 9 min, 20 min, 8 min, 10 min
-- Trend: fast execution continues; UI visualization plans very efficient
+- Last 5 plans: 9 min, 20 min, 8 min, 10 min, 15 min
+- Trend: fast execution continues; Phase 2 complete engine shipped in 4 plans averaging 8 min each
 
 *Updated after each plan completion*
 
@@ -76,6 +76,10 @@ Recent decisions affecting current work:
 - [02-02]: untrack() wraps capExceeded clearing logic in STATE_UPDATE handler — reads intentionally non-reactive (one-shot check)
 - [02-02]: Worker handlers return 'cap_exceeded' sentinel string rather than throwing — allows caller to distinguish cap rejection from errors
 - [02-02]: CapEnforcementModal auto-closes via state.capExceeded=null in store on STATE_UPDATE when count drops below cap
+- [02-03]: ARCHIVE_ATOM reused as UPDATE_ATOM with status='archived' — no new command needed (existing UPDATE_ATOM handles arbitrary field updates)
+- [02-03]: MERGE_ATOMS de-duplicates links via Set spread: [...new Set([...target.links, ...source.links])]
+- [02-03]: Merge appends source content to target with '\n\n---\nMerged from:' separator before deleting source
+- [02-03]: Review tab badge shows live compressionCandidates.length — badge hidden when count is zero
 
 ### Pending Todos
 
@@ -90,5 +94,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 02-02-PLAN.md — Staleness visualization, priority badges, entropy health, cap enforcement modal
+Stopped at: Completed 02-03-PLAN.md — ReviewView + MERGE_ATOMS + Review tab; Phase 2 Compute Engine fully complete
 Resume file: None

@@ -47,7 +47,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **ENTR-06**: Entropy score is a function of open tasks count, stale item count, zero-link atom count, and inbox length
 - [x] **ENTR-07**: Link density is tracked per atom — items with many links are surfaced as core; zero-link stale items are entropy candidates
 - [x] **ENTR-08**: System surfaces compression prompt candidates: stale atoms, zero-link atoms, semantically similar atoms
-- [ ] **ENTR-09**: Compression prompts offer archive, delete, or keep options — user decides, system suggests
+- [x] **ENTR-09**: Compression prompts offer archive, delete, or keep options — user decides, system suggests
 - [x] **ENTR-10**: Entropy enforcement is advisory-first: soft warnings before hard blocks, forgiving decay for new users (first 30 days)
 
 ### Navigation & Search
@@ -151,7 +151,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENTR-06 | Phase 2 | Complete |
 | ENTR-07 | Phase 2 | Complete |
 | ENTR-08 | Phase 2 | Complete |
-| ENTR-09 | Phase 2 | Pending |
+| ENTR-09 | Phase 2 | Complete |
 | ENTR-10 | Phase 2 | Complete |
 | NAV-01 | Phase 3 | Pending |
 | NAV-02 | Phase 3 | Pending |
