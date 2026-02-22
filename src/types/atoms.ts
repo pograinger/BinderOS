@@ -7,9 +7,13 @@
  *
  * Links are typed, directional edges (CONTEXT.md decision).
  * Type-aware link rules enforced in Phase 2 compute layer.
+ *
+ * Phase 2 additions: pinned_tier, pinned_staleness, importance, energy
+ * fields support the compute engine scoring pipeline.
  */
 
 import { z } from 'zod/v4';
+import type { PriorityTier, EnergyLevel } from './config';
 
 // --- Enums ---
 
@@ -41,6 +45,10 @@ export const AtomLinkSchema = z.object({
 });
 export type AtomLink = z.infer<typeof AtomLinkSchema>;
 
+// --- Priority tier and energy level (re-exported from config for convenience) ---
+
+export type { PriorityTier, EnergyLevel };
+
 // --- Base atom shape (shared fields) ---
 
 const BaseAtomFields = {
@@ -53,6 +61,11 @@ const BaseAtomFields = {
   sectionItemId: z.string().uuid().optional(),
   created_at: z.number(), // Unix ms timestamp
   updated_at: z.number(), // Unix ms timestamp
+  // Phase 2 compute engine fields
+  pinned_tier: z.enum(['Critical', 'High', 'Medium', 'Low', 'Someday']).optional(),
+  pinned_staleness: z.boolean().optional(),
+  importance: z.number().min(0).max(1).optional(), // 0-1 user override
+  energy: z.enum(['Quick', 'Medium', 'Deep']).optional(),
 };
 
 // --- Type-specific atom schemas (discriminated union members) ---
