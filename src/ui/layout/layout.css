@@ -2579,3 +2579,471 @@ body {
   color: var(--text-muted);
   font-style: italic;
 }
+
+/* =============================================================================
+   Search Overlay (Ctrl+K — Spotlight-style full-text + semantic search)
+   ============================================================================= */
+
+.search-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.search-overlay-container {
+  position: fixed;
+  top: 15vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 201;
+  width: 600px;
+  max-width: calc(100vw - 32px);
+  max-height: 70vh;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 17px;
+  font-family: inherit;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-primary);
+  color: var(--text-primary);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-primary);
+  align-items: center;
+}
+
+.search-chip {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-family: inherit;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+
+.search-chip:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.search-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0d1117;
+}
+
+.search-chip-separator {
+  color: var(--border-secondary);
+  padding: 0 2px;
+  font-size: 12px;
+  user-select: none;
+}
+
+.search-loading {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.search-results {
+  overflow-y: auto;
+  flex: 1;
+  padding: 4px 0;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.search-result-item:hover,
+.search-result-item.focused {
+  background: var(--bg-tertiary);
+}
+
+.search-result-type-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.search-result-title {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-status {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.search-result-score {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.search-empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.search-suggestions {
+  padding: 8px 16px;
+  border-top: 1px solid var(--border-primary);
+}
+
+.search-suggestions-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.search-suggestion-item {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 2px 0;
+  display: block;
+  text-align: left;
+}
+
+.search-suggestion-item:hover {
+  text-decoration: underline;
+}
+
+.search-hints {
+  display: flex;
+  gap: 12px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border-primary);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.search-hints kbd {
+  font-family: inherit;
+  font-size: 10px;
+  padding: 1px 4px;
+  border: 1px solid var(--border-secondary);
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+/* =============================================================================
+   Command Palette (Ctrl+P — action-oriented palette)
+   ============================================================================= */
+
+.command-palette-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.command-palette-container {
+  position: fixed;
+  top: 15vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 201;
+  width: 500px;
+  max-width: calc(100vw - 32px);
+  max-height: 60vh;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.command-palette-input {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 15px;
+  font-family: inherit;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-primary);
+  color: var(--text-primary);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.command-palette-input::placeholder {
+  color: var(--text-muted);
+}
+
+.command-list {
+  overflow-y: auto;
+  flex: 1;
+  padding: 4px 0;
+  outline: none;
+}
+
+.command-group {
+  padding: 4px 0;
+}
+
+.command-group + .command-group {
+  border-top: 1px solid var(--border-primary);
+}
+
+.command-group-label {
+  padding: 6px 16px 2px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.command-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.command-item:hover,
+.command-item.focused {
+  background: var(--bg-tertiary);
+}
+
+.command-item-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.command-item-shortcut {
+  font-size: 11px;
+  padding: 1px 5px;
+  border: 1px solid var(--border-secondary);
+  border-radius: 3px;
+  background: var(--bg-primary);
+  color: var(--text-muted);
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.command-empty {
+  padding: 20px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.command-hints {
+  display: flex;
+  gap: 12px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border-primary);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.command-hints kbd {
+  font-family: inherit;
+  font-size: 10px;
+  padding: 1px 4px;
+  border: 1px solid var(--border-secondary);
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+/* =============================================================================
+   Shortcut Reference (? key — keyboard shortcut reference sheet)
+   ============================================================================= */
+
+.shortcut-reference-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.shortcut-reference-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 201;
+  width: 640px;
+  max-width: calc(100vw - 32px);
+  max-height: 80vh;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.shortcut-reference-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-primary);
+  flex-shrink: 0;
+}
+
+.shortcut-reference-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.shortcut-reference-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.shortcut-reference-close:hover {
+  color: var(--text-primary);
+}
+
+.shortcut-reference-grid {
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.shortcut-category {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shortcut-category-title {
+  margin: 0 0 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.shortcut-list {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  align-items: baseline;
+}
+
+.shortcut-key {
+  /* definition term */
+}
+
+.shortcut-key kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.shortcut-description {
+  /* definition description */
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* kbd styling for hints inside overlays */
+kbd {
+  display: inline-block;
+  padding: 1px 4px;
+  border: 1px solid var(--border-secondary);
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+  font-size: 10px;
+  font-family: inherit;
+  color: var(--text-secondary);
+}
