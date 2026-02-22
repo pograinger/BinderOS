@@ -122,57 +122,57 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | — | Pending |
-| DATA-02 | — | Pending |
-| DATA-03 | — | Pending |
-| DATA-04 | — | Pending |
-| DATA-05 | — | Pending |
-| DATA-06 | — | Pending |
-| CAPT-01 | — | Pending |
-| CAPT-02 | — | Pending |
-| CAPT-03 | — | Pending |
-| CAPT-04 | — | Pending |
-| CAPT-05 | — | Pending |
-| CAPT-06 | — | Pending |
-| ORG-01 | — | Pending |
-| ORG-02 | — | Pending |
-| ORG-03 | — | Pending |
-| ORG-04 | — | Pending |
-| ORG-05 | — | Pending |
-| ORG-06 | — | Pending |
-| ORG-07 | — | Pending |
-| ORG-08 | — | Pending |
-| ORG-09 | — | Pending |
-| ENTR-01 | — | Pending |
-| ENTR-02 | — | Pending |
-| ENTR-03 | — | Pending |
-| ENTR-04 | — | Pending |
-| ENTR-05 | — | Pending |
-| ENTR-06 | — | Pending |
-| ENTR-07 | — | Pending |
-| ENTR-08 | — | Pending |
-| ENTR-09 | — | Pending |
-| ENTR-10 | — | Pending |
-| NAV-01 | — | Pending |
-| NAV-02 | — | Pending |
-| NAV-03 | — | Pending |
-| NAV-04 | — | Pending |
-| NAV-05 | — | Pending |
-| NAV-06 | — | Pending |
-| NAV-07 | — | Pending |
-| TRST-01 | — | Pending |
-| TRST-02 | — | Pending |
-| TRST-03 | — | Pending |
-| TRST-04 | — | Pending |
-| TRST-05 | — | Pending |
-| TRST-06 | — | Pending |
-| TRST-07 | — | Pending |
+| DATA-01 | Phase 1 | Pending |
+| DATA-02 | Phase 1 | Pending |
+| DATA-03 | Phase 1 | Pending |
+| DATA-04 | Phase 1 | Pending |
+| DATA-05 | Phase 1 | Pending |
+| DATA-06 | Phase 1 | Pending |
+| CAPT-01 | Phase 3 | Pending |
+| CAPT-02 | Phase 2 | Pending |
+| CAPT-03 | Phase 2 | Pending |
+| CAPT-04 | Phase 2 | Pending |
+| CAPT-05 | Phase 2 | Pending |
+| CAPT-06 | Phase 2 | Pending |
+| ORG-01 | Phase 1 | Pending |
+| ORG-02 | Phase 1 | Pending |
+| ORG-03 | Phase 3 | Pending |
+| ORG-04 | Phase 3 | Pending |
+| ORG-05 | Phase 3 | Pending |
+| ORG-06 | Phase 3 | Pending |
+| ORG-07 | Phase 3 | Pending |
+| ORG-08 | Phase 3 | Pending |
+| ORG-09 | Phase 1 | Pending |
+| ENTR-01 | Phase 2 | Pending |
+| ENTR-02 | Phase 2 | Pending |
+| ENTR-03 | Phase 2 | Pending |
+| ENTR-04 | Phase 2 | Pending |
+| ENTR-05 | Phase 2 | Pending |
+| ENTR-06 | Phase 2 | Pending |
+| ENTR-07 | Phase 2 | Pending |
+| ENTR-08 | Phase 2 | Pending |
+| ENTR-09 | Phase 2 | Pending |
+| ENTR-10 | Phase 2 | Pending |
+| NAV-01 | Phase 3 | Pending |
+| NAV-02 | Phase 3 | Pending |
+| NAV-03 | Phase 3 | Pending |
+| NAV-04 | Phase 3 | Pending |
+| NAV-05 | Phase 3 | Pending |
+| NAV-06 | Phase 3 | Pending |
+| NAV-07 | Phase 3 | Pending |
+| TRST-01 | Phase 1 | Pending |
+| TRST-02 | Phase 1 | Pending |
+| TRST-03 | Phase 1 | Pending |
+| TRST-04 | Phase 1 | Pending |
+| TRST-05 | Phase 1 | Pending |
+| TRST-06 | Phase 1 | Pending |
+| TRST-07 | Phase 1 | Pending |
 
 **Coverage:**
-- v1 requirements: 44 total
-- Mapped to phases: 0
-- Unmapped: 44
+- v1 requirements: 45 total
+- Mapped to phases: 45
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-21*
-*Last updated: 2026-02-21 after initial definition*
+*Last updated: 2026-02-21 — traceability updated after roadmap creation*
