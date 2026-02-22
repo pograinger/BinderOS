@@ -3,17 +3,21 @@
  *
  * Segments:
  * - Persistence status (green/red dot)
+ * - Entropy health badge (green/yellow/red with label)
  * - Atom count
- * - Inbox count
+ * - Inbox count (color-coded: ok/warning/full based on cap status)
+ * - Open task count (color-coded: ok/warning/full based on cap status)
  * - Storage used (from navigator.storage.estimate())
  *
  * No badges anywhere -- this IS the ambient health indicator (CONTEXT.md).
+ * Soft warning at 80% cap = color shift only. No modal, no banner.
  *
  * CRITICAL: Never destructure props or store. Read state.atoms.length etc.
+ * CRITICAL: Import createMemo signals directly — do not call as state.inboxCapStatus.
  */
 
-import { createSignal, onMount } from 'solid-js';
-import { state } from '../signals/store';
+import { createSignal, createMemo, onMount, Show } from 'solid-js';
+import { state, inboxCapStatus, taskCapStatus } from '../signals/store';
 
 export function StatusBar() {
   const [storageUsed, setStorageUsed] = createSignal<string>('');
@@ -35,10 +39,27 @@ export function StatusBar() {
     void updateStorage();
     const interval = setInterval(() => void updateStorage(), 30000);
 
-    // Cleanup not needed in onMount for setInterval in non-component context,
-    // but good practice
     return () => clearInterval(interval);
   });
+
+  // Entropy level derived from store state
+  const entropyLevel = createMemo(() => state.entropyScore?.level ?? 'green');
+
+  const entropyLabel = (): string => {
+    switch (entropyLevel()) {
+      case 'green':  return 'Healthy';
+      case 'yellow': return 'Warning';
+      case 'red':    return 'Critical';
+      default:       return 'Healthy';
+    }
+  };
+
+  // Count of open/in-progress tasks for the task cap segment
+  const openTaskCount = createMemo(() =>
+    state.atoms.filter(
+      (a) => a.type === 'task' && (a.status === 'open' || a.status === 'in-progress'),
+    ).length,
+  );
 
   return (
     <div class="status-bar">
@@ -52,25 +73,38 @@ export function StatusBar() {
         </span>
       </div>
 
+      {/* Entropy health badge — only show after scoring has run */}
+      <Show when={state.entropyScore !== null}>
+        <div class={`status-bar-item entropy-badge entropy-${entropyLevel()}`}>
+          <span class="entropy-dot" />
+          <span>{entropyLabel()}</span>
+        </div>
+      </Show>
+
       {/* Atom count */}
       <div class="status-bar-item">
         <span>{state.atoms.length} atoms</span>
       </div>
 
-      {/* Inbox count */}
-      <div class="status-bar-item">
+      {/* Inbox count with cap color coding */}
+      <div class={`status-bar-item status-segment inbox-${inboxCapStatus()}`}>
         <span>{state.inboxItems.length} inbox</span>
+      </div>
+
+      {/* Open task count with cap color coding */}
+      <div class={`status-bar-item status-segment task-${taskCapStatus()}`}>
+        <span>{openTaskCount()} tasks</span>
       </div>
 
       {/* Spacer to push storage to the right */}
       <div class="status-bar-spacer" />
 
       {/* Storage used */}
-      {storageUsed() && (
+      <Show when={storageUsed()}>
         <div class="status-bar-item">
           <span>{storageUsed()} used</span>
         </div>
-      )}
+      </Show>
     </div>
   );
 }

@@ -40,6 +40,27 @@ export const theme = {
 } as const;
 
 /**
+ * Priority tier colors mapped per tier.
+ * Chosen to complement the dark theme and not clash with atom type colors.
+ */
+export const tierColors = {
+  Critical: '#f85149', // red — highest urgency
+  High:     '#d29922', // amber — elevated
+  Medium:   '#58a6ff', // blue — standard
+  Low:      '#8b949e', // muted grey — background noise
+  Someday:  '#484f58', // dim — far horizon
+} as const;
+
+/**
+ * Entropy health level colors.
+ */
+export const entropyColors = {
+  green:  '#3fb950',
+  yellow: '#d29922',
+  red:    '#f85149',
+} as const;
+
+/**
  * Get the signature color for an atom type.
  */
 export function getAtomColor(type: string): string {

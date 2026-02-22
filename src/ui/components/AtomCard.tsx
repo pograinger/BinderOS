@@ -8,15 +8,22 @@
  *   - Visual feedback: card slides with color tint (red for archive, green for complete)
  *   - Velocity threshold: 80px displacement or 0.5 velocity
  *
+ * Phase 2 additions:
+ *   - Staleness opacity: reads state.scores[atom.id].opacity (1.0 fresh → 0.6 stale)
+ *   - PriorityBadge: shown for Tasks and Events only (not Facts/Decisions/Insights)
+ *   - CSS transition on opacity for gradual visual change
+ *
  * Uses raw touch handlers since solid-gesture is not installed.
  * Disambiguates horizontal swipe from vertical scroll.
  *
  * CRITICAL: Never destructure props. Use props.atom, not { atom }.
+ * CRITICAL: Never destructure state. Access via state.scores[props.atom.id].
  */
 
 import { createSignal, Show } from 'solid-js';
 import { AtomTypeIcon } from './AtomTypeIcon';
-import { sendCommand } from '../signals/store';
+import { PriorityBadge } from './PriorityBadge';
+import { sendCommand, state } from '../signals/store';
 import type { Atom } from '../../types/atoms';
 
 interface AtomCardProps {
@@ -50,6 +57,20 @@ export function AtomCard(props: AtomCardProps) {
   let touchStartY = 0;
   let touchStartTime = 0;
   let isHorizontalSwipe: boolean | null = null;
+
+  // Phase 2: reactive score for this atom
+  const atomScore = () => state.scores[props.atom.id];
+
+  // Phase 2: staleness opacity (defaults to 1.0 if no score yet)
+  const stalenessOpacity = () => {
+    if (dismissed()) return 0;
+    return atomScore()?.opacity ?? 1.0;
+  };
+
+  // Phase 2: show priority badge for tasks and events only
+  const showPriorityBadge = () =>
+    (props.atom.type === 'task' || props.atom.type === 'event') &&
+    atomScore()?.priorityTier != null;
 
   const handleTouchStart = (e: TouchEvent) => {
     const touch = e.touches[0];
@@ -146,8 +167,11 @@ export function AtomCard(props: AtomCardProps) {
       style={{
         transform: `translateX(${translateX()}px)`,
         background: bgTint(),
-        transition: swiping() ? 'none' : 'transform 0.2s ease-out, background 0.2s, opacity 0.2s',
-        opacity: dismissed() ? '0' : '1',
+        // Phase 2: staleness opacity transition; swipe animation uses transform transition
+        transition: swiping()
+          ? 'none'
+          : 'transform 0.2s ease-out, background 0.2s, opacity 0.5s ease',
+        opacity: String(stalenessOpacity()),
         "touch-action": "pan-y",
       }}
       onTouchStart={handleTouchStart}
@@ -157,6 +181,13 @@ export function AtomCard(props: AtomCardProps) {
     >
       <div class="atom-card-row">
         <AtomTypeIcon type={props.atom.type} size={16} />
+        {/* Phase 2: PriorityBadge for tasks and events */}
+        <Show when={showPriorityBadge()}>
+          <PriorityBadge
+            tier={atomScore()!.priorityTier!}
+            pinned={props.atom.pinned_tier != null}
+          />
+        </Show>
         <span class="atom-card-title">
           {props.atom.title || props.atom.content.slice(0, 60)}
         </span>
