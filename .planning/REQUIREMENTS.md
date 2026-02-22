@@ -29,10 +29,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **ORG-01**: System has four stable sections: Projects, Areas, Resources, Archive
 - [x] **ORG-02**: User can create, rename, and archive items within sections (e.g., specific projects, specific areas)
-- [ ] **ORG-03**: Pages are query definitions over the atom store, not separate data silos
+- [x] **ORG-03**: Pages are query definitions over the atom store, not separate data silos
 - [ ] **ORG-04**: Default pages exist: Today, This Week, Active Projects, Waiting, Insights
-- [ ] **ORG-05**: User can filter atom lists by type, status, date range, section, and priority tier
-- [ ] **ORG-06**: User can sort atom lists by date, priority score, last updated, and staleness
+- [x] **ORG-05**: User can filter atom lists by type, status, date range, section, and priority tier
+- [x] **ORG-06**: User can sort atom lists by date, priority score, last updated, and staleness
 - [ ] **ORG-07**: Tasks have status: open, in-progress, waiting, done, cancelled
 - [ ] **ORG-08**: Tasks support due date and scheduled date; Events are dated by nature
 - [x] **ORG-09**: UI follows binder metaphor: left sidebar (sections), top tabs (pages), main pane (atom list + detail)
@@ -136,10 +136,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CAPT-06 | Phase 2 | Pending |
 | ORG-01 | Phase 1 | Complete |
 | ORG-02 | Phase 1 | Complete |
-| ORG-03 | Phase 3 | Pending |
+| ORG-03 | Phase 3 | Complete |
 | ORG-04 | Phase 3 | Pending |
-| ORG-05 | Phase 3 | Pending |
-| ORG-06 | Phase 3 | Pending |
+| ORG-05 | Phase 3 | Complete |
+| ORG-06 | Phase 3 | Complete |
 | ORG-07 | Phase 3 | Pending |
 | ORG-08 | Phase 3 | Pending |
 | ORG-09 | Phase 1 | Complete |

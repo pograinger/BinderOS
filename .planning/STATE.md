@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 3 — Pages, Navigation, and Search (context gathered, ready for planning)
+**Current focus:** Phase 3 — Pages, Navigation, and Search (Plan 1 complete)
 
 ## Current Position
 
-Phase: 3 of 3 (Pages, Navigation, and Search) — CONTEXT GATHERED
-Plan: 0 of TBD in current phase
-Status: Phase 3 context gathered
-Last activity: 2026-02-22 — Phase 3 context discussion complete: GTD-aligned pages, intelligent search with local embeddings, keyboard+mobile nav, tags/backlinks/saved filters
+Phase: 3 of 3 (Pages, Navigation, and Search)
+Plan: 1 of TBD in current phase
+Status: Phase 3 Plan 1 complete — schema migration, query engine, and filter infrastructure shipped
+Last activity: 2026-02-22 — 03-01 complete: Dexie v2 migration + five page query memos + FilterBar component
 
-Progress: [█████████░] 88% (7/8 plans complete)
+Progress: [█████████░] 90% (8/9 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 18 min
-- Total execution time: 108 min
+- Total plans completed: 7
+- Average duration: 16 min
+- Total execution time: 114 min
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [█████████░] 88% (7/8 plans complete)
 |-------|-------|-------|----------|
 | 1. Foundation | 4/4 | 90 min | 23 min |
 | 2. Compute Engine | 4/4 | 33 min | 8 min |
+| 3. Pages/Nav/Search | 1/TBD | 6 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 9 min, 20 min, 8 min, 10 min, 15 min
-- Trend: fast execution continues; Phase 2 complete engine shipped in 4 plans averaging 8 min each
+- Last 5 plans: 20 min, 8 min, 10 min, 15 min, 6 min
+- Trend: Phase 3 Plan 1 fastest yet at 6 min; data foundation plans execute quickly
 
 *Updated after each plan completion*
 
@@ -80,6 +81,10 @@ Recent decisions affecting current work:
 - [02-03]: MERGE_ATOMS de-duplicates links via Set spread: [...new Set([...target.links, ...source.links])]
 - [02-03]: Merge appends source content to target with '\n\n---\nMerged from:' separator before deleting source
 - [02-03]: Review tab badge shows live compressionCandidates.length — badge hidden when count is zero
+- [03-01]: Dexie v2 upgrade() callback uses .modify() to patch existing atoms inline — safe for additive field migration, no full table read
+- [03-01]: Ring buffer hysteresis for interactions table: trim to 1000 when count exceeds 1200 — prevents per-write overhead
+- [03-01]: filteredAndSortedAtoms is a higher-order function returning createMemo — allows flexible composition with any source memo
+- [03-01]: Zod default() applies at parse time not object construction — TypeScript still requires tags field in object literals
 
 ### Pending Todos
 
@@ -89,10 +94,11 @@ None.
 
 - [Phase 2]: Priority scoring formula weights need calibration after real usage data — starting constants reasonable but unvalidated
 - [Phase 3]: `@solidjs/router` version 0.15.4 verified at install (research said 0.14.x, actual was 0.15.x — API compatible)
+- [Phase 3]: FilterBar CSS classes documented in component but not yet added to global stylesheet — needed when first page component uses FilterBar
 - [Build]: pnpm build:wasm requires LIB env var set to MSVC + Windows SDK paths on Windows; see .planning/phases/01-foundation/01-01-SUMMARY.md User Setup section
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-pages-navigation-and-search/03-CONTEXT.md
+Stopped at: Completed 03-01-PLAN.md
+Resume file: .planning/phases/03-pages-navigation-and-search/03-01-SUMMARY.md

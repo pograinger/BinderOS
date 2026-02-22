@@ -66,7 +66,7 @@ Plans:
 **Plans:** 4 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Schema migration + query engine: Dexie v2 (tags, context, savedFilters, interactions), Zod schema extension, createMemo query functions for 5 pages, FilterBar component, store/worker updates
+- [x] 03-01-PLAN.md — Schema migration + query engine: Dexie v2 (tags, context, savedFilters, interactions), Zod schema extension, createMemo query functions for 5 pages, FilterBar component, store/worker updates
 - [ ] 03-02-PLAN.md — Default pages + task UX: TodayPage, ThisWeekPage, ActiveProjectsPage, WaitingPage, InsightsPage, MainPane routing, PageTabStrip, AtomDetailView with status/date editing
 - [ ] 03-03-PLAN.md — Search + command palette: MiniSearch full-text index, Spotlight search overlay (Ctrl+K), vector embeddings worker, blended ranking, command palette (Ctrl+P), keyboard navigation, shortcut reference
 - [ ] 03-04-PLAN.md — Tags + backlinks + saved filters: TagInput with autocomplete, GTD context field, BacklinksPanel, @mention inline linking, save-as-page filter persistence
@@ -80,4 +80,4 @@ Phases execute in numeric order: 1 -> 2 -> 3
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-02-22 |
 | 2. Compute Engine | 3/3 | Complete | 2026-02-22 |
-| 3. Pages, Navigation, and Search | 0/4 | Not started | - |
+| 3. Pages, Navigation, and Search | 1/4 | In Progress | - |
