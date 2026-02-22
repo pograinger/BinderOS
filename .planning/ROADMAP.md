@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 4 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Project scaffolding: Vite + SolidJS + TypeScript + ESLint (solid plugin) + Zod, three-step WASM build pipeline, Web Worker bridge skeleton
+- [x] 01-01-PLAN.md — Project scaffolding: Vite + SolidJS + TypeScript + ESLint (solid plugin) + Zod, three-step WASM build pipeline, Web Worker bridge skeleton
 - [ ] 01-02-PLAN.md — Atom schema + IndexedDB persistence: Zod-validated five-type schema, Dexie.js with write-queue, schema migrations, change log, sections, storage persistence
 - [ ] 01-03-PLAN.md — Worker handlers + shell frame: Worker command dispatch, SolidJS reactive store, dark theme layout, sidebar, bottom tab bar, page tabs, status bar
 - [ ] 01-04-PLAN.md — Views + components + capture: card-by-card triage with swipe/type-ahead/type-suggestion, atom cards with swipe gestures, fast capture overlay, voice, export, storage warning, classification logging
@@ -75,6 +75,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/4 | Not started | - |
+| 1. Foundation | 1/4 | In progress | - |
 | 2. Compute Engine | 0/2 | Not started | - |
 | 3. Pages, Navigation, and Search | 0/2 | Not started | - |

@@ -62,13 +62,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Trust & Safety
 
-- [ ] **TRST-01**: System operates fully offline — zero network calls for core read/write operations
+- [x] **TRST-01**: System operates fully offline — zero network calls for core read/write operations
 - [ ] **TRST-02**: User can export all data as JSON and Markdown at any time
 - [ ] **TRST-03**: All atom mutations are logged in an append-only change log
 - [ ] **TRST-04**: User can undo recent changes (Ctrl+Z at minimum, browse change log optionally)
 - [ ] **TRST-05**: System requests persistent storage (`navigator.storage.persist()`) at first launch
 - [ ] **TRST-06**: Storage persistence grant status is visible in the entropy health indicator
-- [ ] **TRST-07**: All data is stored locally in IndexedDB/OPFS — never leaves the device unless user explicitly exports
+- [x] **TRST-07**: All data is stored locally in IndexedDB/OPFS — never leaves the device unless user explicitly exports
 
 ## v2 Requirements
 
@@ -160,13 +160,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NAV-05 | Phase 3 | Pending |
 | NAV-06 | Phase 3 | Pending |
 | NAV-07 | Phase 3 | Pending |
-| TRST-01 | Phase 1 | Pending |
+| TRST-01 | Phase 1 | Complete |
 | TRST-02 | Phase 1 | Pending |
 | TRST-03 | Phase 1 | Pending |
 | TRST-04 | Phase 1 | Pending |
 | TRST-05 | Phase 1 | Pending |
 | TRST-06 | Phase 1 | Pending |
-| TRST-07 | Phase 1 | Pending |
+| TRST-07 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 45 total
