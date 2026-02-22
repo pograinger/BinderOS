@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 ## Current Position
 
 Phase: 1 of 3 (Foundation)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-22 — Plan 01-01 complete: Vite + SolidJS + WASM scaffold and Worker bridge
+Last activity: 2026-02-22 — Plan 01-02 complete: Atom schema + IndexedDB persistence layer
 
-Progress: [██░░░░░░░░] 12.5% (1/8 plans complete)
+Progress: [███░░░░░░░] 25% (2/8 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 54 min
-- Total execution time: 54 min
+- Total plans completed: 2
+- Average duration: 31 min
+- Total execution time: 61 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Foundation | 1/4 | 54 min | 54 min |
+| 1. Foundation | 2/4 | 61 min | 31 min |
 
 **Recent Trend:**
-- Last 5 plans: 54 min
-- Trend: baseline established
+- Last 5 plans: 54 min, 7 min
+- Trend: accelerating (schema/storage plan much faster than scaffold)
 
 *Updated after each plan completion*
 
@@ -53,6 +53,10 @@ Recent decisions affecting current work:
 - [01-01]: Windows MSVC toolchain requires VS Build Tools + Windows SDK + .cargo/config.toml lld-link.exe config
 - [01-01]: ESLint v10 (not v9) installed; requires jiti package for TypeScript config file loading
 - [01-01]: WASM pkg ignored in ESLint — generated files produce false-positive unused-disable-directive warnings
+- [01-02]: Zod v4 must be imported via 'zod/v4' path — default 'zod' import in v4.x package exposes v3 compat layer
+- [01-02]: Deterministic UUIDs hardcoded for seed sections (not computed from hash) for simplicity
+- [01-02]: Device ID stored in localStorage (not IndexedDB) so it survives database deletion/recreation
+- [01-02]: WriteQueue includes flushImmediate() for critical writes alongside normal 300ms debounce
 
 ### Pending Todos
 
@@ -68,5 +72,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 01-01-PLAN.md — Vite + SolidJS + WASM + Worker bridge scaffold
+Stopped at: Completed 01-02-PLAN.md — Atom schema + IndexedDB persistence layer
 Resume file: None

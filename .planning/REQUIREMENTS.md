@@ -9,12 +9,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Data Model
 
-- [ ] **DATA-01**: User can create atoms of exactly five types: Task, Fact, Event, Decision, Insight
-- [ ] **DATA-02**: Every atom has an ID, type, created_at, updated_at, links array, and status
-- [ ] **DATA-03**: Atom type is mandatory — system never persists an untyped atom outside the inbox
-- [ ] **DATA-04**: Atom content supports Markdown formatting (enough for clarity, not rich text editing)
-- [ ] **DATA-05**: Atoms are stored in IndexedDB via Dexie.js with enforced schema (Zod validation on all mutations)
-- [ ] **DATA-06**: Atom schema evolves only via explicit migrations, not ad-hoc fields
+- [x] **DATA-01**: User can create atoms of exactly five types: Task, Fact, Event, Decision, Insight
+- [x] **DATA-02**: Every atom has an ID, type, created_at, updated_at, links array, and status
+- [x] **DATA-03**: Atom type is mandatory — system never persists an untyped atom outside the inbox
+- [x] **DATA-04**: Atom content supports Markdown formatting (enough for clarity, not rich text editing)
+- [x] **DATA-05**: Atoms are stored in IndexedDB via Dexie.js with enforced schema (Zod validation on all mutations)
+- [x] **DATA-06**: Atom schema evolves only via explicit migrations, not ad-hoc fields
 
 ### Capture & Inbox
 
@@ -27,8 +27,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Organization
 
-- [ ] **ORG-01**: System has four stable sections: Projects, Areas, Resources, Archive
-- [ ] **ORG-02**: User can create, rename, and archive items within sections (e.g., specific projects, specific areas)
+- [x] **ORG-01**: System has four stable sections: Projects, Areas, Resources, Archive
+- [x] **ORG-02**: User can create, rename, and archive items within sections (e.g., specific projects, specific areas)
 - [ ] **ORG-03**: Pages are query definitions over the atom store, not separate data silos
 - [ ] **ORG-04**: Default pages exist: Today, This Week, Active Projects, Waiting, Insights
 - [ ] **ORG-05**: User can filter atom lists by type, status, date range, section, and priority tier
@@ -64,10 +64,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **TRST-01**: System operates fully offline — zero network calls for core read/write operations
 - [ ] **TRST-02**: User can export all data as JSON and Markdown at any time
-- [ ] **TRST-03**: All atom mutations are logged in an append-only change log
+- [x] **TRST-03**: All atom mutations are logged in an append-only change log
 - [ ] **TRST-04**: User can undo recent changes (Ctrl+Z at minimum, browse change log optionally)
-- [ ] **TRST-05**: System requests persistent storage (`navigator.storage.persist()`) at first launch
-- [ ] **TRST-06**: Storage persistence grant status is visible in the entropy health indicator
+- [x] **TRST-05**: System requests persistent storage (`navigator.storage.persist()`) at first launch
+- [x] **TRST-06**: Storage persistence grant status is visible in the entropy health indicator
 - [x] **TRST-07**: All data is stored locally in IndexedDB/OPFS — never leaves the device unless user explicitly exports
 
 ## v2 Requirements
@@ -122,20 +122,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
-| DATA-04 | Phase 1 | Pending |
-| DATA-05 | Phase 1 | Pending |
-| DATA-06 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
+| DATA-03 | Phase 1 | Complete |
+| DATA-04 | Phase 1 | Complete |
+| DATA-05 | Phase 1 | Complete |
+| DATA-06 | Phase 1 | Complete |
 | CAPT-01 | Phase 3 | Pending |
 | CAPT-02 | Phase 2 | Pending |
 | CAPT-03 | Phase 2 | Pending |
 | CAPT-04 | Phase 2 | Pending |
 | CAPT-05 | Phase 2 | Pending |
 | CAPT-06 | Phase 2 | Pending |
-| ORG-01 | Phase 1 | Pending |
-| ORG-02 | Phase 1 | Pending |
+| ORG-01 | Phase 1 | Complete |
+| ORG-02 | Phase 1 | Complete |
 | ORG-03 | Phase 3 | Pending |
 | ORG-04 | Phase 3 | Pending |
 | ORG-05 | Phase 3 | Pending |
@@ -162,10 +162,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NAV-07 | Phase 3 | Pending |
 | TRST-01 | Phase 1 | Complete |
 | TRST-02 | Phase 1 | Pending |
-| TRST-03 | Phase 1 | Pending |
+| TRST-03 | Phase 1 | Complete |
 | TRST-04 | Phase 1 | Pending |
-| TRST-05 | Phase 1 | Pending |
-| TRST-06 | Phase 1 | Pending |
+| TRST-05 | Phase 1 | Complete |
+| TRST-06 | Phase 1 | Complete |
 | TRST-07 | Phase 1 | Complete |
 
 **Coverage:**
