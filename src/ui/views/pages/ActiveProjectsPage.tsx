@@ -27,7 +27,7 @@ export function ActiveProjectsPage() {
   // For roving tabindex, flatten all atoms across all groups
   const flatAtoms = () => allGroupedAtoms();
 
-  const { itemTabindex, isItemFocused, containerProps } = useRovingTabindex({
+  const { itemTabindex, isItemFocused, onKeyDown } = useRovingTabindex({
     itemCount: () => flatAtoms().length,
     onSelect: (i) => {
       const atom = flatAtoms()[i];
@@ -73,7 +73,7 @@ export function ActiveProjectsPage() {
 
       {/* Project groups */}
       <Show when={activeProjectAtoms().length > 0}>
-        <div {...(containerProps as Record<string, unknown>)}>
+        <div role="listbox" tabindex={0} onKeyDown={onKeyDown}>
           <For each={activeProjectAtoms()}>
             {(group) => {
               return (
