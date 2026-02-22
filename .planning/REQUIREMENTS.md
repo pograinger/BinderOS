@@ -56,9 +56,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **NAV-02**: Search supports filtering by type, status, and date range
 - [x] **NAV-03**: User can navigate the entire system via keyboard (arrow keys, hotkeys for common actions)
 - [x] **NAV-04**: Command palette is accessible via keyboard shortcut and lists all available actions
-- [ ] **NAV-05**: Backlinks are visible on each atom — user can see all atoms that link to the current one
-- [ ] **NAV-06**: User can add lightweight tags to atoms for cross-cutting categorization
-- [ ] **NAV-07**: User can create and save custom filter definitions on pages
+- [x] **NAV-05**: Backlinks are visible on each atom — user can see all atoms that link to the current one
+- [x] **NAV-06**: User can add lightweight tags to atoms for cross-cutting categorization
+- [x] **NAV-07**: User can create and save custom filter definitions on pages
 
 ### Trust & Safety
 
@@ -157,9 +157,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NAV-02 | Phase 3 | Complete |
 | NAV-03 | Phase 3 | Complete |
 | NAV-04 | Phase 3 | Complete |
-| NAV-05 | Phase 3 | Pending |
-| NAV-06 | Phase 3 | Pending |
-| NAV-07 | Phase 3 | Pending |
+| NAV-05 | Phase 3 | Complete |
+| NAV-06 | Phase 3 | Complete |
+| NAV-07 | Phase 3 | Complete |
 | TRST-01 | Phase 1 | Complete |
 | TRST-02 | Phase 1 | Complete |
 | TRST-03 | Phase 1 | Complete |

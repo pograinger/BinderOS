@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 3 — Pages, Navigation, and Search (Plan 2 complete)
+**Current focus:** Phase 3 — Pages, Navigation, and Search (All plans complete)
 
 ## Current Position
 
 Phase: 3 of 3 (Pages, Navigation, and Search)
-Plan: 3 of 3 in current phase
-Status: Phase 3 Plan 3 complete — full-text + semantic search, command palette, keyboard navigation shipped
-Last activity: 2026-02-22 — 03-03 complete: SearchOverlay (Ctrl+K) + CommandPalette (Ctrl+P) + ShortcutReference (?) + useRovingTabindex full implementation
+Plan: 4 of 4 in current phase (all phases complete)
+Status: Phase 3 Plan 04 complete — tags, backlinks, saved filters, @mention inline linking shipped
+Last activity: 2026-02-22 — 03-04 complete: TagInput + BacklinksPanel + MentionAutocomplete + FilterBar "Save as page" + MainPane filter pages
 
-Progress: [██████████] 100% (10/10 plans complete)
+Progress: [██████████] 100% (11/11 plans complete)
 
 ## Performance Metrics
 
@@ -29,11 +29,11 @@ Progress: [██████████] 100% (10/10 plans complete)
 |-------|-------|-------|----------|
 | 1. Foundation | 4/4 | 90 min | 23 min |
 | 2. Compute Engine | 4/4 | 33 min | 8 min |
-| 3. Pages/Nav/Search | 3/3 | 25 min | 8 min |
+| 3. Pages/Nav/Search | 4/4 | 33 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 10 min, 15 min, 6 min, 13 min, 21 min
-- Trend: Phase 3 complete; search+nav plan took longer due to new dependency installation and URL redirect debugging
+- Last 5 plans: 15 min, 6 min, 13 min, 21 min, 8 min
+- Trend: Phase 3 fully complete; all 4 plans shipped; fast execution averaging 8 min/plan
 
 *Updated after each plan completion*
 
@@ -95,6 +95,9 @@ Recent decisions affecting current work:
 - [03-03]: Download script uses new URL(location, requestUrl).href to resolve relative HuggingFace CDN redirect URLs
 - [03-03]: EmbedPipeline typed as simplified function signature to avoid TS2590 union-too-complex from Transformers.js pipeline overloads
 - [03-03]: Download script checks file size > 0 (not just existence) to detect incomplete partial downloads
+- [Phase 03-04]: BacklinksPanel uses props.atomId directly (not destructured) inside createMemo for SolidJS reactive tracking
+- [Phase 03-04]: MentionAutocomplete v1 anchors dropdown to textarea bottom (not cursor) per RESEARCH.md Pitfall 7 simplification
+- [Phase 03-04]: Content editing debounced 300ms via createSignal+createEffect+setTimeout to avoid per-keystroke UPDATE_ATOM mutations
 
 ### Pending Todos
 
@@ -109,5 +112,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 03-03-PLAN.md (final plan — all phases complete)
-Resume file: .planning/phases/03-pages-navigation-and-search/03-03-SUMMARY.md
+Stopped at: Completed 03-04-PLAN.md (all phases complete)
+Resume file: .planning/phases/03-pages-navigation-and-search/03-04-SUMMARY.md
