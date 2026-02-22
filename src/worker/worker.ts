@@ -6,7 +6,7 @@
  * priority scoring, and entropy computation run here.
  *
  * Message flow:
- *   Main thread sends Command → Worker dispatches → Worker sends Response
+ *   Main thread sends Command -> Worker dispatches -> Worker sends Response
  */
 import type { Command, Response } from '../types/messages';
 import init, { BinderCore } from '../wasm/pkg/binderos_core';
@@ -23,7 +23,12 @@ self.onmessage = async (event: MessageEvent<Command>) => {
         core = new BinderCore();
         const response: Response = {
           type: 'READY',
-          payload: { version: core.version() },
+          payload: {
+            version: core.version(),
+            sections: [],
+            atoms: [],
+            inboxItems: [],
+          },
         };
         self.postMessage(response);
         break;
@@ -38,26 +43,107 @@ self.onmessage = async (event: MessageEvent<Command>) => {
       }
 
       case 'CREATE_ATOM': {
-        // Placeholder: real handler added in Plan 02 when Dexie schema is defined
+        // Placeholder: real handler wired in Plan 03 when full worker dispatch is built
         const response: Response = {
-          type: 'ATOM_CREATED',
-          payload: { id: `placeholder-${Date.now()}` },
+          type: 'STATE_UPDATE',
+          payload: { atoms: [] },
         };
         self.postMessage(response);
         break;
       }
 
       case 'UPDATE_ATOM': {
+        // Placeholder: real handler wired in Plan 03
         const response: Response = {
-          type: 'ATOM_UPDATED',
-          payload: { id: msg.payload.id },
+          type: 'STATE_UPDATE',
+          payload: { atoms: [] },
         };
         self.postMessage(response);
         break;
       }
 
       case 'DELETE_ATOM': {
-        // Placeholder: real handler added in Plan 02
+        // Placeholder: real handler wired in Plan 03
+        const response: Response = {
+          type: 'STATE_UPDATE',
+          payload: { atoms: [] },
+        };
+        self.postMessage(response);
+        break;
+      }
+
+      case 'CREATE_INBOX_ITEM': {
+        // Placeholder: real handler wired in Plan 03
+        const response: Response = {
+          type: 'STATE_UPDATE',
+          payload: { inboxItems: [] },
+        };
+        self.postMessage(response);
+        break;
+      }
+
+      case 'CLASSIFY_INBOX_ITEM': {
+        // Placeholder: real handler wired in Plan 03
+        const response: Response = {
+          type: 'STATE_UPDATE',
+          payload: { atoms: [], inboxItems: [] },
+        };
+        self.postMessage(response);
+        break;
+      }
+
+      case 'CREATE_SECTION_ITEM': {
+        // Placeholder: real handler wired in Plan 03
+        const response: Response = {
+          type: 'STATE_UPDATE',
+          payload: { sectionItems: [] },
+        };
+        self.postMessage(response);
+        break;
+      }
+
+      case 'RENAME_SECTION_ITEM': {
+        // Placeholder: real handler wired in Plan 03
+        const response: Response = {
+          type: 'STATE_UPDATE',
+          payload: { sectionItems: [] },
+        };
+        self.postMessage(response);
+        break;
+      }
+
+      case 'ARCHIVE_SECTION_ITEM': {
+        // Placeholder: real handler wired in Plan 03
+        const response: Response = {
+          type: 'STATE_UPDATE',
+          payload: { sectionItems: [] },
+        };
+        self.postMessage(response);
+        break;
+      }
+
+      case 'EXPORT_DATA': {
+        // Placeholder: triggers export flow (storage/export.ts)
+        break;
+      }
+
+      case 'REQUEST_PERSISTENCE': {
+        // Placeholder: triggers persistence request (storage/persistence.ts)
+        const response: Response = {
+          type: 'PERSISTENCE_STATUS',
+          payload: { granted: false },
+        };
+        self.postMessage(response);
+        break;
+      }
+
+      case 'UNDO': {
+        // Placeholder: real undo wired in Plan 03 using changelog
+        const response: Response = {
+          type: 'STATE_UPDATE',
+          payload: {},
+        };
+        self.postMessage(response);
         break;
       }
 
