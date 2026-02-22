@@ -10,16 +10,19 @@
     "lint": "eslint src/",
     "build:wasm": "cargo build --target wasm32-unknown-unknown --release --manifest-path wasm/core/Cargo.toml && wasm-bindgen --target web ./wasm/core/target/wasm32-unknown-unknown/release/binderos_core.wasm --out-dir ./src/wasm/pkg && wasm-opt -Oz ./src/wasm/pkg/binderos_core_bg.wasm -o ./src/wasm/pkg/binderos_core_bg.wasm",
     "build:all": "pnpm build:wasm && pnpm build",
-    "test": "vitest run"
+    "test": "vitest run",
+    "postinstall:models": "node scripts/download-model.cjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.30.1",
   "dependencies": {
+    "@huggingface/transformers": "^3.8.1",
     "@solidjs/router": "^0.15.4",
     "dexie": "^4.3.0",
     "dexie-export-import": "^4.1.4",
+    "minisearch": "^7.2.0",
     "solid-dexie": "^0.0.5",
     "solid-js": "^1.9.11",
     "zod": "^4.3.6"

@@ -25,3 +25,7 @@ wasm/core/target/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local ONNX model files (binary, downloaded by pnpm postinstall:models)
+# These are large binary files (~22MB) — download via: node scripts/download-model.cjs
+public/models/
