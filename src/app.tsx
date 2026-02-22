@@ -16,6 +16,7 @@ import { sendCommand, state } from './ui/signals/store';
 import { Shell } from './ui/layout/Shell';
 import { CaptureOverlay } from './ui/views/CaptureOverlay';
 import { StorageWarning } from './ui/views/StorageWarning';
+import { CapEnforcementModal } from './ui/components/CapEnforcementModal';
 
 function App() {
   const [showCapture, setShowCapture] = createSignal(false);
@@ -85,6 +86,9 @@ function App() {
       <Show when={showStorageWarning()}>
         <StorageWarning onDismiss={() => setStorageWarningDismissed(true)} />
       </Show>
+
+      {/* Cap enforcement modal — self-managing via state.capExceeded */}
+      <CapEnforcementModal />
 
       {/* Floating Action Button for mobile capture */}
       <Show when={!showCapture()}>

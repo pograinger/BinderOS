@@ -4,6 +4,11 @@
  * All handlers validate input with Zod BEFORE touching Dexie.
  * Every mutation creates a CRDT-compatible changelog entry.
  * Writes are enqueued to the write queue, never direct db.put() calls.
+ *
+ * Phase 2 additions:
+ * - handleCreateAtom checks task cap BEFORE inserting if type='task' and
+ *   status is open/in-progress. Returns 'cap_exceeded' if at cap.
+ * - handleUpdateAtom checks task cap when status is being set to open/in-progress.
  */
 
 import { db } from '../../storage/db';
@@ -12,16 +17,40 @@ import { appendMutation } from '../../storage/changelog';
 import { AtomSchema, CreateAtomInputSchema } from '../../types/atoms';
 import type { Atom, CreateAtomInput } from '../../types/atoms';
 import type { MutationLogEntry } from '../../types/changelog';
+import { getCapConfig } from './config';
+
+/** Count open/in-progress tasks from Dexie. */
+async function countOpenTasks(): Promise<number> {
+  return db.atoms
+    .filter((a) => a.type === 'task' && (a.status === 'open' || a.status === 'in-progress'))
+    .count();
+}
 
 /**
- * Create a new atom.
+ * Create a new atom, with task cap enforcement.
+ *
+ * Returns 'cap_exceeded' if the atom is a task in open/in-progress status
+ * and the open task count has reached the configured taskCap.
  *
  * Generates UUID, sets timestamps, validates with Zod,
  * creates changelog entry, and enqueues writes.
  */
 export async function handleCreateAtom(
   payload: CreateAtomInput,
-): Promise<{ atom: Atom; logEntry: MutationLogEntry }> {
+): Promise<{ atom: Atom; logEntry: MutationLogEntry } | 'cap_exceeded'> {
+  // Phase 2: task cap check
+  if (payload.type === 'task') {
+    const status = payload.status ?? 'open';
+    if (status === 'open' || status === 'in-progress') {
+      await writeQueue.flushImmediate();
+      const capConfig = await getCapConfig();
+      const openCount = await countOpenTasks();
+      if (openCount >= capConfig.taskCap) {
+        return 'cap_exceeded';
+      }
+    }
+  }
+
   // Validate input shape
   CreateAtomInputSchema.parse(payload);
 
@@ -51,17 +80,37 @@ export async function handleCreateAtom(
 }
 
 /**
- * Update an existing atom.
+ * Update an existing atom, with task cap enforcement.
+ *
+ * Returns 'cap_exceeded' if updating a task's status to open/in-progress
+ * would push the open task count over the configured taskCap.
  *
  * Reads current atom, merges changes, validates,
  * creates changelog entry, and enqueues writes.
  */
 export async function handleUpdateAtom(
   payload: { id: string; changes: Partial<Atom> },
-): Promise<{ atom: Atom; logEntry: MutationLogEntry }> {
+): Promise<{ atom: Atom; logEntry: MutationLogEntry } | 'cap_exceeded'> {
   const existing = await db.atoms.get(payload.id);
   if (!existing) {
     throw new Error(`Atom not found: ${payload.id}`);
+  }
+
+  // Phase 2: task cap check when reopening a task
+  if (existing.type === 'task' && payload.changes.status !== undefined) {
+    const newStatus = payload.changes.status;
+    const wasActive = existing.status === 'open' || existing.status === 'in-progress';
+    const willBeActive = newStatus === 'open' || newStatus === 'in-progress';
+
+    // Only check cap if transitioning FROM inactive TO active
+    if (!wasActive && willBeActive) {
+      await writeQueue.flushImmediate();
+      const capConfig = await getCapConfig();
+      const openCount = await countOpenTasks();
+      if (openCount >= capConfig.taskCap) {
+        return 'cap_exceeded';
+      }
+    }
   }
 
   const updated: Atom = {

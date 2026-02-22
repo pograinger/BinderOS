@@ -32,6 +32,7 @@ export type Command =
   | { type: 'UPDATE_ATOM'; payload: { id: string; changes: Partial<Atom> } }
   | { type: 'DELETE_ATOM'; payload: { id: string } }
   | { type: 'CREATE_INBOX_ITEM'; payload: { content: string; title?: string } }
+  | { type: 'DELETE_INBOX_ITEM'; payload: { id: string } }
   | { type: 'CLASSIFY_INBOX_ITEM'; payload: { id: string; type: AtomType; sectionItemId?: string } }
   | { type: 'CREATE_SECTION_ITEM'; payload: { sectionId: string; name: string } }
   | { type: 'RENAME_SECTION_ITEM'; payload: { id: string; name: string } }

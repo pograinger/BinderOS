@@ -17,7 +17,7 @@
  * - inboxCapStatus() / taskCapStatus() derived signals for StatusBar
  */
 
-import { createMemo } from 'solid-js';
+import { createMemo, untrack } from 'solid-js';
 import { createStore, reconcile } from 'solid-js/store';
 import { dispatch, onMessage } from '../../worker/bridge';
 import type { Atom, InboxItem } from '../../types/atoms';
@@ -114,6 +114,24 @@ onMessage((response) => {
       if (response.payload.capConfig !== undefined) {
         setState('capConfig', reconcile(response.payload.capConfig));
       }
+      // Phase 2: clear capExceeded if counts are now below cap after an action.
+      // untrack() prevents the ESLint solid/reactivity warning — this is intentionally
+      // a one-shot check in a message handler, not a reactive computation.
+      untrack(() => {
+        if (state.capExceeded === 'inbox' && response.payload.inboxItems !== undefined) {
+          if (state.inboxItems.length < state.capConfig.inboxCap) {
+            setState('capExceeded', null);
+          }
+        }
+        if (state.capExceeded === 'task' && response.payload.atoms !== undefined) {
+          const openCount = state.atoms.filter(
+            (a) => a.type === 'task' && (a.status === 'open' || a.status === 'in-progress'),
+          ).length;
+          if (openCount < state.capConfig.taskCap) {
+            setState('capExceeded', null);
+          }
+        }
+      });
       break;
 
     case 'CAP_EXCEEDED':

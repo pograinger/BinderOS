@@ -27,7 +27,7 @@ import { initLamportClock, appendMutation } from '../storage/changelog';
 import { initStoragePersistence } from '../storage/persistence';
 import { exportAllData } from '../storage/export';
 import { handleCreateAtom, handleUpdateAtom, handleDeleteAtom, handleMergeAtoms } from './handlers/atoms';
-import { handleCreateInboxItem, handleClassifyInboxItem } from './handlers/inbox';
+import { handleCreateInboxItem, handleDeleteInboxItem, handleClassifyInboxItem } from './handlers/inbox';
 import {
   handleCreateSectionItem,
   handleRenameSectionItem,
@@ -178,13 +178,33 @@ self.onmessage = async (event: MessageEvent<Command>) => {
       }
 
       case 'CREATE_ATOM': {
-        await handleCreateAtom(msg.payload);
+        // Phase 2: cap enforcement — handler returns 'cap_exceeded' if over task cap
+        const createResult = await handleCreateAtom(msg.payload);
+        if (createResult === 'cap_exceeded') {
+          const capConfig = await getCapConfig();
+          const capResponse: Response = {
+            type: 'CAP_EXCEEDED',
+            payload: { capType: 'task', cap: capConfig.taskCap },
+          };
+          self.postMessage(capResponse);
+          break;
+        }
         await flushAndSendState();
         break;
       }
 
       case 'UPDATE_ATOM': {
-        await handleUpdateAtom(msg.payload);
+        // Phase 2: cap enforcement — handler returns 'cap_exceeded' if reopening task at cap
+        const updateResult = await handleUpdateAtom(msg.payload);
+        if (updateResult === 'cap_exceeded') {
+          const capConfig = await getCapConfig();
+          const capResponse: Response = {
+            type: 'CAP_EXCEEDED',
+            payload: { capType: 'task', cap: capConfig.taskCap },
+          };
+          self.postMessage(capResponse);
+          break;
+        }
         await flushAndSendState();
         break;
       }
@@ -196,7 +216,23 @@ self.onmessage = async (event: MessageEvent<Command>) => {
       }
 
       case 'CREATE_INBOX_ITEM': {
-        await handleCreateInboxItem(msg.payload);
+        // Phase 2: cap enforcement — handler returns 'cap_exceeded' if inbox is at cap
+        const inboxResult = await handleCreateInboxItem(msg.payload);
+        if (inboxResult === 'cap_exceeded') {
+          const capConfig = await getCapConfig();
+          const capResponse: Response = {
+            type: 'CAP_EXCEEDED',
+            payload: { capType: 'inbox', cap: capConfig.inboxCap },
+          };
+          self.postMessage(capResponse);
+          break;
+        }
+        await flushAndSendState();
+        break;
+      }
+
+      case 'DELETE_INBOX_ITEM': {
+        await handleDeleteInboxItem(msg.payload);
         await flushAndSendState();
         break;
       }
