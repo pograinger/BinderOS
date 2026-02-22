@@ -5,33 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 1 complete — ready for Phase 2
+**Current focus:** Phase 2 in progress — Compute Engine
 
 ## Current Position
 
-Phase: 1 of 3 (Foundation) — COMPLETE
-Plan: 4 of 4 in current phase
-Status: Phase complete
-Last activity: 2026-02-22 — Plan 01-04 complete: Views + capture + voice + triage
+Phase: 2 of 3 (Compute Engine) — IN PROGRESS
+Plan: 1 of 4 in current phase
+Status: Plan 02-01 complete
+Last activity: 2026-02-22 — Plan 02-01 complete: Rust WASM scoring engine + Worker integration + Store extension
 
-Progress: [█████░░░░░] 50% (4/8 plans complete)
+Progress: [██████░░░░] 62% (5/8 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 23 min
-- Total execution time: 90 min
+- Total plans completed: 5
+- Average duration: 20 min
+- Total execution time: 98 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 4/4 | 90 min | 23 min |
+| 2. Compute Engine | 1/4 | 8 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 54 min, 7 min, 9 min, 20 min
-- Trend: fast execution after scaffold established
+- Last 5 plans: 7 min, 9 min, 20 min, 8 min
+- Trend: fast execution continues; Rust WASM plans very efficient
 
 *Updated after each plan completion*
 
@@ -66,6 +67,10 @@ Recent decisions affecting current work:
 - [01-04]: Classification events stored in Dexie config table as JSON array (no separate table)
 - [01-04]: Pattern suggestion needs 60% confidence (3+ similar items) before overriding content heuristic
 - [01-04]: Voice capture shows disclaimer — Web Speech API sends audio to external servers
+- [02-01]: AtomLink[] flattened to string[] targetIds in flattenAtomLinksForWasm() before WASM calls (Rust expects Vec<String>)
+- [02-01]: Three WASM calls per STATE_UPDATE acceptable — all off main thread in Worker, each in try/catch for graceful fallback
+- [02-01]: createMemo (not plain function) for inboxCapStatus/taskCapStatus — ensures SolidJS fine-grained reactive dependency tracking
+- [02-01]: Periodic re-scoring every 10 minutes via setInterval in INIT handler — staleness drifts over time without user mutations
 
 ### Pending Todos
 
@@ -73,13 +78,12 @@ None.
 
 ### Blockers/Concerns
 
-- [Phase 2]: Priority scoring formula weights (P = f(deadline, importance, recency, dependencies, energy)) need calibration — start with simple constants, adjust after user feedback
-- [Phase 2]: Staleness decay curve half-life default values are undefined — use configurable exponential decay, tune after real usage data
+- [Phase 2]: Priority scoring formula weights need calibration after real usage data — starting constants reasonable but unvalidated
 - [Phase 3]: `@solidjs/router` version 0.15.4 verified at install (research said 0.14.x, actual was 0.15.x — API compatible)
 - [Build]: pnpm build:wasm requires LIB env var set to MSVC + Windows SDK paths on Windows; see .planning/phases/01-foundation/01-01-SUMMARY.md User Setup section
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 1 Foundation complete — all 4 plans executed
+Stopped at: Completed 02-01-PLAN.md — Rust WASM scoring engine + Worker integration + Store extension
 Resume file: None

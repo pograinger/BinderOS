@@ -39,16 +39,16 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Entropy Engine
 
-- [ ] **ENTR-01**: Priority score is computed dynamically: P = f(deadline, importance, recency, dependencies, energy)
-- [ ] **ENTR-02**: Priority scoring runs in a Rust/WASM module in a Web Worker (never on main thread)
-- [ ] **ENTR-03**: Staleness decay reduces atom relevance scores over time unless the atom is touched, linked to active items, or pinned
+- [x] **ENTR-01**: Priority score is computed dynamically: P = f(deadline, importance, recency, dependencies, energy)
+- [x] **ENTR-02**: Priority scoring runs in a Rust/WASM module in a Web Worker (never on main thread)
+- [x] **ENTR-03**: Staleness decay reduces atom relevance scores over time unless the atom is touched, linked to active items, or pinned
 - [ ] **ENTR-04**: Each atom displays a visual staleness indicator showing its current relevance state
 - [ ] **ENTR-05**: Entropy health indicator (green/yellow/red) is visible on every view, showing system health
-- [ ] **ENTR-06**: Entropy score is a function of open tasks count, stale item count, zero-link atom count, and inbox length
-- [ ] **ENTR-07**: Link density is tracked per atom — items with many links are surfaced as core; zero-link stale items are entropy candidates
-- [ ] **ENTR-08**: System surfaces compression prompt candidates: stale atoms, zero-link atoms, semantically similar atoms
+- [x] **ENTR-06**: Entropy score is a function of open tasks count, stale item count, zero-link atom count, and inbox length
+- [x] **ENTR-07**: Link density is tracked per atom — items with many links are surfaced as core; zero-link stale items are entropy candidates
+- [x] **ENTR-08**: System surfaces compression prompt candidates: stale atoms, zero-link atoms, semantically similar atoms
 - [ ] **ENTR-09**: Compression prompts offer archive, delete, or keep options — user decides, system suggests
-- [ ] **ENTR-10**: Entropy enforcement is advisory-first: soft warnings before hard blocks, forgiving decay for new users (first 30 days)
+- [x] **ENTR-10**: Entropy enforcement is advisory-first: soft warnings before hard blocks, forgiving decay for new users (first 30 days)
 
 ### Navigation & Search
 
@@ -143,16 +143,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ORG-07 | Phase 3 | Pending |
 | ORG-08 | Phase 3 | Pending |
 | ORG-09 | Phase 1 | Complete |
-| ENTR-01 | Phase 2 | Pending |
-| ENTR-02 | Phase 2 | Pending |
-| ENTR-03 | Phase 2 | Pending |
+| ENTR-01 | Phase 2 | Complete |
+| ENTR-02 | Phase 2 | Complete |
+| ENTR-03 | Phase 2 | Complete |
 | ENTR-04 | Phase 2 | Pending |
 | ENTR-05 | Phase 2 | Pending |
-| ENTR-06 | Phase 2 | Pending |
-| ENTR-07 | Phase 2 | Pending |
-| ENTR-08 | Phase 2 | Pending |
+| ENTR-06 | Phase 2 | Complete |
+| ENTR-07 | Phase 2 | Complete |
+| ENTR-08 | Phase 2 | Complete |
 | ENTR-09 | Phase 2 | Pending |
-| ENTR-10 | Phase 2 | Pending |
+| ENTR-10 | Phase 2 | Complete |
 | NAV-01 | Phase 3 | Pending |
 | NAV-02 | Phase 3 | Pending |
 | NAV-03 | Phase 3 | Pending |
