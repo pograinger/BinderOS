@@ -52,10 +52,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Navigation & Search
 
-- [ ] **NAV-01**: User can full-text search across all atom types with results ranked by relevance
-- [ ] **NAV-02**: Search supports filtering by type, status, and date range
+- [x] **NAV-01**: User can full-text search across all atom types with results ranked by relevance
+- [x] **NAV-02**: Search supports filtering by type, status, and date range
 - [x] **NAV-03**: User can navigate the entire system via keyboard (arrow keys, hotkeys for common actions)
-- [ ] **NAV-04**: Command palette is accessible via keyboard shortcut and lists all available actions
+- [x] **NAV-04**: Command palette is accessible via keyboard shortcut and lists all available actions
 - [ ] **NAV-05**: Backlinks are visible on each atom — user can see all atoms that link to the current one
 - [ ] **NAV-06**: User can add lightweight tags to atoms for cross-cutting categorization
 - [ ] **NAV-07**: User can create and save custom filter definitions on pages
@@ -153,10 +153,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENTR-08 | Phase 2 | Complete |
 | ENTR-09 | Phase 2 | Complete |
 | ENTR-10 | Phase 2 | Complete |
-| NAV-01 | Phase 3 | Pending |
-| NAV-02 | Phase 3 | Pending |
+| NAV-01 | Phase 3 | Complete |
+| NAV-02 | Phase 3 | Complete |
 | NAV-03 | Phase 3 | Complete |
-| NAV-04 | Phase 3 | Pending |
+| NAV-04 | Phase 3 | Complete |
 | NAV-05 | Phase 3 | Pending |
 | NAV-06 | Phase 3 | Pending |
 | NAV-07 | Phase 3 | Pending |

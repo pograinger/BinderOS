@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 ## Current Position
 
 Phase: 3 of 3 (Pages, Navigation, and Search)
-Plan: 2 of TBD in current phase
-Status: Phase 3 Plan 2 complete — five GTD page views + atom detail panel + status/date editing shipped
-Last activity: 2026-02-22 — 03-02 complete: five default pages + AtomDetailView + AtomCard due date display
+Plan: 3 of 3 in current phase
+Status: Phase 3 Plan 3 complete — full-text + semantic search, command palette, keyboard navigation shipped
+Last activity: 2026-02-22 — 03-03 complete: SearchOverlay (Ctrl+K) + CommandPalette (Ctrl+P) + ShortcutReference (?) + useRovingTabindex full implementation
 
-Progress: [██████████] 95% (9/10 plans complete)
+Progress: [██████████] 100% (10/10 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 15 min
-- Total execution time: 127 min
+- Total execution time: 148 min
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [██████████] 95% (9/10 plans complete)
 |-------|-------|-------|----------|
 | 1. Foundation | 4/4 | 90 min | 23 min |
 | 2. Compute Engine | 4/4 | 33 min | 8 min |
-| 3. Pages/Nav/Search | 2/TBD | 19 min | 10 min |
+| 3. Pages/Nav/Search | 3/3 | 25 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 8 min, 10 min, 15 min, 6 min, 13 min
-- Trend: Phase 3 plans executing fast; UI component work averages ~10 min
+- Last 5 plans: 10 min, 15 min, 6 min, 13 min, 21 min
+- Trend: Phase 3 complete; search+nav plan took longer due to new dependency installation and URL redirect debugging
 
 *Updated after each plan completion*
 
@@ -90,6 +90,11 @@ Recent decisions affecting current work:
 - [03-02]: ActiveProjectsPage tracks a mutable running index for roving tabindex across grouped atoms — flat index space covering all groups
 - [03-02]: AtomDetailView uses onCleanup to remove Escape keydown listener — avoids memory leak when panel is closed and reopened
 - [03-02]: Empty states read live state signals (entropyScore, compressionCandidates, scores) at render time — no caching needed since they're createMemo-based
+- [03-03]: @huggingface/transformers v3 removed quantized:true — use dtype:'q8' for int8 quantized ONNX models
+- [03-03]: useRovingTabindex returns onKeyDown handler not containerProps spread — avoids SolidJS strict role type union conflict
+- [03-03]: Download script uses new URL(location, requestUrl).href to resolve relative HuggingFace CDN redirect URLs
+- [03-03]: EmbedPipeline typed as simplified function signature to avoid TS2590 union-too-complex from Transformers.js pipeline overloads
+- [03-03]: Download script checks file size > 0 (not just existence) to detect incomplete partial downloads
 
 ### Pending Todos
 
@@ -104,5 +109,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 03-02-PLAN.md
-Resume file: .planning/phases/03-pages-navigation-and-search/03-02-SUMMARY.md
+Stopped at: Completed 03-03-PLAN.md (final plan — all phases complete)
+Resume file: .planning/phases/03-pages-navigation-and-search/03-03-SUMMARY.md
