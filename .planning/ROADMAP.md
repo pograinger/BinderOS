@@ -63,11 +63,13 @@ Plans:
   3. User can navigate the entire system — move between atoms, switch pages, trigger common actions — using only the keyboard; command palette is accessible via shortcut and lists all available actions
   4. Each atom detail view shows all atoms that link to it (backlinks), and user can add tags and save custom filter definitions on any page view
   5. User can filter and sort any atom list by type, status, date range, section, priority tier, last updated, and staleness
-**Plans**: TBD
+**Plans:** 4 plans
 
 Plans:
-- [ ] 03-01: Pages as queries — query engine over atom store, five default pages, filter/sort controls, task status and date fields
-- [ ] 03-02: Search + navigation — full-text search, keyboard navigation, command palette, backlinks UI, tags, saved filters
+- [ ] 03-01-PLAN.md — Schema migration + query engine: Dexie v2 (tags, context, savedFilters, interactions), Zod schema extension, createMemo query functions for 5 pages, FilterBar component, store/worker updates
+- [ ] 03-02-PLAN.md — Default pages + task UX: TodayPage, ThisWeekPage, ActiveProjectsPage, WaitingPage, InsightsPage, MainPane routing, PageTabStrip, AtomDetailView with status/date editing
+- [ ] 03-03-PLAN.md — Search + command palette: MiniSearch full-text index, Spotlight search overlay (Ctrl+K), vector embeddings worker, blended ranking, command palette (Ctrl+P), keyboard navigation, shortcut reference
+- [ ] 03-04-PLAN.md — Tags + backlinks + saved filters: TagInput with autocomplete, GTD context field, BacklinksPanel, @mention inline linking, save-as-page filter persistence
 
 ## Progress
 
@@ -78,4 +80,4 @@ Phases execute in numeric order: 1 -> 2 -> 3
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-02-22 |
 | 2. Compute Engine | 3/3 | Complete | 2026-02-22 |
-| 3. Pages, Navigation, and Search | 0/2 | Not started | - |
+| 3. Pages, Navigation, and Search | 0/4 | Not started | - |
