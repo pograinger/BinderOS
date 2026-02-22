@@ -18,7 +18,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Capture & Inbox
 
-- [ ] **CAPT-01**: User can quick-capture an item to the inbox via keyboard shortcut from any view
+- [x] **CAPT-01**: User can quick-capture an item to the inbox via keyboard shortcut from any view
 - [x] **CAPT-02**: Inbox has a hard cap (configurable, default 20) — system blocks new items when full
 - [x] **CAPT-03**: When inbox is full, system presents resolution UI (classify, schedule, or discard existing items)
 - [x] **CAPT-04**: Inbox items must be classified (assigned a type and optionally linked to a section) before becoming atoms
@@ -30,11 +30,11 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **ORG-01**: System has four stable sections: Projects, Areas, Resources, Archive
 - [x] **ORG-02**: User can create, rename, and archive items within sections (e.g., specific projects, specific areas)
 - [x] **ORG-03**: Pages are query definitions over the atom store, not separate data silos
-- [ ] **ORG-04**: Default pages exist: Today, This Week, Active Projects, Waiting, Insights
+- [x] **ORG-04**: Default pages exist: Today, This Week, Active Projects, Waiting, Insights
 - [x] **ORG-05**: User can filter atom lists by type, status, date range, section, and priority tier
 - [x] **ORG-06**: User can sort atom lists by date, priority score, last updated, and staleness
-- [ ] **ORG-07**: Tasks have status: open, in-progress, waiting, done, cancelled
-- [ ] **ORG-08**: Tasks support due date and scheduled date; Events are dated by nature
+- [x] **ORG-07**: Tasks have status: open, in-progress, waiting, done, cancelled
+- [x] **ORG-08**: Tasks support due date and scheduled date; Events are dated by nature
 - [x] **ORG-09**: UI follows binder metaphor: left sidebar (sections), top tabs (pages), main pane (atom list + detail)
 
 ### Entropy Engine
@@ -54,7 +54,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **NAV-01**: User can full-text search across all atom types with results ranked by relevance
 - [ ] **NAV-02**: Search supports filtering by type, status, and date range
-- [ ] **NAV-03**: User can navigate the entire system via keyboard (arrow keys, hotkeys for common actions)
+- [x] **NAV-03**: User can navigate the entire system via keyboard (arrow keys, hotkeys for common actions)
 - [ ] **NAV-04**: Command palette is accessible via keyboard shortcut and lists all available actions
 - [ ] **NAV-05**: Backlinks are visible on each atom — user can see all atoms that link to the current one
 - [ ] **NAV-06**: User can add lightweight tags to atoms for cross-cutting categorization
@@ -128,7 +128,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-04 | Phase 1 | Complete |
 | DATA-05 | Phase 1 | Complete |
 | DATA-06 | Phase 1 | Complete |
-| CAPT-01 | Phase 3 | Pending |
+| CAPT-01 | Phase 3 | Complete |
 | CAPT-02 | Phase 2 | Pending |
 | CAPT-03 | Phase 2 | Pending |
 | CAPT-04 | Phase 2 | Pending |
@@ -137,11 +137,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ORG-01 | Phase 1 | Complete |
 | ORG-02 | Phase 1 | Complete |
 | ORG-03 | Phase 3 | Complete |
-| ORG-04 | Phase 3 | Pending |
+| ORG-04 | Phase 3 | Complete |
 | ORG-05 | Phase 3 | Complete |
 | ORG-06 | Phase 3 | Complete |
-| ORG-07 | Phase 3 | Pending |
-| ORG-08 | Phase 3 | Pending |
+| ORG-07 | Phase 3 | Complete |
+| ORG-08 | Phase 3 | Complete |
 | ORG-09 | Phase 1 | Complete |
 | ENTR-01 | Phase 2 | Complete |
 | ENTR-02 | Phase 2 | Complete |
@@ -155,7 +155,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENTR-10 | Phase 2 | Complete |
 | NAV-01 | Phase 3 | Pending |
 | NAV-02 | Phase 3 | Pending |
-| NAV-03 | Phase 3 | Pending |
+| NAV-03 | Phase 3 | Complete |
 | NAV-04 | Phase 3 | Pending |
 | NAV-05 | Phase 3 | Pending |
 | NAV-06 | Phase 3 | Pending |

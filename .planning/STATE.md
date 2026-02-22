@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 3 — Pages, Navigation, and Search (Plan 1 complete)
+**Current focus:** Phase 3 — Pages, Navigation, and Search (Plan 2 complete)
 
 ## Current Position
 
 Phase: 3 of 3 (Pages, Navigation, and Search)
-Plan: 1 of TBD in current phase
-Status: Phase 3 Plan 1 complete — schema migration, query engine, and filter infrastructure shipped
-Last activity: 2026-02-22 — 03-01 complete: Dexie v2 migration + five page query memos + FilterBar component
+Plan: 2 of TBD in current phase
+Status: Phase 3 Plan 2 complete — five GTD page views + atom detail panel + status/date editing shipped
+Last activity: 2026-02-22 — 03-02 complete: five default pages + AtomDetailView + AtomCard due date display
 
-Progress: [█████████░] 90% (8/9 plans complete)
+Progress: [██████████] 95% (9/10 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 16 min
-- Total execution time: 114 min
+- Total plans completed: 9
+- Average duration: 15 min
+- Total execution time: 127 min
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [█████████░] 90% (8/9 plans complete)
 |-------|-------|-------|----------|
 | 1. Foundation | 4/4 | 90 min | 23 min |
 | 2. Compute Engine | 4/4 | 33 min | 8 min |
-| 3. Pages/Nav/Search | 1/TBD | 6 min | 6 min |
+| 3. Pages/Nav/Search | 2/TBD | 19 min | 10 min |
 
 **Recent Trend:**
-- Last 5 plans: 20 min, 8 min, 10 min, 15 min, 6 min
-- Trend: Phase 3 Plan 1 fastest yet at 6 min; data foundation plans execute quickly
+- Last 5 plans: 8 min, 10 min, 15 min, 6 min, 13 min
+- Trend: Phase 3 plans executing fast; UI component work averages ~10 min
 
 *Updated after each plan completion*
 
@@ -85,6 +85,11 @@ Recent decisions affecting current work:
 - [03-01]: Ring buffer hysteresis for interactions table: trim to 1000 when count exceeds 1200 — prevents per-write overhead
 - [03-01]: filteredAndSortedAtoms is a higher-order function returning createMemo — allows flexible composition with any source memo
 - [03-01]: Zod default() applies at parse time not object construction — TypeScript still requires tags field in object literals
+- [03-02]: AtomCard removes inline expand toggle — click now opens detail panel via setSelectedAtomId; keeps swipe gestures intact
+- [03-02]: Page components use onKeyDown directly from useRovingTabindex (not containerProps) — Plan 03's full implementation differs from stub API
+- [03-02]: ActiveProjectsPage tracks a mutable running index for roving tabindex across grouped atoms — flat index space covering all groups
+- [03-02]: AtomDetailView uses onCleanup to remove Escape keydown listener — avoids memory leak when panel is closed and reopened
+- [03-02]: Empty states read live state signals (entropyScore, compressionCandidates, scores) at render time — no caching needed since they're createMemo-based
 
 ### Pending Todos
 
@@ -94,11 +99,10 @@ None.
 
 - [Phase 2]: Priority scoring formula weights need calibration after real usage data — starting constants reasonable but unvalidated
 - [Phase 3]: `@solidjs/router` version 0.15.4 verified at install (research said 0.14.x, actual was 0.15.x — API compatible)
-- [Phase 3]: FilterBar CSS classes documented in component but not yet added to global stylesheet — needed when first page component uses FilterBar
 - [Build]: pnpm build:wasm requires LIB env var set to MSVC + Windows SDK paths on Windows; see .planning/phases/01-foundation/01-01-SUMMARY.md User Setup section
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 03-01-PLAN.md
-Resume file: .planning/phases/03-pages-navigation-and-search/03-01-SUMMARY.md
+Stopped at: Completed 03-02-PLAN.md
+Resume file: .planning/phases/03-pages-navigation-and-search/03-02-SUMMARY.md
