@@ -28,12 +28,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can export all stored atoms as JSON and Markdown at any time, and the resulting file contains every atom visible in the UI
   4. System requests persistent storage at first launch and storage grant status is visible in the UI; atoms are never stored outside IndexedDB/OPFS and zero network calls are made for read/write
   5. User can undo a recent atom mutation via Ctrl+Z and the atom returns to its prior state
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 01-01: Project scaffolding — Vite + SolidJS + TypeScript + ESLint (solid plugin) + Zod, three-step WASM build pipeline, Web Worker bridge skeleton
-- [ ] 01-02: Atom schema + IndexedDB persistence — Zod-validated five-type schema, Dexie.js with write-queue, schema migrations, change log
-- [ ] 01-03: Binder UI shell + storage safety — sidebar (sections), tab bar (page tabs), main pane, `navigator.storage.persist()` flow, export, undo, fast-capture hotkey to inbox
+- [ ] 01-01-PLAN.md — Project scaffolding: Vite + SolidJS + TypeScript + ESLint (solid plugin) + Zod, three-step WASM build pipeline, Web Worker bridge skeleton
+- [ ] 01-02-PLAN.md — Atom schema + IndexedDB persistence: Zod-validated five-type schema, Dexie.js with write-queue, schema migrations, change log, sections, storage persistence
+- [ ] 01-03-PLAN.md — Binder UI shell + storage safety: dark theme layout, sidebar, bottom tab bar, page tabs, status bar, Worker handlers, fast capture, voice, undo, export
 
 ### Phase 2: Compute Engine
 **Goal**: Every atom has a live priority score and staleness indicator computed off the main thread, the entropy health of the system is always visible, and the inbox and task caps enforce hygiene through warnings before blocks
