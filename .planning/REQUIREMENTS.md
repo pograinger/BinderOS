@@ -19,11 +19,11 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Capture & Inbox
 
 - [ ] **CAPT-01**: User can quick-capture an item to the inbox via keyboard shortcut from any view
-- [ ] **CAPT-02**: Inbox has a hard cap (configurable, default 20) — system blocks new items when full
-- [ ] **CAPT-03**: When inbox is full, system presents resolution UI (classify, schedule, or discard existing items)
-- [ ] **CAPT-04**: Inbox items must be classified (assigned a type and optionally linked to a section) before becoming atoms
-- [ ] **CAPT-05**: Open tasks have a hard cap (configurable, default 30) — adding beyond cap requires replacing, scheduling, or merging
-- [ ] **CAPT-06**: Soft warning appears at 80% of inbox and task caps; hard block at 100%
+- [x] **CAPT-02**: Inbox has a hard cap (configurable, default 20) — system blocks new items when full
+- [x] **CAPT-03**: When inbox is full, system presents resolution UI (classify, schedule, or discard existing items)
+- [x] **CAPT-04**: Inbox items must be classified (assigned a type and optionally linked to a section) before becoming atoms
+- [x] **CAPT-05**: Open tasks have a hard cap (configurable, default 30) — adding beyond cap requires replacing, scheduling, or merging
+- [x] **CAPT-06**: Soft warning appears at 80% of inbox and task caps; hard block at 100%
 
 ### Organization
 
@@ -42,8 +42,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **ENTR-01**: Priority score is computed dynamically: P = f(deadline, importance, recency, dependencies, energy)
 - [x] **ENTR-02**: Priority scoring runs in a Rust/WASM module in a Web Worker (never on main thread)
 - [x] **ENTR-03**: Staleness decay reduces atom relevance scores over time unless the atom is touched, linked to active items, or pinned
-- [ ] **ENTR-04**: Each atom displays a visual staleness indicator showing its current relevance state
-- [ ] **ENTR-05**: Entropy health indicator (green/yellow/red) is visible on every view, showing system health
+- [x] **ENTR-04**: Each atom displays a visual staleness indicator showing its current relevance state
+- [x] **ENTR-05**: Entropy health indicator (green/yellow/red) is visible on every view, showing system health
 - [x] **ENTR-06**: Entropy score is a function of open tasks count, stale item count, zero-link atom count, and inbox length
 - [x] **ENTR-07**: Link density is tracked per atom — items with many links are surfaced as core; zero-link stale items are entropy candidates
 - [x] **ENTR-08**: System surfaces compression prompt candidates: stale atoms, zero-link atoms, semantically similar atoms

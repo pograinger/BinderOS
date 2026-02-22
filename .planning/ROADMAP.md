@@ -13,7 +13,7 @@ BinderOS ships in three phases. Phase 1 lays the typed-atom data model, local-fi
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Typed atom schema, local-first storage with browser durability, and the binder UI shell with fast capture (completed 2026-02-22)
-- [ ] **Phase 2: Compute Engine** - Rust/WASM priority scoring, staleness decay, entropy health indicator, and advisory-first hard caps (1/3 plans complete)
+- [ ] **Phase 2: Compute Engine** - Rust/WASM priority scoring, staleness decay, entropy health indicator, and advisory-first hard caps (2/3 plans complete)
 - [ ] **Phase 3: Pages, Navigation, and Search** - Pages as queries, full-text search, keyboard navigation, command palette, backlinks, tags, and saved filters
 
 ## Phase Details
@@ -50,7 +50,7 @@ Plans:
 
 Plans:
 - [x] 02-01-PLAN.md — Rust/WASM scoring engine: priority formula + staleness decay + entropy score + compression candidates, TypeScript types, Worker integration, store extension with scores/caps
-- [ ] 02-02-PLAN.md — Per-atom display + cap enforcement: PriorityBadge component, AtomCard staleness opacity, StatusBar entropy/cap indicators, CapEnforcementModal with triage, Worker cap checks
+- [x] 02-02-PLAN.md — Per-atom display + cap enforcement: PriorityBadge component, AtomCard staleness opacity, StatusBar entropy/cap indicators, CapEnforcementModal with triage, Worker cap checks
 - [ ] 02-03-PLAN.md — Review page: compression prompt card-by-card triage with Archive/Delete/Keep/Merge actions, merge handler, Review tab integration, human verification checkpoint
 
 ### Phase 3: Pages, Navigation, and Search
@@ -77,5 +77,5 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 4/4 | Complete   | 2026-02-22 |
-| 2. Compute Engine | 1/3 | In progress | - |
+| 2. Compute Engine | 2/3 | In progress | - |
 | 3. Pages, Navigation, and Search | 0/2 | Not started | - |

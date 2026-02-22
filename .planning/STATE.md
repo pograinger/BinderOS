@@ -10,29 +10,29 @@ See: .planning/PROJECT.md (updated 2026-02-21)
 ## Current Position
 
 Phase: 2 of 3 (Compute Engine) — IN PROGRESS
-Plan: 1 of 4 in current phase
-Status: Plan 02-01 complete
-Last activity: 2026-02-22 — Plan 02-01 complete: Rust WASM scoring engine + Worker integration + Store extension
+Plan: 2 of 4 in current phase
+Status: Plan 02-02 complete
+Last activity: 2026-02-22 — Plan 02-02 complete: Staleness visualization, priority badges, entropy health, cap enforcement modal
 
-Progress: [██████░░░░] 62% (5/8 plans complete)
+Progress: [███████░░░] 75% (6/8 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 20 min
-- Total execution time: 98 min
+- Total plans completed: 6
+- Average duration: 18 min
+- Total execution time: 108 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 4/4 | 90 min | 23 min |
-| 2. Compute Engine | 1/4 | 8 min | 8 min |
+| 2. Compute Engine | 2/4 | 18 min | 9 min |
 
 **Recent Trend:**
-- Last 5 plans: 7 min, 9 min, 20 min, 8 min
-- Trend: fast execution continues; Rust WASM plans very efficient
+- Last 5 plans: 9 min, 20 min, 8 min, 10 min
+- Trend: fast execution continues; UI visualization plans very efficient
 
 *Updated after each plan completion*
 
@@ -71,6 +71,11 @@ Recent decisions affecting current work:
 - [02-01]: Three WASM calls per STATE_UPDATE acceptable — all off main thread in Worker, each in try/catch for graceful fallback
 - [02-01]: createMemo (not plain function) for inboxCapStatus/taskCapStatus — ensures SolidJS fine-grained reactive dependency tracking
 - [02-01]: Periodic re-scoring every 10 minutes via setInterval in INIT handler — staleness drifts over time without user mutations
+- [02-02]: Switch/Match used in PriorityBadge TierIcon instead of multiple Show blocks — only one tier is active at a time
+- [02-02]: DELETE_INBOX_ITEM added as new command (auto-fix Rule 2) — discard action in cap modal requires it
+- [02-02]: untrack() wraps capExceeded clearing logic in STATE_UPDATE handler — reads intentionally non-reactive (one-shot check)
+- [02-02]: Worker handlers return 'cap_exceeded' sentinel string rather than throwing — allows caller to distinguish cap rejection from errors
+- [02-02]: CapEnforcementModal auto-closes via state.capExceeded=null in store on STATE_UPDATE when count drops below cap
 
 ### Pending Todos
 
@@ -85,5 +90,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 02-01-PLAN.md — Rust WASM scoring engine + Worker integration + Store extension
+Stopped at: Completed 02-02-PLAN.md — Staleness visualization, priority badges, entropy health, cap enforcement modal
 Resume file: None
