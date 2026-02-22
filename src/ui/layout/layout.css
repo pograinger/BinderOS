@@ -3047,3 +3047,473 @@ kbd {
   font-family: inherit;
   color: var(--text-secondary);
 }
+
+/* =============================================================================
+   Phase 3 Plan 04: TagInput Component
+   ============================================================================= */
+
+.tag-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tag-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tag-input-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  min-height: 32px;
+  transition: border-color 0.15s;
+}
+
+.tag-input-field:focus-within {
+  border-color: var(--accent);
+}
+
+/* Tag chip — small pill with remove button */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px 2px 8px;
+  border-radius: 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-secondary);
+  font-size: 11px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tag-chip-remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.1s, background 0.1s;
+}
+
+.tag-chip-remove:hover {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+.tag-input-container {
+  position: relative;
+  flex: 1;
+  min-width: 80px;
+}
+
+/* Inline tag input */
+.tag-input {
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  padding: 2px 0;
+}
+
+.tag-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Autocomplete dropdown below the input */
+.tag-autocomplete {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 160px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 50;
+  overflow: hidden;
+}
+
+.tag-autocomplete-item {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.tag-autocomplete-item:hover,
+.tag-autocomplete-item.highlighted {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* Context section */
+.context-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Context chip — highlighted pill with @ prefix */
+.context-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px 2px 8px;
+  border-radius: 12px;
+  background: rgba(88, 166, 255, 0.12);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  color: var(--accent);
+  font-size: 11px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* Context select dropdown */
+.context-select {
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.context-select:focus {
+  border-color: var(--accent);
+}
+
+/* Custom context input */
+.context-custom-input {
+  height: 26px;
+  padding: 0 8px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 12px;
+  outline: none;
+  width: 140px;
+}
+
+/* =============================================================================
+   Phase 3 Plan 04: BacklinksPanel Component
+   ============================================================================= */
+
+.backlinks-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.backlinks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  transition: color 0.1s;
+}
+
+.backlinks-header:hover {
+  color: var(--text-primary);
+}
+
+.backlinks-header-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.backlinks-header:hover .backlinks-header-label {
+  color: var(--text-secondary);
+}
+
+.backlinks-header-chevron {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.backlinks-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 6px;
+}
+
+.backlinks-empty {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 4px 0;
+  margin: 0;
+}
+
+/* Compact backlink row */
+.backlink-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.backlink-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.backlink-item-title {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.backlink-item:hover .backlink-item-title {
+  color: var(--text-primary);
+}
+
+.backlink-item-time {
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* =============================================================================
+   Phase 3 Plan 04: AtomCard tag and context display
+   ============================================================================= */
+
+.atom-card-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0 0 26px;
+  flex-wrap: wrap;
+}
+
+/* Tiny tag chip on atom card */
+.atom-card-tag {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  color: var(--text-muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.atom-card-tag--overflow {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+}
+
+/* GTD context indicator on atom card */
+.atom-card-context {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: rgba(88, 166, 255, 0.08);
+  border: 1px solid rgba(88, 166, 255, 0.2);
+  color: rgba(88, 166, 255, 0.7);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+/* =============================================================================
+   Phase 3 Plan 04: FilterBar "Save as page" button
+   ============================================================================= */
+
+.save-filter-btn {
+  height: 24px;
+  padding: 0 10px;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.1s, color 0.1s, background 0.1s;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.save-filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(88, 166, 255, 0.08);
+}
+
+/* Inline name input replacing the save button */
+.save-filter-input {
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 12px;
+  outline: none;
+  width: 140px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* =============================================================================
+   Phase 3 Plan 04: Saved filter tab delete button
+   ============================================================================= */
+
+.filter-tab-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 2px;
+  opacity: 0;
+  transition: opacity 0.1s, color 0.1s, background 0.1s;
+}
+
+.page-tab:hover .filter-tab-delete {
+  opacity: 1;
+}
+
+.filter-tab-delete:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+/* =============================================================================
+   Phase 3 Plan 04: MentionAutocomplete Component
+   ============================================================================= */
+
+.mention-autocomplete {
+  position: relative;
+  width: 100%;
+}
+
+.mention-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s;
+  min-height: 100px;
+}
+
+.mention-textarea:focus {
+  border-color: var(--accent);
+}
+
+/* Dropdown below textarea (v1: anchored to textarea bottom, not cursor) */
+.mention-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 50;
+  overflow: hidden;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.mention-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s, color 0.1s;
+}
+
+.mention-item:hover,
+.mention-item.highlighted {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.mention-item-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

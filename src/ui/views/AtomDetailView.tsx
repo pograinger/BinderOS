@@ -22,6 +22,8 @@ import { Show, Switch, Match, createSignal, createMemo, onCleanup, For } from 's
 import { state, sendCommand, setSelectedAtomId } from '../signals/store';
 import { AtomTypeIcon } from '../components/AtomTypeIcon';
 import { PriorityBadge } from '../components/PriorityBadge';
+import { TagInput } from '../components/TagInput';
+import { BacklinksPanel } from '../components/BacklinksPanel';
 import type { AtomStatus } from '../../types/atoms';
 
 // --- Date helpers ---
@@ -400,14 +402,18 @@ export function AtomDetailView() {
           </div>
         </div>
 
-        {/* Backlinks placeholder — Plan 04 */}
-        <div id="backlinks-section" class="atom-detail-section atom-detail-placeholder">
-          <span class="atom-detail-placeholder-text">Backlinks section — added in Plan 04</span>
+        {/* Backlinks section — shows atoms that link to this atom */}
+        <div class="atom-detail-section">
+          <BacklinksPanel atomId={state.selectedAtomId!} />
         </div>
 
-        {/* Tags placeholder — Plan 04 */}
-        <div id="tags-section" class="atom-detail-section atom-detail-placeholder">
-          <span class="atom-detail-placeholder-text">Tags section — added in Plan 04</span>
+        {/* Tags + GTD context section */}
+        <div class="atom-detail-section">
+          <TagInput
+            atomId={state.selectedAtomId!}
+            tags={atom()?.tags ?? []}
+            context={atom()?.context ?? null}
+          />
         </div>
       </div>
     </Show>

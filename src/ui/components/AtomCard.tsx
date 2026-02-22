@@ -26,7 +26,7 @@
  * CRITICAL: Never destructure state. Access via state.scores[props.atom.id].
  */
 
-import { createSignal, Show } from 'solid-js';
+import { createSignal, Show, For } from 'solid-js';
 import { AtomTypeIcon } from './AtomTypeIcon';
 import { PriorityBadge } from './PriorityBadge';
 import { sendCommand, state, setSelectedAtomId } from '../signals/store';
@@ -254,6 +254,25 @@ export function AtomCard(props: AtomCardProps) {
         </Show>
         <span class="atom-card-time">{relativeTime(props.atom.updated_at)}</span>
       </div>
+
+      {/* Phase 3 Plan 04: tags and context display */}
+      <Show when={(props.atom.tags?.length ?? 0) > 0 || props.atom.context}>
+        <div class="atom-card-meta-row">
+          {/* Show first 3 tags as tiny chips */}
+          <For each={(props.atom.tags ?? []).slice(0, 3)}>
+            {(tag) => <span class="atom-card-tag">{tag}</span>}
+          </For>
+          <Show when={(props.atom.tags?.length ?? 0) > 3}>
+            <span class="atom-card-tag atom-card-tag--overflow">
+              +{(props.atom.tags?.length ?? 0) - 3}
+            </span>
+          </Show>
+          {/* GTD context */}
+          <Show when={props.atom.context}>
+            <span class="atom-card-context">{props.atom.context}</span>
+          </Show>
+        </div>
+      </Show>
     </div>
   );
 }
