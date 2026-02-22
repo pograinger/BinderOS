@@ -7,13 +7,29 @@
  * CRITICAL: Never destructure state or payload. Always access via
  * state.atoms, state.inboxItems, etc. Destructuring breaks reactivity
  * (RESEARCH.md Pitfall 2).
+ *
+ * Phase 2 additions:
+ * - scores (Record<string, AtomScore>): per-atom scoring results
+ * - entropyScore (EntropyScore | null): system health indicator
+ * - compressionCandidates (CompressionCandidate[]): review page feed
+ * - capConfig (CapConfig): inbox + task cap configuration
+ * - capExceeded ('inbox' | 'task' | null): cap overflow signal
+ * - inboxCapStatus() / taskCapStatus() derived signals for StatusBar
  */
 
+import { createMemo } from 'solid-js';
 import { createStore, reconcile } from 'solid-js/store';
 import { dispatch, onMessage } from '../../worker/bridge';
 import type { Atom, InboxItem } from '../../types/atoms';
 import type { Section, SectionItem } from '../../types/sections';
 import type { Command } from '../../types/messages';
+import type {
+  AtomScore,
+  EntropyScore,
+  CompressionCandidate,
+  CapConfig,
+} from '../../types/config';
+import { DEFAULT_CAP_CONFIG } from '../../types/config';
 
 // --- State interface ---
 
@@ -28,6 +44,12 @@ export interface BinderState {
   activeSection: string | null;
   activePage: string;
   lastError: string | null;
+  // Phase 2: scoring and cap management
+  scores: Record<string, AtomScore>;
+  entropyScore: EntropyScore | null;
+  compressionCandidates: CompressionCandidate[];
+  capConfig: CapConfig;
+  capExceeded: 'inbox' | 'task' | null;
 }
 
 const initialState: BinderState = {
@@ -41,6 +63,12 @@ const initialState: BinderState = {
   activeSection: null,
   activePage: 'inbox',
   lastError: null,
+  // Phase 2 defaults
+  scores: {},
+  entropyScore: null,
+  compressionCandidates: [],
+  capConfig: { ...DEFAULT_CAP_CONFIG },
+  capExceeded: null,
 };
 
 // --- Create the store ---
@@ -74,6 +102,22 @@ onMessage((response) => {
       if (response.payload.sectionItems !== undefined) {
         setState('sectionItems', reconcile(response.payload.sectionItems));
       }
+      if (response.payload.scores !== undefined) {
+        setState('scores', reconcile(response.payload.scores));
+      }
+      if (response.payload.entropyScore !== undefined) {
+        setState('entropyScore', response.payload.entropyScore ?? null);
+      }
+      if (response.payload.compressionCandidates !== undefined) {
+        setState('compressionCandidates', reconcile(response.payload.compressionCandidates));
+      }
+      if (response.payload.capConfig !== undefined) {
+        setState('capConfig', reconcile(response.payload.capConfig));
+      }
+      break;
+
+    case 'CAP_EXCEEDED':
+      setState('capExceeded', response.payload.capType);
       break;
 
     case 'ERROR':
@@ -126,3 +170,37 @@ export function atomsBySection(sectionId: string): Atom[] {
 export function atomsBySectionItem(sectionItemId: string): Atom[] {
   return state.atoms.filter((a) => a.sectionItemId === sectionItemId);
 }
+
+// --- Phase 2 derived cap status signals ---
+
+/**
+ * Reactive signal: inbox cap status based on current inbox count vs configured cap.
+ *
+ * 'full'    — inbox.length >= capConfig.inboxCap (hard cap reached)
+ * 'warning' — inbox.length >= capConfig.inboxCap * 0.8 (soft 80% threshold)
+ * 'ok'      — below warning threshold
+ */
+export const inboxCapStatus = createMemo((): 'ok' | 'warning' | 'full' => {
+  const cap = state.capConfig.inboxCap;
+  const count = state.inboxItems.length;
+  if (count >= cap) return 'full';
+  if (count >= cap * 0.8) return 'warning';
+  return 'ok';
+});
+
+/**
+ * Reactive signal: task cap status based on open + in-progress task count vs configured cap.
+ *
+ * 'full'    — openTaskCount >= capConfig.taskCap (hard cap reached)
+ * 'warning' — openTaskCount >= capConfig.taskCap * 0.8 (soft 80% threshold)
+ * 'ok'      — below warning threshold
+ */
+export const taskCapStatus = createMemo((): 'ok' | 'warning' | 'full' => {
+  const cap = state.capConfig.taskCap;
+  const openCount = state.atoms.filter(
+    (a) => a.type === 'task' && (a.status === 'open' || a.status === 'in-progress'),
+  ).length;
+  if (openCount >= cap) return 'full';
+  if (openCount >= cap * 0.8) return 'warning';
+  return 'ok';
+});

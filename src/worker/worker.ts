@@ -8,10 +8,18 @@
  *   Main thread sends Command -> Worker dispatches to handler -> Worker sends Response
  *
  * After each mutation: flush write queue, read fresh state from Dexie,
- * postMessage STATE_UPDATE with full state snapshot.
+ * run WASM scoring (compute_scores, compute_entropy, filter_compression_candidates),
+ * postMessage STATE_UPDATE with full state snapshot including scoring results.
+ *
+ * Phase 2 additions:
+ * - flushAndSendState() calls all three WASM scoring functions
+ * - RECOMPUTE_SCORES command triggers re-score without mutation
+ * - UPDATE_CAP_CONFIG command updates cap config in Dexie then re-scores
+ * - 10-minute periodic re-scoring interval (staleness changes over time)
  */
 import type { Command, Response } from '../types/messages';
 import type { Atom } from '../types/atoms';
+import type { AtomScore, EntropyScore, CompressionCandidate } from '../types/config';
 import init, { BinderCore } from '../wasm/pkg/binderos_core';
 import { db } from '../storage/db';
 import { writeQueue } from '../storage/write-queue';
@@ -25,6 +33,7 @@ import {
   handleRenameSectionItem,
   handleArchiveSectionItem,
 } from './handlers/sections';
+import { getCapConfig, setCapConfig } from './handlers/config';
 
 let core: BinderCore | null = null;
 
@@ -42,12 +51,86 @@ async function getFullState() {
 }
 
 /**
- * Flush the write queue and send a STATE_UPDATE with fresh state.
+ * Prepare atoms for WASM scoring by flattening AtomLink[] to string[] of targetIds.
+ *
+ * The Rust AtomInput struct expects links as Vec<String> (target IDs),
+ * but our TypeScript Atom type uses AtomLink[] with {targetId, relationshipType, direction}.
+ */
+function flattenAtomLinksForWasm(atoms: Atom[]): unknown[] {
+  return atoms.map((atom) => ({
+    id: atom.id,
+    type: atom.type,
+    updated_at: atom.updated_at,
+    created_at: atom.created_at,
+    status: atom.status,
+    links: atom.links.map((l) => l.targetId),
+    due_date: 'dueDate' in atom ? atom.dueDate ?? null : null,
+    pinned_tier: atom.pinned_tier ?? null,
+    pinned_staleness: atom.pinned_staleness ?? false,
+    importance: atom.importance ?? null,
+    energy: atom.energy ?? null,
+    content: atom.content,
+  }));
+}
+
+/**
+ * Flush the write queue and send a STATE_UPDATE with fresh state + scoring results.
+ *
+ * Scoring is non-blocking: if WASM scoring fails, STATE_UPDATE is still sent
+ * with empty/null scoring fields rather than failing the entire update.
  */
 async function flushAndSendState(): Promise<void> {
   await writeQueue.flushImmediate();
   const state = await getFullState();
-  const response: Response = { type: 'STATE_UPDATE', payload: state };
+
+  const capConfig = await getCapConfig();
+  const now = Date.now();
+
+  let scores: Record<string, AtomScore> = {};
+  let entropyScore: EntropyScore | undefined;
+  let compressionCandidates: CompressionCandidate[] = [];
+
+  if (core) {
+    const atomsForWasm = flattenAtomLinksForWasm(state.atoms);
+
+    try {
+      scores = core.compute_scores(atomsForWasm, now) as Record<string, AtomScore>;
+    } catch (err) {
+      console.error('[Worker] compute_scores failed:', err);
+    }
+
+    try {
+      entropyScore = core.compute_entropy(
+        atomsForWasm,
+        state.inboxItems.length,
+        capConfig.inboxCap,
+        capConfig.taskCap,
+        now,
+      ) as EntropyScore;
+    } catch (err) {
+      console.error('[Worker] compute_entropy failed:', err);
+    }
+
+    try {
+      compressionCandidates = core.filter_compression_candidates(
+        atomsForWasm,
+        now,
+      ) as CompressionCandidate[];
+    } catch (err) {
+      console.error('[Worker] filter_compression_candidates failed:', err);
+    }
+  }
+
+  const response: Response = {
+    type: 'STATE_UPDATE',
+    payload: {
+      ...state,
+      scores,
+      entropyScore,
+      compressionCandidates,
+      capConfig,
+    },
+  };
   self.postMessage(response);
 }
 
@@ -76,6 +159,13 @@ self.onmessage = async (event: MessageEvent<Command>) => {
           },
         };
         self.postMessage(response);
+
+        // Schedule periodic re-scoring every 10 minutes
+        // (staleness changes over time even without user mutations)
+        setInterval(() => {
+          void flushAndSendState();
+        }, 10 * 60 * 1000);
+
         break;
       }
 
@@ -194,6 +284,18 @@ self.onmessage = async (event: MessageEvent<Command>) => {
           payload: { granted: result.granted },
         };
         self.postMessage(response);
+        break;
+      }
+
+      case 'RECOMPUTE_SCORES': {
+        // Re-trigger full scoring without any mutation
+        await flushAndSendState();
+        break;
+      }
+
+      case 'UPDATE_CAP_CONFIG': {
+        await setCapConfig(msg.payload);
+        await flushAndSendState();
         break;
       }
 
