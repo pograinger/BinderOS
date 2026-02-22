@@ -5,33 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-21)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 1 complete — ready for Phase 2
 
 ## Current Position
 
-Phase: 1 of 3 (Foundation)
-Plan: 3 of 4 in current phase
-Status: In progress
-Last activity: 2026-02-22 — Plan 01-03 complete: Worker handlers + binder UI shell
+Phase: 1 of 3 (Foundation) — COMPLETE
+Plan: 4 of 4 in current phase
+Status: Phase complete
+Last activity: 2026-02-22 — Plan 01-04 complete: Views + capture + voice + triage
 
-Progress: [████░░░░░░] 38% (3/8 plans complete)
+Progress: [█████░░░░░] 50% (4/8 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: 23 min
-- Total execution time: 70 min
+- Total execution time: 90 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Foundation | 3/4 | 70 min | 23 min |
+| 1. Foundation | 4/4 | 90 min | 23 min |
 
 **Recent Trend:**
-- Last 5 plans: 54 min, 7 min, 9 min
-- Trend: accelerating (handler + UI plan fast due to established patterns)
+- Last 5 plans: 54 min, 7 min, 9 min, 20 min
+- Trend: fast execution after scaffold established
 
 *Updated after each plan completion*
 
@@ -62,6 +62,10 @@ Recent decisions affecting current work:
 - [01-03]: sendCommand() is the single entry point for all Worker commands from UI code
 - [01-03]: Sidebar/BottomTabBar use _props prefix to avoid SolidJS reactivity warnings when CSS handles visibility
 - [01-03]: PageTabStrip generates section tabs dynamically from store — future phases add query pages
+- [01-04]: Raw touch handlers used for swipe (solid-gesture not installed) — scroll-vs-swipe disambiguation built in
+- [01-04]: Classification events stored in Dexie config table as JSON array (no separate table)
+- [01-04]: Pattern suggestion needs 60% confidence (3+ similar items) before overriding content heuristic
+- [01-04]: Voice capture shows disclaimer — Web Speech API sends audio to external servers
 
 ### Pending Todos
 
@@ -77,5 +81,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 01-03-PLAN.md — Worker handlers + binder UI shell
+Stopped at: Phase 1 Foundation complete — all 4 plans executed
 Resume file: None
