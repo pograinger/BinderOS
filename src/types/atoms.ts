@@ -66,6 +66,9 @@ const BaseAtomFields = {
   pinned_staleness: z.boolean().optional(),
   importance: z.number().min(0).max(1).optional(), // 0-1 user override
   energy: z.enum(['Quick', 'Medium', 'Deep']).optional(),
+  // Phase 3 tagging and GTD context fields
+  tags: z.array(z.string()).default([]),
+  context: z.string().nullable().optional(),
 };
 
 // --- Type-specific atom schemas (discriminated union members) ---

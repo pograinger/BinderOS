@@ -16,6 +16,13 @@
  * - RECOMPUTE_SCORES command triggers re-score without mutation
  * - UPDATE_CAP_CONFIG command updates cap config in Dexie then re-scores
  * - 10-minute periodic re-scoring interval (staleness changes over time)
+ *
+ * Phase 3 additions:
+ * - SAVE_FILTER: persist a named filter to db.savedFilters, include in state
+ * - DELETE_FILTER: remove a saved filter by id, include updated list in state
+ * - LOG_INTERACTION: append interaction event to db.interactions with ring buffer
+ *   (max 1000 entries; trimmed when count exceeds 1200 to avoid per-write trimming)
+ * - INIT handler now hydrates savedFilters in the READY response
  */
 import type { Command, Response } from '../types/messages';
 import type { Atom } from '../types/atoms';
@@ -78,6 +85,8 @@ function flattenAtomLinksForWasm(atoms: Atom[]): unknown[] {
  *
  * Scoring is non-blocking: if WASM scoring fails, STATE_UPDATE is still sent
  * with empty/null scoring fields rather than failing the entire update.
+ *
+ * Phase 3: includes savedFilters in every STATE_UPDATE for consistency.
  */
 async function flushAndSendState(): Promise<void> {
   await writeQueue.flushImmediate();
@@ -121,6 +130,8 @@ async function flushAndSendState(): Promise<void> {
     }
   }
 
+  const savedFilters = await db.savedFilters.toArray();
+
   const response: Response = {
     type: 'STATE_UPDATE',
     payload: {
@@ -129,6 +140,7 @@ async function flushAndSendState(): Promise<void> {
       entropyScore,
       compressionCandidates,
       capConfig,
+      savedFilters,
     },
   };
   self.postMessage(response);
@@ -146,8 +158,9 @@ self.onmessage = async (event: MessageEvent<Command>) => {
         // Initialize lamport clock from existing changelog
         await initLamportClock();
 
-        // Load all data from Dexie for initial state
+        // Load all data from Dexie for initial state, including Phase 3 savedFilters
         const state = await getFullState();
+        const savedFilters = await db.savedFilters.toArray();
 
         const response: Response = {
           type: 'READY',
@@ -156,6 +169,7 @@ self.onmessage = async (event: MessageEvent<Command>) => {
             sections: state.sections,
             atoms: state.atoms,
             inboxItems: state.inboxItems,
+            savedFilters,
           },
         };
         self.postMessage(response);
@@ -338,6 +352,34 @@ self.onmessage = async (event: MessageEvent<Command>) => {
       case 'MERGE_ATOMS': {
         await handleMergeAtoms(msg.payload);
         await flushAndSendState();
+        break;
+      }
+
+      case 'SAVE_FILTER': {
+        // Persist named filter preset; flushAndSendState will include updated savedFilters
+        await db.savedFilters.put(msg.payload);
+        await flushAndSendState();
+        break;
+      }
+
+      case 'DELETE_FILTER': {
+        // Remove filter by id; flushAndSendState will include updated savedFilters
+        await db.savedFilters.delete(msg.payload.id);
+        await flushAndSendState();
+        break;
+      }
+
+      case 'LOG_INTERACTION': {
+        // Append interaction event with generated UUID
+        await db.interactions.add({ ...msg.payload, id: crypto.randomUUID() });
+        // Ring buffer: trim to 1000 most recent when count exceeds 1200
+        // Hysteresis (1200 trigger, 1000 target) prevents trimming on every write
+        const count = await db.interactions.count();
+        if (count > 1200) {
+          const oldest = await db.interactions.orderBy('ts').limit(count - 1000).primaryKeys();
+          await db.interactions.bulkDelete(oldest as string[]);
+        }
+        // No flushAndSendState — interactions are fire-and-forget, no UI update needed
         break;
       }
 

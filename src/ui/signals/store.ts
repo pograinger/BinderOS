@@ -15,6 +15,12 @@
  * - capConfig (CapConfig): inbox + task cap configuration
  * - capExceeded ('inbox' | 'task' | null): cap overflow signal
  * - inboxCapStatus() / taskCapStatus() derived signals for StatusBar
+ *
+ * Phase 3 additions:
+ * - savedFilters (SavedFilter[]): user-persisted filter presets
+ * - selectedAtomId (string | null): currently selected atom for detail view
+ * - selectedAtom derived memo: resolves selectedAtomId to Atom | null
+ * - setSelectedAtomId() setter for navigation and detail views
  */
 
 import { createMemo, untrack } from 'solid-js';
@@ -30,6 +36,7 @@ import type {
   CapConfig,
 } from '../../types/config';
 import { DEFAULT_CAP_CONFIG } from '../../types/config';
+import type { SavedFilter } from '../../storage/db';
 
 // --- State interface ---
 
@@ -50,6 +57,9 @@ export interface BinderState {
   compressionCandidates: CompressionCandidate[];
   capConfig: CapConfig;
   capExceeded: 'inbox' | 'task' | null;
+  // Phase 3: filters and selection
+  savedFilters: SavedFilter[];
+  selectedAtomId: string | null;
 }
 
 const initialState: BinderState = {
@@ -69,6 +79,9 @@ const initialState: BinderState = {
   compressionCandidates: [],
   capConfig: { ...DEFAULT_CAP_CONFIG },
   capExceeded: null,
+  // Phase 3 defaults
+  savedFilters: [],
+  selectedAtomId: null,
 };
 
 // --- Create the store ---
@@ -85,6 +98,7 @@ onMessage((response) => {
       setState('atoms', reconcile(response.payload.atoms));
       setState('inboxItems', reconcile(response.payload.inboxItems));
       setState('sections', reconcile(response.payload.sections));
+      setState('savedFilters', reconcile(response.payload.savedFilters));
       setState('lastError', null);
       break;
 
@@ -113,6 +127,9 @@ onMessage((response) => {
       }
       if (response.payload.capConfig !== undefined) {
         setState('capConfig', reconcile(response.payload.capConfig));
+      }
+      if (response.payload.savedFilters !== undefined) {
+        setState('savedFilters', reconcile(response.payload.savedFilters));
       }
       // Phase 2: clear capExceeded if counts are now below cap after an action.
       // untrack() prevents the ESLint solid/reactivity warning — this is intentionally
@@ -171,6 +188,14 @@ export function setActivePage(page: string): void {
   setState('activePage', page);
 }
 
+/**
+ * Set the currently selected atom id for detail view navigation.
+ * Pass null to deselect / close the detail panel.
+ */
+export function setSelectedAtomId(id: string | null): void {
+  setState('selectedAtomId', id);
+}
+
 // --- Derived signals ---
 
 export function atomCount(): number {
@@ -221,4 +246,14 @@ export const taskCapStatus = createMemo((): 'ok' | 'warning' | 'full' => {
   if (openCount >= cap) return 'full';
   if (openCount >= cap * 0.8) return 'warning';
   return 'ok';
+});
+
+// --- Phase 3 derived signals ---
+
+/**
+ * Reactive memo: resolves selectedAtomId to the full Atom object.
+ * Returns null if no atom is selected or if the id is not found in state.atoms.
+ */
+export const selectedAtom = createMemo((): Atom | null => {
+  return state.atoms.find((a) => a.id === state.selectedAtomId) ?? null;
 });

@@ -12,6 +12,12 @@
  * - UPDATE_CAP_CONFIG command (updates inbox/task caps in Dexie)
  * - STATE_UPDATE extended with scores, entropyScore, compressionCandidates, capConfig
  * - CAP_EXCEEDED response (fires when inbox or open task count hits cap)
+ *
+ * Phase 3 additions:
+ * - SAVE_FILTER command (persists a named filter configuration)
+ * - DELETE_FILTER command (removes a saved filter by id)
+ * - LOG_INTERACTION command (records a search/filter/click interaction event)
+ * - STATE_UPDATE extended with savedFilters array
  */
 
 import type { Atom, AtomType, CreateAtomInput, InboxItem } from './atoms';
@@ -22,6 +28,7 @@ import type {
   CompressionCandidate,
   CapConfig,
 } from './config';
+import type { SavedFilter, InteractionEvent } from '../storage/db';
 
 // --- Commands (main thread -> Worker) ---
 
@@ -42,7 +49,11 @@ export type Command =
   | { type: 'UNDO' }
   | { type: 'RECOMPUTE_SCORES' }
   | { type: 'UPDATE_CAP_CONFIG'; payload: CapConfig }
-  | { type: 'MERGE_ATOMS'; payload: { sourceId: string; targetId: string } };
+  | { type: 'MERGE_ATOMS'; payload: { sourceId: string; targetId: string } }
+  // Phase 3: filter and interaction commands
+  | { type: 'SAVE_FILTER'; payload: SavedFilter }
+  | { type: 'DELETE_FILTER'; payload: { id: string } }
+  | { type: 'LOG_INTERACTION'; payload: Omit<InteractionEvent, 'id'> };
 
 // --- Responses (Worker -> main thread) ---
 
@@ -54,6 +65,7 @@ export type Response =
         sections: Section[];
         atoms: Atom[];
         inboxItems: InboxItem[];
+        savedFilters: SavedFilter[];
       };
     }
   | {
@@ -67,6 +79,7 @@ export type Response =
         entropyScore?: EntropyScore;
         compressionCandidates?: CompressionCandidate[];
         capConfig?: CapConfig;
+        savedFilters?: SavedFilter[];
       };
     }
   | { type: 'PONG'; payload: string }
