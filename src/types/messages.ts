@@ -40,7 +40,8 @@ export type Command =
   | { type: 'REQUEST_PERSISTENCE' }
   | { type: 'UNDO' }
   | { type: 'RECOMPUTE_SCORES' }
-  | { type: 'UPDATE_CAP_CONFIG'; payload: CapConfig };
+  | { type: 'UPDATE_CAP_CONFIG'; payload: CapConfig }
+  | { type: 'MERGE_ATOMS'; payload: { sourceId: string; targetId: string } };
 
 // --- Responses (Worker -> main thread) ---
 

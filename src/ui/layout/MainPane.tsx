@@ -13,6 +13,7 @@ import { Show, Switch, Match } from 'solid-js';
 import { state } from '../signals/store';
 import { InboxView } from '../views/InboxView';
 import { SectionView } from '../views/SectionView';
+import { ReviewView } from '../views/ReviewView';
 
 export function MainPane() {
   const sectionId = (): string | undefined => {
@@ -37,6 +38,9 @@ export function MainPane() {
           </Match>
           <Match when={state.activePage === 'all'}>
             <SectionView />
+          </Match>
+          <Match when={state.activePage === 'review'}>
+            <ReviewView />
           </Match>
           <Match when={state.activePage.startsWith('section-')}>
             <SectionView sectionId={sectionId()} />

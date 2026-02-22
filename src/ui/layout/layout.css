@@ -33,6 +33,17 @@
   --status-warning: #d29922;
   --status-error: #f85149;
 
+  /* Phase 2: cap and entropy status colors */
+  --color-warning: #d29922;
+  --color-danger: #f85149;
+
+  /* Phase 2: priority tier colors */
+  --tier-critical: #f85149;
+  --tier-high: #d29922;
+  --tier-medium: #58a6ff;
+  --tier-low: #8b949e;
+  --tier-someday: #484f58;
+
   --sidebar-width: 260px;
   --status-bar-height: 32px;
   --tab-bar-height: 56px;
@@ -452,6 +463,8 @@ body {
   cursor: pointer;
   user-select: none;
   will-change: transform;
+  /* Phase 2: staleness opacity transition */
+  transition: opacity 0.5s ease;
 }
 
 .atom-card:hover {
@@ -1271,4 +1284,694 @@ body {
   .fab-capture {
     bottom: calc(var(--status-bar-height) + 16px);
   }
+}
+
+/* ============================================
+   Phase 2: PriorityBadge Component
+   ============================================ */
+
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.priority-pin {
+  opacity: 0.7;
+  margin-left: 1px;
+}
+
+/* ============================================
+   Phase 2: Entropy Health Badge (StatusBar)
+   ============================================ */
+
+.entropy-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.entropy-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: currentColor;
+}
+
+.entropy-green {
+  color: var(--status-success);
+}
+
+.entropy-yellow {
+  color: var(--color-warning);
+}
+
+.entropy-red {
+  color: var(--color-danger);
+}
+
+/* ============================================
+   Phase 2: Cap Status Segments (StatusBar)
+   ============================================ */
+
+/* inbox cap color coding */
+.status-segment.inbox-ok {
+  color: var(--text-secondary);
+}
+
+.status-segment.inbox-warning {
+  color: var(--color-warning);
+}
+
+.status-segment.inbox-full {
+  color: var(--color-danger);
+}
+
+/* task cap color coding */
+.status-segment.task-ok {
+  color: var(--text-secondary);
+}
+
+.status-segment.task-warning {
+  color: var(--color-warning);
+}
+
+.status-segment.task-full {
+  color: var(--color-danger);
+}
+
+/* ============================================
+   Phase 2: CapEnforcementModal
+   ============================================ */
+
+.cap-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 20px;
+}
+
+.cap-modal {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.cap-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-danger);
+  margin: 0;
+}
+
+.cap-modal-message {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.cap-modal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  max-height: 60vh;
+  /* Give some breathing room for scroll */
+  padding-right: 4px;
+}
+
+.cap-modal-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+}
+
+.cap-modal-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cap-modal-item-title {
+  font-size: 13px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cap-modal-item-time {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.cap-modal-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Base modal action button */
+.cap-modal-btn {
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.cap-modal-btn:hover {
+  border-color: var(--border-secondary);
+  color: var(--text-primary);
+}
+
+.cap-modal-btn-classify {
+  color: var(--accent);
+  border-color: rgba(88, 166, 255, 0.4);
+}
+
+.cap-modal-btn-classify:hover {
+  background: rgba(88, 166, 255, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.cap-modal-btn-discard {
+  color: var(--color-danger);
+  border-color: rgba(248, 81, 73, 0.4);
+}
+
+.cap-modal-btn-discard:hover {
+  background: rgba(248, 81, 73, 0.1);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.cap-modal-btn-complete {
+  color: var(--status-success);
+  border-color: rgba(63, 185, 80, 0.4);
+}
+
+.cap-modal-btn-complete:hover {
+  background: rgba(63, 185, 80, 0.1);
+  border-color: var(--status-success);
+  color: var(--status-success);
+}
+
+.cap-modal-btn-archive {
+  color: var(--text-muted);
+  border-color: var(--border-primary);
+}
+
+.cap-modal-btn-archive:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.cap-modal-btn-schedule {
+  color: var(--color-warning);
+  border-color: rgba(210, 153, 34, 0.4);
+}
+
+.cap-modal-btn-schedule:hover {
+  background: rgba(210, 153, 34, 0.1);
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+/* Classify inline type selector within cap modal */
+.cap-modal-type-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  border: 1px solid var(--accent);
+}
+
+.cap-modal-type-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cap-modal-type-btn {
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: capitalize;
+}
+
+.cap-modal-type-btn:hover {
+  border-color: var(--border-secondary);
+  color: var(--text-primary);
+}
+
+.cap-modal-type-btn.selected {
+  border-color: var(--accent);
+  background: rgba(88, 166, 255, 0.15);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.cap-modal-classify-confirm {
+  padding: 6px 14px;
+  border-radius: 5px;
+  border: none;
+  background: var(--accent);
+  color: var(--bg-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  align-self: flex-start;
+}
+
+.cap-modal-classify-confirm:hover {
+  opacity: 0.9;
+}
+
+.cap-modal-classify-cancel {
+  padding: 5px 12px;
+  border-radius: 5px;
+  border: 1px solid var(--border-primary);
+  background: none;
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+.cap-modal-classify-cancel:hover {
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}
+
+/* ============================================
+   ReviewView: Card-by-card compression triage
+   ============================================ */
+
+.review-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--status-warning);
+  color: var(--bg-primary);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.review-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  outline: none;
+}
+
+/* Progress indicator */
+.review-progress {
+  width: 100%;
+  max-width: 480px;
+  padding: 8px 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.review-progress-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.review-progress-bar {
+  width: 100%;
+  height: 3px;
+  background: var(--border-primary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.review-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease-out;
+}
+
+/* Triage card */
+.review-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  padding: 24px 20px;
+  margin: 12px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  will-change: transform;
+  touch-action: none;
+  position: relative;
+}
+
+.review-card.action-out {
+  animation: reviewActionOut 0.4s ease-in forwards;
+}
+
+@keyframes reviewActionOut {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: translateY(-120px) scale(0.9); opacity: 0; }
+}
+
+.review-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.review-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Reason: prominently displayed */
+.review-reason {
+  font-size: 13px;
+  color: var(--status-warning);
+  font-style: italic;
+  background: rgba(210, 153, 34, 0.1);
+  border-left: 3px solid var(--status-warning);
+  padding: 6px 10px;
+  border-radius: 0 4px 4px 0;
+  line-height: 1.4;
+}
+
+.review-last-edit {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.review-card-content {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.review-expand-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  align-self: flex-start;
+}
+
+/* Four action buttons */
+.review-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 8px 0;
+  max-width: 480px;
+  width: 100%;
+}
+
+.review-action-btn {
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  flex: 1;
+  min-width: 80px;
+}
+
+.review-action-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}
+
+/* Archive: muted color */
+.review-action-btn.archive {
+  color: var(--text-muted);
+}
+.review-action-btn.archive:hover {
+  color: var(--text-secondary);
+  border-color: var(--border-secondary);
+}
+
+/* Delete: danger color */
+.review-action-btn.delete {
+  color: var(--status-error);
+  border-color: rgba(248, 81, 73, 0.3);
+}
+.review-action-btn.delete:hover {
+  background: rgba(248, 81, 73, 0.1);
+  border-color: var(--status-error);
+}
+
+/* Keep: positive/success color */
+.review-action-btn.keep {
+  color: var(--status-success);
+  border-color: rgba(63, 185, 80, 0.3);
+}
+.review-action-btn.keep:hover {
+  background: rgba(63, 185, 80, 0.1);
+  border-color: var(--status-success);
+}
+
+/* Merge: info/accent color */
+.review-action-btn.merge {
+  color: var(--accent);
+  border-color: rgba(88, 166, 255, 0.3);
+}
+.review-action-btn.merge:hover {
+  background: rgba(88, 166, 255, 0.1);
+  border-color: var(--accent);
+}
+
+/* Merge target selector */
+.review-merge-search {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 0;
+}
+
+.review-merge-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.review-merge-input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.review-merge-input:focus {
+  border-color: var(--accent);
+}
+
+.review-merge-input::placeholder {
+  color: var(--text-muted);
+}
+
+.review-merge-results {
+  display: flex;
+  flex-direction: column;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  background: var(--bg-primary);
+}
+
+.review-merge-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.1s;
+}
+
+.review-merge-item:last-child {
+  border-bottom: none;
+}
+
+.review-merge-item:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.review-merge-item-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.review-merge-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 12px;
+}
+
+.review-merge-cancel {
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-primary);
+  background: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  align-self: center;
+}
+
+.review-merge-cancel:hover {
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}
+
+/* Empty state */
+.review-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 12px;
+  padding: 40px 20px;
+}
+
+.review-empty-state.celebrate .review-empty-icon {
+  animation: celebratePulse 0.6s ease-out;
+}
+
+.review-empty-icon {
+  opacity: 0.9;
+}
+
+.review-empty-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--status-success);
+}
+
+.review-empty-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.review-entropy-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.review-entropy-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.review-entropy-badge.green {
+  background: rgba(63, 185, 80, 0.15);
+  color: var(--status-success);
+}
+
+.review-entropy-badge.yellow {
+  background: rgba(210, 153, 34, 0.15);
+  color: var(--status-warning);
+}
+
+.review-entropy-badge.red {
+  background: rgba(248, 81, 73, 0.15);
+  color: var(--status-error);
+}
+
+.review-entropy-score {
+  font-size: 12px;
+  color: var(--text-muted);
 }

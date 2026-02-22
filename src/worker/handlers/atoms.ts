@@ -116,3 +116,64 @@ export async function handleDeleteAtom(
 
   return { logEntry };
 }
+
+/**
+ * Merge source atom into target atom.
+ *
+ * Transfers all links from source to target (de-duplicated by targetId).
+ * Appends source content to target content with a separator.
+ * Deletes source atom after merging.
+ * Both writes go through the write queue with changelog entries.
+ */
+export async function handleMergeAtoms(
+  payload: { sourceId: string; targetId: string },
+): Promise<void> {
+  const [source, target] = await Promise.all([
+    db.atoms.get(payload.sourceId),
+    db.atoms.get(payload.targetId),
+  ]);
+
+  if (!source) throw new Error(`Source atom not found: ${payload.sourceId}`);
+  if (!target) throw new Error(`Target atom not found: ${payload.targetId}`);
+
+  // Combine links: merge source links into target, de-duplicate by targetId
+  const existingTargetIds = new Set(target.links.map((l) => l.targetId));
+  const newLinks = source.links.filter((l) => !existingTargetIds.has(l.targetId));
+  const mergedLinks = [...target.links, ...newLinks];
+
+  // Append source content to target with separator
+  const sourceLabel = source.content.split('\n')[0]?.slice(0, 60) ?? payload.sourceId;
+  const mergedContent = source.content
+    ? `${target.content}\n\n---\nMerged from: ${sourceLabel}\n${source.content}`
+    : target.content;
+
+  const updatedTarget: Atom = {
+    ...target,
+    links: mergedLinks,
+    content: mergedContent,
+    updated_at: Date.now(),
+  } as Atom;
+
+  // Validate updated target
+  AtomSchema.parse(updatedTarget);
+
+  // Changelog: update target
+  const updateLogEntry = appendMutation(updatedTarget.id, 'update', target, updatedTarget);
+
+  // Changelog: delete source
+  const deleteLogEntry = appendMutation(source.id, 'delete', source, null);
+
+  // Enqueue writes
+  writeQueue.enqueue(async () => {
+    await db.atoms.put(updatedTarget);
+  });
+  writeQueue.enqueue(async () => {
+    await db.changelog.put(updateLogEntry);
+  });
+  writeQueue.enqueue(async () => {
+    await db.atoms.delete(payload.sourceId);
+  });
+  writeQueue.enqueue(async () => {
+    await db.changelog.put(deleteLogEntry);
+  });
+}

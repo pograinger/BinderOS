@@ -26,7 +26,7 @@ import { writeQueue } from '../storage/write-queue';
 import { initLamportClock, appendMutation } from '../storage/changelog';
 import { initStoragePersistence } from '../storage/persistence';
 import { exportAllData } from '../storage/export';
-import { handleCreateAtom, handleUpdateAtom, handleDeleteAtom } from './handlers/atoms';
+import { handleCreateAtom, handleUpdateAtom, handleDeleteAtom, handleMergeAtoms } from './handlers/atoms';
 import { handleCreateInboxItem, handleClassifyInboxItem } from './handlers/inbox';
 import {
   handleCreateSectionItem,
@@ -295,6 +295,12 @@ self.onmessage = async (event: MessageEvent<Command>) => {
 
       case 'UPDATE_CAP_CONFIG': {
         await setCapConfig(msg.payload);
+        await flushAndSendState();
+        break;
+      }
+
+      case 'MERGE_ATOMS': {
+        await handleMergeAtoms(msg.payload);
         await flushAndSendState();
         break;
       }

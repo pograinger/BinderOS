@@ -8,7 +8,7 @@
  * CRITICAL: Never destructure props. Use <For> for lists.
  */
 
-import { For } from 'solid-js';
+import { For, Show } from 'solid-js';
 import { state, setActivePage } from '../signals/store';
 
 interface PageTab {
@@ -21,18 +21,22 @@ const staticTabs: PageTab[] = [
   { id: 'all', label: 'All Items' },
 ];
 
+const reviewTab: PageTab = { id: 'review', label: 'Review' };
+
 export function PageTabStrip() {
   const tabs = (): PageTab[] => {
     const sectionTabs = state.sections.map((s) => ({
       id: `section-${s.id}`,
       label: s.name,
     }));
-    return [...staticTabs, ...sectionTabs];
+    return [...staticTabs, ...sectionTabs, reviewTab];
   };
 
   const handleTabClick = (tabId: string) => {
     setActivePage(tabId);
   };
+
+  const reviewCount = () => state.compressionCandidates.length;
 
   return (
     <div class="page-tab-strip">
@@ -43,6 +47,9 @@ export function PageTabStrip() {
             onClick={() => handleTabClick(tab.id)}
           >
             {tab.label}
+            <Show when={tab.id === 'review' && reviewCount() > 0}>
+              <span class="review-tab-badge">{reviewCount()}</span>
+            </Show>
           </button>
         )}
       </For>
