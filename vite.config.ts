@@ -5,6 +5,20 @@ import wasm from 'vite-plugin-wasm';
 import topLevelAwait from 'vite-plugin-top-level-await';
 
 export default defineConfig({
+  // Cross-origin isolation headers required for SharedArrayBuffer (used by ONNX WASM backend).
+  // RESEARCH.md Pitfall 4: without COOP/COEP the WASM backend silently falls back to single-thread.
+  server: {
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    },
+  },
+  preview: {
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    },
+  },
   plugins: [
     solid(),
     wasm(),
