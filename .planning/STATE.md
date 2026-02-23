@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 4 of 7 (AI Infrastructure)
-Plan: — of 3 in Phase 4
-Status: Ready to plan
-Last activity: 2026-02-22 — v2.0 roadmap created (Phases 4–7, 30/30 requirements mapped)
+Plan: 1 of 3 in Phase 4 (complete)
+Status: In progress
+Last activity: 2026-02-23 — Phase 4 Plan 1 complete (AI backbone: adapter interface, NoOpAdapter, router, store extension)
 
-Progress: [███░░░░░░░] 30% (v1.0 complete; v2.0 Phase 4 next)
+Progress: [████░░░░░░] 33% (v1.0 complete; v2.0 Phase 4 Plan 1/3 done)
 
 ## Performance Metrics
 
@@ -32,6 +32,7 @@ Progress: [███░░░░░░░] 30% (v1.0 complete; v2.0 Phase 4 next
 | 3. Pages/Nav/Search | 4/4 | 33 min | 8 min |
 
 *v2.0 metrics will populate as phases complete*
+| Phase 04 P01 | 7 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -45,6 +46,9 @@ Recent decisions affecting current work:
 - [v2.0]: GSD-style question flows as core AI interaction pattern (3-4 options + freeform)
 - [v2.0]: Floating orb is the single AI entry point; AI mutations are additive, tagged, reversible
 - [v2.0]: Phases 6 and 7 flagged for research before planning (review session schema; GTD question flow design)
+- [04-01]: NoOpAdapter initialized in worker INIT handler for immediate pipeline verification on startup
+- [04-01]: AIRequest.prompt typed as string (not Atom) — privacy boundary enforced at TypeScript compile time
+- [04-01]: AI UI setters (setAIEnabled etc.) are pure local store state — settings persistence to Dexie deferred to Phase 5
 
 ### Pending Todos
 
@@ -58,6 +62,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-22
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-ai-infrastructure/04-CONTEXT.md
+Last session: 2026-02-23
+Stopped at: Completed .planning/phases/04-ai-infrastructure/04-01-PLAN.md
+Resume file: .planning/phases/04-ai-infrastructure/04-02-PLAN.md

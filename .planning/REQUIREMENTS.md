@@ -9,11 +9,11 @@ Requirements for AI Orchestration milestone. Each maps to roadmap phases.
 
 ### AI Infrastructure
 
-- [ ] **AINF-01**: Pluggable AI adapter interface with provider routing (no-op, browser LLM, cloud API)
+- [x] **AINF-01**: Pluggable AI adapter interface with provider routing (no-op, browser LLM, cloud API)
 - [ ] **AINF-02**: Dedicated LLM worker running SmolLM2 via Transformers.js, isolated from BinderCore worker
 - [ ] **AINF-03**: WebGPU-tiered model selection — larger/faster models on GPU-capable machines, CPU fallback with smaller model
 - [ ] **AINF-04**: Cloud API integration layer with Anthropic CORS support and streaming via fetch-event-stream
-- [ ] **AINF-05**: AI provider status (available/unavailable/loading/error/disabled) surfaced in store and UI
+- [x] **AINF-05**: AI provider status (available/unavailable/loading/error/disabled) surfaced in store and UI
 - [ ] **AINF-06**: Graceful offline degradation — browser LLM works offline; cloud features show friendly unavailable message
 
 ### AI UX
@@ -53,7 +53,7 @@ Requirements for AI Orchestration milestone. Each maps to roadmap phases.
 - [ ] **AIST-01**: Explicit opt-in/opt-out for all AI features; cloud API requires separate consent
 - [ ] **AIST-02**: API key stored in memory only by default; encrypted persistence optional with security disclosure
 - [ ] **AIST-03**: Destructive AI actions (delete, archive, overwrite content) always require explicit user approval
-- [ ] **AIST-04**: AI never runs autonomously on a schedule — all analysis triggered by user action or app launch
+- [x] **AIST-04**: AI never runs autonomously on a schedule — all analysis triggered by user action or app launch
 
 ## v3.0 Requirements
 
@@ -98,11 +98,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AINF-01 | Phase 4 | Pending |
+| AINF-01 | Phase 4 | Complete |
 | AINF-02 | Phase 4 | Pending |
 | AINF-03 | Phase 4 | Pending |
 | AINF-04 | Phase 4 | Pending |
-| AINF-05 | Phase 4 | Pending |
+| AINF-05 | Phase 4 | Complete |
 | AINF-06 | Phase 4 | Pending |
 | AIUX-01 | Phase 5 | Pending |
 | AIUX-02 | Phase 5 | Pending |
@@ -127,7 +127,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AIST-01 | Phase 4 | Pending |
 | AIST-02 | Phase 4 | Pending |
 | AIST-03 | Phase 4 | Pending |
-| AIST-04 | Phase 4 | Pending |
+| AIST-04 | Phase 4 | Complete |
 
 **Coverage:**
 - v2.0 requirements: 30 total
