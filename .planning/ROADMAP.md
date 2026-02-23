@@ -24,7 +24,7 @@ See [Archive](.planning/milestones/v1.0-ROADMAP.md) for full detail.
 
 **Milestone Goal:** Make GTD review cycles effortless through AI-powered triage, guided reviews, and proactive suggestions — all accessible via a floating orb with conversational question flows.
 
-- [ ] **Phase 4: AI Infrastructure** - Worker isolation, adapter interface, store extension, trust & safety model
+- [x] **Phase 4: AI Infrastructure** - Worker isolation, adapter interface, store extension, trust & safety model (complete 2026-02-22)
 - [ ] **Phase 5: Triage AI** - Floating orb, suggestion tray, question-flow UX, inbox triage suggestions
 - [ ] **Phase 6: Review Pre-Analysis** - Background analysis briefings, session persistence, cloud API end-to-end
 - [ ] **Phase 7: Guided Review + Compression Coach** - Full GTD weekly review, compression coach, draft atom staging, AI mutation tracking
@@ -40,12 +40,12 @@ See [Archive](.planning/milestones/v1.0-ROADMAP.md) for full detail.
   2. User can enter an API key in Settings; the key is memory-only by default with a visible security disclosure; the settings panel shows current provider status (loading, available, error, disabled)
   3. An AI command dispatched through the orb completes the full worker round-trip with a no-op response — verifying message routing, store updates, and UI reaction — without touching the BinderCore worker
   4. On a GPU-capable machine the browser LLM status reflects the appropriate model tier; on CPU-only machines a smaller fallback model is selected; going offline shows a friendly unavailable message for cloud features only
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans executed
 
 Plans:
-- [ ] 04-01-PLAN.md — AI message protocol + store extension + no-op adapter (end-to-end routing proof)
-- [ ] 04-02-PLAN.md — LLM worker (SmolLM2 via Transformers.js) + browser adapter + WebGPU detection
-- [ ] 04-03-PLAN.md — Cloud API adapter (Anthropic SDK + streaming + BYOK) + trust & safety settings UI
+- [x] 04-01-PLAN.md — AI message protocol + store extension + no-op adapter (end-to-end routing proof)
+- [x] 04-02-PLAN.md — LLM worker (SmolLM2 via Transformers.js) + browser adapter + WebGPU detection
+- [x] 04-03-PLAN.md — Cloud API adapter (Anthropic SDK + streaming + BYOK) + trust & safety settings UI
 
 ### Phase 5: Triage AI
 **Goal**: Users have a floating orb available on every page that opens a suggestion tray during inbox triage, presents AI-suggested atom type and section with reasoning, and lets them accept or dismiss each suggestion — all changes tagged as AI-sourced in the changelog
@@ -107,7 +107,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7
 | 1. Foundation | v1.0 | 4/4 | Complete | 2026-02-22 |
 | 2. Compute Engine | v1.0 | 3/3 | Complete | 2026-02-22 |
 | 3. Pages, Navigation, Search | v1.0 | 4/4 | Complete | 2026-02-22 |
-| 4. AI Infrastructure | 2/3 | In Progress|  | - |
+| 4. AI Infrastructure | v2.0 | 3/3 | Complete | 2026-02-22 |
 | 5. Triage AI | v2.0 | 0/4 | Not started | - |
 | 6. Review Pre-Analysis | v2.0 | 0/3 | Not started | - |
 | 7. Guided Review + Compression Coach | v2.0 | 0/3 | Not started | - |
