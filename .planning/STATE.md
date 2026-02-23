@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** v2.0 — AI Orchestration (defining requirements)
+**Current focus:** v2.0 AI Orchestration — Phase 4: AI Infrastructure
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-22 — Milestone v2.0 started
+Phase: 4 of 7 (AI Infrastructure)
+Plan: — of 3 in Phase 4
+Status: Ready to plan
+Last activity: 2026-02-22 — v2.0 roadmap created (Phases 4–7, 30/30 requirements mapped)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███░░░░░░░] 30% (v1.0 complete; v2.0 Phase 4 next)
 
 ## Performance Metrics
 
@@ -31,6 +31,8 @@ Progress: [░░░░░░░░░░] 0%
 | 2. Compute Engine | 3/3 | 33 min | 11 min |
 | 3. Pages/Nav/Search | 4/4 | 33 min | 8 min |
 
+*v2.0 metrics will populate as phases complete*
+
 ## Accumulated Context
 
 ### Decisions
@@ -38,12 +40,11 @@ Progress: [░░░░░░░░░░] 0%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [v2.0]: Tiered LLM — small WASM model for classification/tagging, cloud API for conversations/reviews
+- [v2.0]: Tiered LLM — SmolLM2 via Transformers.js for classification; Anthropic cloud API for conversational reviews
+- [v2.0]: Dedicated llm-worker.ts separate from BinderCore worker — prevents OOM crashes and unblocks atom mutations during inference
 - [v2.0]: GSD-style question flows as core AI interaction pattern (3-4 options + freeform)
-- [v2.0]: Floating orb — context-aware AI trigger + GTD menu, always available
-- [v2.0]: AI mutations are additive and tagged — destructive changes require user approval
-- [v2.0]: Changelog extended with source field to track AI vs user mutations
-- [v2.0]: PARA views, sync, encryption deferred to v3.0+
+- [v2.0]: Floating orb is the single AI entry point; AI mutations are additive, tagged, reversible
+- [v2.0]: Phases 6 and 7 flagged for research before planning (review session schema; GTD question flow design)
 
 ### Pending Todos
 
@@ -52,10 +53,11 @@ None.
 ### Blockers/Concerns
 
 - [Build]: pnpm build:wasm requires LIB env var set to MSVC + Windows SDK paths on Windows
-- [v2.0]: Browser LLM model selection needs research — Phi-3-mini vs SmolLM vs TinyLlama, WASM vs WebGPU runtime
+- [Phase 6]: Dexie schema for branching review session state needs design work before planning
+- [Phase 7]: GTD question flow design (specific questions per phase, preventing Get Creative from becoming open-ended chat) needs deliberate design work before planning
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: v2.0 milestone initialization — defining requirements
-Resume file: .planning/PROJECT.md
+Stopped at: v2.0 roadmap created — ready to plan Phase 4
+Resume file: None
