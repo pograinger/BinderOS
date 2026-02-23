@@ -18,6 +18,7 @@
 
 import { createSignal, createMemo, onMount, Show } from 'solid-js';
 import { state, inboxCapStatus, taskCapStatus } from '../signals/store';
+// Note: state imported above includes Phase 4 AI fields (aiEnabled, aiActivity, llmStatus)
 
 export function StatusBar() {
   const [storageUsed, setStorageUsed] = createSignal<string>('');
@@ -95,6 +96,28 @@ export function StatusBar() {
       <div class={`status-bar-item status-segment task-${taskCapStatus()}`}>
         <span>{openTaskCount()} tasks</span>
       </div>
+
+      {/* Phase 4: AI activity indicator */}
+      <Show when={state.aiEnabled}>
+        <div class="status-bar-item ai-status">
+          <Show
+            when={state.aiActivity}
+            fallback={
+              <span class="ai-status-idle">
+                {state.llmStatus === 'available'
+                  ? 'Local AI: Ready'
+                  : state.llmStatus === 'loading'
+                  ? 'Local AI: Loading...'
+                  : state.llmStatus === 'error'
+                  ? 'Local AI: Error'
+                  : 'AI: Disabled'}
+              </span>
+            }
+          >
+            <span class="ai-status-active">{state.aiActivity}</span>
+          </Show>
+        </div>
+      </Show>
 
       {/* Spacer to push storage to the right */}
       <div class="status-bar-spacer" />

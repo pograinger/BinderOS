@@ -33,6 +33,7 @@ interface PaletteCommand {
 interface CommandPaletteProps {
   onClose: () => void;
   onOpenSearch: () => void;
+  onOpenAISettings?: () => void;
 }
 
 // --- Fuzzy filter ---
@@ -144,6 +145,12 @@ export function CommandPalette(props: CommandPaletteProps) {
       label: 'Request Storage Persistence',
       category: 'action',
       action: () => { sendCommand({ type: 'REQUEST_PERSISTENCE' }); props.onClose(); },
+    },
+    {
+      id: 'action-ai-settings',
+      label: 'AI Settings',
+      category: 'action',
+      action: () => { props.onClose(); props.onOpenAISettings?.(); },
     },
   ];
 

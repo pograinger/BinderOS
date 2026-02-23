@@ -24,7 +24,7 @@ import { createSignal, onMount, onCleanup, Show } from 'solid-js';
 import { initWorker } from './worker/bridge';
 import { sendCommand, state, setActivePage, setSelectedAtomId, setPersistenceGranted } from './ui/signals/store';
 import { initStoragePersistence } from './storage/persistence';
-import { Shell } from './ui/layout/Shell';
+import { Shell, setShowAISettings } from './ui/layout/Shell';
 import { CaptureOverlay } from './ui/views/CaptureOverlay';
 import { SearchOverlay } from './ui/views/SearchOverlay';
 import { StorageWarning } from './ui/views/StorageWarning';
@@ -171,6 +171,7 @@ function App() {
         <CommandPalette
           onClose={() => setOverlay('none')}
           onOpenSearch={() => setOverlay('search')}
+          onOpenAISettings={() => setShowAISettings(true)}
         />
       </Show>
 

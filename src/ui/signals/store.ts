@@ -46,6 +46,7 @@ import type {
 import { DEFAULT_CAP_CONFIG } from '../../types/config';
 import type { SavedFilter } from '../../storage/db';
 import type { AIProviderStatus } from '../../ai/adapters/adapter';
+import type { CloudRequestLogEntry } from '../../ai/key-vault';
 import { dispatchAI } from '../../ai/router';
 import { BrowserAdapter } from '../../ai/adapters/browser';
 
@@ -82,6 +83,13 @@ export interface BinderState {
   llmDownloadProgress: number | null;
   aiActivity: string | null;
   aiFirstRunComplete: boolean;
+  // Phase 4: Feature toggles (UI-only in Phase 4, used by Phases 5-7)
+  triageEnabled: boolean;
+  reviewEnabled: boolean;
+  compressionEnabled: boolean;
+  // Phase 4: Cloud request preview state (wired by Shell.tsx -> CloudAdapter pre-send approval handler)
+  pendingCloudRequest: CloudRequestLogEntry | null;
+  pendingCloudRequestResolve: ((approved: boolean) => void) | null;
 }
 
 const initialState: BinderState = {
@@ -115,6 +123,13 @@ const initialState: BinderState = {
   llmDownloadProgress: null,
   aiActivity: null,
   aiFirstRunComplete: false,
+  // Phase 4: Feature toggles (default true so they're active when AI is first enabled)
+  triageEnabled: true,
+  reviewEnabled: true,
+  compressionEnabled: true,
+  // Phase 4: Cloud request preview state
+  pendingCloudRequest: null,
+  pendingCloudRequestResolve: null,
 };
 
 // --- Create the store ---
@@ -301,6 +316,26 @@ export function setCloudAPIEnabled(enabled: boolean): void {
 
 export function setAIFirstRunComplete(complete: boolean): void {
   setState('aiFirstRunComplete', complete);
+}
+
+export function setTriageEnabled(enabled: boolean): void {
+  setState('triageEnabled', enabled);
+}
+
+export function setReviewEnabled(enabled: boolean): void {
+  setState('reviewEnabled', enabled);
+}
+
+export function setCompressionEnabled(enabled: boolean): void {
+  setState('compressionEnabled', enabled);
+}
+
+export function setPendingCloudRequest(
+  entry: CloudRequestLogEntry | null,
+  resolve: ((approved: boolean) => void) | null,
+): void {
+  setState('pendingCloudRequest', entry);
+  setState('pendingCloudRequestResolve', resolve);
 }
 
 /**
