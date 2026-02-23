@@ -40,12 +40,12 @@ See [Archive](.planning/milestones/v1.0-ROADMAP.md) for full detail.
   2. User can enter an API key in Settings; the key is memory-only by default with a visible security disclosure; the settings panel shows current provider status (loading, available, error, disabled)
   3. An AI command dispatched through the orb completes the full worker round-trip with a no-op response — verifying message routing, store updates, and UI reaction — without touching the BinderCore worker
   4. On a GPU-capable machine the browser LLM status reflects the appropriate model tier; on CPU-only machines a smaller fallback model is selected; going offline shows a friendly unavailable message for cloud features only
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 04-01: AI message protocol + store extension + no-op adapter (end-to-end routing proof)
-- [ ] 04-02: LLM worker (SmolLM2 via Transformers.js) + browser adapter + WebGPU detection
-- [ ] 04-03: Cloud API adapter (Anthropic fetch + CORS header + streaming + BYOK) + trust & safety settings UI
+- [ ] 04-01-PLAN.md — AI message protocol + store extension + no-op adapter (end-to-end routing proof)
+- [ ] 04-02-PLAN.md — LLM worker (SmolLM2 via Transformers.js) + browser adapter + WebGPU detection
+- [ ] 04-03-PLAN.md — Cloud API adapter (Anthropic SDK + streaming + BYOK) + trust & safety settings UI
 
 ### Phase 5: Triage AI
 **Goal**: Users have a floating orb available on every page that opens a suggestion tray during inbox triage, presents AI-suggested atom type and section with reasoning, and lets them accept or dismiss each suggestion — all changes tagged as AI-sourced in the changelog
