@@ -40,7 +40,7 @@ See [Archive](.planning/milestones/v1.0-ROADMAP.md) for full detail.
   2. User can enter an API key in Settings; the key is memory-only by default with a visible security disclosure; the settings panel shows current provider status (loading, available, error, disabled)
   3. An AI command dispatched through the orb completes the full worker round-trip with a no-op response — verifying message routing, store updates, and UI reaction — without touching the BinderCore worker
   4. On a GPU-capable machine the browser LLM status reflects the appropriate model tier; on CPU-only machines a smaller fallback model is selected; going offline shows a friendly unavailable message for cloud features only
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 04-01-PLAN.md — AI message protocol + store extension + no-op adapter (end-to-end routing proof)
@@ -107,7 +107,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7
 | 1. Foundation | v1.0 | 4/4 | Complete | 2026-02-22 |
 | 2. Compute Engine | v1.0 | 3/3 | Complete | 2026-02-22 |
 | 3. Pages, Navigation, Search | v1.0 | 4/4 | Complete | 2026-02-22 |
-| 4. AI Infrastructure | 1/3 | In Progress|  | - |
+| 4. AI Infrastructure | 2/3 | In Progress|  | - |
 | 5. Triage AI | v2.0 | 0/4 | Not started | - |
 | 6. Review Pre-Analysis | v2.0 | 0/3 | Not started | - |
 | 7. Guided Review + Compression Coach | v2.0 | 0/3 | Not started | - |

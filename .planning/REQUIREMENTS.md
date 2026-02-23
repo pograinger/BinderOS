@@ -10,11 +10,11 @@ Requirements for AI Orchestration milestone. Each maps to roadmap phases.
 ### AI Infrastructure
 
 - [x] **AINF-01**: Pluggable AI adapter interface with provider routing (no-op, browser LLM, cloud API)
-- [ ] **AINF-02**: Dedicated LLM worker running SmolLM2 via Transformers.js, isolated from BinderCore worker
-- [ ] **AINF-03**: WebGPU-tiered model selection — larger/faster models on GPU-capable machines, CPU fallback with smaller model
+- [x] **AINF-02**: Dedicated LLM worker running SmolLM2 via Transformers.js, isolated from BinderCore worker
+- [x] **AINF-03**: WebGPU-tiered model selection — larger/faster models on GPU-capable machines, CPU fallback with smaller model
 - [ ] **AINF-04**: Cloud API integration layer with Anthropic CORS support and streaming via fetch-event-stream
 - [x] **AINF-05**: AI provider status (available/unavailable/loading/error/disabled) surfaced in store and UI
-- [ ] **AINF-06**: Graceful offline degradation — browser LLM works offline; cloud features show friendly unavailable message
+- [x] **AINF-06**: Graceful offline degradation — browser LLM works offline; cloud features show friendly unavailable message
 
 ### AI UX
 
@@ -99,11 +99,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | AINF-01 | Phase 4 | Complete |
-| AINF-02 | Phase 4 | Pending |
-| AINF-03 | Phase 4 | Pending |
+| AINF-02 | Phase 4 | Complete |
+| AINF-03 | Phase 4 | Complete |
 | AINF-04 | Phase 4 | Pending |
 | AINF-05 | Phase 4 | Complete |
-| AINF-06 | Phase 4 | Pending |
+| AINF-06 | Phase 4 | Complete |
 | AIUX-01 | Phase 5 | Pending |
 | AIUX-02 | Phase 5 | Pending |
 | AIUX-03 | Phase 5 | Pending |

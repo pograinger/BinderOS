@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 4 of 7 (AI Infrastructure)
-Plan: 1 of 3 in Phase 4 (complete)
+Plan: 2 of 3 in Phase 4 (complete)
 Status: In progress
-Last activity: 2026-02-23 — Phase 4 Plan 1 complete (AI backbone: adapter interface, NoOpAdapter, router, store extension)
+Last activity: 2026-02-23 — Phase 4 Plan 2 complete (LLM worker, BrowserAdapter, main-thread AI dispatch)
 
-Progress: [████░░░░░░] 33% (v1.0 complete; v2.0 Phase 4 Plan 1/3 done)
+Progress: [████░░░░░░] 36% (v1.0 complete; v2.0 Phase 4 Plan 2/3 done)
 
 ## Performance Metrics
 
 **Velocity (from v1.0):**
-- Total plans completed: 11
+- Total plans completed: 12
 - Average duration: 14 min
-- Total execution time: ~156 min
+- Total execution time: ~169 min
 
 **By Phase (v1.0):**
 
@@ -32,7 +32,8 @@ Progress: [████░░░░░░] 33% (v1.0 complete; v2.0 Phase 4 Plan
 | 3. Pages/Nav/Search | 4/4 | 33 min | 8 min |
 
 *v2.0 metrics will populate as phases complete*
-| Phase 04 P01 | 7 | 2 tasks | 7 files |
+| Phase 04 P01 | 7 min | 2 tasks | 7 files |
+| Phase 04 P02 | 13 min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -49,6 +50,9 @@ Recent decisions affecting current work:
 - [04-01]: NoOpAdapter initialized in worker INIT handler for immediate pipeline verification on startup
 - [04-01]: AIRequest.prompt typed as string (not Atom) — privacy boundary enforced at TypeScript compile time
 - [04-01]: AI UI setters (setAIEnabled etc.) are pure local store state — settings persistence to Dexie deferred to Phase 5
+- [04-02]: AI dispatch moved from BinderCore worker to main thread — BrowserAdapter cannot run in BinderCore worker without Transformers.js contamination
+- [04-02]: GeneratorFn callable type alias for pipeline — ReturnType<typeof pipeline> too complex for TypeScript
+- [04-02]: BrowserAdapter.onStatusChange optional callback pattern — avoids circular dependency between adapter and store
 
 ### Pending Todos
 
@@ -63,5 +67,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: Completed .planning/phases/04-ai-infrastructure/04-01-PLAN.md
-Resume file: .planning/phases/04-ai-infrastructure/04-02-PLAN.md
+Stopped at: Completed .planning/phases/04-ai-infrastructure/04-02-PLAN.md
+Resume file: .planning/phases/04-ai-infrastructure/04-03-PLAN.md
