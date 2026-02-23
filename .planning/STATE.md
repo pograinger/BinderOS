@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 4 of 7 (AI Infrastructure)
-Plan: 3 of 3 in Phase 4 (complete)
-Status: In progress
-Last activity: 2026-02-22 — Phase 4 Plan 3 complete (cloud adapter, privacy proxy, key vault, AI settings panel, guided setup, cloud request preview)
+Plan: 4 of 4 in Phase 4 (complete — gap closure plan added)
+Status: Phase 4 complete
+Last activity: 2026-02-23 — Phase 4 Plan 4 complete (gap closure: main-thread NoOpAdapter init, AI round-trip proof verified)
 
-Progress: [█████░░░░░] 40% (v1.0 complete; v2.0 Phase 4 all 3/3 plans done)
+Progress: [█████░░░░░] 40% (v1.0 complete; v2.0 Phase 4 all 4/4 plans done)
 
 ## Performance Metrics
 
@@ -35,6 +35,7 @@ Progress: [█████░░░░░] 40% (v1.0 complete; v2.0 Phase 4 all 
 | Phase 04 P01 | 7 min | 2 tasks | 7 files |
 | Phase 04 P02 | 13 min | 2 tasks | 6 files |
 | Phase 04 P03 | 30 min | 3 tasks | 9 files |
+| Phase 04 P04 | 5 min | 1 task | 2 files |
 
 ## Accumulated Context
 
@@ -48,7 +49,9 @@ Recent decisions affecting current work:
 - [v2.0]: GSD-style question flows as core AI interaction pattern (3-4 options + freeform)
 - [v2.0]: Floating orb is the single AI entry point; AI mutations are additive, tagged, reversible
 - [v2.0]: Phases 6 and 7 flagged for research before planning (review session schema; GTD question flow design)
-- [04-01]: NoOpAdapter initialized in worker INIT handler for immediate pipeline verification on startup
+- [04-04]: NoOpAdapter must be initialized on the main thread (app.tsx) not in the BinderCore worker — browser workers have separate module registries; the worker-side call had no effect on the main-thread router
+- [04-04]: Dev-only dispatchAICommand test dispatch added to app.tsx onMount behind import.meta.env.DEV guard; Vite tree-shakes it from production builds
+- [04-01]: NoOpAdapter initialized in worker INIT handler for immediate pipeline verification on startup (superseded by 04-04 fix)
 - [04-01]: AIRequest.prompt typed as string (not Atom) — privacy boundary enforced at TypeScript compile time
 - [04-01]: AI UI setters (setAIEnabled etc.) are pure local store state — settings persistence to Dexie deferred to Phase 5
 - [04-02]: AI dispatch moved from BinderCore worker to main thread — BrowserAdapter cannot run in BinderCore worker without Transformers.js contamination
@@ -73,6 +76,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-22
-Stopped at: Completed .planning/phases/04-ai-infrastructure/04-03-PLAN.md
+Last session: 2026-02-23
+Stopped at: Completed .planning/phases/04-ai-infrastructure/04-04-PLAN.md
 Resume file: .planning/phases/05-triage/05-01-PLAN.md (next phase)
