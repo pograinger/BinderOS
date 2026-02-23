@@ -31,9 +31,10 @@ const MODEL_TIERS = {
   wasm: 'HuggingFaceTB/SmolLM2-135M-Instruct', // "Fast" tier
 } as const;
 
-// Active pipeline — null until initModel() completes
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let generator: any | null = null;
+// Active text-generation pipeline — null until initModel() completes
+// Typed as a callable to avoid the overly-complex Transformers.js union return types
+type GeneratorFn = (prompt: string, opts: Record<string, unknown>) => Promise<unknown>;
+let generator: GeneratorFn | null = null;
 
 // Pending abort controllers keyed by requestId
 // NOTE: Transformers.js pipeline does not natively support abort.
@@ -79,7 +80,7 @@ function postResponse(response: LLMResponse): void {
  * Initialize the SmolLM2 pipeline with download progress reporting.
  */
 async function initModel(modelId: string, device: 'webgpu' | 'wasm'): Promise<void> {
-  generator = await pipeline('text-generation', modelId, {
+  const pipe = await pipeline('text-generation', modelId, {
     device,
     dtype: device === 'webgpu' ? 'fp16' : 'q8',
     progress_callback: (progressInfo: ProgressInfo) => {
@@ -96,6 +97,8 @@ async function initModel(modelId: string, device: 'webgpu' | 'wasm'): Promise<vo
       }
     },
   });
+  // Cast to our simplified callable type — the pipeline is callable in JS
+  generator = pipe as unknown as GeneratorFn;
 }
 
 self.onmessage = async (event: MessageEvent<LLMCommand>) => {
@@ -141,8 +144,8 @@ self.onmessage = async (event: MessageEvent<LLMCommand>) => {
         abortControllers.set(requestId, controller);
 
         try {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const output: any = await generator(prompt, {
+          // Call pipeline — Transformers.js text-generation returns [{ generated_text: string }]
+          const output: unknown = await generator(prompt, {
             max_new_tokens: maxTokens ?? 256,
           });
 
@@ -155,10 +158,14 @@ self.onmessage = async (event: MessageEvent<LLMCommand>) => {
 
           // Extract generated text from pipeline output
           // Transformers.js text-generation returns: [{ generated_text: string }]
-          const generatedText: string =
+          const firstResult =
             Array.isArray(output) && output.length > 0
-              ? (output[0].generated_text as string) ?? ''
-              : String(output);
+              ? (output[0] as Record<string, unknown>)
+              : null;
+          const generatedText: string =
+            firstResult && typeof firstResult['generated_text'] === 'string'
+              ? firstResult['generated_text']
+              : '';
 
           postResponse({
             type: 'LLM_COMPLETE',

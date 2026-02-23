@@ -23,6 +23,13 @@
  * - LOG_INTERACTION: append interaction event to db.interactions with ring buffer
  *   (max 1000 entries; trimmed when count exceeds 1200 to avoid per-write trimming)
  * - INIT handler now hydrates savedFilters in the READY response
+ *
+ * Phase 4 additions:
+ * - INIT handler: setActiveAdapter(new NoOpAdapter()) for round-trip verification
+ * - AI_DISPATCH: NOT handled in this worker. AI dispatch is on the main thread
+ *   via dispatchAICommand() in store.ts. The BrowserAdapter (SmolLM2 inference)
+ *   manages its own dedicated LLM worker (src/worker/llm-worker.ts) from the
+ *   main thread to prevent Transformers.js contamination of the BinderCore worker.
  */
 import type { Command, Response } from '../types/messages';
 import type { Atom } from '../types/atoms';
@@ -41,7 +48,7 @@ import {
   handleArchiveSectionItem,
 } from './handlers/sections';
 import { getCapConfig, setCapConfig } from './handlers/config';
-import { dispatchAI, setActiveAdapter } from '../ai/router';
+import { setActiveAdapter } from '../ai/router';
 import { NoOpAdapter } from '../ai/adapters/noop';
 
 let core: BinderCore | null = null;
@@ -401,37 +408,11 @@ self.onmessage = async (event: MessageEvent<Command>) => {
       }
 
       case 'AI_DISPATCH': {
-        // Phase 4: AI dispatch is always user-initiated (AIST-04)
-        // Notify UI that processing has started
-        const activityResponse: Response = {
-          type: 'AI_STATUS',
-          payload: { aiActivity: 'Processing...' },
-        };
-        self.postMessage(activityResponse);
-
-        const result = await dispatchAI({
-          requestId: msg.payload.requestId,
-          prompt: msg.payload.prompt,
-          maxTokens: msg.payload.maxTokens,
-        });
-
-        const aiResponse: Response = {
-          type: 'AI_RESPONSE',
-          payload: {
-            requestId: result.requestId,
-            text: result.text,
-            provider: result.provider,
-            model: result.model,
-          },
-        };
-        self.postMessage(aiResponse);
-
-        // Clear activity indicator after response is sent
-        const clearActivity: Response = {
-          type: 'AI_STATUS',
-          payload: { aiActivity: null },
-        };
-        self.postMessage(clearActivity);
+        // Phase 4 architecture correction: AI dispatch is handled on the main thread
+        // via dispatchAICommand() in store.ts. The BrowserAdapter + LLM worker must
+        // live on the main thread — importing Transformers.js here would contaminate
+        // the BinderCore worker and risk OOM crashes during WASM scoring.
+        // This case is kept for Command type exhaustiveness only.
         break;
       }
 

@@ -46,6 +46,8 @@ import type {
 import { DEFAULT_CAP_CONFIG } from '../../types/config';
 import type { SavedFilter } from '../../storage/db';
 import type { AIProviderStatus } from '../../ai/adapters/adapter';
+import { dispatchAI } from '../../ai/router';
+import { BrowserAdapter } from '../../ai/adapters/browser';
 
 // --- State interface ---
 
@@ -299,6 +301,53 @@ export function setCloudAPIEnabled(enabled: boolean): void {
 
 export function setAIFirstRunComplete(complete: boolean): void {
   setState('aiFirstRunComplete', complete);
+}
+
+/**
+ * Dispatch an AI request directly from the main thread.
+ *
+ * Phase 4 architecture: AI dispatch bypasses the BinderCore worker entirely.
+ * The BrowserAdapter (SmolLM2) manages its own dedicated LLM worker via llm-bridge.ts.
+ * This prevents Transformers.js contamination of the BinderCore WASM worker.
+ *
+ * All dispatch is user-initiated — never called autonomously (AIST-04).
+ */
+export async function dispatchAICommand(prompt: string, maxTokens?: number): Promise<void> {
+  const requestId = crypto.randomUUID();
+  setState('aiActivity', 'Processing...');
+  try {
+    await dispatchAI({ requestId, prompt, maxTokens });
+    // AI activity cleared on completion — further result handling added in Phase 5 (triage, review)
+    setState('aiActivity', null);
+  } catch (err) {
+    setState('aiActivity', null);
+    setState('lastError', err instanceof Error ? err.message : String(err));
+  }
+}
+
+/**
+ * Initialize the BrowserAdapter and wire its status changes into the store.
+ *
+ * Call when the user enables browser LLM (browserLLMEnabled becomes true).
+ * The adapter's onStatusChange callback forwards llmStatus, llmDevice, llmModelId,
+ * and llmDownloadProgress updates from the LLM worker into reactive store state.
+ *
+ * Returns the initialized adapter so the caller can call setActiveAdapter(adapter)
+ * on the router (e.g., in App.tsx initialization flow).
+ */
+export async function initBrowserAdapter(): Promise<BrowserAdapter> {
+  const browserAdapter = new BrowserAdapter();
+
+  // Wire LLM worker status changes into the store
+  browserAdapter.onStatusChange = (update) => {
+    if (update.status !== undefined) setState('llmStatus', update.status);
+    if (update.device !== undefined) setState('llmDevice', update.device as 'webgpu' | 'wasm');
+    if (update.modelId !== undefined) setState('llmModelId', update.modelId);
+    if (update.downloadProgress !== undefined) setState('llmDownloadProgress', update.downloadProgress);
+  };
+
+  await browserAdapter.initialize();
+  return browserAdapter;
 }
 
 // --- Derived signals ---
