@@ -22,8 +22,10 @@
 
 import { createSignal, onMount, onCleanup, Show } from 'solid-js';
 import { initWorker } from './worker/bridge';
-import { sendCommand, state, setActivePage, setSelectedAtomId, setPersistenceGranted } from './ui/signals/store';
+import { sendCommand, state, setActivePage, setSelectedAtomId, setPersistenceGranted, dispatchAICommand } from './ui/signals/store';
 import { initStoragePersistence } from './storage/persistence';
+import { setActiveAdapter } from './ai/router';
+import { NoOpAdapter } from './ai/adapters/noop';
 import { Shell, setShowAISettings } from './ui/layout/Shell';
 import { CaptureOverlay } from './ui/views/CaptureOverlay';
 import { SearchOverlay } from './ui/views/SearchOverlay';
@@ -62,6 +64,21 @@ function App() {
       // (Worker thread may not see installed-PWA status, causing false denials)
       const persistence = await initStoragePersistence();
       setPersistenceGranted(persistence.granted);
+
+      // Initialize NoOpAdapter on the main thread so dispatchAICommand() has a working adapter.
+      // The worker module scope is separate — setActiveAdapter() in worker.ts does NOT affect the
+      // main-thread router instance that store.ts imports. This fixes the "No AI adapter available"
+      // error from dispatchAICommand() on the main thread.
+      setActiveAdapter(new NoOpAdapter());
+
+      // Dev-only: verify AI round-trip works (Phase 4 gap closure proof)
+      if (import.meta.env.DEV) {
+        dispatchAICommand('Phase 4 round-trip test').then(() => {
+          console.log('[BinderOS] AI round-trip verified: NoOp adapter responded');
+        }).catch((err) => {
+          console.error('[BinderOS] AI round-trip FAILED:', err);
+        });
+      }
     } catch (err) {
       console.error('[BinderOS] Worker initialization failed:', err);
     }

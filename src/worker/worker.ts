@@ -25,7 +25,7 @@
  * - INIT handler now hydrates savedFilters in the READY response
  *
  * Phase 4 additions:
- * - INIT handler: setActiveAdapter(new NoOpAdapter()) for round-trip verification
+ * - INIT handler: NoOpAdapter now initialized on main thread (app.tsx) — worker module scope is separate
  * - AI_DISPATCH: NOT handled in this worker. AI dispatch is on the main thread
  *   via dispatchAICommand() in store.ts. The BrowserAdapter (SmolLM2 inference)
  *   manages its own dedicated LLM worker (src/worker/llm-worker.ts) from the
@@ -48,8 +48,6 @@ import {
   handleArchiveSectionItem,
 } from './handlers/sections';
 import { getCapConfig, setCapConfig } from './handlers/config';
-import { setActiveAdapter } from '../ai/router';
-import { NoOpAdapter } from '../ai/adapters/noop';
 
 let core: BinderCore | null = null;
 
@@ -195,8 +193,7 @@ self.onmessage = async (event: MessageEvent<Command>) => {
           void flushAndSendState();
         }, 10 * 60 * 1000);
 
-        // Phase 4: Initialize AI with no-op adapter for round-trip verification
-        setActiveAdapter(new NoOpAdapter());
+        // NoOpAdapter now initialized on main thread (app.tsx) — worker module scope is separate
 
         break;
       }
