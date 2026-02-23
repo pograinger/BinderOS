@@ -21,6 +21,14 @@
  * - selectedAtomId (string | null): currently selected atom for detail view
  * - selectedAtom derived memo: resolves selectedAtomId to Atom | null
  * - setSelectedAtomId() setter for navigation and detail views
+ *
+ * Phase 4 additions:
+ * - aiEnabled / browserLLMEnabled / cloudAPIEnabled: user AI settings (all disabled by default per AIST-01)
+ * - llmStatus / cloudStatus: provider lifecycle status
+ * - llmModelId / llmDevice / llmDownloadProgress: LLM worker metadata
+ * - aiActivity: current in-progress AI request description (null when idle)
+ * - aiFirstRunComplete: whether user has completed initial AI onboarding
+ * - llmReady / cloudReady / anyAIAvailable: derived reactive signals
  */
 
 import { createMemo, untrack } from 'solid-js';
@@ -37,6 +45,7 @@ import type {
 } from '../../types/config';
 import { DEFAULT_CAP_CONFIG } from '../../types/config';
 import type { SavedFilter } from '../../storage/db';
+import type { AIProviderStatus } from '../../ai/adapters/adapter';
 
 // --- State interface ---
 
@@ -60,6 +69,17 @@ export interface BinderState {
   // Phase 3: filters and selection
   savedFilters: SavedFilter[];
   selectedAtomId: string | null;
+  // Phase 4: AI infrastructure
+  aiEnabled: boolean;
+  browserLLMEnabled: boolean;
+  cloudAPIEnabled: boolean;
+  llmStatus: AIProviderStatus;
+  cloudStatus: AIProviderStatus;
+  llmModelId: string | null;
+  llmDevice: 'webgpu' | 'wasm' | null;
+  llmDownloadProgress: number | null;
+  aiActivity: string | null;
+  aiFirstRunComplete: boolean;
 }
 
 const initialState: BinderState = {
@@ -82,6 +102,17 @@ const initialState: BinderState = {
   // Phase 3 defaults
   savedFilters: [],
   selectedAtomId: null,
+  // Phase 4 defaults (all AI disabled by default per AIST-01)
+  aiEnabled: false,
+  browserLLMEnabled: false,
+  cloudAPIEnabled: false,
+  llmStatus: 'disabled',
+  cloudStatus: 'disabled',
+  llmModelId: null,
+  llmDevice: null,
+  llmDownloadProgress: null,
+  aiActivity: null,
+  aiFirstRunComplete: false,
 };
 
 // --- Create the store ---
@@ -182,6 +213,40 @@ onMessage((response) => {
     case 'PONG':
       // No state update needed for ping/pong
       break;
+
+    case 'AI_RESPONSE':
+      // Clear activity indicator on completion
+      setState('aiActivity', null);
+      // Update provider status fields if included in response
+      if (response.payload.llmStatus !== undefined) {
+        setState('llmStatus', response.payload.llmStatus);
+      }
+      if (response.payload.cloudStatus !== undefined) {
+        setState('cloudStatus', response.payload.cloudStatus);
+      }
+      break;
+
+    case 'AI_STATUS':
+      // Update AI status fields from payload (partial update — only set fields present)
+      if (response.payload.llmStatus !== undefined) {
+        setState('llmStatus', response.payload.llmStatus);
+      }
+      if (response.payload.cloudStatus !== undefined) {
+        setState('cloudStatus', response.payload.cloudStatus);
+      }
+      if (response.payload.llmModelId !== undefined) {
+        setState('llmModelId', response.payload.llmModelId ?? null);
+      }
+      if (response.payload.llmDevice !== undefined) {
+        setState('llmDevice', response.payload.llmDevice ?? null);
+      }
+      if (response.payload.llmDownloadProgress !== undefined) {
+        setState('llmDownloadProgress', response.payload.llmDownloadProgress ?? null);
+      }
+      if (response.payload.aiActivity !== undefined) {
+        setState('aiActivity', response.payload.aiActivity ?? null);
+      }
+      break;
   }
 });
 
@@ -216,6 +281,24 @@ export function setSelectedAtomId(id: string | null): void {
  */
 export function setPersistenceGranted(granted: boolean): void {
   setState('persistenceGranted', granted);
+}
+
+// --- Phase 4: AI UI state setters ---
+
+export function setAIEnabled(enabled: boolean): void {
+  setState('aiEnabled', enabled);
+}
+
+export function setBrowserLLMEnabled(enabled: boolean): void {
+  setState('browserLLMEnabled', enabled);
+}
+
+export function setCloudAPIEnabled(enabled: boolean): void {
+  setState('cloudAPIEnabled', enabled);
+}
+
+export function setAIFirstRunComplete(complete: boolean): void {
+  setState('aiFirstRunComplete', complete);
 }
 
 // --- Derived signals ---
@@ -279,3 +362,20 @@ export const taskCapStatus = createMemo((): 'ok' | 'warning' | 'full' => {
 export const selectedAtom = createMemo((): Atom | null => {
   return state.atoms.find((a) => a.id === state.selectedAtomId) ?? null;
 });
+
+// Phase 4: AI derived signals
+
+/**
+ * Reactive signal: true when the browser LLM adapter is ready to serve requests.
+ */
+export const llmReady = createMemo(() => state.llmStatus === 'available');
+
+/**
+ * Reactive signal: true when the cloud API adapter is ready to serve requests.
+ */
+export const cloudReady = createMemo(() => state.cloudStatus === 'available');
+
+/**
+ * Reactive signal: true when any AI adapter is available (browser or cloud).
+ */
+export const anyAIAvailable = createMemo(() => llmReady() || cloudReady());

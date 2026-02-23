@@ -41,6 +41,8 @@ import {
   handleArchiveSectionItem,
 } from './handlers/sections';
 import { getCapConfig, setCapConfig } from './handlers/config';
+import { dispatchAI, setActiveAdapter } from '../ai/router';
+import { NoOpAdapter } from '../ai/adapters/noop';
 
 let core: BinderCore | null = null;
 
@@ -185,6 +187,9 @@ self.onmessage = async (event: MessageEvent<Command>) => {
         setInterval(() => {
           void flushAndSendState();
         }, 10 * 60 * 1000);
+
+        // Phase 4: Initialize AI with no-op adapter for round-trip verification
+        setActiveAdapter(new NoOpAdapter());
 
         break;
       }
@@ -392,6 +397,41 @@ self.onmessage = async (event: MessageEvent<Command>) => {
           await db.interactions.bulkDelete(oldest as string[]);
         }
         // No flushAndSendState — interactions are fire-and-forget, no UI update needed
+        break;
+      }
+
+      case 'AI_DISPATCH': {
+        // Phase 4: AI dispatch is always user-initiated (AIST-04)
+        // Notify UI that processing has started
+        const activityResponse: Response = {
+          type: 'AI_STATUS',
+          payload: { aiActivity: 'Processing...' },
+        };
+        self.postMessage(activityResponse);
+
+        const result = await dispatchAI({
+          requestId: msg.payload.requestId,
+          prompt: msg.payload.prompt,
+          maxTokens: msg.payload.maxTokens,
+        });
+
+        const aiResponse: Response = {
+          type: 'AI_RESPONSE',
+          payload: {
+            requestId: result.requestId,
+            text: result.text,
+            provider: result.provider,
+            model: result.model,
+          },
+        };
+        self.postMessage(aiResponse);
+
+        // Clear activity indicator after response is sent
+        const clearActivity: Response = {
+          type: 'AI_STATUS',
+          payload: { aiActivity: null },
+        };
+        self.postMessage(clearActivity);
         break;
       }
 

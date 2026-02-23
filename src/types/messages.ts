@@ -18,6 +18,11 @@
  * - DELETE_FILTER command (removes a saved filter by id)
  * - LOG_INTERACTION command (records a search/filter/click interaction event)
  * - STATE_UPDATE extended with savedFilters array
+ *
+ * Phase 4 additions:
+ * - AI_DISPATCH command (user-initiated AI request through adapter router)
+ * - AI_RESPONSE response (adapter result back to store)
+ * - AI_STATUS response (provider status updates: loading, available, error, etc.)
  */
 
 import type { Atom, AtomType, CreateAtomInput, InboxItem } from './atoms';
@@ -29,6 +34,7 @@ import type {
   CapConfig,
 } from './config';
 import type { SavedFilter, InteractionEvent } from '../storage/db';
+import type { AIProviderStatus } from '../ai/adapters/adapter';
 
 // --- Commands (main thread -> Worker) ---
 
@@ -53,7 +59,9 @@ export type Command =
   // Phase 3: filter and interaction commands
   | { type: 'SAVE_FILTER'; payload: SavedFilter }
   | { type: 'DELETE_FILTER'; payload: { id: string } }
-  | { type: 'LOG_INTERACTION'; payload: Omit<InteractionEvent, 'id'> };
+  | { type: 'LOG_INTERACTION'; payload: Omit<InteractionEvent, 'id'> }
+  // Phase 4: AI dispatch (always user-initiated per AIST-04)
+  | { type: 'AI_DISPATCH'; payload: { requestId: string; prompt: string; maxTokens?: number } };
 
 // --- Responses (Worker -> main thread) ---
 
@@ -87,4 +95,27 @@ export type Response =
   | { type: 'ERROR'; payload: { message: string; command?: string } }
   | { type: 'EXPORT_READY'; payload: { blob: Blob; filename: string } }
   | { type: 'PERSISTENCE_STATUS'; payload: { granted: boolean } }
-  | { type: 'CAP_EXCEEDED'; payload: { capType: 'inbox' | 'task'; cap: number } };
+  | { type: 'CAP_EXCEEDED'; payload: { capType: 'inbox' | 'task'; cap: number } }
+  // Phase 4: AI responses
+  | {
+      type: 'AI_RESPONSE';
+      payload: {
+        requestId: string;
+        text: string;
+        provider: 'noop' | 'browser' | 'cloud';
+        model?: string;
+        llmStatus?: AIProviderStatus;
+        cloudStatus?: AIProviderStatus;
+      };
+    }
+  | {
+      type: 'AI_STATUS';
+      payload: {
+        llmStatus?: AIProviderStatus;
+        cloudStatus?: AIProviderStatus;
+        llmModelId?: string | null;
+        llmDevice?: 'webgpu' | 'wasm' | null;
+        llmDownloadProgress?: number | null;
+        aiActivity?: string | null;
+      };
+    };
