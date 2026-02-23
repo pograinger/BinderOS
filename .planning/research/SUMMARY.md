@@ -1,245 +1,276 @@
 # Project Research Summary
 
-**Project:** BinderOS
-**Domain:** Local-first, browser-only personal information management (PIM) with Rust/WASM compute, information-theoretic entropy management, and pluggable AI
-**Researched:** 2026-02-21
-**Confidence:** MEDIUM-HIGH (stack and pitfalls HIGH; architecture and feature differentiators MEDIUM)
+**Project:** BinderOS v2.0 — AI Orchestration Layer
+**Domain:** Local-first browser PKM/GTD tool with in-browser LLM + cloud API AI integration
+**Researched:** 2026-02-22 (v2.0 AI milestone; see v1.0 entry at bottom for prior core research)
+**Confidence:** MEDIUM-HIGH (infrastructure patterns HIGH; GTD-specific AI UX MEDIUM; browser LLM performance numbers MEDIUM)
 
 ## Executive Summary
 
-BinderOS is a fundamentally different PKM tool: it enforces information hygiene through hard caps, mandatory type classification, and staleness decay rather than allowing indefinite accumulation. The research confirms this thesis is technically viable and competitively distinct — no existing tool (Notion, Obsidian, Tana, Capacities) enforces caps, computes priority as a decay function, or surfaces entropy as a first-class health metric. The recommended build approach is a layered architecture: Rust/WASM compute engine for scoring and validation, a Web Worker bridge to keep compute off the main thread, Dexie.js/IndexedDB as the persistent atom store, and SolidJS for fine-grained reactive UI. The toolchain is modern but requires care: wasm-pack is dead (archived July 2025) and must be replaced with a three-step cargo/wasm-bindgen-cli/wasm-opt pipeline.
+BinderOS v2.0 adds an AI orchestration layer on top of a fully operational v1.0 foundation (SolidJS 1.9 + Rust/WASM + Dexie.js + semantic embeddings + entropy engine). The central design challenge is not building AI features — it is integrating AI as an advisor into a system whose primary value proposition is that the user remains the sole author of all knowledge. Every AI capability must fit an additive, approval-gated model: AI suggests, user decides, changes flow through the existing mutation pipeline, and are tagged with `source: 'ai'` in the changelog. This constraint is non-negotiable and must drive every architecture decision from the start.
 
-The biggest technical risk is not performance — it is browser storage durability. Safari's ITP will silently delete all user data after 7 days of inactivity without `navigator.storage.persist()`. This is a trust-destroying failure for a personal information system and must be addressed in Phase 1, not deferred. The second major risk is product risk: the entropy management system that makes BinderOS valuable (hard caps, decay scoring, compression prompts) is precisely what can make users feel punished and anxious rather than supported. The implementation must treat every enforcement mechanism as advisory-first, with soft warnings before hard blocks, forgiving decay curves for new users, and deferrable compression prompts. Getting this UX balance wrong kills the product regardless of technical quality.
+The recommended approach is a tiered AI infrastructure: `@huggingface/transformers` (already installed at v3.8.1) running SmolLM2-135M/360M-Instruct in a dedicated `llm-worker.ts` for fast classification tasks, with Anthropic Claude (Haiku) via raw `fetch` + `fetch-event-stream` as the cloud tier for conversational review flows. The floating orb is the single AI entry point — a context-aware, always-visible trigger that reads the existing SolidJS reactive store and surfaces the most relevant AI action based on current page, selected atom, and entropy level. The orb dispatches commands through the existing bridge protocol; AI adapters live entirely in the worker scope; the BinderCore WASM module and all existing handlers remain untouched.
 
-IronCalc embedded spreadsheets and WebLLM in-browser AI are compelling differentiators but both carry meaningful uncertainty: IronCalc is pre-v1 with an incomplete feature set, and WebGPU-based AI is unavailable in Firefox and on most mobile. Both should be built behind the pluggable interfaces already planned (AI provider interface, on-demand WASM loading) and deferred to post-MVP validation phases. The MVP validation goal is singular and clear: prove that a system that forces you to throw things away is more useful than one that lets you keep everything.
+The top risks are architectural and must be solved in Phase 1 before any feature is built: running AI inference in the existing data worker (blocks all atom mutations during LLM calls), skipping the dedicated LLM worker isolation (LLM OOM crashes take down IndexedDB), missing the required Anthropic CORS header (silent failure), and building proactive orb nudges by default (suggestion fatigue within two weeks). Retrofitting the correct architecture after building features on top of the wrong foundation is expensive enough to invalidate the entire milestone.
+
+---
 
 ## Key Findings
 
 ### Recommended Stack
 
-The stack is SolidJS 1.9.x for the UI (fine-grained signal reactivity is critical at the WASM↔UI boundary — React's VDOM reconciler adds overhead that compounds with WASM state changes), Rust/WASM for compute-intensive logic (priority scoring, staleness decay, atom validation, link graph), and Dexie.js 4.0.x over IndexedDB for structured persistence. All WASM operations must live in a dedicated Web Worker to keep the main thread free for UI rendering. The three-step WASM build pipeline is cargo → wasm-bindgen-cli → wasm-opt; wasm-pack must not be used (archived July 2025). IronCalc 0.7.x is the planned embedded spreadsheet engine but is explicitly early-stage and should be loaded on demand, not bundled at startup.
+The v1.0 stack is confirmed stable and requires no changes. v2.0 stack additions are minimal by design. Only `fetch-event-stream` (741 bytes) is a new required dependency; `@mlc-ai/web-llm` is optional and user opt-in only. See [STACK.md](.planning/research/STACK.md) for full details.
 
-**Core technologies:**
-- **SolidJS 1.9.x**: UI framework — fine-grained signal reactivity with 7KB runtime; zero VDOM overhead at WASM state boundary; v2.0 is in development but not production-ready
-- **Rust + wasm-bindgen 0.2.109**: WASM core — priority scoring, entropy engine, validation, mutation log; serde-wasm-bindgen for efficient boundary serialization (3-10x faster than JSON)
-- **Dexie.js 4.0.x + solid-dexie**: IndexedDB persistence — schema versioning, typed queries, reactive live queries bridged to SolidJS signals
-- **Zod 4.x**: Runtime schema validation — validates all atom mutations before they touch IndexedDB; single schema generates TS types and runtime validators
-- **Vite 7.3.x + vite-plugin-wasm + vite-plugin-top-level-await**: Build toolchain — required plugin trio for ESM-compatible WASM loading
-- **@solidjs/router 0.14.x**: Client-side routing — pure SPA mode, no server required
-- **@mlc-ai/web-llm 0.2.x (optional)**: In-browser LLM — WebGPU-accelerated, plugged in as one implementation of the AI provider interface
-- **@ironcalc/wasm 0.7.x (deferred)**: Embedded spreadsheets — Rust-native, load on demand only; treat as post-MVP differentiator
+**Core technologies (new in v2.0):**
+- `fetch-event-stream` 0.1.6 — SSE streaming for cloud API; replaces any SDK; 741 bytes, zero dependencies
+- `@huggingface/transformers` 3.8.1 (already installed) — SmolLM2-135M/360M-Instruct for browser LLM classification; same pipeline API already used for semantic embeddings
+- Raw `fetch` (no OpenAI/Anthropic SDKs) — Anthropic supports direct browser CORS; OpenAI does not; `openai` npm (~17KB) and `@anthropic-ai/sdk` (~15KB) are unnecessary bloat for a browser-only app
+- `@mlc-ai/web-llm` 0.2.81 — optional, user opt-in only; WebGPU-accelerated; NOT loaded by default
 
-See `.planning/research/STACK.md` for full version matrix, build pipeline details, and alternatives considered.
+**Critical constraints:**
+- Do NOT upgrade `@huggingface/transformers` to v4 (`@next`) — preview only as of Feb 9 2026; API unstable
+- SmolLM2-135M for fast triage classification (~150MB download, ~100-300ms/token on CPU); SmolLM2-360M for higher-quality tasks (~300MB); neither bundled — fetched from HuggingFace CDN on first use
+- Use Cache API (not IndexedDB) for model weight storage; call `navigator.storage.persist()` before caching
+- WebLLM in single-threaded mode by default — multi-threaded requires COOP/COEP headers that can break cross-origin assets across the entire page
 
 ### Expected Features
 
-The PKM market has converged on two failure modes: accumulation tools (users add indefinitely, nothing gets removed) and over-engineered systems (too much friction, abandoned in 30 days). BinderOS's information-theory framing directly attacks failure mode #1. The MVP must validate that enforced caps and structured classification are liberating, not punishing.
+The v2.0 AI feature set builds directly on v1.0's entropy engine and semantic embeddings — BinderOS's AI reads the entropy state before making suggestions, which no competitor does. See [FEATURES.md](.planning/research/FEATURES.md) for full competitor analysis and prioritization matrix.
 
-**Must have — table stakes (v1):**
-- Fast capture via global hotkey — frictionless entry is non-negotiable; users abandon tools that require navigation to capture
-- Five typed atoms (Task, Fact, Event, Decision, Insight) with mandatory classification — the foundational differentiator; must be non-bypassable
-- Inbox with hard cap — validates the cap mechanic; if users hate it, the thesis is wrong (learn fast)
-- Sections (Projects, Areas, Resources, Archive) and Pages as queries — structural scaffolding; pages must never store data
-- Staleness decay with per-atom visual indicator — validates entropy management thesis
-- Entropy health indicator (green/yellow/red, always visible) — this IS the product's core concept made visible
-- Computed priority scoring (P = f(deadline, importance, recency, dependencies, energy)) — replaces static manual flags
-- Full-text search across all atom types — if you can't find it, it doesn't exist
-- Data export (JSON + Markdown) — trust requires users know they can leave; ship on day one
-- Offline operation, change log / undo — trust and data safety are table stakes
+**Must have (table stakes) — v2.0 launch:**
+- Pluggable AI interface — abstract provider routing to browser WASM, cloud API, or null (no-op); everything degrades gracefully
+- AI-suggested atom type and section during inbox triage — expected by any user who knows the system has typed atoms
+- Accept / dismiss per-suggestion — missing this means users feel railroaded
+- Visual distinction of AI-generated content — persistent AI badge on all AI-sourced atoms (never look identical to user content)
+- AI changelog tagging (`source: 'user' | 'ai'`) — foundation for reversibility and trust; low effort, high trust
+- Opt-in / opt-out control over AI (privacy-first audience expects explicit control)
+- Reasoning shown per suggestion — "Suggested because this task is 45 days old with no activity"
+- Floating orb as single AI entry point with GTD action menu
+- Review pre-analysis briefing — AI-generated entropy state summary before weekly review begins
 
-**Should have — competitive differentiators (v1.x after validation):**
-- Link density tracking and backlinks UI — add once organic linking behavior is established
-- Compression ritual suggestions (non-AI first) — surface stale + zero-link atoms as a list; validate the ritual concept before adding AI complexity
-- Full keyboard-driven navigation and command palette — polish once structure is stable
-- Tags and advanced saved filters — add when section + type proves insufficient
+**Should have (differentiators) — v2.x after validation:**
+- Guided GTD weekly review (Get Clear / Get Current / Get Creative conversational flow via cloud API)
+- Compression coach with AI explanations (why an atom is stale — today it's mechanical, AI adds reasoning)
+- Related atoms surface during triage (2-3 semantically similar existing atoms alongside classification suggestion)
+- AI-suggested priority signal overlay (shown during review only, never persistently)
 
-**Defer (v2+):**
-- AI orchestration (compression, prioritization suggestions) — requires stable data model and enough user data for AI to act on meaningfully
-- IronCalc embedded spreadsheets — high implementation cost, unclear user demand; validate via interviews first
-- CRDT-based P2P sync and multi-device support — design data model to allow it, don't ship it in v1
-- Mobile web optimization — post-MVP; design data model with future CRDT sync in mind
+**Defer (v3+):**
+- On-device model selection UI and model download management
+- Review history and trend analysis (requires data accumulation over time)
+- AI-assisted natural language capture (high risk of bypassing the classification ritual that defines BinderOS)
 
-**Anti-features to avoid explicitly:** Unlimited inbox, free-form untyped notes, real-time collaboration, managed cloud sync, daily notes/journal, plugin ecosystem, AI-generated atom content.
-
-See `.planning/research/FEATURES.md` for full feature dependency graph, competitor analysis, and prioritization matrix.
+**Anti-features — explicitly do not build:**
+- AI auto-creates or auto-classifies atoms without approval (defeats the classification ritual)
+- AI-generated atom content — AI suggests metadata only, never content; user is sole author
+- Autonomous review agents running on a schedule
+- AI priority override of the deterministic entropy engine
+- Persistent AI behavioral learning model (privacy surface, complexity, not needed for good classification)
+- Chat sidebar as primary AI interface — structured question flows are the correct model for GTD reviews
 
 ### Architecture Approach
 
-The system uses four distinct layers: a SolidJS presentation layer on the main thread that reads only from signal stores (never touches WASM directly), a Web Worker thread that owns all WASM compute and IndexedDB writes, a Storage layer (IndexedDB for structured atoms, OPFS for future binary blobs), and a pluggable AI Adapter layer that defaults to a no-op and must be explicitly enabled per-provider. All state flows unidirectionally: IndexedDB (source of truth) → WASM in-memory store (operational truth) → SolidJS signal store (UI projection). All writes flow through the Worker via typed command messages; the UI never calls IndexedDB or WASM directly.
+The integration is additive: 6 existing files are extended (types, store, worker, app), all existing handlers remain unchanged, and 3 new worker files plus 3 new UI components are created. The key structural decision is three separate worker threads: the existing BinderCore worker (WASM + Dexie), a new dedicated LLM worker (Transformers.js inference), and cloud API calls routed through the AI adapter inside a separate AI adapter scope. See [ARCHITECTURE.md](.planning/research/ARCHITECTURE.md) for the full component diagram and all data flow sequences.
 
 **Major components:**
-1. **SolidJS UI (main thread)** — renders from signals only; sends typed commands to Worker; ESLint SolidJS plugin mandatory to catch destructuring reactivity bugs
-2. **Web Worker + WASM Bridge** — owns all WASM calls; owns all IndexedDB reads/writes; the only path for state mutation
-3. **WASM Core (Rust)** — atom schema enforcement, validation, mutation log, link graph, priority scoring, entropy scoring; built as Cargo workspace; panic = abort in release builds
-4. **IndexedDB / Dexie** — structured atom persistence with schema versioning; write-queue pattern mandatory (never one transaction per write)
-5. **AI Adapter Layer** — TypeScript interface; no-op by default; OpenAI, WebLLM, and Ollama adapters as optional implementations; AI suggestions are proposals only, never auto-commits
+1. **Floating Orb** (`FloatingOrb.tsx`) — Portal-rendered, always-visible; reads `state.activePage`, `selectedAtom()`, `state.entropyScore` reactively from existing store via `createMemo`; dispatches typed AI commands; never receives props (portal boundary)
+2. **AI Adapter layer** (`src/worker/ai/`) — `interface.ts` + `noop.ts` + `browser-llm.ts` + `cloud-api.ts`; lives entirely in worker scope; UI never calls AI directly
+3. **LLM Worker** (`llm-worker.ts`) — dedicated Transformers.js worker; owns SmolLM2 model; typed `INFER / INFER_RESULT` protocol; separate from existing `embedding-worker.ts`
+4. **AI Suggestion Tray** (`AISuggestionTray.tsx`) — approve/reject UI; dispatches `AI_APPLY_SUGGESTION` which calls the same existing handlers user commands call, tagged `source: 'ai'` in changelog
+5. **Extended store** (`store.ts`) — new `aiState` slice (`aiStatus`, `aiSuggestions[]`, `conversationTurn`) added to existing `BinderState`; no restructuring of existing state
+6. **Separate AI message protocol** (`types/ai-messages.ts`) — AI command/response types in a SEPARATE file from `types/messages.ts` to preserve the exhaustiveness check in worker.ts
 
-**Key patterns:**
-- Worker-Owned WASM, Signal-Projected UI (foundational — WASM never imported in `ui/` code)
-- Command Pattern with Mutation Log (every atom write is a typed, logged command)
-- Pages as Queries, Never Storage (pages define filter + sort rules; no atom data stored per-page)
-- AI Adapter Interface (pluggable from day one; no-op is the default; hardcoding breaks users without that provider)
-
-See `.planning/research/ARCHITECTURE.md` for full data flow diagrams, component boundaries, and build order.
+**Build order (violating this causes rework):**
+Protocol + store extensions → no-op AI adapter → LLM Worker + browser adapter → cloud API adapter → Floating Orb UI → Suggestion Tray UI → feature-specific flows (triage, review, compression).
 
 ### Critical Pitfalls
 
-1. **Browser storage eviction (Safari ITP)** — call `navigator.storage.persist()` at first launch, display grant status in the entropy health indicator, and ship data export in Phase 1 (not Phase 3). Without this, Safari deletes all user data after 7 days of inactivity with no warning.
+See [PITFALLS.md](.planning/research/PITFALLS.md) for all 16 pitfalls with prevention checklists, recovery strategies, and production verification steps. Top 5 requiring Phase 1 resolution:
 
-2. **IndexedDB transaction batching** — never open one transaction per write. All IndexedDB writes must go through a write queue with debounce (200-500ms). Per-write transactions cause 10-25x slowdowns; SolidJS fine-grained reactivity makes this easy to trigger accidentally.
+1. **Running AI inference in the existing BinderCore worker** — Cloud API calls (2-10s) and LLM inference (5-60s) block the worker event loop, freezing all atom mutations and scoring. Prevention: dedicated AI Worker separate from data worker; AI commands in `types/ai-messages.ts` not `types/messages.ts`; data worker never awaits LLM.
 
-3. **WASM panic poisoning** — compile with `panic = "abort"` in release builds; wrap all public WASM functions in `catch_unwind`. After a panic, the module is in undefined state and will return silently incorrect results. Treat a thrown WASM exception as a dead module — reload it.
+2. **Missing `anthropic-dangerous-direct-browser-access: true` header** — Anthropic requires this exact header for direct browser CORS; without it every call silently fails with a CORS error. OpenAI has no browser CORS support at all — do not attempt direct browser calls to `api.openai.com`. Prevention: hardcode the Anthropic header in `ai/cloud-api.ts` with a comment explaining why.
 
-4. **SolidJS destructuring kills reactivity** — never destructure props or store paths; always use `props.value` and `store.atoms.list`. This is a silent failure (no warnings, no errors) where components render correctly once but never update. Install the `eslint-plugin-solid` ruleset in Phase 1 before any component is written.
+3. **Combining LLM Worker memory with BinderCore Worker** — SmolLM2-360M at q8 = ~180MB RAM; on 8GB devices combined with BinderCore WASM, Chrome OOM-kills the tab. Prevention: dedicated `llm-worker.ts`; check `performance.memory` before model load; call `engine.unload()` on idle timeout (5 minutes).
 
-5. **Entropy system as guilt machine** — hard caps and decay scoring will make users feel punished if implemented strictly. Use soft warnings at 80% of cap, hard block with resolution UI at 100%, forgiving decay curves for new users (first 30 days), and deferrable compression prompts. Test the emotional experience with real usage before enforcing any cap.
+4. **API key stored in `localStorage`** — readable by any browser extension with storage permission; documented real-world theft targeting AI productivity tools. Prevention: memory-only by default (re-enter each session); if persistence required, encrypt with Web Crypto AES-GCM; always show security disclosure in settings UI.
 
-See `.planning/research/PITFALLS.md` for the full pitfall inventory including performance traps, security mistakes, UX pitfalls, and the "looks done but isn't" checklist.
+5. **Proactive orb nudges enabled by default** — 46% of developers distrust AI accuracy (Stack Overflow 2025); unsolicited wrong suggestions accelerate distrust 3x vs. solicited ones. Fatigue builds within 2 weeks. Prevention: orb is static (no pulse, no badge) by default; all proactive behavior is explicit opt-in in settings; dismissed suggestions respect 24-hour cooldown.
+
+---
 
 ## Implications for Roadmap
 
-Architecture research defines a strict dependency chain that the roadmap must follow. Violating this order causes rework. The suggested phase structure maps directly onto that chain, front-loading the foundation that all differentiating features depend on.
+The research defines a natural 4-phase build order driven by the dependency graph: infrastructure before features, features before the orb's full depth, and lower-stakes features before higher-stakes ones. Building the floating orb before the features it surfaces are ready creates a hollow first impression.
 
-### Phase 1: Foundation — Storage, Types, and UI Shell
+### Phase 1: AI Infrastructure Foundation
 
-**Rationale:** Every BinderOS differentiator (typed atoms, scored priority, entropy health) depends on the atom schema and the Worker/WASM architecture being in place first. The storage pitfalls (Safari eviction, IndexedDB batching, OPFS worker requirement) must be solved before any data is stored — they cannot be retrofitted. SolidJS ESLint rules must be installed before any component is written. This phase has no prerequisites and many dependents.
+**Rationale:** Every AI feature depends on the same foundations: worker isolation, AI adapter interface, message protocol extension, store extension, security model, WebGPU detection, and offline degradation strategy. Building any AI feature before these exist means rebuilding that feature when the architecture is corrected. This phase has zero user-visible AI — it delivers the backbone everything else plugs into.
 
-**Delivers:** Typed atom schema (TypeScript + Zod), IndexedDB/Dexie storage with write-queue pattern, Web Worker bridge, SolidJS signal store, UI shell (sidebar, tab bar, main pane), `navigator.storage.persist()` flow, and data export. A working inbox where atoms can be created, classified, and persisted.
+**Delivers:**
+- `types/ai-messages.ts` — separate AI command/response protocol; preserves exhaustiveness check in `worker.ts`
+- `aiState` slice added to `BinderState` (`aiStatus`, `aiSuggestions[]`, `conversationTurn`)
+- `source: 'user' | 'ai'` field added to `MutationLogEntry` in `changelog.ts`
+- `src/worker/ai/` with `interface.ts` + `noop.ts`; AI commands routed in `worker.ts` to no-op (end-to-end message flow proven with no real AI)
+- `llm-worker.ts` with SmolLM2-360M-Instruct via Transformers.js; typed `INFER / INFER_RESULT` protocol
+- `src/worker/ai/browser-llm.ts` — postMessage bridge to LLM worker with request-ID pending map and 30s timeout
+- `src/worker/ai/cloud-api.ts` — Anthropic fetch with required CORS header + BYOK pattern + exponential backoff with jitter for 429s
+- `AIProviderStatus` enum (`available | unavailable | loading | error | disabled`) surfaced in store and orb visual state
+- WebGPU feature detection: `requestAdapter()` check (not just `navigator.gpu` existence); settings panel shows correct status on GPU-less machines
+- `navigator.onLine` pre-check before cloud API calls; friendly offline messaging
+- API key: memory-only by default; security disclosure and key rotation flow in settings
+- `pnpm add fetch-event-stream`
 
-**Addresses (from FEATURES.md):** Five atom types, Sections structure, fast capture, offline operation, change log, data export, full-text search foundation
+**Avoids:** Pitfalls 1-8 (all infrastructure-level), Pitfall 16 (offline degradation)
 
-**Avoids (from PITFALLS.md):** Safari storage eviction, IndexedDB transaction batching, OPFS Worker requirement, SolidJS destructuring bugs, atom link orphan problem
+**Research flag:** SKIP — well-documented patterns (Worker isolation, Transformers.js, Anthropic CORS, WebGPU detection). Verification is integration testing, not research.
 
-**Research flag:** Standard patterns — SolidJS + Dexie + Worker setup is well-documented; no phase-level research needed
+### Phase 2: Triage AI — Validate the Suggestion Pattern
 
-### Phase 2: Compute Engine — Priority, Entropy, and Decay
+**Rationale:** Inbox triage is the highest-frequency, lowest-stakes AI interaction. Every inbox card the user processes is an opportunity to accept or dismiss a suggestion. This is where the accept/dismiss UX pattern gets validated before being applied to higher-stakes review flows. The Suggestion Tray and AI badge must ship here — not later — because any AI suggestion surfaced without visual distinction and changelog tagging is a trust failure from the first interaction.
 
-**Rationale:** Priority scoring and staleness decay are the thesis of BinderOS. They can only be built meaningfully after the atom schema is stable (Phase 1) — scoring meaningless data proves nothing. WASM panic safety must be established before the scoring engine is wired to the UI, because a poisoned WASM module silently corrupts all subsequent scores. The entropy UX (soft warnings before hard blocks) must be designed and tested here, not after launch.
+**Delivers:**
+- `FloatingOrb.tsx` — Portal-rendered at `document.body`; context-aware primary action via `createMemo` (reads `activePage`, `selectedAtom()`, `entropyScore`); idle/thinking/streaming/expanded states; pure CSS animation (no animation library); `overlayState` extended with `'ai-orb'`
+- `ConversationTurnCard.tsx` — shared question-flow component (3-4 options + freeform); used by triage, review, and compression coach
+- `AISuggestionTray.tsx` — approve/reject queue; persistent AI badge; `AI_APPLY_SUGGESTION` calls existing handlers with `source: 'ai'` in changelog; rejected suggestions removed from state only
+- `AI_TRIAGE_INBOX` handler in worker — collects inbox items + scores; calls AI adapter; yields `AISuggestion` objects for type + section per card
+- Zod validation at AI adapter boundary — LLM JSON output validated before `dispatch()`; sectionItemId existence check against current store; user-friendly error messages (never raw Zod errors)
+- Streaming: `ReadableStream` → `AI_TOKEN` messages → SolidJS `batch()` signal accumulation; JSON parsed from fully accumulated content only after `[DONE]`
+- `AbortController` tied to orb overlay lifecycle; stream timeout after 15 seconds; partial response shown on abort with "Retry" option
 
-**Delivers:** Rust WASM priority scorer (P = f(deadline, importance, recency, dependencies, energy)), staleness decay engine with configurable decay curve, entropy health indicator (green/yellow/red), inbox hard cap with soft-warning at 80% + resolution UI at 100%, open task cap, per-atom staleness visual indicator. Entropy health visible on every view.
+**Implements (from FEATURES.md):** Pluggable AI interface (P1), triage type suggestion (P1), triage section suggestion (P1), AI mutation changelog tagging (P1), conversational question-flow UX (P1), floating orb (P1)
 
-**Addresses (from FEATURES.md):** Computed priority scoring, staleness decay, entropy health indicator, inbox cap, hard caps enforcement
+**Avoids:** Pitfalls 10 (stream errors), 11 (schema validation), 13 (AI vs. user content confusion)
 
-**Avoids (from PITFALLS.md):** WASM panic poisoning (catch_unwind, panic = abort), JS↔WASM chatty call pattern (batch API), entropy guilt machine (soft warnings first, UX observation before enforcement), link density pre-computation
+**Research flag:** SKIP — Portal rendering, signal accumulation for streaming, AbortController, and Zod at adapter boundary are standard SolidJS/web platform patterns with clear precedent.
 
-**Research flag:** Needs deeper research during planning — priority scoring formula parameters, staleness decay curve calibration, and WASM panic recovery patterns are complex; consider a research-phase before building
+### Phase 3: Review Pre-Analysis + Cloud API Integration
 
-### Phase 3: Pages, Queries, and Navigation
+**Rationale:** Once the triage suggestion pattern is validated (users are accepting/dismissing correctly, the AI badge is trusted), escalate to the review use case. The pre-analysis briefing is the entry point — lower stakes than a full guided review because it is read-only (AI summarizes entropy state, no suggestions to apply). This phase also validates the cloud API path end-to-end with BYOK key flow, streaming error handling, and rate-limit recovery.
 
-**Rationale:** Pages as queries depend on the WASM Core query engine being stable (Phase 1) and priority scores being meaningful (Phase 2). Building pages before scoring is complete means the "Today" and "Priority Queue" pages would display inaccurate data, undermining user trust from day one. Full-text search, command palette, and keyboard navigation belong here as the navigation layer is completed.
+**Delivers:**
+- `AI_START_REVIEW` handler (mode: `'pre-analysis'`) — reads aggregate entropy state + stale task count + projects without next actions + compression candidates; uses browser LLM (SmolLM2 sufficient for summarization); formatted briefing streamed to orb
+- Sequential review step queue — one API call at a time for conversational flows (no `Promise.all()` for parallel questions)
+- Rate limit UI: "AI is thinking..." skeleton with cancel button; user-friendly 429 message; session call counter (>20 calls in 60s → user prompt)
+- `db.reviewSession` table in Dexie — persists review state at each completed step; resume prompt on app load when unfinished session <24h old
+- Anthropic cloud adapter end-to-end tested with streaming response, 15s timeout, and abort on panel close
+- API key settings panel with security disclosure, visible current provider status, and key rotation flow with link to Anthropic key management
 
-**Delivers:** Pages as query definitions (Today, This Week, Active Projects, Waiting, Insights), full-text search across all atom types, command palette, keyboard-driven navigation, filter and sort controls on page views, backlinks UI, atomic linking from the UI.
+**Implements (from FEATURES.md):** Review pre-analysis briefing (P1), tiered LLM infrastructure (P1 — browser for classification, cloud for reasoning)
 
-**Addresses (from FEATURES.md):** Pages as queries (not storage), full-text search, keyboard navigation, command palette, atomic linking, filtering and sorting
+**Avoids:** Pitfalls 9 (rate limit retry storms), 10 (streaming errors), 12 (conversation state loss)
 
-**Avoids (from PITFALLS.md):** Storing atoms in page-specific state (each page is a query, never a data container), query performance traps (indexed queries via Dexie, not full-atom-tree traversal)
+**Research flag:** NEEDS RESEARCH — Dexie table schema for branching review session state (which fields, how to handle partial completion and phase-skipping) and context summarization strategy to keep token costs manageable for 10-15 step reviews need design work before implementation.
 
-**Research flag:** Standard patterns for query architecture and keyboard navigation; no phase-level research needed
+### Phase 4: Guided Weekly Review + Compression Coach
 
-### Phase 4: Link Density and Compression Rituals
+**Rationale:** The full guided GTD review (Get Clear / Get Current / Get Creative with multi-turn AI conversation) is the highest-value and highest-complexity feature. It requires everything from Phases 1-3 to be stable first. The compression coach upgrade (AI explains why atoms are stale) is lower complexity and can be developed in parallel with the review flow.
 
-**Rationale:** Link density tracking and compression rituals require that users have established organic atom linking behavior (Phase 3 must be used, not just built). Compression suggestions without sufficient data are noise. The non-AI compression ritual (surface stale + zero-link atoms as a list) validates the ritual concept before adding AI complexity and cloud/privacy concerns. Tags and advanced saved filters belong here as the user base discovers what cross-cutting labels they actually need.
+**Delivers:**
+- Full `AI_START_REVIEW` handler (mode: `'weekly'`) — multi-turn `ConversationTurn` flow through three GTD phases; escalates to cloud API for Get Creative (nuanced reasoning)
+- `summarizeEarlierTurns()` — context summarization for reviews longer than 5 steps; prevents quadratic token cost growth
+- AI accept rate tracking — if >90% over 3+ sessions, gentle prompt: "You're accepting most suggestions — take a moment to see if they still match your priorities"
+- Per-session max suggestion cap (like inbox cap enforcement) — prevents suggestion queue overload during bulk triage
+- Compression coach: `AI_SUGGEST_COMPRESSION` handler — reads staleness decay + semantic embeddings + link density; explains why an atom is a compression candidate with specific reasoning ("This Fact hasn't been linked since October, has 3 semantically similar Facts, and predates your decision to switch to X")
+- Related atoms surface during triage — upgrade triage UI to show 2-3 semantically similar existing atoms alongside classification suggestion (existing embeddings infrastructure; UI upgrade only)
 
-**Delivers:** Link density tracking (pre-computed per-atom link count as indexed field), link density sort on list views, compression ritual suggestions (non-AI: stale + zero-link atom list with archive/delete/keep options), link integrity consistency check on startup, tags, advanced filtering and saved filters on pages.
+**Implements (from FEATURES.md):** Guided GTD weekly review flow (P2), compression coach with AI explanations (P2), related atoms during triage (P2)
 
-**Addresses (from FEATURES.md):** Link density signal, compression rituals (non-AI), backlinks refinement, tags, advanced filtering
+**Avoids:** Pitfall 14 (GTD review over-automation — question-flow pattern enforced; no "accept all" for destructive operations; "why" shown per suggestion), Pitfall 15 (orb suggestion fatigue — proactive nudges opt-in only; dismissed suggestions 24h cooldown)
 
-**Avoids (from PITFALLS.md):** Computing link density in JS per-atom render (pre-computed field), orphaned atom links (consistency check), entropy cap UX regressions
+**Research flag:** NEEDS RESEARCH — the specific question flow design for each GTD review phase (what questions to ask, what 3-4 options to present, how to prevent Get Creative from becoming open-ended chat) has no direct precedent. FacileThings is the closest reference but manual-only; this is novel territory requiring deliberate design work before implementation spec.
 
-**Research flag:** Standard patterns; no phase-level research needed
-
-### Phase 5: AI Orchestration Layer
-
-**Rationale:** AI is last in the feature dependency chain (requires stable data model, established link graph, and meaningful staleness/priority data). Building AI before users have sufficient data produces useless suggestions. The pluggable AI interface (no-op default) should be scaffolded in Phase 1 or 2, but actual AI provider implementations ship here. AI key security (do not store in IndexedDB unencrypted) and explicit opt-in for data transmission must be designed upfront.
-
-**Delivers:** Cloud LLM adapter (OpenAI), Ollama local server adapter, AI-assisted compression suggestions (surface candidates; user decides), AI-assisted prioritization hints, secure API key handling (in-memory session-only or encrypted), explicit opt-in data transmission UI.
-
-**Addresses (from FEATURES.md):** AI orchestration (compression, prioritization), AI as orchestrator not author
-
-**Avoids (from PITFALLS.md):** AI API key in localStorage unencrypted, AI auto-committing atoms, prompt injection from atom content, AI layer not gracefully disabled (all features must work with no-op adapter)
-
-**Research flag:** Needs deeper research during planning — API key management via PasswordCredential API, prompt injection mitigation for user-authored atom content, and WebGPU feature detection and fallback patterns are niche and need specific research before implementation
-
-### Phase 6: Embedded Content (IronCalc)
-
-**Rationale:** IronCalc is explicitly early-stage (pre-v1 roadmap targeting Q2 2026). This phase should not begin until user interviews validate that computation inside atoms is actually wanted, and until IronCalc's v1 release provides a more stable API surface. Lazy loading is mandatory — IronCalc adds significant bundle weight and must not appear in the initial load waterfall.
-
-**Delivers:** IronCalc spreadsheet atoms (embedded Rust/WASM spreadsheet engine, loaded on demand), OPFS blob storage for spreadsheet state, lazy load with "Loading spreadsheet engine..." state.
-
-**Addresses (from FEATURES.md):** WASM-powered embedded content (IronCalc), computational atoms (budgets, metrics, scores)
-
-**Avoids (from PITFALLS.md):** IronCalc loaded in initial bundle (use dynamic import), IronCalc feature-parity assumptions (missing array formulas, charts, merged cells in current version), OPFS Worker requirement for synchronous access
-
-**Research flag:** Needs research during planning — IronCalc API has evolved; verify v1 WASM binding patterns, test WASM binary size against load budget before committing; defer the entire phase if IronCalc v1 is delayed past project schedule
+---
 
 ### Phase Ordering Rationale
 
-- **Foundation before everything** (Phase 1): The typed atom schema, Worker architecture, and write-queue storage pattern are dependencies for every subsequent feature. They also carry the highest-severity pitfalls (storage eviction, IndexedDB batching) that cannot be retrofitted.
-- **Compute before views** (Phase 2 before Phase 3): Priority scores and entropy health are the differentiating content of every page view. Building pages before the compute layer is stable means displaying data users cannot trust.
-- **Rituals before AI** (Phase 4 before Phase 5): Non-AI compression rituals validate the behavior at lower complexity and risk. They confirm whether users engage with entropy management at all before AI complexity is added.
-- **AI before embedded content** (Phase 5 before Phase 6): AI features have more established patterns and higher user demand than embedded spreadsheets. IronCalc depends on external project maturity outside BinderOS's control.
-- **Hard caps are UX, not just features**: The inbox cap and open task cap must be implemented with soft-warning states and resolution UIs in Phase 2, not as simple boolean blocks. These mechanics define the user's daily experience of the system.
+- **Infrastructure before features:** The architecture explicitly identifies running AI in the BinderCore worker as an anti-pattern requiring an expensive architectural reversal to fix. Phase 1 prevents this by establishing the correct worker isolation and message protocol separation from the start.
+- **Triage before review:** Triage validates the accept/dismiss pattern and AI badge at the lowest stakes before they are applied to review flows where mistakes are more consequential. The `ConversationTurnCard` built for triage is reused by all subsequent AI interactions.
+- **Pre-analysis before full guided review:** Pre-analysis briefing validates the cloud API path and streaming infrastructure without requiring multi-turn conversation state management. It is a natural stepping stone.
+- **Features before orb depth:** The orb's GTD menu should deliver real features. Building a deeply animated orb before the underlying features are ready creates a hollow first impression. The orb UI is built in Phase 2 but its depth grows with each phase.
+- **Changelog tagging in Phase 2 (not later):** Any AI suggestion surfaced without `source: 'ai'` tagging and without the AI badge is a trust failure. Both must ship with the first suggestion, not as a later addition.
 
 ### Research Flags
 
-Phases likely needing deeper research during planning:
-- **Phase 2 (Priority/Entropy Engine):** Priority scoring formula parameter calibration, staleness decay curve design, and WASM panic recovery patterns require specific technical research before implementation; community patterns are emerging but not standardized
-- **Phase 5 (AI Layer):** PasswordCredential API for secure key storage, prompt injection mitigation strategies, and WebGPU feature detection with graceful fallback are niche areas with sparse documentation; research before spec
+Phases needing `/gsd:research-phase` during planning:
+- **Phase 3** — review session persistence: Dexie table schema for branching review flows and the context summarization strategy for keeping multi-step review costs reasonable. The patterns exist but BinderOS-specific implementation decisions need design work.
+- **Phase 4** — GTD question flow design: specific questions for each review phase, how to structure the conversational turns for Get Creative without it becoming open-ended chat. Novel territory relative to existing tools.
 
-Phases with standard patterns (skip research-phase):
-- **Phase 1 (Foundation):** SolidJS + Dexie + Web Worker + wasm-bindgen is well-documented; the three-step build pipeline (cargo → wasm-bindgen-cli → wasm-opt) is explicitly documented in source material
-- **Phase 3 (Pages/Navigation):** Query architecture, command palette, and keyboard navigation are established patterns with extensive prior art
-- **Phase 4 (Link Density/Rituals):** Pre-computed indexed fields and list-based compression UI are straightforward implementations
+Phases with standard patterns (skip research):
+- **Phase 1** — Worker isolation, Transformers.js, Anthropic CORS, and WebGPU feature detection are all well-documented with verified patterns in STACK.md and ARCHITECTURE.md.
+- **Phase 2** — Portal rendering, signal accumulation for streaming, AbortController, and Zod validation at adapter boundary are standard SolidJS/web platform patterns.
+
+---
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Core stack (SolidJS, Vite, Dexie, wasm-bindgen) verified against official sources and release blogs; wasm-pack deprecation confirmed via official Inside Rust Blog announcement; Zod v4 and TypeScript 5.9 confirmed; only IronCalc is LOW (self-described early-stage, API may shift) |
-| Features | MEDIUM-HIGH | Table stakes (capture, search, export, offline) are HIGH — confirmed by market observation across all major PKM tools; BinderOS differentiators (typed atoms, entropy mechanics, hard caps) are MEDIUM — validated by first-principles reasoning and market gap analysis, not empirical user data |
-| Architecture | MEDIUM | Worker-owned WASM and signal-projected UI patterns are well-supported by official wasm-bindgen docs and SolidJS docs; SolidJS + WASM integration at this specific architecture depth is community-emerging with limited production examples; data flow and component boundaries are HIGH confidence by design reasoning |
-| Pitfalls | MEDIUM-HIGH | Browser storage pitfalls (Safari ITP, IndexedDB batching) are HIGH — official MDN, WebKit blog, and production benchmarks; WASM panic behavior is HIGH — confirmed via wasm-bindgen issue tracker; SolidJS destructuring is HIGH — official docs; IronCalc-specific integration is LOW; entropy UX pitfalls are MEDIUM — pattern-derived from community PKM research |
+| Stack | HIGH | All versions verified against npm, official blogs, and GitHub releases. Transformers.js v3/v4 distinction is critical and well-sourced. wasm-pack deprecation confirmed via official Inside Rust Blog July 2025. OpenAI browser CORS limitation confirmed across multiple community and official sources. |
+| Features | MEDIUM-HIGH | Competitor analysis from multiple sources; GTD phases from official David Allen/FacileThings docs. Anti-features are first-principles but validated by HBR research on AI fatigue (2025-2026). Differentiator claims (entropy-informed suggestions) are novel by design — no empirical validation yet. |
+| Architecture | HIGH | Verified directly against existing BinderOS codebase (`worker.ts`, `bridge.ts`, `store.ts`, `messages.ts`, `embedding-worker.ts`). All integration points confirmed against actual source files. LLM Worker isolation pattern from official WebLLM and MDN docs. |
+| Pitfalls | HIGH (infrastructure) / MEDIUM (GTD UX) | Browser LLM memory/CORS/Worker pitfalls are from official docs, official incident reports (Obsidian Security), and real production behavior. GTD-specific AI UX pitfalls (suggestion fatigue, automation bias) are community wisdom + first-principles; solid reasoning but less empirical backing specific to BinderOS. |
 
 **Overall confidence:** MEDIUM-HIGH
 
 ### Gaps to Address
 
-- **IronCalc API stability**: The IronCalc v0.7.x API may change before BinderOS reaches Phase 6. Verify the WASM binding patterns and binary size against the load budget at Phase 6 planning time, not now. Do not architect Phase 1–4 around IronCalc specifics.
-- **Priority scoring formula calibration**: The formula P = f(deadline, importance, recency, dependencies, energy) is defined conceptually but the specific weights and normalization approach are not determined. This requires either design research or initial implementation + feedback loop. Recommend defining v1 weights as simple constants and making them adjustable per user feedback.
-- **Staleness decay curve shape**: The decay rate (weekly vs monthly as mentioned in FEATURES.md) needs a concrete mathematical form. An exponential decay with a configurable half-life is the natural approach, but the default half-life values need calibration against realistic usage data — start opinionated, adjust based on feedback.
-- **WebGPU + WebLLM production readiness**: WebGPU remains unavailable in Firefox (as of early 2026) and on most mobile browsers. The AI adapter interface correctly isolates this, but the WebLLM user experience (model download size, first-inference latency) has not been validated. Defer integration until Phase 5 and prototype the download + loading UX before committing to it as a supported path.
-- **`@solidjs/router` exact version**: The STACK.md notes version 0.14.x as general availability but this was not confirmed via npm at research time. Verify at install time.
+- **SmolLM2 CPU inference speed on real hardware:** Research gives approximate figures (100-300ms/token for 135M on modern CPU). Performance on a 4-year-old laptop or a device without discrete GPU is unknown until measured. Do not commit to "instant" classification UX before benchmarking on representative hardware; design for graceful degradation to cloud API if browser LLM is too slow.
+
+- **OpenAI in v2.0:** ARCHITECTURE.md recommends Anthropic + Ollama/LM Studio and deferring OpenAI direct support (no browser CORS). Users with only an OpenAI key cannot use cloud AI without a proxy. Accept this constraint for v2.0 and document it clearly in the settings panel. Revisit for v2.x with a lightweight CORS relay option.
+
+- **Review question flow design:** What questions does the AI ask in each GTD phase? What 3-4 options does the user see? How are answers accumulated into the next-turn context without growing token cost quadratically? This is the most content-design-heavy part of the system and has no direct precedent. Needs deliberate design work before Phase 4 implementation.
+
+- **Dexie schema for review session persistence:** The `db.reviewSession` table needs a schema that supports partial completion, phase-skipping, and context summarization. Design before Phase 3 implementation begins.
+
+- **Suggestion cap policy:** ARCHITECTURE.md recommends a `maxSuggestions` cap on `state.aiSuggestions[]`. The right number and the UX for communicating it are unresolved. Validate during Phase 2 UX design with realistic triage scenarios.
+
+---
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [SolidJS Releases — GitHub](https://github.com/solidjs/solid/releases) — v1.9.x stable, v2.0 in development
-- [Sunsetting the rustwasm GitHub org — Inside Rust Blog](https://blog.rust-lang.org/inside-rust/2025/07/21/sunsetting-the-rustwasm-github-org/) — wasm-pack deprecated, wasm-bindgen transferred to new org
-- [wasm-bindgen Guide](https://rustwasm.github.io/docs/wasm-bindgen/) — authoritative WASM integration patterns
-- [Storage quotas and eviction criteria — MDN](https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria) — Safari ITP and browser eviction behavior
-- [Updates to Storage Policy — WebKit Blog](https://webkit.org/blog/14403/updates-to-storage-policy/) — official Apple/WebKit storage eviction documentation
-- [Solving IndexedDB Slowness — RxDB](https://rxdb.info/slow-indexeddb.html) — transaction batching benchmarks (10-25x slowdown confirmed)
-- [Vite 7.0 announcement](https://vite.dev/blog/announcing-vite7) — v7.3.x current, confirmed stable
-- [Zod v4 release notes](https://zod.dev/v4) — v4.x released July 2025, TS 5.5+ required
-- [wasm-bindgen Panic Recovery — GitHub Issue #4095](https://github.com/wasm-bindgen/wasm-bindgen/issues/4095) — WASM panic poisoning behavior documented
-- [SolidJS Fine-grained reactivity docs](https://docs.solidjs.com/advanced-concepts/fine-grained-reactivity) — destructuring pitfall and prop access patterns
-- [Dexie.js — dexie.org](https://dexie.org/) — v4.0.x, actively maintained
+- Official SolidJS GitHub releases — v1.9.11 confirmed stable
+- [Inside Rust Blog: Sunsetting the rustwasm org](https://blog.rust-lang.org/inside-rust/2025/07/21/sunsetting-the-rustwasm-github-org/) — wasm-pack deprecated; wasm-bindgen transferred to new org
+- [Transformers.js v4 preview announcement](https://huggingface.co/blog/transformersjs-v4) — v4 is `@next` only as of Feb 9 2026; use v3.8.1
+- [SmolLM2 model collection — HuggingFace](https://huggingface.co/collections/HuggingFaceTB/smollm2-6723884218bcda64b34d7db9) — ONNX + Transformers.js support confirmed; 135M, 360M, 1.7B
+- [fetch-event-stream GitHub](https://github.com/lukeed/fetch-event-stream) — v0.1.6, 741 bytes, Oct 2025
+- [Simon Willison: Anthropic direct browser CORS](https://simonwillison.net/2024/Aug/23/anthropic-dangerous-direct-browser-access/) — `anthropic-dangerous-direct-browser-access` header confirmed required
+- [Chrome Developers: Cache models in the browser](https://developer.chrome.com/docs/ai/cache-models) — Cache API (not IndexedDB) for model storage
+- [MDN WorkerNavigator.gpu](https://developer.mozilla.org/en-US/docs/Web/API/WorkerNavigator/gpu) — WebGPU in dedicated workers confirmed; `requestAdapter()` check required
+- [WebLLM Documentation](https://webllm.mlc.ai/docs/) — model lifecycle, `initProgressCallback`, `engine.unload()`
+- [OpenAI: Best Practices for API Key Safety](https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety) — localStorage explicitly discouraged
+- [OpenAI API: Rate limits guide](https://developers.openai.com/api/docs/guides/rate-limits) — exponential backoff with jitter recommended
+- Existing BinderOS codebase — `worker.ts`, `bridge.ts`, `store.ts`, `messages.ts`, `embedding-worker.ts` verified directly (ground truth for integration points)
 
 ### Secondary (MEDIUM confidence)
-- [Life after wasm-pack — nickb.dev](https://nickb.dev/blog/life-after-wasm-pack-an-opinionated-deconstruction/) — concrete three-step pipeline post wasm-pack
-- [LocalStorage vs IndexedDB vs OPFS comparison — RxDB](https://rxdb.info/articles/localstorage-indexeddb-cookies-opfs-sqlite-wasm.html) — storage API trade-offs
-- [LogRocket: Offline-first frontend apps 2025](https://blog.logrocket.com/offline-first-frontend-apps-2025-indexeddb-sqlite/) — IndexedDB vs OPFS use cases
-- [Forte Labs: test-driving Obsidian, Tana, Mem](https://fortelabs.com/blog/test-driving-a-new-generation-of-second-brain-apps-obsidian-tana-and-mem/) — PKM market feature analysis
-- [Local-first software essay — Ink & Switch](https://www.inkandswitch.com/essay/local-first/) — foundational local-first design principles
-- [Downsides of Local First — RxDB](https://rxdb.info/downsides-of-offline-first.html) — documented local-first production pitfalls
-- [IronCalc GitHub](https://github.com/ironcalc/IronCalc) — v0.7.1 (Jan 2026), early-stage
+- [Mozilla AI Blog: 3W for in-browser AI](https://blog.mozilla.ai/3w-for-in-browser-ai-webllm-wasm-webworkers/) — Worker isolation architecture; memory crash behavior documented
+- [Simon Willison: SmolLM2-360M browser demo](https://simonwillison.net/2024/Nov/29/structured-generation-smollm2-webgpu/) — confirmed browser-runnable with WebGPU, Nov 2024
+- [HBR Feb 2026: AI doesn't reduce work, it intensifies it](https://hbr.org/2026/02/ai-doesnt-reduce-work-it-intensifies-it) — anti-automation research
+- [HBR Sep 2025: AI-generated workslop](https://hbr.org/2025/09/ai-generated-workslop-is-destroying-productivity) — AI content authorship risks
+- [Stack Overflow Developer Survey 2025](https://www.baytechconsulting.com/blog/the-ai-trust-paradox-software-development-2025) — 46% distrust AI accuracy
+- [FacileThings: GTD weekly review](https://facilethings.com/blog/en/the-weekly-review-updated) — Get Clear/Get Current/Get Creative structure; closest reference for review flow design
+- [Obsidian Security: Browser extensions stealing API keys](https://www.obsidiansecurity.com/blog/small-tools-big-risk-when-browser-extensions-start-stealing-api-keys) — documented real-world key theft from AI productivity tools
+- [OpenAI community: CORS limitation](https://community.openai.com/t/cross-origin-resource-sharing-cors/28905) — OpenAI does not support direct browser CORS confirmed
 
 ### Tertiary (LOW confidence)
-- [Your Second Brain Is Broken — Medium](https://medium.com/@ann_p/your-second-brain-is-broken-why-most-pkm-tools-waste-your-time-76e41dfc6747) — PKM failure pattern analysis; pattern-derived, single author
-- [The PKM Paradox — Medium](https://medium.com/@helloantonova/the-pkm-paradox-why-most-knowledge-management-tools-fail-to-meet-our-needs-d5042f08f99e) — PKM failure modes; community analysis
-- [PWA on iOS — Current Status 2025 — Brainhub](https://brainhub.eu/library/pwa-on-ios) — iOS persistent storage behavior; third-party, corroborated by Apple forums
-- [IronCalc Roadmap](https://www.ironcalc.com/roadmap.html) — Phase 6 planning context; subject to change (small team, side project)
+- SmolLM2 CPU inference speed figures (100-300ms/token for 135M) — community benchmarks; measure at integration time before committing to UX expectations
+- WebLLM + existing WASM thread contention numbers — architecture analysis from Mozilla AI blog; no BinderOS-specific measurements
+- IronCalc (spreadsheet WASM) — self-described early-stage; deferred to v3.0; no evaluation needed for v2.0
 
 ---
-*Research completed: 2026-02-21*
+
+## v1.0 Research Reference
+
+The prior SUMMARY.md covering the core v1.0 stack (SolidJS, Rust/WASM, Dexie, entropy engine, typed atoms) was written 2026-02-21. Key conclusions from that research that remain relevant to v2.0:
+
+- **Safari ITP storage eviction** — `navigator.storage.persist()` must already be called at app startup (v1.0 concern); v2.0 adds a separate concern: `navigator.storage.persist()` before caching LLM model weights in the Cache API
+- **IndexedDB write-queue pattern** — all v2.0 mutations (including AI-applied suggestions) must route through the existing write queue; this is already the architecture
+- **wasm-pack is deprecated** — already addressed in v1.0 build pipeline; no change for v2.0
+- **SolidJS destructuring kills reactivity** — applies equally to all new v2.0 components (FloatingOrb, ConversationTurnCard, AISuggestionTray)
+- **Entropy guilt machine risk** — the AI overlay must not make the entropy system feel more punishing; AI suggestions should reduce friction during reviews, not add new pressure
+
+*See `.planning/research/STACK.md`, `.planning/research/FEATURES.md`, `.planning/research/ARCHITECTURE.md`, `.planning/research/PITFALLS.md` for full v2.0 research detail.*
+
+---
+*Research completed: 2026-02-22*
 *Ready for roadmap: yes*
