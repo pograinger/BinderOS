@@ -98,6 +98,9 @@ onMessage((response) => {
       setState('atoms', reconcile(response.payload.atoms));
       setState('inboxItems', reconcile(response.payload.inboxItems));
       setState('sections', reconcile(response.payload.sections));
+      if (response.payload.sectionItems !== undefined) {
+        setState('sectionItems', reconcile(response.payload.sectionItems));
+      }
       setState('savedFilters', reconcile(response.payload.savedFilters));
       setState('lastError', null);
       break;
@@ -164,6 +167,18 @@ onMessage((response) => {
       setState('persistenceGranted', response.payload.granted);
       break;
 
+    case 'EXPORT_READY': {
+      // Trigger file download on the main thread (Worker has no DOM access)
+      const { blob, filename } = response.payload;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+      break;
+    }
+
     case 'PONG':
       // No state update needed for ping/pong
       break;
@@ -194,6 +209,13 @@ export function setActivePage(page: string): void {
  */
 export function setSelectedAtomId(id: string | null): void {
   setState('selectedAtomId', id);
+}
+
+/**
+ * Set persistence granted status (called from main thread persistence check).
+ */
+export function setPersistenceGranted(granted: boolean): void {
+  setState('persistenceGranted', granted);
 }
 
 // --- Derived signals ---

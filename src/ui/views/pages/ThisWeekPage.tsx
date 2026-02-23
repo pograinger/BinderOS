@@ -1,60 +1,66 @@
 /**
- * ThisWeekPage: Tasks and events for the current week.
+ * ThisWeekPage: Weekly view with Last Week / This Week / Next Week tabs.
  *
- * Shows: tasks due this week, overdue tasks, and events happening this week.
- * Displays the Mon-Sun date range in the header.
+ * Shows: tasks due in the selected week, overdue tasks (current/next only),
+ * and events in that week. Sun-Sat calendar weeks.
  *
  * Empty state is compute-engine-driven.
  *
  * CRITICAL: Never destructure props or store. Use <For>/<Show>, not map/ternary.
  */
 
-import { For, Show } from 'solid-js';
-import { thisWeekAtoms, filteredAndSortedAtoms, createFilterState } from '../../signals/queries';
+import { createSignal, For, Show } from 'solid-js';
+import { createWeeklyAtoms, weekRangeLabel, filteredAndSortedAtoms, createFilterState } from '../../signals/queries';
+import type { WeekOffset } from '../../signals/queries';
 import { FilterBar } from '../../components/FilterBar';
 import { AtomCard } from '../../components/AtomCard';
 import { state, setSelectedAtomId, setActivePage } from '../../signals/store';
 import { useRovingTabindex } from '../../hooks/useRovingTabindex';
 
-/** Format Mon-Sun range for the current week. */
-function weekRangeLabel(): string {
-  const now = new Date();
-  const day = now.getDay(); // 0=Sun
-  const diffToMon = day === 0 ? -6 : 1 - day;
-
-  const mon = new Date(now);
-  mon.setDate(now.getDate() + diffToMon);
-  mon.setHours(0, 0, 0, 0);
-
-  const sun = new Date(mon);
-  sun.setDate(mon.getDate() + 6);
-
-  const fmt = (d: Date) =>
-    d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-
-  return `${fmt(mon)} – ${fmt(sun)}`;
-}
+const TABS: { offset: WeekOffset; label: string }[] = [
+  { offset: -1, label: 'Last Week' },
+  { offset: 0, label: 'This Week' },
+  { offset: 1, label: 'Next Week' },
+];
 
 export function ThisWeekPage() {
+  const [weekOffset, setWeekOffset] = createSignal<WeekOffset>(0);
+  const weekAtoms = createWeeklyAtoms(weekOffset);
   const { filters, setFilter } = createFilterState();
-  const filteredAtoms = filteredAndSortedAtoms(thisWeekAtoms, filters);
+  const filteredAtoms = filteredAndSortedAtoms(weekAtoms, filters);
 
-  const { itemTabindex, isItemFocused, onKeyDown } = useRovingTabindex({
+  const { itemTabindex, isItemFocused } = useRovingTabindex({
     itemCount: () => filteredAtoms().length,
     onSelect: (i) => {
       const atom = filteredAtoms()[i];
       if (atom) setSelectedAtomId(atom.id);
     },
+    onLeft: () => setWeekOffset((v) => Math.max(-1, v - 1) as WeekOffset),
+    onRight: () => setWeekOffset((v) => Math.min(1, v + 1) as WeekOffset),
   });
 
   return (
     <div class="page-view">
       <div class="page-header">
-        <h2 class="page-title">This Week</h2>
-        <span class="page-date-range">{weekRangeLabel()}</span>
+        <h2 class="page-title">Weekly</h2>
         <Show when={filteredAtoms().length > 0}>
           <span class="page-count-badge">{filteredAtoms().length}</span>
         </Show>
+      </div>
+
+      {/* Week tabs */}
+      <div class="week-tabs">
+        <For each={TABS}>
+          {(tab) => (
+            <button
+              class={`week-tab${weekOffset() === tab.offset ? ' active' : ''}`}
+              onClick={() => setWeekOffset(tab.offset)}
+            >
+              <span class="week-tab-label">{tab.label}</span>
+              <span class="week-tab-range">{weekRangeLabel(tab.offset)}</span>
+            </button>
+          )}
+        </For>
       </div>
 
       <FilterBar
@@ -72,7 +78,7 @@ export function ThisWeekPage() {
             </svg>
           </div>
           <Show when={state.compressionCandidates.length > 0}>
-            <p class="page-empty-title">Your week is clear.</p>
+            <p class="page-empty-title">Nothing scheduled.</p>
             <p class="page-empty-subtitle">
               Good time to review {state.compressionCandidates.length} stale item
               {state.compressionCandidates.length !== 1 ? 's' : ''} in your system.
@@ -85,7 +91,7 @@ export function ThisWeekPage() {
             </button>
           </Show>
           <Show when={state.compressionCandidates.length === 0}>
-            <p class="page-empty-title">Your week is clear.</p>
+            <p class="page-empty-title">Nothing scheduled.</p>
             <p class="page-empty-subtitle">Good time to plan ahead or review stale items.</p>
           </Show>
         </div>
@@ -93,7 +99,7 @@ export function ThisWeekPage() {
 
       {/* Atom list */}
       <Show when={filteredAtoms().length > 0}>
-        <div class="atom-list" role="listbox" tabindex={0} onKeyDown={onKeyDown}>
+        <div class="atom-list" role="listbox">
           <For each={filteredAtoms()}>
             {(atom, i) => (
               <AtomCard

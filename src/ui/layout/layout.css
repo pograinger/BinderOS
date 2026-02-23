@@ -13,6 +13,8 @@
 /* --- CSS Custom Properties (mapped from theme/colors.ts) --- */
 
 :root {
+  color-scheme: dark;
+
   --bg-primary: #0d1117;
   --bg-secondary: #161b22;
   --bg-tertiary: #21262d;
@@ -239,19 +241,11 @@ body {
 
 .page-tab-strip {
   display: flex;
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
+  align-items: stretch;
   border-bottom: 1px solid var(--border-primary);
   background: var(--bg-primary);
   min-height: 40px;
   flex-shrink: 0;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.page-tab-strip::-webkit-scrollbar {
-  display: none;
 }
 
 .page-tab {
@@ -281,6 +275,71 @@ body {
 .page-tab.active {
   color: var(--text-primary);
   border-bottom-color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .page-tab {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+/* --- More Dropdown (overflow tabs) --- */
+
+.page-tab-more-container {
+  position: relative;
+  margin-left: auto;
+}
+
+.page-tab-more {
+  gap: 4px;
+}
+
+.page-tab-more-chevron {
+  transition: transform 0.15s;
+}
+
+.page-tab-more[aria-expanded="true"] .page-tab-more-chevron {
+  transform: rotate(180deg);
+}
+
+.page-tab-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 180px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 40;
+  padding: 4px 0;
+}
+
+.page-tab-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 14px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  transition: background 0.1s, color 0.1s;
+}
+
+.page-tab-dropdown-item:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.page-tab-dropdown-item.active {
+  color: var(--accent);
 }
 
 /* --- Main Pane (content area) --- */
@@ -421,6 +480,10 @@ body {
   background: var(--status-error);
 }
 
+.status-bar-dot.dev {
+  background: var(--status-warning);
+}
+
 .status-bar-spacer {
   flex: 1;
 }
@@ -467,8 +530,14 @@ body {
   transition: opacity 0.5s ease;
 }
 
-.atom-card:hover {
+.atom-card:hover,
+.atom-card.focused {
   background: var(--bg-tertiary);
+}
+
+.atom-card.focused {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
 }
 
 .atom-card-row {
@@ -553,22 +622,28 @@ body {
 }
 
 .section-item-name {
+  flex: 1;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .section-item-archive-btn {
-  display: none;
+  flex-shrink: 0;
   background: none;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 11px;
-  padding: 0 2px;
+  font-size: 14px;
+  padding: 0 4px;
   line-height: 1;
+  opacity: 0.4;
+  transition: opacity 0.15s, color 0.15s;
 }
 
-.section-item-row:hover .section-item-archive-btn {
-  display: inline;
+.section-item-archive-btn:hover {
+  opacity: 1;
+  color: var(--status-error);
 }
 
 .section-item-edit {
@@ -1982,18 +2057,13 @@ body {
 
 .filter-bar {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 8px 12px;
   padding: 8px 12px;
   background: var(--bg-secondary);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
   border-bottom: 1px solid var(--border-primary);
 }
-
-.filter-bar::-webkit-scrollbar { display: none; }
 
 .filter-bar__group {
   display: flex;
@@ -2118,6 +2188,71 @@ body {
   color: var(--text-muted);
 }
 
+.page-header-action {
+  margin-left: auto;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.page-header-action:hover {
+  background: var(--accent);
+  color: var(--bg-primary);
+}
+
+.week-tabs {
+  display: flex;
+  margin: 0 12px 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-primary);
+}
+
+.week-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border: none;
+  border-right: 1px solid var(--border-primary);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.week-tab:last-child {
+  border-right: none;
+}
+
+.week-tab:hover {
+  background: var(--bg-tertiary);
+}
+
+.week-tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.week-tab-label {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.week-tab-range {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
 .page-count-badge {
   display: inline-flex;
   align-items: center;
@@ -2226,6 +2361,67 @@ body {
 /* ============================================
    Phase 3: ActiveProjectsPage
    ============================================ */
+
+.project-list-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 16px;
+}
+
+.project-list-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.project-list-name {
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: default;
+}
+
+.project-list-count {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.project-list-edit {
+  padding: 2px 6px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  width: 120px;
+}
+
+.project-list-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0;
+  transition: color 0.1s, background 0.1s;
+}
+
+.project-list-delete:hover {
+  color: var(--status-critical);
+  background: var(--bg-tertiary);
+}
 
 .project-group {
   margin-bottom: 16px;
@@ -2517,6 +2713,23 @@ body {
   border-color: var(--accent);
 }
 
+.atom-detail-select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.atom-detail-select:focus {
+  border-color: var(--accent);
+}
+
 /* Content textarea */
 .atom-detail-content-section {
   flex: 1;
@@ -2567,6 +2780,62 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Link chips */
+.atom-detail-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.atom-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+  max-width: 200px;
+}
+
+.atom-link-chip:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.atom-link-chip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.atom-link-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: color 0.1s, background 0.1s;
+}
+
+.atom-link-remove:hover {
+  color: var(--status-critical);
+  background: var(--bg-tertiary);
 }
 
 /* Placeholder sections */
@@ -3435,7 +3704,8 @@ kbd {
   transition: opacity 0.1s, color 0.1s, background 0.1s;
 }
 
-.page-tab:hover .filter-tab-delete {
+.page-tab:hover .filter-tab-delete,
+.page-tab-dropdown-item:hover .filter-tab-delete {
   opacity: 1;
 }
 

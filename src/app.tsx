@@ -22,7 +22,8 @@
 
 import { createSignal, onMount, onCleanup, Show } from 'solid-js';
 import { initWorker } from './worker/bridge';
-import { sendCommand, state, setActivePage, setSelectedAtomId } from './ui/signals/store';
+import { sendCommand, state, setActivePage, setSelectedAtomId, setPersistenceGranted } from './ui/signals/store';
+import { initStoragePersistence } from './storage/persistence';
 import { Shell } from './ui/layout/Shell';
 import { CaptureOverlay } from './ui/views/CaptureOverlay';
 import { SearchOverlay } from './ui/views/SearchOverlay';
@@ -38,22 +39,29 @@ type OverlayState = 'none' | 'capture' | 'search' | 'command-palette' | 'shortcu
 // --- Page key mapping (number keys 1-5) ---
 
 const PAGE_KEYS: Record<string, string> = {
+  '0': 'inbox',
   '1': 'today',
   '2': 'this-week',
   '3': 'active-projects',
   '4': 'waiting',
   '5': 'insights',
+  '6': 'all',
 };
 
 function App() {
   const [overlay, setOverlay] = createSignal<OverlayState>('none');
-  const [storageWarningDismissed, setStorageWarningDismissed] = createSignal(false);
+  const [storageWarningDismissed, setStorageWarningDismissed] = createSignal(
+    // Persist dismissal across reloads; also suppress in dev mode (localhost won't get persistence)
+    import.meta.env.DEV || localStorage.getItem('binderos-storage-warning-dismissed') === '1',
+  );
 
   onMount(async () => {
     try {
       await initWorker();
-      // Request persistence after Worker is ready
-      sendCommand({ type: 'REQUEST_PERSISTENCE' });
+      // Request persistence on main thread — browser has full PWA context here
+      // (Worker thread may not see installed-PWA status, causing false denials)
+      const persistence = await initStoragePersistence();
+      setPersistenceGranted(persistence.granted);
     } catch (err) {
       console.error('[BinderOS] Worker initialization failed:', err);
     }
@@ -111,7 +119,7 @@ function App() {
       }
       // Dismiss storage warning as last resort
       if (!storageWarningDismissed() && !state.persistenceGranted) {
-        setStorageWarningDismissed(true);
+        { localStorage.setItem('binderos-storage-warning-dismissed', '1'); setStorageWarningDismissed(true); };
         return;
       }
     }
@@ -173,7 +181,7 @@ function App() {
 
       {/* Storage persistence warning */}
       <Show when={showStorageWarning()}>
-        <StorageWarning onDismiss={() => setStorageWarningDismissed(true)} />
+        <StorageWarning onDismiss={() => { localStorage.setItem('binderos-storage-warning-dismissed', '1'); setStorageWarningDismissed(true); }} />
       </Show>
 
       {/* Cap enforcement modal — self-managing via state.capExceeded */}

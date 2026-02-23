@@ -92,21 +92,29 @@ export async function handleClassifyInboxItem(
 
   const now = Date.now();
 
+  // Resolve sectionId from sectionItemId if provided
+  let sectionId: string | undefined;
+  if (payload.sectionItemId) {
+    const sectionItem = await db.sectionItems.get(payload.sectionItemId);
+    if (sectionItem) {
+      sectionId = sectionItem.sectionId;
+    }
+  }
+
   // Convert to typed atom — remove isInbox, set type
-  const atom: Atom = {
+  // Use AtomSchema.parse() return value so Zod defaults (tags, etc.) are applied
+  const atom: Atom = AtomSchema.parse({
     id: inboxItem.id,
     title: inboxItem.title,
     content: inboxItem.content,
     type: payload.type,
     status: 'open',
     links: inboxItem.links,
+    sectionId,
     sectionItemId: payload.sectionItemId,
     created_at: inboxItem.created_at,
     updated_at: now,
-  } as Atom;
-
-  // Validate the new atom
-  AtomSchema.parse(atom);
+  });
 
   // Create changelog entry for the new atom
   const logEntry = appendMutation(atom.id, 'create', null, atom);

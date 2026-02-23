@@ -63,13 +63,13 @@ export function StatusBar() {
 
   return (
     <div class="status-bar">
-      {/* Persistence status */}
+      {/* Persistence status — show amber in dev mode (localhost can't get persistence) */}
       <div class="status-bar-item">
         <span
-          class={`status-bar-dot ${state.persistenceGranted ? 'granted' : 'denied'}`}
+          class={`status-bar-dot ${state.persistenceGranted ? 'granted' : import.meta.env.DEV ? 'dev' : 'denied'}`}
         />
         <span>
-          {state.persistenceGranted ? 'Persistent' : 'Not persistent'}
+          {state.persistenceGranted ? 'Persistent' : import.meta.env.DEV ? 'Dev mode' : 'Not persistent'}
         </span>
       </div>
 

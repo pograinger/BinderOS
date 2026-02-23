@@ -63,6 +63,7 @@ export type Response =
       payload: {
         version: string;
         sections: Section[];
+        sectionItems?: SectionItem[];
         atoms: Atom[];
         inboxItems: InboxItem[];
         savedFilters: SavedFilter[];
@@ -84,6 +85,6 @@ export type Response =
     }
   | { type: 'PONG'; payload: string }
   | { type: 'ERROR'; payload: { message: string; command?: string } }
-  | { type: 'EXPORT_READY'; payload: { blob: Blob } }
+  | { type: 'EXPORT_READY'; payload: { blob: Blob; filename: string } }
   | { type: 'PERSISTENCE_STATUS'; payload: { granted: boolean } }
   | { type: 'CAP_EXCEEDED'; payload: { capType: 'inbox' | 'task'; cap: number } };

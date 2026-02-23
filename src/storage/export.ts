@@ -18,11 +18,10 @@ import type { Atom } from '../types/atoms';
  *
  * Filename: binderos-backup-YYYY-MM-DD.json
  */
-export async function exportAllData(): Promise<void> {
+export async function exportAllData(): Promise<{ blob: Blob; filename: string }> {
   const blob = await exportDB(db);
-
   const dateStr = new Date().toISOString().split('T')[0];
-  triggerDownload(blob, `binderos-backup-${dateStr}.json`);
+  return { blob, filename: `binderos-backup-${dateStr}.json` };
 }
 
 /**

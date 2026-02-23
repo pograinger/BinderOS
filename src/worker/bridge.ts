@@ -48,6 +48,10 @@ export function initWorker(): Promise<Response> {
       worker.onmessage = originalHandler;
 
       if (response.type === 'READY') {
+        // Forward READY to the store handler so state.ready becomes true
+        if (originalHandler) {
+          originalHandler.call(worker, event);
+        }
         resolve(response);
       } else if (response.type === 'ERROR') {
         reject(new Error(response.payload.message));

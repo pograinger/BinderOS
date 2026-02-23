@@ -12,7 +12,7 @@
  */
 
 import { For, Show } from 'solid-js';
-import { state, setActiveSection, sendCommand } from '../signals/store';
+import { state, setActiveSection, setActivePage, sendCommand } from '../signals/store';
 import { SECTION_IDS } from '../../storage/migrations/v1';
 
 interface SidebarProps {
@@ -28,7 +28,13 @@ const sectionConfig = [
 
 export function Sidebar(_props: SidebarProps) {
   const handleSectionClick = (sectionId: string) => {
-    setActiveSection(sectionId);
+    if (state.activeSection === sectionId) {
+      // Clicking the already-active section collapses it
+      setActiveSection(null);
+    } else {
+      setActiveSection(sectionId);
+      setActivePage(`section-${sectionId}`);
+    }
   };
 
   const handleAddItem = (sectionId: string) => {

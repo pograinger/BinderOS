@@ -28,6 +28,13 @@ import { createMemo, createSignal } from 'solid-js';
 import { state } from './store';
 import type { Atom } from '../../types/atoms';
 
+// Safe property access for type-specific fields on SolidJS store proxies.
+// The `in` operator uses the `has` trap which does NOT create reactive subscriptions.
+// Bracket access uses the `get` trap which SolidJS tracks properly.
+function getDate(a: Atom, field: 'dueDate' | 'scheduledDate' | 'eventDate'): number | undefined {
+  return (a as Record<string, unknown>)[field] as number | undefined;
+}
+
 // --- Date helpers (module-level, not exported) ---
 
 /** Timestamp for 00:00:00.000 today (local time). */
@@ -44,24 +51,35 @@ function endOfDay(): number {
   return d.getTime();
 }
 
-/** Timestamp for 00:00:00.000 on the Monday of the current week (local time). */
+/** Timestamp for 00:00:00.000 on the Sunday of the current week (local time). Sun-Sat weeks. */
 function startOfWeek(): number {
   const d = new Date();
   const day = d.getDay(); // 0=Sun, 1=Mon, ...
-  const diff = (day === 0 ? -6 : 1 - day); // adjust to Monday
-  d.setDate(d.getDate() + diff);
+  d.setDate(d.getDate() - day); // back to Sunday
   d.setHours(0, 0, 0, 0);
   return d.getTime();
 }
 
-/** Timestamp for 23:59:59.999 on the Sunday of the current week (local time). */
+/** Timestamp for 23:59:59.999 on the Saturday of the current week (local time). Sun-Sat weeks. */
 function endOfWeek(): number {
   const d = new Date();
   const day = d.getDay(); // 0=Sun, 1=Mon, ...
-  const diff = (day === 0 ? 0 : 7 - day); // adjust to Sunday
-  d.setDate(d.getDate() + diff);
+  d.setDate(d.getDate() + (6 - day)); // forward to Saturday
   d.setHours(23, 59, 59, 999);
   return d.getTime();
+}
+
+/** Start/end of a Sun-Sat week offset by N weeks from the current week. 0 = this week, -1 = last, +1 = next. */
+function weekBounds(offset: number): { start: number; end: number } {
+  const now = new Date();
+  const day = now.getDay();
+  const sun = new Date(now);
+  sun.setDate(now.getDate() - day + offset * 7);
+  sun.setHours(0, 0, 0, 0);
+  const sat = new Date(sun);
+  sat.setDate(sun.getDate() + 6);
+  sat.setHours(23, 59, 59, 999);
+  return { start: sun.getTime(), end: sat.getTime() };
 }
 
 // --- Filter state interface ---
@@ -115,12 +133,14 @@ export const todayAtoms = createMemo((): Atom[] => {
         return false;
       }
       // Task due today or overdue
-      if (a.type === 'task' && 'dueDate' in a && a.dueDate !== undefined) {
-        if (a.dueDate <= eod) return true;
+      const dueDateVal = a.type === 'task' ? getDate(a, 'dueDate') : undefined;
+      if (dueDateVal !== undefined) {
+        if (dueDateVal <= eod) return true;
       }
       // Event happening today
-      if (a.type === 'event' && 'eventDate' in a && a.eventDate !== undefined) {
-        if (a.eventDate >= now && a.eventDate <= eod) return true;
+      const eventDateVal = a.type === 'event' ? getDate(a, 'eventDate') : undefined;
+      if (eventDateVal !== undefined) {
+        if (eventDateVal >= now && eventDateVal <= eod) return true;
       }
       // Critical priority task
       if (a.type === 'task' && state.scores[a.id]?.priorityTier === 'Critical') return true;
@@ -136,45 +156,62 @@ export const todayAtoms = createMemo((): Atom[] => {
 });
 
 /**
- * This Week page atoms.
+ * Week view offset: -1 = last week, 0 = this week, 1 = next week.
+ */
+export type WeekOffset = -1 | 0 | 1;
+
+/**
+ * Weekly page atoms (parameterized by week offset signal).
  *
- * Includes: tasks due this week, overdue tasks (dueDate < today),
- * and events happening this week.
+ * Includes: tasks due in the target Sun-Sat range (+ overdue for current/next),
+ * and events happening in that range.
  * Excludes: done, cancelled, archived atoms.
  * Sorted by: dueDate/eventDate ascending (soonest first), then priorityScore desc.
  */
-export const thisWeekAtoms = createMemo((): Atom[] => {
-  const sow = startOfWeek();
-  const eow = endOfWeek();
-  const sod = startOfDay();
+export function createWeeklyAtoms(offset: () => WeekOffset) {
+  return createMemo((): Atom[] => {
+    const bounds = weekBounds(offset());
+    const sod = startOfDay();
 
-  return state.atoms
-    .filter((a) => {
-      if (a.status === 'done' || a.status === 'cancelled' || a.status === 'archived') {
+    return state.atoms
+      .filter((a) => {
+        if (a.status === 'done' || a.status === 'cancelled' || a.status === 'archived') {
+          return false;
+        }
+        const dueDateVal = a.type === 'task' ? getDate(a, 'dueDate') : undefined;
+        if (dueDateVal !== undefined) {
+          // Due in range
+          if (dueDateVal >= bounds.start && dueDateVal <= bounds.end) return true;
+          // Overdue tasks (only for current/next week views, not last week)
+          if (offset() >= 0 && dueDateVal < sod) return true;
+        }
+        const eventDateVal = a.type === 'event' ? getDate(a, 'eventDate') : undefined;
+        if (eventDateVal !== undefined) {
+          if (eventDateVal >= bounds.start && eventDateVal <= bounds.end) return true;
+        }
         return false;
-      }
-      if (a.type === 'task' && 'dueDate' in a && a.dueDate !== undefined) {
-        // Due this week (soonest upcoming tasks)
-        if (a.dueDate >= sod && a.dueDate <= eow) return true;
-        // Overdue tasks need attention
-        if (a.dueDate < sod) return true;
-      }
-      if (a.type === 'event' && 'eventDate' in a && a.eventDate !== undefined) {
-        if (a.eventDate >= sow && a.eventDate <= eow) return true;
-      }
-      return false;
-    })
-    .sort((a, b) => {
-      // Extract date field for each atom type
-      const dateA = ('dueDate' in a ? a.dueDate : undefined) ?? ('eventDate' in a ? a.eventDate : undefined) ?? Infinity;
-      const dateB = ('dueDate' in b ? b.dueDate : undefined) ?? ('eventDate' in b ? b.eventDate : undefined) ?? Infinity;
-      if (dateA !== dateB) return dateA - dateB; // ascending by date
-      // Tie-break: priorityScore descending
-      const scoreA = state.scores[a.id]?.priorityScore ?? 0;
-      const scoreB = state.scores[b.id]?.priorityScore ?? 0;
-      return scoreB - scoreA;
-    });
-});
+      })
+      .sort((a, b) => {
+        const dateA = getDate(a, 'dueDate') ?? getDate(a, 'eventDate') ?? Infinity;
+        const dateB = getDate(b, 'dueDate') ?? getDate(b, 'eventDate') ?? Infinity;
+        if (dateA !== dateB) return dateA - dateB;
+        const scoreA = state.scores[a.id]?.priorityScore ?? 0;
+        const scoreB = state.scores[b.id]?.priorityScore ?? 0;
+        return scoreB - scoreA;
+      });
+  });
+}
+
+/** Compute Sun-Sat date range label for a given week offset. */
+export function weekRangeLabel(offset: number): string {
+  const bounds = weekBounds(offset);
+  const fmt = (ts: number) =>
+    new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  return `${fmt(bounds.start)} – ${fmt(bounds.end)}`;
+}
+
+/** Default this-week memo for backward compatibility (current calendar week). */
+export const thisWeekAtoms = createWeeklyAtoms(() => 0);
 
 /**
  * Active Projects page atoms.

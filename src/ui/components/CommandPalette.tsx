@@ -74,7 +74,7 @@ export function CommandPalette(props: CommandPaletteProps) {
     },
     {
       id: 'nav-this-week',
-      label: 'Go to This Week',
+      label: 'Go to Weekly',
       shortcut: '2',
       category: 'navigation',
       action: () => { setActivePage('this-week'); props.onClose(); },
@@ -184,6 +184,7 @@ export function CommandPalette(props: CommandPaletteProps) {
       if (cmd) cmd.action();
     },
     onEscape: props.onClose,
+    mode: 'container',
   });
 
   const handleInputKeyDown = (e: KeyboardEvent) => {

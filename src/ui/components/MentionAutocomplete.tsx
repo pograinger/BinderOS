@@ -29,6 +29,8 @@ interface MentionAutocompleteProps {
   value: string;
   onValueChange: (value: string) => void;
   onLinkCreated: (targetId: string) => void;
+  /** Current atom ID — excluded from suggestions (can't link to yourself) */
+  excludeId?: string;
 }
 
 // --- Helper: extract @mention query from textarea value and cursor position ---
@@ -77,13 +79,15 @@ export function MentionAutocomplete(props: MentionAutocompleteProps) {
     return detectMention(props.value, cursorPos());
   });
 
-  // Filter atoms matching the mention query
+  // Filter atoms matching the mention query (excludes current atom)
   const suggestions = createMemo((): Atom[] => {
     const ms = mentionState();
     if (!ms.active) return [];
     const q = ms.query.toLowerCase();
+    const exclude = props.excludeId;
     return state.atoms
       .filter((a) => {
+        if (exclude && a.id === exclude) return false;
         const title = (a.title || a.content.slice(0, 60)).toLowerCase();
         return title.includes(q);
       })
@@ -100,27 +104,28 @@ export function MentionAutocomplete(props: MentionAutocompleteProps) {
     const ms = mentionState();
     if (!ms.active) return;
 
-    const title = atom.title || atom.content.slice(0, 60);
-    // Replace @query with @title in the content
+    // Remove the @query text from content (keep it clean)
     const before = props.value.slice(0, ms.mentionStart);
-    const after = props.value.slice(
-      ms.mentionStart + 1 + ms.query.length,
-    );
-    const newValue = `${before}@${title}${after}`;
+    const after = props.value.slice(ms.mentionStart + 1 + ms.query.length);
+    const newValue = before + after;
+
+    // Update state before re-rendering
+    setShowDropdown(false);
+    setHighlightedIndex(0);
 
     props.onValueChange(newValue);
     props.onLinkCreated(atom.id);
 
-    setShowDropdown(false);
-    setHighlightedIndex(0);
+    // Restore focus, update cursor position signal, and set selection
+    const newCursorPos = before.length;
+    setCursorPos(newCursorPos);
 
-    // Restore focus and position cursor after the inserted mention
     if (textareaRef) {
-      const newCursorPos = before.length + 1 + title.length;
       textareaRef.focus();
       requestAnimationFrame(() => {
         if (textareaRef) {
           textareaRef.setSelectionRange(newCursorPos, newCursorPos);
+          setCursorPos(newCursorPos);
         }
       });
     }

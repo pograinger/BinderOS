@@ -25,26 +25,42 @@ import { PriorityBadge } from '../components/PriorityBadge';
 import { TagInput } from '../components/TagInput';
 import { BacklinksPanel } from '../components/BacklinksPanel';
 import { MentionAutocomplete } from '../components/MentionAutocomplete';
-import type { AtomStatus, AtomLink } from '../../types/atoms';
+import { SECTION_IDS } from '../../storage/migrations/v1';
+import type { Atom, AtomStatus, AtomLink } from '../../types/atoms';
+
+// --- Safe property access for type-specific atom fields ---
+// CRITICAL: Do NOT use 'field in proxy' with SolidJS store proxies.
+// The `in` operator uses the `has` trap which does NOT create reactive subscriptions.
+// Direct property access via `get` trap is required for reactivity.
+
+function getAtomDate(a: Atom, field: 'dueDate' | 'scheduledDate' | 'eventDate'): number | undefined {
+  return (a as Record<string, unknown>)[field] as number | undefined;
+}
 
 // --- Date helpers ---
 
 /**
  * Convert a Unix ms timestamp to an HTML date input value string (YYYY-MM-DD).
  * Returns '' if ts is undefined.
+ *
+ * Uses UTC methods because dateInputToTs stores dates as UTC midnight.
+ * Both functions must use the same timezone to avoid off-by-one errors.
  */
 function tsToDateInput(ts: number | undefined): string {
   if (ts === undefined) return '';
   const d = new Date(ts);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
   return `${y}-${m}-${day}`;
 }
 
 /**
  * Convert an HTML date input value string (YYYY-MM-DD) to Unix ms timestamp.
  * Returns undefined if the value is empty.
+ *
+ * new Date('YYYY-MM-DD') parses as UTC midnight per spec.
+ * tsToDateInput uses UTC methods to match.
  */
 function dateInputToTs(value: string): number | undefined {
   if (!value) return undefined;
@@ -135,39 +151,16 @@ export function AtomDetailView() {
     });
   };
 
-  // --- Due date change (tasks) ---
-  const handleDueDateChange = (e: Event) => {
+  // --- Date change handler (auto-saves on input) ---
+  const handleDateField = (field: 'dueDate' | 'scheduledDate' | 'eventDate') => (e: Event) => {
     const a = atom();
     if (!a) return;
     const input = e.target as HTMLInputElement;
     const ts = dateInputToTs(input.value);
+    if (ts === undefined) return; // Don't send empty/partial dates
     sendCommand({
       type: 'UPDATE_ATOM',
-      payload: { id: a.id, changes: { dueDate: ts } },
-    });
-  };
-
-  // --- Scheduled date change (tasks) ---
-  const handleScheduledDateChange = (e: Event) => {
-    const a = atom();
-    if (!a) return;
-    const input = e.target as HTMLInputElement;
-    const ts = dateInputToTs(input.value);
-    sendCommand({
-      type: 'UPDATE_ATOM',
-      payload: { id: a.id, changes: { scheduledDate: ts } },
-    });
-  };
-
-  // --- Event date change ---
-  const handleEventDateChange = (e: Event) => {
-    const a = atom();
-    if (!a) return;
-    const input = e.target as HTMLInputElement;
-    const ts = dateInputToTs(input.value);
-    sendCommand({
-      type: 'UPDATE_ATOM',
-      payload: { id: a.id, changes: { eventDate: ts } },
+      payload: { id: a.id, changes: { [field]: ts } },
     });
   };
 
@@ -175,13 +168,16 @@ export function AtomDetailView() {
   // Local signal for the content textarea value — debounces saves at 300ms
   const [contentDraft, setContentDraft] = createSignal<string | null>(null);
 
-  // Sync draft to atom content when selected atom changes (reset draft on nav)
+  // Sync draft to atom content ONLY when switching to a different atom.
+  // During editing, local draft is authoritative — prevents race conditions
+  // where a STATE_UPDATE (e.g., link change) overwrites in-flight content edits.
+  let contentSyncId: string | null = null;
   createEffect(() => {
     const a = atom();
-    if (a) {
-      setContentDraft(a.content);
-    } else {
-      setContentDraft(null);
+    const newId = a?.id ?? null;
+    if (newId !== contentSyncId) {
+      contentSyncId = newId;
+      setContentDraft(a ? a.content : null);
     }
   });
 
@@ -363,10 +359,8 @@ export function AtomDetailView() {
                 <input
                   type="date"
                   class="atom-detail-date-input"
-                  value={tsToDateInput(
-                    'dueDate' in atom()! ? (atom()! as { dueDate?: number }).dueDate : undefined,
-                  )}
-                  onChange={handleDueDateChange}
+                  value={tsToDateInput(getAtomDate(atom()!, 'dueDate'))}
+                  onInput={handleDateField('dueDate')}
                   aria-label="Due date"
                 />
               </label>
@@ -375,12 +369,8 @@ export function AtomDetailView() {
                 <input
                   type="date"
                   class="atom-detail-date-input"
-                  value={tsToDateInput(
-                    'scheduledDate' in atom()!
-                      ? (atom()! as { scheduledDate?: number }).scheduledDate
-                      : undefined,
-                  )}
-                  onChange={handleScheduledDateChange}
+                  value={tsToDateInput(getAtomDate(atom()!, 'scheduledDate'))}
+                  onInput={handleDateField('scheduledDate')}
                   aria-label="Scheduled date"
                 />
               </label>
@@ -395,14 +385,41 @@ export function AtomDetailView() {
             <input
               type="date"
               class="atom-detail-date-input"
-              value={tsToDateInput(
-                'eventDate' in atom()! ? (atom()! as { eventDate?: number }).eventDate : undefined,
-              )}
-              onChange={handleEventDateChange}
+              value={tsToDateInput(getAtomDate(atom()!, 'eventDate'))}
+              onInput={handleDateField('eventDate')}
               aria-label="Event date"
             />
           </div>
         </Show>
+
+        {/* Project assignment */}
+        <div class="atom-detail-section">
+          <span class="atom-detail-section-label">Project</span>
+          <select
+            class="atom-detail-select"
+            value={atom()!.sectionItemId ?? ''}
+            onChange={(e) => {
+              const value = e.currentTarget.value;
+              sendCommand({
+                type: 'UPDATE_ATOM',
+                payload: {
+                  id: atom()!.id,
+                  changes: {
+                    sectionId: value ? SECTION_IDS.projects : undefined,
+                    sectionItemId: value || undefined,
+                  },
+                },
+              });
+            }}
+          >
+            <option value="">None</option>
+            <For each={state.sectionItems.filter((si) => si.sectionId === SECTION_IDS.projects && !si.archived)}>
+              {(item) => (
+                <option value={item.id}>{item.name}</option>
+              )}
+            </For>
+          </select>
+        </div>
 
         {/* Content section — MentionAutocomplete textarea with @mention + debounced save */}
         <div class="atom-detail-section atom-detail-content-section">
@@ -411,6 +428,7 @@ export function AtomDetailView() {
             value={contentDraft() ?? atom()!.content}
             onValueChange={handleContentChange}
             onLinkCreated={handleLinkCreated}
+            excludeId={atom()!.id}
           />
         </div>
 
@@ -436,11 +454,59 @@ export function AtomDetailView() {
               <span class="atom-detail-meta-value">{sectionItemName()}</span>
             </div>
           </Show>
-          <div class="atom-detail-meta-row">
-            <span class="atom-detail-meta-label">Links</span>
-            <span class="atom-detail-meta-value">{atom()!.links.length}</span>
-          </div>
         </div>
+
+        {/* Forward links — clickable chips for atoms this atom links to */}
+        <Show when={atom()!.links.length > 0}>
+          <div class="atom-detail-section">
+            <span class="atom-detail-section-label">
+              Links ({atom()!.links.length})
+            </span>
+            <div class="atom-detail-links">
+              <For each={atom()!.links}>
+                {(link) => {
+                  const target = () => state.atoms.find((a) => a.id === link.targetId);
+                  return (
+                    <Show when={target()}>
+                      <div
+                        class="atom-link-chip"
+                        onClick={() => setSelectedAtomId(link.targetId)}
+                        title={target()!.title || target()!.content.slice(0, 60)}
+                      >
+                        <AtomTypeIcon type={target()!.type} size={12} />
+                        <span class="atom-link-chip-label">
+                          {target()!.title || target()!.content.slice(0, 40)}
+                        </span>
+                        <span
+                          class="atom-link-remove"
+                          role="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const a = atom();
+                            if (!a) return;
+                            sendCommand({
+                              type: 'UPDATE_ATOM',
+                              payload: {
+                                id: a.id,
+                                changes: {
+                                  links: a.links.filter((l) => l.targetId !== link.targetId),
+                                },
+                              },
+                            });
+                          }}
+                          title="Remove link"
+                          aria-label="Remove link"
+                        >
+                          &times;
+                        </span>
+                      </div>
+                    </Show>
+                  );
+                }}
+              </For>
+            </div>
+          </div>
+        </Show>
 
         {/* Backlinks section — shows atoms that link to this atom */}
         <div class="atom-detail-section">

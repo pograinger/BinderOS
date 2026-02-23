@@ -39,11 +39,13 @@ const SHORTCUTS: ShortcutCategory[] = [
   {
     category: 'Navigation',
     shortcuts: [
+      { key: '0', description: 'Go to Inbox' },
       { key: '1', description: 'Go to Today' },
-      { key: '2', description: 'Go to This Week' },
+      { key: '2', description: 'Go to Weekly' },
       { key: '3', description: 'Go to Active Projects' },
       { key: '4', description: 'Go to Waiting' },
       { key: '5', description: 'Go to Insights' },
+      { key: '6', description: 'Go to All Items' },
     ],
   },
   {

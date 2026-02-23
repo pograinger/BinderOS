@@ -8,9 +8,12 @@
  */
 
 import { createSignal, createMemo, For, Show } from 'solid-js';
-import { state } from '../signals/store';
+import { state, setSelectedAtomId } from '../signals/store';
+import { filteredAndSortedAtoms, createFilterState } from '../signals/queries';
 import { AtomCard } from '../components/AtomCard';
+import { FilterBar } from '../components/FilterBar';
 import { SectionItemList } from '../components/SectionItemList';
+import { useRovingTabindex } from '../hooks/useRovingTabindex';
 import type { Atom } from '../../types/atoms';
 
 interface SectionViewProps {
@@ -19,33 +22,39 @@ interface SectionViewProps {
 
 export function SectionView(props: SectionViewProps) {
   const [activeSectionItemId, setActiveSectionItemId] = createSignal<string | null>(null);
+  const { filters, setFilter } = createFilterState();
 
-  const activeAtoms = createMemo((): Atom[] => {
+  // Base atoms before FilterBar filtering
+  const baseAtoms = createMemo((): Atom[] => {
     const itemId = activeSectionItemId();
-    let atoms: Atom[];
 
     if (itemId) {
-      // Filter by specific section item
-      atoms = state.atoms.filter(
+      return state.atoms.filter(
         (a) => a.sectionItemId === itemId && a.status !== 'archived',
       );
     } else if (props.sectionId) {
-      // Filter by section (all items in the section)
       const sectionItemIds = state.sectionItems
         .filter((si) => si.sectionId === props.sectionId && !si.archived)
         .map((si) => si.id);
-      atoms = state.atoms.filter(
+      return state.atoms.filter(
         (a) =>
           (a.sectionId === props.sectionId || (a.sectionItemId && sectionItemIds.includes(a.sectionItemId))) &&
           a.status !== 'archived',
       );
     } else {
-      // All non-archived atoms
-      atoms = state.atoms.filter((a) => a.status !== 'archived');
+      return state.atoms.filter((a) => a.status !== 'archived');
     }
+  });
 
-    // Sort by updated_at descending (most recent first)
-    return [...atoms].sort((a, b) => b.updated_at - a.updated_at);
+  // Apply FilterBar filters + sorting
+  const activeAtoms = filteredAndSortedAtoms(baseAtoms, filters);
+
+  const { itemTabindex, isItemFocused } = useRovingTabindex({
+    itemCount: () => activeAtoms().length,
+    onSelect: (i) => {
+      const atom = activeAtoms()[i];
+      if (atom) setSelectedAtomId(atom.id);
+    },
   });
 
   return (
@@ -58,6 +67,13 @@ export function SectionView(props: SectionViewProps) {
           onSelectItem={setActiveSectionItemId}
         />
       </Show>
+
+      {/* Filters */}
+      <FilterBar
+        filters={filters()}
+        onFilterChange={setFilter}
+        showSectionFilter={!props.sectionId}
+      />
 
       {/* Atom list */}
       <Show
@@ -73,9 +89,16 @@ export function SectionView(props: SectionViewProps) {
           </div>
         }
       >
-        <div class="atom-list">
+        <div class="atom-list" role="listbox">
           <For each={activeAtoms()}>
-            {(atom) => <AtomCard atom={atom} />}
+            {(atom, i) => (
+              <AtomCard
+                atom={atom}
+                tabindex={itemTabindex(i())}
+                focused={isItemFocused(i())}
+                onClick={() => setSelectedAtomId(atom.id)}
+              />
+            )}
           </For>
         </div>
       </Show>

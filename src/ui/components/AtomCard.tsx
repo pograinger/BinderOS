@@ -26,7 +26,7 @@
  * CRITICAL: Never destructure state. Access via state.scores[props.atom.id].
  */
 
-import { createSignal, Show, For } from 'solid-js';
+import { createSignal, createEffect, Show, For } from 'solid-js';
 import { AtomTypeIcon } from './AtomTypeIcon';
 import { PriorityBadge } from './PriorityBadge';
 import { sendCommand, state, setSelectedAtomId } from '../signals/store';
@@ -44,9 +44,10 @@ interface AtomCardProps {
 
 /**
  * Format a Unix ms timestamp as a short date (e.g., "Feb 22").
+ * Uses UTC because date-only values are stored as UTC midnight.
  */
 function formatDate(ts: number): string {
-  return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
 }
 
 /**
@@ -91,17 +92,18 @@ export function AtomCard(props: AtomCardProps) {
     atomScore()?.priorityTier != null;
 
   // Phase 3: due date display for tasks
+  // CRITICAL: Use bracket access (get trap) not `in` operator (has trap) for SolidJS reactivity
   const dueDate = (): number | undefined => {
-    if (props.atom.type === 'task' && 'dueDate' in props.atom) {
-      return props.atom.dueDate;
+    if (props.atom.type === 'task') {
+      return (props.atom as Record<string, unknown>).dueDate as number | undefined;
     }
     return undefined;
   };
 
   // Phase 3: event date display for events
   const eventDate = (): number | undefined => {
-    if (props.atom.type === 'event' && 'eventDate' in props.atom) {
-      return props.atom.eventDate;
+    if (props.atom.type === 'event') {
+      return (props.atom as Record<string, unknown>).eventDate as number | undefined;
     }
     return undefined;
   };
@@ -200,9 +202,20 @@ export function AtomCard(props: AtomCardProps) {
     }
   };
 
+  let cardRef!: HTMLDivElement;
+
+  // Auto-focus and scroll into view when roving tabindex focuses this card
+  createEffect(() => {
+    if (props.focused && cardRef) {
+      cardRef.focus({ preventScroll: false });
+      cardRef.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
+
   return (
     <div
-      class="atom-card"
+      ref={cardRef}
+      class={`atom-card${props.focused ? ' focused' : ''}`}
       style={{
         transform: `translateX(${translateX()}px)`,
         background: bgTint(),

@@ -98,9 +98,10 @@ export function SectionItemList(props: SectionItemListProps) {
               <button
                 class="section-item-archive-btn"
                 onClick={(e) => handleArchive(e, item.id)}
-                title="Archive"
+                title="Delete project"
+                aria-label="Delete project"
               >
-                x
+                &times;
               </button>
             </Show>
           </div>

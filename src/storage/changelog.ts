@@ -19,17 +19,18 @@ const DEVICE_ID_KEY = 'binderos-device-id';
 // Module-level lamport clock counter
 let lamportClockCounter = 0;
 
+// Cached device ID (loaded from Dexie config table on init)
+let cachedDeviceId: string | null = null;
+
 /**
- * Get or create the device ID from localStorage.
- * This is the CRDT device identifier used in all mutation log entries.
+ * Get the device ID. Must call initLamportClock() first to load from Dexie.
+ * Falls back to generating a new UUID if not yet initialized.
  */
 export function getDeviceId(): string {
-  let deviceId = localStorage.getItem(DEVICE_ID_KEY);
-  if (!deviceId) {
-    deviceId = crypto.randomUUID();
-    localStorage.setItem(DEVICE_ID_KEY, deviceId);
-  }
-  return deviceId;
+  if (cachedDeviceId) return cachedDeviceId;
+  // Fallback: generate and cache (will be persisted on next initLamportClock)
+  cachedDeviceId = crypto.randomUUID();
+  return cachedDeviceId;
 }
 
 /**
@@ -41,8 +42,12 @@ export function getLamportClock(): number {
 }
 
 /**
- * Initialize the lamport clock from the max value in the changelog table.
- * Must be called once on app/worker initialization before any mutations.
+ * Initialize the lamport clock from the max value in the changelog table,
+ * and load (or create) the device ID from the Dexie config table.
+ * Must be called once on worker initialization before any mutations.
+ *
+ * Uses the config table instead of localStorage because this runs
+ * in a Web Worker where localStorage is not available.
  */
 export async function initLamportClock(): Promise<void> {
   const maxEntry = await db.changelog
@@ -50,6 +55,15 @@ export async function initLamportClock(): Promise<void> {
     .last();
 
   lamportClockCounter = maxEntry ? maxEntry.lamportClock : 0;
+
+  // Load or create device ID from Dexie config table
+  const entry = await db.config.get(DEVICE_ID_KEY);
+  if (entry && typeof entry.value === 'string') {
+    cachedDeviceId = entry.value;
+  } else {
+    cachedDeviceId = crypto.randomUUID();
+    await db.config.put({ key: DEVICE_ID_KEY, value: cachedDeviceId });
+  }
 }
 
 /**

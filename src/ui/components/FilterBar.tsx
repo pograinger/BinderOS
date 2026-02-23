@@ -77,7 +77,10 @@ export function FilterBar(props: FilterBarProps) {
   }
 
   function commitSaveFilter() {
+    if (!savingFilter()) return; // Guard against double-fire (Enter + blur)
     const name = filterNameDraft().trim();
+    setSavingFilter(false);
+    setFilterNameDraft('');
     if (name) {
       const id = crypto.randomUUID();
       const filterSnapshot = { ...props.filters };
@@ -86,8 +89,6 @@ export function FilterBar(props: FilterBarProps) {
         payload: { id, name, filter: filterSnapshot },
       });
     }
-    setSavingFilter(false);
-    setFilterNameDraft('');
   }
 
   function handleSaveFilterKeyDown(e: KeyboardEvent) {

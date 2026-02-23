@@ -167,12 +167,18 @@ self.onmessage = async (event: MessageEvent<Command>) => {
           payload: {
             version: core.version(),
             sections: state.sections,
+            sectionItems: state.sectionItems,
             atoms: state.atoms,
             inboxItems: state.inboxItems,
             savedFilters,
           },
         };
         self.postMessage(response);
+
+        // Compute and send scores immediately after READY so UI has
+        // priority/staleness/entropy data on startup without waiting
+        // for the first user action or the 10-minute periodic timer.
+        void flushAndSendState();
 
         // Schedule periodic re-scoring every 10 minutes
         // (staleness changes over time even without user mutations)
@@ -321,9 +327,15 @@ self.onmessage = async (event: MessageEvent<Command>) => {
       }
 
       case 'EXPORT_DATA': {
-        // Flush any pending writes first
+        // Flush any pending writes first, then send blob to main thread
+        // (Workers don't have DOM access — main thread triggers the download)
         await writeQueue.flushImmediate();
-        await exportAllData();
+        const { blob, filename } = await exportAllData();
+        const exportResponse: Response = {
+          type: 'EXPORT_READY',
+          payload: { blob, filename },
+        };
+        self.postMessage(exportResponse);
         break;
       }
 

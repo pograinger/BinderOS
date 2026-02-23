@@ -63,7 +63,7 @@ export function TodayPage() {
   const { filters, setFilter } = createFilterState();
   const filteredAtoms = filteredAndSortedAtoms(todayAtoms, filters);
 
-  const { itemTabindex, isItemFocused, onKeyDown } = useRovingTabindex({
+  const { itemTabindex, isItemFocused } = useRovingTabindex({
     itemCount: () => filteredAtoms().length,
     onSelect: (i) => {
       const atom = filteredAtoms()[i];
@@ -158,7 +158,7 @@ export function TodayPage() {
 
       {/* Atom list */}
       <Show when={filteredAtoms().length > 0}>
-        <div class="atom-list" role="listbox" tabindex={0} onKeyDown={onKeyDown}>
+        <div class="atom-list" role="listbox">
           <For each={filteredAtoms()}>
             {(atom, i) => (
               <AtomCard
