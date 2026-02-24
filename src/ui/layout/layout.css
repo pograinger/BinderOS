@@ -4076,3 +4076,343 @@ kbd {
   flex-shrink: 0;
   opacity: 0.8;
 }
+
+/* ============================================
+   Phase 5: AI Suggestions
+   Inline suggestion strip on inbox triage cards.
+   ============================================ */
+
+.ai-suggestion-strip {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  border-left: 3px solid transparent;
+}
+
+/* High-confidence: solid left border */
+.ai-suggestion-strip--high {
+  border-left: 3px solid var(--accent);
+}
+
+/* Low-confidence: dotted left border */
+.ai-suggestion-strip--low {
+  border-left: 3px dotted var(--text-secondary);
+}
+
+/* Error state */
+.ai-suggestion-strip--error {
+  border-left: 3px solid var(--status-error);
+}
+
+/* Pending / analyzing state */
+.ai-suggestion-strip--pending {
+  opacity: 0.7;
+  border-left: 3px solid var(--border-primary);
+  animation: aiAnalyzingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes aiAnalyzingPulse {
+  0%   { opacity: 0.5; }
+  50%  { opacity: 0.9; }
+  100% { opacity: 0.5; }
+}
+
+/* Analyzing text */
+.ai-suggestion-analyzing {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Error text */
+.ai-suggestion-error {
+  font-size: 12px;
+  color: var(--status-error);
+}
+
+/* Header row: type icon + type + section + AI badge */
+.ai-suggestion-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.ai-suggestion-type {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: capitalize;
+}
+
+.ai-suggestion-section {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ai-suggestion-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  border-radius: 3px;
+  padding: 1px 4px;
+  letter-spacing: 0.05em;
+}
+
+/* Reasoning — truncated by default */
+.ai-suggestion-reasoning {
+  font-size: 12px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 3px;
+}
+
+/* Expanded reasoning */
+.ai-suggestion-reasoning--expanded {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+/* Show more/less toggle */
+.ai-suggestion-expand {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 5px;
+}
+
+.ai-suggestion-expand:hover {
+  opacity: 0.8;
+}
+
+/* Secondary detail section (shown when expanded) */
+.ai-suggestion-detail {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Related atom chips row */
+.ai-suggestion-related {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.ai-suggestion-chip {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding: 2px 8px;
+  cursor: pointer;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ai-suggestion-chip:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Accept / Dismiss action buttons */
+.ai-suggestion-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.ai-suggestion-accept {
+  flex: 1;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  background: var(--accent);
+  color: var(--bg-primary);
+  transition: opacity 0.15s;
+}
+
+.ai-suggestion-accept:hover {
+  opacity: 0.85;
+}
+
+.ai-suggestion-dismiss {
+  flex: 1;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  transition: background 0.15s, color 0.15s;
+}
+
+.ai-suggestion-dismiss:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Accept all bulk button */
+.inbox-accept-all {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 4px 16px 0;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid rgba(88, 166, 255, 0.4);
+  background: rgba(88, 166, 255, 0.1);
+  color: var(--accent);
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.inbox-accept-all:hover {
+  background: rgba(88, 166, 255, 0.2);
+}
+
+/* ============================================
+   Phase 5: AI Question Flow
+   Modal overlay for structured AI interactions.
+   ============================================ */
+
+.ai-question-flow-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.ai-question-flow {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  max-width: 400px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: qfFadeIn 0.2s ease-out;
+}
+
+@keyframes qfFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ai-qf-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.ai-qf-description {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.ai-qf-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.ai-qf-option {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.ai-qf-option:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-secondary);
+}
+
+.ai-qf-option-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ai-qf-option-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ai-qf-freeform {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-primary);
+  margin-bottom: 10px;
+}
+
+.ai-qf-input {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.ai-qf-input:focus {
+  border-color: var(--accent);
+}
+
+.ai-qf-input::placeholder {
+  color: var(--text-muted);
+}
+
+.ai-qf-close {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+
+.ai-qf-close:hover {
+  color: var(--text-primary);
+}

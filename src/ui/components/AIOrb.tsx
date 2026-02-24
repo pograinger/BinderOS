@@ -23,6 +23,7 @@
 import { createSignal, createEffect, Show } from 'solid-js';
 import { state, anyAIAvailable, startTriageInbox } from '../signals/store';
 import { AIRadialMenu } from './AIRadialMenu';
+import { setShowQuestionFlow, setQuestionFlowContext } from './AIQuestionFlow';
 
 // --- State machine type ---
 
@@ -97,13 +98,55 @@ export function AIOrb(props: AIOrpProps) {
   }
 
   function handleMenuAction(action: string) {
-    // Action callbacks — wired to triage pipeline in Plan 03
-    // 'review', 'compress', 'discuss' are stubs for Phases 6-7
+    // Action callbacks — triage wired in Plan 03
+    // 'discuss' wired to AIQuestionFlow in Plan 04
+    // 'review', 'compress' are stubs for Phases 6-7
     if (action === 'triage') {
       setOrbState('idle');
       startTriageInbox();
+      return;
     }
-    // Other actions handled in their respective plans
+
+    if (action === 'discuss') {
+      // Set up context-appropriate question flow options based on current page
+      const isInbox = state.activePage === 'inbox';
+      setQuestionFlowContext({
+        title: isInbox
+          ? 'What would you like to do with your inbox?'
+          : 'What would you like to do?',
+        description: isInbox
+          ? 'Choose how to work with your inbox items'
+          : 'Choose an action for the current view',
+        options: isInbox
+          ? [
+              { id: 'process-all', label: 'Process all inbox items', description: 'Triage everything at once' },
+              { id: 'tell-me', label: 'Tell me about this item', description: 'Explain the current inbox card' },
+              { id: 'organize', label: 'Suggest organization', description: 'Recommend sections and groupings' },
+              { id: 'prioritize', label: 'Prioritize inbox', description: 'Order items by urgency and importance' },
+            ]
+          : [
+              { id: 'summarize', label: 'Summarize this section', description: 'Get an overview of current items' },
+              { id: 'stale', label: 'Find stale items', description: 'Identify atoms that need attention' },
+              { id: 'connections', label: 'Suggest connections', description: 'Find related atoms and patterns' },
+            ],
+        allowFreeform: true,
+        onSelect: (optionId) => {
+          // Phase 5 stub — actual AI conversation wired in Phases 6-7
+          console.log('[AIOrb] Discuss option selected:', optionId);
+        },
+        onFreeform: (text) => {
+          // Phase 5 stub — actual AI conversation wired in Phases 6-7
+          console.log('[AIOrb] Discuss freeform input:', text);
+        },
+        onClose: () => {
+          // No additional cleanup needed
+        },
+      });
+      setShowQuestionFlow(true);
+      return;
+    }
+
+    // Other actions ('review', 'compress') handled in their respective plans
   }
 
   function handleMenuClose() {

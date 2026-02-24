@@ -26,6 +26,7 @@ import { AISettingsPanel } from '../components/AISettingsPanel';
 import { AIGuidedSetup } from '../components/AIGuidedSetup';
 import { CloudRequestPreview } from '../components/CloudRequestPreview';
 import { AIOrb } from '../components/AIOrb';
+import { AIQuestionFlow } from '../components/AIQuestionFlow';
 import { state, setPendingCloudRequest } from '../signals/store';
 import { getActiveAdapter } from '../../ai/router';
 import type { CloudAdapter } from '../../ai/adapters/cloud';
@@ -90,6 +91,9 @@ export function Shell() {
 
       {/* Phase 5: AI Orb — always-visible AI entry point (renders when any AI adapter available) */}
       <AIOrb isOverlayOpen={isAnyOverlayOpen()} />
+
+      {/* Phase 5: AI Question Flow — reusable conversational panel (opened by Discuss orb action) */}
+      <AIQuestionFlow />
 
       {/* Phase 4: AI overlays */}
 
