@@ -3787,3 +3787,281 @@ kbd {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ============================================
+   Phase 5: AI Orb
+   Floating binder-ring AI entry point.
+   States: idle | thinking | streaming | error | expanded
+   ============================================ */
+
+/* --- Orb container --- */
+
+.ai-orb {
+  position: fixed;
+  bottom: var(--orb-bottom, calc(var(--status-bar-height) + 72px));
+  right: var(--orb-right, 16px);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 100;
+  transition: bottom 0.3s ease-out, right 0.3s ease-out, transform 0.2s ease-out;
+  /* Positioning context for radial menu and error message */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Orb ring (the binder ring visual) --- */
+
+.ai-orb-ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 8px rgba(88, 166, 255, 0.4);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* --- State: idle — gentle box-shadow pulse --- */
+
+.ai-orb--idle .ai-orb-ring {
+  animation: orbIdlePulse 3s ease-in-out infinite;
+}
+
+@keyframes orbIdlePulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(88, 166, 255, 0.4); }
+  50%       { box-shadow: 0 0 20px rgba(88, 166, 255, 0.85), 0 0 8px rgba(88, 166, 255, 0.5); }
+}
+
+/* --- State: thinking — dashed ring spins --- */
+
+.ai-orb--thinking .ai-orb-ring {
+  animation: orbThinkingSpin 1s linear infinite;
+  border-style: dashed;
+}
+
+@keyframes orbThinkingSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* --- State: streaming — conic-gradient "ring opening" with slow spin --- */
+
+.ai-orb--streaming .ai-orb-ring {
+  animation: orbStreamingOpen 0.5s ease-out forwards, orbThinkingSpin 2s linear infinite;
+  background: conic-gradient(var(--accent) 0%, transparent 60%);
+  border: none;
+  box-shadow: 0 0 12px rgba(88, 166, 255, 0.6);
+}
+
+@keyframes orbStreamingOpen {
+  from { transform: scale(0.9); opacity: 0.7; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* --- State: error — brief red flash --- */
+
+.ai-orb--error .ai-orb-ring {
+  animation: orbErrorFlash 1.5s ease-out forwards;
+}
+
+@keyframes orbErrorFlash {
+  0%   { border-color: var(--status-error); box-shadow: 0 0 20px rgba(248, 81, 73, 0.9), 0 0 8px rgba(248, 81, 73, 0.6); }
+  60%  { border-color: var(--status-error); box-shadow: 0 0 12px rgba(248, 81, 73, 0.5); }
+  100% { border-color: var(--accent); box-shadow: 0 0 8px rgba(88, 166, 255, 0.4); }
+}
+
+/* --- State: expanded — ring fully open (gap via conic-gradient) --- */
+
+.ai-orb--expanded .ai-orb-ring {
+  background: conic-gradient(var(--accent) 0%, var(--accent) 70%, transparent 70%, transparent 100%);
+  border: none;
+  box-shadow: 0 0 16px rgba(88, 166, 255, 0.7), 0 0 8px rgba(88, 166, 255, 0.4);
+  animation: none;
+}
+
+/* --- Overlay active: shrink to subtle dot --- */
+
+.ai-orb--overlay-active {
+  transform: scale(0.5);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* --- Error message --- */
+
+.ai-orb-error-msg {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--status-error);
+  background: var(--bg-primary);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(248, 81, 73, 0.3);
+  pointer-events: none;
+  animation: orbFadeIn 0.3s ease-out;
+  z-index: 101;
+}
+
+@keyframes orbFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ============================================
+   Phase 5: AI Radial Menu
+   5 segments arranged in a circle around the orb.
+   ============================================ */
+
+/* --- Radial menu container --- */
+
+.ai-radial-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  width: 180px;
+  height: 180px;
+  pointer-events: none;
+  /* No background — transparent container for positioned items */
+}
+
+/* Backdrop for close-on-outside-click */
+.ai-radial-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  pointer-events: all;
+  background: transparent;
+}
+
+/* --- Radial item base --- */
+
+.ai-radial-item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 48px;
+  height: 48px;
+  margin: -24px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  pointer-events: all;
+  gap: 2px;
+  transition: transform 0.15s ease-out, background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  /* Staggered entry animation */
+  animation: radialItemIn 0.2s ease-out backwards;
+}
+
+.ai-radial-item:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* --- 5 items at ~72deg intervals at radius 70px ---
+   Item 1: top           (0deg)   → translateY(-70px)
+   Item 2: top-right     (72deg)  → translate(56px, -42px)
+   Item 3: right         (144deg) → translate(67px, 22px)
+   Item 4: left          (216deg) → translate(-67px, 22px)  [mirrored item 3]
+   Item 5: top-left      (288deg) → translate(-56px, -42px) [mirrored item 2]
+*/
+
+.ai-radial-item:nth-child(1) {
+  transform: translateY(-70px);
+  animation-delay: 0ms;
+}
+
+.ai-radial-item:nth-child(2) {
+  transform: translate(56px, -42px);
+  animation-delay: 40ms;
+}
+
+.ai-radial-item:nth-child(3) {
+  transform: translate(67px, 22px);
+  animation-delay: 80ms;
+}
+
+.ai-radial-item:nth-child(4) {
+  transform: translate(-67px, 22px);
+  animation-delay: 120ms;
+}
+
+.ai-radial-item:nth-child(5) {
+  transform: translate(-56px, -42px);
+  animation-delay: 160ms;
+}
+
+/* Hover states must override the nth-child transforms */
+.ai-radial-item:nth-child(1):hover { transform: translateY(-70px) scale(1.08); }
+.ai-radial-item:nth-child(2):hover { transform: translate(56px, -42px) scale(1.08); }
+.ai-radial-item:nth-child(3):hover { transform: translate(67px, 22px) scale(1.08); }
+.ai-radial-item:nth-child(4):hover { transform: translate(-67px, 22px) scale(1.08); }
+.ai-radial-item:nth-child(5):hover { transform: translate(-56px, -42px) scale(1.08); }
+
+/* --- Primary action highlight --- */
+
+.ai-radial-item--primary {
+  width: 56px;
+  height: 56px;
+  margin: -28px;
+  background: var(--accent);
+  color: var(--bg-primary);
+  border-color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(88, 166, 255, 0.5);
+}
+
+.ai-radial-item--primary:hover {
+  background: var(--accent);
+  color: var(--bg-primary);
+  opacity: 0.9;
+  border-color: var(--accent);
+}
+
+/* Primary item hover overrides — larger base margin */
+.ai-radial-item--primary:nth-child(1):hover { transform: translateY(-70px) scale(1.06); }
+.ai-radial-item--primary:nth-child(2):hover { transform: translate(56px, -42px) scale(1.06); }
+.ai-radial-item--primary:nth-child(3):hover { transform: translate(67px, 22px) scale(1.06); }
+.ai-radial-item--primary:nth-child(4):hover { transform: translate(-67px, 22px) scale(1.06); }
+.ai-radial-item--primary:nth-child(5):hover { transform: translate(-56px, -42px) scale(1.06); }
+
+/* --- Radial item icon --- */
+
+.ai-radial-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.ai-radial-item--primary .ai-radial-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* --- Entry animation --- */
+
+@keyframes radialItemIn {
+  from {
+    opacity: 0;
+    scale: 0.5;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}

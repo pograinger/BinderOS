@@ -338,6 +338,29 @@ export function setPendingCloudRequest(
   setState('pendingCloudRequestResolve', resolve);
 }
 
+// --- Phase 5: AI Orb state trigger ---
+
+/**
+ * Trigger inbox triage from the AI orb.
+ *
+ * This is a stub in Phase 5 Plan 01 — the real implementation is wired
+ * in Phase 5 Plan 03 (triage pipeline). The orb imports this to wire the
+ * error-state retry click handler.
+ *
+ * Plan 03 replaces this module export with the actual triageInbox() call.
+ */
+export let startTriageInbox: () => void = () => {
+  console.log('[AIOrb] startTriageInbox stub called — will be implemented in Plan 03');
+};
+
+/**
+ * Allow Plan 03 to replace the startTriageInbox implementation.
+ * Call this from triage.ts once the real pipeline is ready.
+ */
+export function registerTriageInboxFn(fn: () => void): void {
+  startTriageInbox = fn;
+}
+
 /**
  * Dispatch an AI request directly from the main thread.
  *
