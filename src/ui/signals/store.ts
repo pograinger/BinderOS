@@ -31,7 +31,7 @@
  * - llmReady / cloudReady / anyAIAvailable: derived reactive signals
  */
 
-import { createMemo, untrack } from 'solid-js';
+import { createMemo, createSignal, untrack } from 'solid-js';
 import { createStore, reconcile } from 'solid-js/store';
 import { dispatch, onMessage } from '../../worker/bridge';
 import type { Atom, InboxItem } from '../../types/atoms';
@@ -49,6 +49,8 @@ import type { AIProviderStatus } from '../../ai/adapters/adapter';
 import type { CloudRequestLogEntry } from '../../ai/key-vault';
 import { dispatchAI } from '../../ai/router';
 import { BrowserAdapter } from '../../ai/adapters/browser';
+import { triageInbox, cancelTriage } from '../../ai/triage';
+import type { TriageSuggestion } from '../../ai/triage';
 
 // --- State interface ---
 
@@ -356,27 +358,172 @@ export function setPendingCloudRequest(
   setState('pendingCloudRequestResolve', resolve);
 }
 
-// --- Phase 5: AI Orb state trigger ---
+// --- Phase 5: Triage suggestion state (ephemeral, main-thread only) ---
+// NOT part of BinderState — worker reconcile must not touch these
+
+type TriageStatus = 'idle' | 'running' | 'complete' | 'error' | 'cancelled';
+
+const [triageSuggestions, setTriageSuggestions] = createSignal<Map<string, TriageSuggestion>>(
+  new Map(),
+);
+const [triageStatus, setTriageStatus] = createSignal<TriageStatus>('idle');
+const [triageError, setTriageError] = createSignal<string | null>(null);
+
+export { triageSuggestions, triageStatus, triageError };
+
+// --- Phase 5: Triage orchestration ---
 
 /**
- * Trigger inbox triage from the AI orb.
+ * Start AI triage for all inbox items.
  *
- * This is a stub in Phase 5 Plan 01 — the real implementation is wired
- * in Phase 5 Plan 03 (triage pipeline). The orb imports this to wire the
- * error-state retry click handler.
+ * Bridges the pure triage pipeline (triage.ts) to the store's reactive signals.
+ * Drives the AI orb state: thinking -> streaming -> idle/error.
  *
- * Plan 03 replaces this module export with the actual triageInbox() call.
+ * If triage is already running, cancels the current batch (toggle behaviour).
+ * Guards: AI must be available and triage must be enabled.
+ *
+ * Implements Plan 03 triage orchestration — replaces the Plan 01 stub.
  */
-export let startTriageInbox: () => void = () => {
-  console.log('[AIOrb] startTriageInbox stub called — will be implemented in Plan 03');
-};
+export async function startTriageInbox(): Promise<void> {
+  // Lazy import to avoid circular dependency at module init time
+  const { setOrbState } = await import('../components/AIOrb');
+
+  // Guards: only run if AI is available and triage is enabled
+  if (!anyAIAvailable() || !state.triageEnabled) return;
+  if (state.inboxItems.length === 0) return;
+
+  // Toggle: if already running, cancel current batch
+  if (triageStatus() === 'running') {
+    cancelTriage();
+    setTriageStatus('cancelled');
+    setOrbState('idle');
+    return;
+  }
+
+  setTriageStatus('running');
+  setTriageError(null);
+  setTriageSuggestions(new Map());
+  setOrbState('thinking');
+
+  const atoms = state.atoms.map((a) => ({ id: a.id, title: a.title, content: a.content }));
+
+  try {
+    await triageInbox(
+      state.inboxItems,
+      state.scores,
+      state.entropyScore,
+      state.sectionItems,
+      state.sections,
+      atoms,
+      (suggestion) => {
+        // Each suggestion arrives (pending or complete) — update the Map reactively
+        if (suggestion.status === 'complete' || suggestion.status === 'error') {
+          setOrbState('streaming');
+        }
+        setTriageSuggestions((prev) => {
+          const next = new Map(prev);
+          next.set(suggestion.inboxItemId, suggestion);
+          return next;
+        });
+      },
+      (itemId, error) => {
+        // Individual item error — record error status on that item
+        setTriageSuggestions((prev) => {
+          const next = new Map(prev);
+          next.set(itemId, {
+            inboxItemId: itemId,
+            suggestedType: 'fact',
+            suggestedSectionItemId: null,
+            reasoning: '',
+            confidence: 'low',
+            relatedAtomIds: [],
+            status: 'error',
+            errorMessage: error,
+          });
+          return next;
+        });
+      },
+    );
+    setTriageStatus('complete');
+    setOrbState('idle');
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      setTriageStatus('cancelled');
+      setOrbState('idle');
+    } else {
+      setTriageStatus('error');
+      setTriageError(err instanceof Error ? err.message : String(err));
+      setOrbState('error');
+    }
+  }
+}
 
 /**
- * Allow Plan 03 to replace the startTriageInbox implementation.
- * Call this from triage.ts once the real pipeline is ready.
+ * Accept an AI triage suggestion for the given inbox item.
+ *
+ * Applies the suggested type and section via the existing CLASSIFY_INBOX_ITEM
+ * mutation pipeline with aiSourced: true. Removes the suggestion from the Map.
  */
-export function registerTriageInboxFn(fn: () => void): void {
-  startTriageInbox = fn;
+export function acceptAISuggestion(itemId: string): void {
+  const suggestions = triageSuggestions();
+  const suggestion = suggestions.get(itemId);
+  if (!suggestion || suggestion.status !== 'complete') return;
+
+  // Apply via existing mutation pipeline — same path as manual classification
+  sendCommand({
+    type: 'CLASSIFY_INBOX_ITEM',
+    payload: {
+      id: itemId,
+      type: suggestion.suggestedType,
+      sectionItemId: suggestion.suggestedSectionItemId ?? undefined,
+      aiSourced: true,
+    },
+  });
+
+  // Remove from suggestion Map
+  setTriageSuggestions((prev) => {
+    const next = new Map(prev);
+    next.delete(itemId);
+    return next;
+  });
+}
+
+/**
+ * Dismiss an AI triage suggestion for the given inbox item.
+ *
+ * Removes the suggestion from the Map without affecting the inbox item.
+ * The item remains in the inbox for manual classification.
+ */
+export function dismissAISuggestion(itemId: string): void {
+  setTriageSuggestions((prev) => {
+    const next = new Map(prev);
+    next.delete(itemId);
+    return next;
+  });
+}
+
+/**
+ * Accept all complete AI triage suggestions in bulk.
+ *
+ * Applies every complete suggestion via CLASSIFY_INBOX_ITEM with aiSourced: true,
+ * then clears the entire suggestion Map.
+ */
+export function acceptAllAISuggestions(): void {
+  const suggestions = triageSuggestions();
+  for (const [itemId, suggestion] of suggestions) {
+    if (suggestion.status === 'complete') {
+      sendCommand({
+        type: 'CLASSIFY_INBOX_ITEM',
+        payload: {
+          id: itemId,
+          type: suggestion.suggestedType,
+          sectionItemId: suggestion.suggestedSectionItemId ?? undefined,
+          aiSourced: true,
+        },
+      });
+    }
+  }
+  setTriageSuggestions(new Map());
 }
 
 /**
