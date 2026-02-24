@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** v2.0 AI Orchestration — Phase 4: AI Infrastructure
+**Current focus:** v2.0 AI Orchestration — Phase 5: Triage AI
 
 ## Current Position
 
-Phase: 4 of 7 (AI Infrastructure)
-Plan: 4 of 4 in Phase 4 (complete — gap closure plan added)
-Status: Phase 4 complete
-Last activity: 2026-02-23 — Phase 4 Plan 4 complete (gap closure: main-thread NoOpAdapter init, AI round-trip proof verified)
+Phase: 5 of 7 (Triage AI)
+Plan: 1 of 4 in Phase 5 (complete — AI orb + radial menu)
+Status: Phase 5 active
+Last activity: 2026-02-24 — Phase 5 Plan 1 complete (floating AI orb, radial menu, Shell integration)
 
-Progress: [█████░░░░░] 40% (v1.0 complete; v2.0 Phase 4 all 4/4 plans done)
+Progress: [██████░░░░] 43% (v1.0 complete; v2.0 Phase 4 4/4 done; Phase 5 1/4 done)
 
 ## Performance Metrics
 
@@ -36,6 +36,7 @@ Progress: [█████░░░░░] 40% (v1.0 complete; v2.0 Phase 4 all 
 | Phase 04 P02 | 13 min | 2 tasks | 6 files |
 | Phase 04 P03 | 30 min | 3 tasks | 9 files |
 | Phase 04 P04 | 5 min | 1 task | 2 files |
+| Phase 05 P01 | 5 min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -61,6 +62,9 @@ Recent decisions affecting current work:
 - [04-03]: dangerouslyAllowBrowser: true safe — user provides own key, memory-only by default, never embedded in source
 - [04-03]: UI polish deferred after verification — settings panel and status bar noted as poor quality; follow-up required before Phase 5 ships
 - [04-03]: AIGuidedSetup first-run trigger did not fire on reload — aiFirstRunComplete state persistence to Dexie deferred to Phase 5
+- [05-01]: setOrbState exported at module level (not via prop/ref) — follows setShowAISettings pattern; allows triage pipeline to drive orb state without component coupling
+- [05-01]: startTriageInbox as mutable let export with registerTriageInboxFn override — avoids circular dependency between AIOrb (UI layer) and triage.ts (AI layer); Plan 03 wires real implementation
+- [05-01]: AIOrb placed in Shell.tsx (not app.tsx) — Shell owns all AI overlay state; orb needs showAISettings access for overlay suppression
 
 ### Pending Todos
 
@@ -76,6 +80,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-23
-Stopped at: Completed .planning/phases/04-ai-infrastructure/04-04-PLAN.md
-Resume file: .planning/phases/05-triage/05-01-PLAN.md (next phase)
+Last session: 2026-02-24
+Stopped at: Completed .planning/phases/05-triage-ai/05-01-PLAN.md
+Resume file: .planning/phases/05-triage-ai/05-02-PLAN.md (next plan)

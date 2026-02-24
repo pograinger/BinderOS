@@ -18,8 +18,8 @@ Requirements for AI Orchestration milestone. Each maps to roadmap phases.
 
 ### AI UX
 
-- [ ] **AIUX-01**: Floating orb — always-visible, context-aware AI trigger reading current page/atom/entropy state
-- [ ] **AIUX-02**: Orb GTD menu with relevant actions below context-aware primary suggestion
+- [x] **AIUX-01**: Floating orb — always-visible, context-aware AI trigger reading current page/atom/entropy state
+- [x] **AIUX-02**: Orb GTD menu with relevant actions below context-aware primary suggestion
 - [ ] **AIUX-03**: Conversational question-flow component (3-4 options + freeform input) for all AI interactions
 - [ ] **AIUX-04**: AI suggestion tray with per-suggestion accept/dismiss and reasoning shown
 - [ ] **AIUX-05**: Visual AI badge on all AI-sourced or AI-modified content, distinct from user content
@@ -104,8 +104,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AINF-04 | Phase 4 | Complete |
 | AINF-05 | Phase 4 | Complete |
 | AINF-06 | Phase 4 | Complete |
-| AIUX-01 | Phase 5 | Pending |
-| AIUX-02 | Phase 5 | Pending |
+| AIUX-01 | Phase 5 | Complete |
+| AIUX-02 | Phase 5 | Complete |
 | AIUX-03 | Phase 5 | Pending |
 | AIUX-04 | Phase 5 | Pending |
 | AIUX-05 | Phase 5 | Pending |
