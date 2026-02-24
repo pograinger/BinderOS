@@ -58,13 +58,13 @@ Plans:
   3. User can accept or dismiss each suggestion individually; accepted suggestions apply via the existing mutation pipeline and appear with a persistent AI badge; dismissed suggestions disappear from the tray without affecting the atom
   4. AI responses stream token-by-token into the suggestion tray; the user can cancel mid-stream; on abort a partial response is shown with a "Retry" option
   5. AI type and section suggestions reflect entropy signals — the reasoning references observable data from the atom store (staleness, link density, scoring)
-**Plans**: TBD
+**Plans:** 4 plans
 
 Plans:
-- [ ] 05-01: FloatingOrb component + GTD menu + orb state machine (idle/thinking/streaming/expanded)
-- [ ] 05-02: ConversationTurnCard (3-4 options + freeform) + AISuggestionTray (accept/dismiss + AI badge)
-- [ ] 05-03: AI_TRIAGE_INBOX handler — atom type + section suggestions + related atoms + entropy signals
-- [ ] 05-04: Streaming display (ReadableStream to AI_TOKEN to SolidJS batch) + AbortController + Zod validation at adapter boundary
+- [ ] 05-01-PLAN.md — Floating orb component + radial menu + CSS state animations + Shell integration
+- [ ] 05-02-PLAN.md — AI-source schema extensions + Dexie v3 migration + AI badge + settings persistence
+- [ ] 05-03-PLAN.md — Triage pipeline (prompt builder + response parser + similarity + batch engine + abort)
+- [ ] 05-04-PLAN.md — InboxView suggestion integration + swipe semantics + AIQuestionFlow + end-to-end verification
 
 ### Phase 6: Review Pre-Analysis
 **Goal**: Users can start a weekly review and receive an AI-generated briefing summarizing their entropy state, stale tasks, projects without next actions, and compression candidates — and incomplete reviews can be resumed within 24 hours
