@@ -23,9 +23,14 @@
  * - AI_DISPATCH command (user-initiated AI request through adapter router)
  * - AI_RESPONSE response (adapter result back to store)
  * - AI_STATUS response (provider status updates: loading, available, error, etc.)
+ *
+ * Phase 5 additions:
+ * - SAVE_AI_SETTINGS command (persists AI settings to Dexie config table)
+ * - READY payload extended with aiSettings (loaded from Dexie on INIT)
  */
 
 import type { Atom, AtomType, CreateAtomInput, InboxItem } from './atoms';
+import type { AISettings } from '../storage/ai-settings';
 import type { Section, SectionItem } from './sections';
 import type {
   AtomScore,
@@ -61,7 +66,9 @@ export type Command =
   | { type: 'DELETE_FILTER'; payload: { id: string } }
   | { type: 'LOG_INTERACTION'; payload: Omit<InteractionEvent, 'id'> }
   // Phase 4: AI dispatch (always user-initiated per AIST-04)
-  | { type: 'AI_DISPATCH'; payload: { requestId: string; prompt: string; maxTokens?: number } };
+  | { type: 'AI_DISPATCH'; payload: { requestId: string; prompt: string; maxTokens?: number } }
+  // Phase 5: persist AI settings to Dexie config table
+  | { type: 'SAVE_AI_SETTINGS'; payload: Partial<AISettings> };
 
 // --- Responses (Worker -> main thread) ---
 
@@ -75,6 +82,8 @@ export type Response =
         atoms: Atom[];
         inboxItems: InboxItem[];
         savedFilters: SavedFilter[];
+        // Phase 5: persisted AI settings loaded from Dexie on startup
+        aiSettings?: AISettings | null;
       };
     }
   | {

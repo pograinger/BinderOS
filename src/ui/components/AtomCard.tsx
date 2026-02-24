@@ -91,6 +91,9 @@ export function AtomCard(props: AtomCardProps) {
     (props.atom.type === 'task' || props.atom.type === 'event') &&
     atomScore()?.priorityTier != null;
 
+  // Phase 5: show AI badge when atom was classified by AI
+  const showAIBadge = () => (props.atom as Record<string, unknown>).aiSourced === true;
+
   // Phase 3: due date display for tasks
   // CRITICAL: Use bracket access (get trap) not `in` operator (has trap) for SolidJS reactivity
   const dueDate = (): number | undefined => {
@@ -240,6 +243,17 @@ export function AtomCard(props: AtomCardProps) {
     >
       <div class="atom-card-row">
         <AtomTypeIcon type={props.atom.type} size={16} />
+        {/* Phase 5: AI badge for AI-sourced atoms */}
+        <Show when={showAIBadge()}>
+          <span class="ai-badge" title="AI-suggested">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path
+                d="M6 1L7.09 4.26L10.5 4.26L7.7 6.24L8.79 9.5L6 7.52L3.21 9.5L4.3 6.24L1.5 4.26L4.91 4.26L6 1Z"
+                fill="currentColor"
+              />
+            </svg>
+          </span>
+        </Show>
         {/* Phase 2: PriorityBadge for tasks and events */}
         <Show when={showPriorityBadge()}>
           <PriorityBadge

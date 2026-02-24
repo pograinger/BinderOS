@@ -48,6 +48,7 @@ import {
   handleArchiveSectionItem,
 } from './handlers/sections';
 import { getCapConfig, setCapConfig } from './handlers/config';
+import { loadAISettings, saveAISettings } from '../storage/ai-settings';
 
 let core: BinderCore | null = null;
 
@@ -169,6 +170,9 @@ self.onmessage = async (event: MessageEvent<Command>) => {
         const state = await getFullState();
         const savedFilters = await db.savedFilters.toArray();
 
+        // Phase 5: load persisted AI settings so store can hydrate from Dexie
+        const aiSettings = await loadAISettings();
+
         const response: Response = {
           type: 'READY',
           payload: {
@@ -178,6 +182,7 @@ self.onmessage = async (event: MessageEvent<Command>) => {
             atoms: state.atoms,
             inboxItems: state.inboxItems,
             savedFilters,
+            aiSettings: aiSettings ?? null,
           },
         };
         self.postMessage(response);
@@ -410,6 +415,13 @@ self.onmessage = async (event: MessageEvent<Command>) => {
         // live on the main thread — importing Transformers.js here would contaminate
         // the BinderCore worker and risk OOM crashes during WASM scoring.
         // This case is kept for Command type exhaustiveness only.
+        break;
+      }
+
+      case 'SAVE_AI_SETTINGS': {
+        // Phase 5: persist AI settings to Dexie config table
+        // Uses the write queue for batched persistence (fire-and-forget, no state update needed)
+        saveAISettings(msg.payload);
         break;
       }
 

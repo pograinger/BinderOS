@@ -81,9 +81,12 @@ export async function handleDeleteInboxItem(
  *
  * Reads the inbox item, converts to a full Atom with the given type,
  * deletes from inbox, adds to atoms, creates changelog entry.
+ *
+ * Phase 5: if payload.aiSourced is true, tags the resulting atom with
+ * aiSourced: true and passes source: 'ai' to the changelog entry.
  */
 export async function handleClassifyInboxItem(
-  payload: { id: string; type: AtomType; sectionItemId?: string },
+  payload: { id: string; type: AtomType; sectionItemId?: string; aiSourced?: boolean },
 ): Promise<Atom> {
   const inboxItem = await db.inbox.get(payload.id);
   if (!inboxItem) {
@@ -103,6 +106,7 @@ export async function handleClassifyInboxItem(
 
   // Convert to typed atom — remove isInbox, set type
   // Use AtomSchema.parse() return value so Zod defaults (tags, etc.) are applied
+  // Phase 5: include aiSourced flag if this classification was triggered by AI
   const atom: Atom = AtomSchema.parse({
     id: inboxItem.id,
     title: inboxItem.title,
@@ -114,10 +118,14 @@ export async function handleClassifyInboxItem(
     sectionItemId: payload.sectionItemId,
     created_at: inboxItem.created_at,
     updated_at: now,
+    aiSourced: payload.aiSourced === true ? true : false,
   });
 
-  // Create changelog entry for the new atom
-  const logEntry = appendMutation(atom.id, 'create', null, atom);
+  // Phase 5: tag changelog entry with source: 'ai' when AI-triggered
+  const logEntry = {
+    ...appendMutation(atom.id, 'create', null, atom),
+    ...(payload.aiSourced === true ? { source: 'ai' as const } : { source: 'user' as const }),
+  };
 
   // Enqueue: delete from inbox, add to atoms, add changelog
   writeQueue.enqueue(async () => {

@@ -151,6 +151,17 @@ onMessage((response) => {
       }
       setState('savedFilters', reconcile(response.payload.savedFilters));
       setState('lastError', null);
+      // Phase 5: hydrate AI state from persisted settings (fixes aiFirstRunComplete not persisting)
+      if (response.payload.aiSettings) {
+        const s = response.payload.aiSettings;
+        if (s.aiEnabled !== undefined) setState('aiEnabled', s.aiEnabled);
+        if (s.browserLLMEnabled !== undefined) setState('browserLLMEnabled', s.browserLLMEnabled);
+        if (s.cloudAPIEnabled !== undefined) setState('cloudAPIEnabled', s.cloudAPIEnabled);
+        if (s.aiFirstRunComplete !== undefined) setState('aiFirstRunComplete', s.aiFirstRunComplete);
+        if (s.triageEnabled !== undefined) setState('triageEnabled', s.triageEnabled);
+        if (s.reviewEnabled !== undefined) setState('reviewEnabled', s.reviewEnabled);
+        if (s.compressionEnabled !== undefined) setState('compressionEnabled', s.compressionEnabled);
+      }
       break;
 
     case 'STATE_UPDATE':
@@ -300,34 +311,41 @@ export function setPersistenceGranted(granted: boolean): void {
   setState('persistenceGranted', granted);
 }
 
-// --- Phase 4: AI UI state setters ---
+// --- Phase 4/5: AI UI state setters (Phase 5: also persist to Dexie via worker) ---
 
 export function setAIEnabled(enabled: boolean): void {
   setState('aiEnabled', enabled);
+  sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { aiEnabled: enabled } });
 }
 
 export function setBrowserLLMEnabled(enabled: boolean): void {
   setState('browserLLMEnabled', enabled);
+  sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { browserLLMEnabled: enabled } });
 }
 
 export function setCloudAPIEnabled(enabled: boolean): void {
   setState('cloudAPIEnabled', enabled);
+  sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { cloudAPIEnabled: enabled } });
 }
 
 export function setAIFirstRunComplete(complete: boolean): void {
   setState('aiFirstRunComplete', complete);
+  sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { aiFirstRunComplete: complete } });
 }
 
 export function setTriageEnabled(enabled: boolean): void {
   setState('triageEnabled', enabled);
+  sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { triageEnabled: enabled } });
 }
 
 export function setReviewEnabled(enabled: boolean): void {
   setState('reviewEnabled', enabled);
+  sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { reviewEnabled: enabled } });
 }
 
 export function setCompressionEnabled(enabled: boolean): void {
   setState('compressionEnabled', enabled);
+  sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { compressionEnabled: enabled } });
 }
 
 export function setPendingCloudRequest(
