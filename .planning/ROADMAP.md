@@ -58,7 +58,7 @@ Plans:
   3. User can accept or dismiss each suggestion individually; accepted suggestions apply via the existing mutation pipeline and appear with a persistent AI badge; dismissed suggestions disappear from the tray without affecting the atom
   4. AI responses stream token-by-token into the suggestion tray; the user can cancel mid-stream; on abort a partial response is shown with a "Retry" option
   5. AI type and section suggestions reflect entropy signals — the reasoning references observable data from the atom store (staleness, link density, scoring)
-**Plans:** 2/4 plans executed
+**Plans:** 3/4 plans executed
 
 Plans:
 - [ ] 05-01-PLAN.md — Floating orb component + radial menu + CSS state animations + Shell integration
@@ -109,6 +109,6 @@ Phases execute in numeric order: 4 → 5 → 6 → 7
 | 2. Compute Engine | v1.0 | 3/3 | Complete | 2026-02-22 |
 | 3. Pages, Navigation, Search | v1.0 | 4/4 | Complete | 2026-02-22 |
 | 4. AI Infrastructure | 4/4 | Complete   | 2026-02-23 | 2026-02-22 |
-| 5. Triage AI | 2/4 | In Progress|  | - |
+| 5. Triage AI | 3/4 | In Progress|  | - |
 | 6. Review Pre-Analysis | v2.0 | 0/3 | Not started | - |
 | 7. Guided Review + Compression Coach | v2.0 | 0/3 | Not started | - |

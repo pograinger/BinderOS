@@ -23,15 +23,15 @@ Requirements for AI Orchestration milestone. Each maps to roadmap phases.
 - [ ] **AIUX-03**: Conversational question-flow component (3-4 options + freeform input) for all AI interactions
 - [ ] **AIUX-04**: AI suggestion tray with per-suggestion accept/dismiss and reasoning shown
 - [x] **AIUX-05**: Visual AI badge on all AI-sourced or AI-modified content, distinct from user content
-- [ ] **AIUX-06**: Streaming response display with cancel/abort support
+- [x] **AIUX-06**: Streaming response display with cancel/abort support
 
 ### AI Triage
 
-- [ ] **AITG-01**: AI suggests atom type during inbox triage based on content analysis
-- [ ] **AITG-02**: AI suggests section/project during inbox triage based on existing atom patterns
-- [ ] **AITG-03**: Entropy-informed suggestions — AI reads staleness, link density, and scoring before recommending
-- [ ] **AITG-04**: Related atoms surfaced during triage (2-3 semantically similar existing atoms)
-- [ ] **AITG-05**: Reasoning shown per triage suggestion explaining why AI chose that type/section
+- [x] **AITG-01**: AI suggests atom type during inbox triage based on content analysis
+- [x] **AITG-02**: AI suggests section/project during inbox triage based on existing atom patterns
+- [x] **AITG-03**: Entropy-informed suggestions — AI reads staleness, link density, and scoring before recommending
+- [x] **AITG-04**: Related atoms surfaced during triage (2-3 semantically similar existing atoms)
+- [x] **AITG-05**: Reasoning shown per triage suggestion explaining why AI chose that type/section
 
 ### AI Reviews
 
@@ -109,12 +109,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AIUX-03 | Phase 5 | Pending |
 | AIUX-04 | Phase 5 | Pending |
 | AIUX-05 | Phase 5 | Complete |
-| AIUX-06 | Phase 5 | Pending |
-| AITG-01 | Phase 5 | Pending |
-| AITG-02 | Phase 5 | Pending |
-| AITG-03 | Phase 5 | Pending |
-| AITG-04 | Phase 5 | Pending |
-| AITG-05 | Phase 5 | Pending |
+| AIUX-06 | Phase 5 | Complete |
+| AITG-01 | Phase 5 | Complete |
+| AITG-02 | Phase 5 | Complete |
+| AITG-03 | Phase 5 | Complete |
+| AITG-04 | Phase 5 | Complete |
+| AITG-05 | Phase 5 | Complete |
 | AIRV-01 | Phase 6 | Pending |
 | AIRV-02 | Phase 6 | Pending |
 | AIRV-03 | Phase 7 | Pending |

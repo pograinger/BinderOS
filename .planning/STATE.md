@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 5 of 7 (Triage AI)
-Plan: 2 of 4 in Phase 5 (complete — schema extensions, AI settings persistence, AI badge)
+Plan: 3 of 4 in Phase 5 (complete — triage pipeline, similarity module, triage store signals)
 Status: Phase 5 active
-Last activity: 2026-02-24 — Phase 5 Plan 2 complete (aiSourced schema, Dexie v3, AI settings persistence, AI badge)
+Last activity: 2026-02-24 — Phase 5 Plan 3 complete (triage.ts, similarity.ts, store triage signals, startTriageInbox)
 
-Progress: [██████░░░░] 46% (v1.0 complete; v2.0 Phase 4 4/4 done; Phase 5 2/4 done)
+Progress: [███████░░░] 50% (v1.0 complete; v2.0 Phase 4 4/4 done; Phase 5 3/4 done)
 
 ## Performance Metrics
 
@@ -38,6 +38,7 @@ Progress: [██████░░░░] 46% (v1.0 complete; v2.0 Phase 4 4/4 
 | Phase 04 P04 | 5 min | 1 task | 2 files |
 | Phase 05 P01 | 5 min | 2 tasks | 5 files |
 | Phase 05 P02 | 8 min | 2 tasks | 10 files |
+| Phase 05 P03 | 7 min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -69,6 +70,10 @@ Recent decisions affecting current work:
 - [05-02]: aiSourced defaults to false on existing atoms via Dexie v3 upgrade() — clean index queries without undefined
 - [05-02]: SAVE_AI_SETTINGS is fire-and-forget (no flushAndSendState) — settings changes don't require full state update
 - [05-02]: source: 'user'|'ai' spread onto appendMutation result in inbox handler — preserves changelog abstraction, avoids changing appendMutation signature
+- [05-03]: Dynamic import of setOrbState from AIOrb in startTriageInbox — avoids circular dependency; defers resolution until function call time
+- [05-03]: startTriageInbox changed from mutable let to async function — cleaner API; AIOrb calls without await (fire-and-forget) which works correctly
+- [05-03]: Pending placeholder before AI call — onSuggestion called with status:pending so UI shows Analyzing... indicator during sequential processing
+- [05-03]: sectionItemId null-check includes string 'null' — AI models sometimes return literal string "null" instead of JSON null
 
 ### Pending Todos
 
@@ -85,5 +90,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed .planning/phases/05-triage-ai/05-02-PLAN.md
-Resume file: .planning/phases/05-triage-ai/05-03-PLAN.md (next plan)
+Stopped at: Completed .planning/phases/05-triage-ai/05-03-PLAN.md
+Resume file: .planning/phases/05-triage-ai/05-04-PLAN.md (next plan)
