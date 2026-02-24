@@ -18,8 +18,9 @@
  */
 
 import { createSignal, createMemo, createResource, For, Show, onCleanup } from 'solid-js';
-import { state, sendCommand } from '../signals/store';
+import { state, sendCommand, triageSuggestions, acceptAISuggestion, dismissAISuggestion, acceptAllAISuggestions, triageStatus, setSelectedAtomId } from '../signals/store';
 import { AtomTypeIcon } from '../components/AtomTypeIcon';
+import { InboxAISuggestion } from '../components/InboxAISuggestion';
 import { logClassification, suggestTypeFromPatterns } from '../../storage/classification-log';
 import type { AtomType } from '../../types/atoms';
 
@@ -223,6 +224,32 @@ export function InboxView() {
     const velocityX = Math.abs(dx) / Math.max(elapsed, 1);
     const velocityY = Math.abs(dy) / Math.max(elapsed, 1);
 
+    // AI suggestion-aware swipe handling (must come BEFORE existing swipe checks)
+    const hasSuggestion = currentItem() ? triageSuggestions().has(currentItem()!.id) : false;
+
+    // Swipe RIGHT with suggestion -> accept AI suggestion
+    if (hasSuggestion && (dx > 80 || (dx > 30 && velocityX > 0.5))) {
+      setCardTranslateX(300); // animate right
+      setTimeout(() => {
+        setCardTranslateX(0);
+        acceptAISuggestion(currentItem()!.id);
+        // Index adjusts automatically since item is removed from inboxItems
+        if (currentIndex() >= state.inboxItems.length) {
+          setCurrentIndex(Math.max(0, state.inboxItems.length - 1));
+        }
+        if (state.inboxItems.length === 0) setEmptyAnimation(true);
+      }, 300);
+      return;
+    }
+
+    // Swipe LEFT with suggestion -> dismiss suggestion only (card stays in inbox)
+    if (hasSuggestion && (dx < -80 || (dx < -30 && velocityX > 0.5))) {
+      dismissAISuggestion(currentItem()!.id);
+      setCardTranslateX(0);
+      setCardTranslateY(0);
+      return;
+    }
+
     // Swipe RIGHT -> open classify
     if (dx > 80 || (dx > 30 && velocityX > 0.5)) {
       setCardTranslateX(0);
@@ -298,6 +325,13 @@ export function InboxView() {
         </div>
       </Show>
 
+      {/* Accept all button — visible when triage is complete with 2+ suggestions */}
+      <Show when={triageStatus() === 'complete' && triageSuggestions().size >= 2}>
+        <button class="inbox-accept-all" onClick={acceptAllAISuggestions}>
+          Accept all ({triageSuggestions().size} suggestions)
+        </button>
+      </Show>
+
       {/* Empty state */}
       <Show when={totalItems() === 0}>
         <div class={`inbox-empty${emptyAnimation() ? ' celebrate' : ''}`}>
@@ -331,12 +365,30 @@ export function InboxView() {
             {new Date(currentItem()!.created_at).toLocaleString()}
           </div>
 
-          {/* Swipe hints */}
+          {/* Swipe hints — context-aware: show Accept/Dismiss when AI suggestion is active */}
           <div class="inbox-swipe-hints">
-            <span class="swipe-hint left">Skip</span>
+            <span class="swipe-hint left">
+              {triageSuggestions().has(currentItem()!.id) ? 'Dismiss' : 'Skip'}
+            </span>
             <span class="swipe-hint up">Archive</span>
-            <span class="swipe-hint right">Classify</span>
+            <span class="swipe-hint right">
+              {triageSuggestions().has(currentItem()!.id) ? 'Accept' : 'Classify'}
+            </span>
           </div>
+
+          {/* AI suggestion strip — rendered when a suggestion exists for this card */}
+          <Show when={triageSuggestions().get(currentItem()!.id)}>
+            {(suggestion) => (
+              <InboxAISuggestion
+                suggestion={suggestion()}
+                onAccept={() => acceptAISuggestion(currentItem()!.id)}
+                onDismiss={() => dismissAISuggestion(currentItem()!.id)}
+                onAtomClick={(atomId) => setSelectedAtomId(atomId)}
+                atoms={state.atoms}
+                sectionItems={state.sectionItems}
+              />
+            )}
+          </Show>
         </div>
 
         {/* Classification panel */}
