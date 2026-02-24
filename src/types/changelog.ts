@@ -32,5 +32,9 @@ export const MutationLogEntrySchema = z.object({
   timestamp: z.number(),         // Unix ms — causal ordering
   lamportClock: z.number(),      // Monotonic device counter
   deviceId: z.string(),          // UUID from localStorage — CRDT device identity
+  // Phase 5: AI-sourced mutations tagged
+  source: z.enum(['user', 'ai']).optional(),
+  // Phase 5: links back to the AI request that triggered this
+  aiRequestId: z.string().optional(),
 });
 export type MutationLogEntry = z.infer<typeof MutationLogEntrySchema>;

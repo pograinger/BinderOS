@@ -24,6 +24,7 @@ import type { MutationLogEntry } from '../types/changelog';
 import type { Section, SectionItem } from '../types/sections';
 import { getDefaultSections } from './migrations/v1';
 import { applyV2Migration } from './migrations/v2';
+import { applyV3Migration } from './migrations/v3';
 
 export interface ConfigEntry {
   key: string;
@@ -93,6 +94,9 @@ export class BinderDB extends Dexie {
 
     // Phase 3: v2 migration — tags, context, savedFilters, interactions
     applyV2Migration(this);
+
+    // Phase 5: v3 migration — aiSourced index on atoms
+    applyV3Migration(this);
 
     // Seed the four stable sections on first database creation
     this.on('populate', (tx) => {

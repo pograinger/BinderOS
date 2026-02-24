@@ -69,6 +69,8 @@ const BaseAtomFields = {
   // Phase 3 tagging and GTD context fields
   tags: z.array(z.string()).default([]),
   context: z.string().nullable().optional(),
+  // Phase 5: true if this atom was classified by AI
+  aiSourced: z.boolean().optional(),
 };
 
 // --- Type-specific atom schemas (discriminated union members) ---
