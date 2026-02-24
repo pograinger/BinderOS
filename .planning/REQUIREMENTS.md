@@ -22,7 +22,7 @@ Requirements for AI Orchestration milestone. Each maps to roadmap phases.
 - [x] **AIUX-02**: Orb GTD menu with relevant actions below context-aware primary suggestion
 - [ ] **AIUX-03**: Conversational question-flow component (3-4 options + freeform input) for all AI interactions
 - [ ] **AIUX-04**: AI suggestion tray with per-suggestion accept/dismiss and reasoning shown
-- [ ] **AIUX-05**: Visual AI badge on all AI-sourced or AI-modified content, distinct from user content
+- [x] **AIUX-05**: Visual AI badge on all AI-sourced or AI-modified content, distinct from user content
 - [ ] **AIUX-06**: Streaming response display with cancel/abort support
 
 ### AI Triage
@@ -108,7 +108,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AIUX-02 | Phase 5 | Complete |
 | AIUX-03 | Phase 5 | Pending |
 | AIUX-04 | Phase 5 | Pending |
-| AIUX-05 | Phase 5 | Pending |
+| AIUX-05 | Phase 5 | Complete |
 | AIUX-06 | Phase 5 | Pending |
 | AITG-01 | Phase 5 | Pending |
 | AITG-02 | Phase 5 | Pending |

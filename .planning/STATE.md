@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22)
 ## Current Position
 
 Phase: 5 of 7 (Triage AI)
-Plan: 1 of 4 in Phase 5 (complete — AI orb + radial menu)
+Plan: 2 of 4 in Phase 5 (complete — schema extensions, AI settings persistence, AI badge)
 Status: Phase 5 active
-Last activity: 2026-02-24 — Phase 5 Plan 1 complete (floating AI orb, radial menu, Shell integration)
+Last activity: 2026-02-24 — Phase 5 Plan 2 complete (aiSourced schema, Dexie v3, AI settings persistence, AI badge)
 
-Progress: [██████░░░░] 43% (v1.0 complete; v2.0 Phase 4 4/4 done; Phase 5 1/4 done)
+Progress: [██████░░░░] 46% (v1.0 complete; v2.0 Phase 4 4/4 done; Phase 5 2/4 done)
 
 ## Performance Metrics
 
@@ -37,6 +37,7 @@ Progress: [██████░░░░] 43% (v1.0 complete; v2.0 Phase 4 4/4 
 | Phase 04 P03 | 30 min | 3 tasks | 9 files |
 | Phase 04 P04 | 5 min | 1 task | 2 files |
 | Phase 05 P01 | 5 min | 2 tasks | 5 files |
+| Phase 05 P02 | 8 min | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,9 @@ Recent decisions affecting current work:
 - [05-01]: setOrbState exported at module level (not via prop/ref) — follows setShowAISettings pattern; allows triage pipeline to drive orb state without component coupling
 - [05-01]: startTriageInbox as mutable let export with registerTriageInboxFn override — avoids circular dependency between AIOrb (UI layer) and triage.ts (AI layer); Plan 03 wires real implementation
 - [05-01]: AIOrb placed in Shell.tsx (not app.tsx) — Shell owns all AI overlay state; orb needs showAISettings access for overlay suppression
+- [05-02]: aiSourced defaults to false on existing atoms via Dexie v3 upgrade() — clean index queries without undefined
+- [05-02]: SAVE_AI_SETTINGS is fire-and-forget (no flushAndSendState) — settings changes don't require full state update
+- [05-02]: source: 'user'|'ai' spread onto appendMutation result in inbox handler — preserves changelog abstraction, avoids changing appendMutation signature
 
 ### Pending Todos
 
@@ -76,10 +80,10 @@ None.
 - [Phase 6]: Dexie schema for branching review session state needs design work before planning
 - [Phase 7]: GTD question flow design (specific questions per phase, preventing Get Creative from becoming open-ended chat) needs deliberate design work before planning
 - [UI/UX]: AISettingsPanel and StatusBar AI indicator need polish pass before Phase 5 ships — user reported both as "very ugly and not intuitive"
-- [UX]: AIGuidedSetup first-run wizard did not appear on reload — aiFirstRunComplete flag not persisted, defaults to complete; fix when Phase 5 adds Dexie settings persistence
+- [RESOLVED 05-02]: aiFirstRunComplete and all AI toggles now persist via Dexie config table
 
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed .planning/phases/05-triage-ai/05-01-PLAN.md
-Resume file: .planning/phases/05-triage-ai/05-02-PLAN.md (next plan)
+Stopped at: Completed .planning/phases/05-triage-ai/05-02-PLAN.md
+Resume file: .planning/phases/05-triage-ai/05-03-PLAN.md (next plan)
