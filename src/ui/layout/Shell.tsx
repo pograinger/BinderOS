@@ -25,6 +25,7 @@ import { StatusBar } from './StatusBar';
 import { AISettingsPanel } from '../components/AISettingsPanel';
 import { AIGuidedSetup } from '../components/AIGuidedSetup';
 import { CloudRequestPreview } from '../components/CloudRequestPreview';
+import { AIOrb } from '../components/AIOrb';
 import { state, setPendingCloudRequest } from '../signals/store';
 import { getActiveAdapter } from '../../ai/router';
 import type { CloudAdapter } from '../../ai/adapters/cloud';
@@ -70,6 +71,13 @@ export function Shell() {
     }
   });
 
+  // Derive overlay-open state for AIOrb suppression.
+  // The orb shrinks to a dot when any overlay (settings, setup, cloud preview) is active.
+  const isAnyOverlayOpen = () =>
+    showAISettings() ||
+    !state.aiFirstRunComplete ||
+    state.pendingCloudRequest !== null;
+
   return (
     <div class="shell">
       <Sidebar isDesktop={isDesktop()} />
@@ -80,9 +88,12 @@ export function Shell() {
       <BottomTabBar isDesktop={isDesktop()} />
       <StatusBar />
 
+      {/* Phase 5: AI Orb — always-visible AI entry point (renders when any AI adapter available) */}
+      <AIOrb isOverlayOpen={isAnyOverlayOpen()} />
+
       {/* Phase 4: AI overlays */}
 
-      {/* AI Settings panel — opened from Command Palette */}
+      {/* AI Settings panel — opened from Command Palette or AIOrb radial menu */}
       <Show when={showAISettings()}>
         <AISettingsPanel onClose={() => setShowAISettings(false)} />
       </Show>
