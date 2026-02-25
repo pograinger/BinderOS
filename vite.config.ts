@@ -62,7 +62,7 @@ export default defineConfig({
         // Precache the small binderos_core WASM but skip the 21.6MB ONNX WASM
         // (ONNX will be fetched on demand when browser LLM is activated)
         globIgnores: ['**/ort-wasm-*'],
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 25 * 1024 * 1024,
       },
     }),
   ],

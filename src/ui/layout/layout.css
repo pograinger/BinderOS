@@ -3804,7 +3804,10 @@ kbd {
   height: 48px;
   border-radius: 50%;
   cursor: pointer;
-  z-index: 100;
+  z-index: 101;
+  /* Disable browser double-tap-to-zoom so our custom double-tap handler works on iOS */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: bottom 0.3s ease-out, right 0.3s ease-out, transform 0.2s ease-out;
   /* Positioning context for radial menu and error message */
   display: flex;
@@ -4900,4 +4903,275 @@ kbd {
 .ai-settings-provider-table td {
   padding: 4px 8px;
   color: var(--text-primary);
+}
+
+/* ============================================
+   AI Guided Setup (first-run wizard)
+   ============================================ */
+
+.ai-guided-setup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.ai-guided-setup-container {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 16px;
+  max-width: 420px;
+  width: 100%;
+  padding: 32px 24px 24px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+}
+
+.ai-guided-setup-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.ai-guided-setup-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(88, 166, 255, 0.2), rgba(136, 87, 255, 0.2));
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.ai-guided-setup-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.ai-guided-setup-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.ai-guided-setup-note {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.ai-guided-setup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.ai-guided-setup-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, opacity 0.15s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ai-guided-setup-btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.ai-guided-setup-btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.ai-guided-setup-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ai-guided-setup-btn-secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+}
+
+.ai-guided-setup-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Model selection cards */
+
+.ai-guided-setup-model-cards {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin: 4px 0;
+}
+
+.ai-guided-setup-model-card {
+  flex: 1;
+  padding: 16px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ai-guided-setup-model-card:hover {
+  border-color: var(--border-secondary);
+}
+
+.ai-guided-setup-model-card.selected {
+  border-color: var(--accent);
+  background: rgba(88, 166, 255, 0.08);
+}
+
+.ai-model-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-model-card-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(88, 166, 255, 0.15);
+  color: var(--accent);
+}
+
+.ai-model-card-size {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.ai-model-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Cloud API key section */
+
+.ai-guided-setup-key-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.ai-guided-setup-field-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.ai-guided-setup-input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: var(--font-mono, monospace);
+  box-sizing: border-box;
+}
+
+.ai-guided-setup-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.ai-guided-setup-saved {
+  font-size: 13px;
+  color: var(--status-success, #3fb950);
+  margin: 0;
+}
+
+.ai-guided-setup-disclosure {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Summary (step 3) */
+
+.ai-guided-setup-summary {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+}
+
+.ai-summary-item {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ai-summary-enabled {
+  color: var(--status-success, #3fb950);
+}
+
+.ai-summary-disabled {
+  color: var(--text-muted);
+}
+
+/* Step indicator dots */
+
+.ai-guided-setup-steps-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ai-guided-setup-step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-primary);
+  transition: background 0.2s;
+}
+
+.ai-guided-setup-step-dot.active {
+  background: var(--accent);
+}
+
+.ai-guided-setup-step-dot.done {
+  background: rgba(88, 166, 255, 0.4);
 }

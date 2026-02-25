@@ -83,27 +83,31 @@ export function AIOrb(props: AIOrpProps) {
     }
   });
 
-  // Double-click/double-tap detection for quick capture
-  let lastClickTime = 0;
-  const DOUBLE_CLICK_MS = 350;
+  // Double-click/double-tap detection for quick capture.
+  // Uses onTouchEnd for reliable iOS handling (onClick can be swallowed by Safari
+  // gesture recognition). The touchHandled flag prevents double-firing on devices
+  // that emit both touchend and click.
+  let lastTapTime = 0;
+  let touchHandled = false;
+  const DOUBLE_TAP_MS = 350;
 
-  function handleOrbClick() {
+  function handleTap() {
     if (props.isOverlayOpen) return;
 
     const now = Date.now();
-    if (now - lastClickTime < DOUBLE_CLICK_MS) {
-      // Double-click/tap: open capture overlay
-      lastClickTime = 0;
+    if (now - lastTapTime < DOUBLE_TAP_MS) {
+      // Double-tap: open capture overlay
+      lastTapTime = 0;
       setOrbState('idle');
       setShowCapture(true);
       return;
     }
-    lastClickTime = now;
+    lastTapTime = now;
 
-    // Delay single-click action to distinguish from double-click
+    // Delay single-tap action to distinguish from double-tap
     setTimeout(() => {
-      // If a double-click happened, lastClickTime was reset to 0
-      if (lastClickTime === 0) return;
+      // If a double-tap happened, lastTapTime was reset to 0
+      if (lastTapTime === 0) return;
 
       const current = orbState();
       if (current === 'error') {
@@ -114,8 +118,21 @@ export function AIOrb(props: AIOrpProps) {
       } else if (current === 'idle') {
         setOrbState('expanded');
       }
-    }, DOUBLE_CLICK_MS);
-    // Do not toggle during thinking/streaming
+    }, DOUBLE_TAP_MS);
+  }
+
+  function handleTouchEnd(e: TouchEvent) {
+    e.preventDefault(); // Prevent iOS from synthesizing a delayed click
+    touchHandled = true;
+    handleTap();
+    // Reset flag after the click event would have fired
+    setTimeout(() => { touchHandled = false; }, 50);
+  }
+
+  function handleClick() {
+    // Skip if already handled by touchend (touch devices fire both)
+    if (touchHandled) return;
+    handleTap();
   }
 
   function handleMenuAction(action: string) {
@@ -184,7 +201,8 @@ export function AIOrb(props: AIOrpProps) {
     <div
       ref={orbRef}
       class={orbClass()}
-      onClick={handleOrbClick}
+      onTouchEnd={handleTouchEnd}
+      onClick={handleClick}
       role="button"
       aria-label="AI assistant — double-click to capture"
       aria-expanded={orbState() === 'expanded'}
