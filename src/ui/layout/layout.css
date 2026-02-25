@@ -3799,46 +3799,45 @@ kbd {
 .ai-orb {
   position: fixed;
   bottom: var(--orb-bottom, calc(var(--status-bar-height) + 72px));
-  right: var(--orb-right, 16px);
+  left: var(--orb-left, 16px);
   width: 48px;
   height: 48px;
   border-radius: 50%;
   cursor: pointer;
   z-index: 100;
-  transition: bottom 0.3s ease-out, right 0.3s ease-out, transform 0.2s ease-out;
+  transition: bottom 0.3s ease-out, left 0.3s ease-out, transform 0.2s ease-out;
   /* Positioning context for radial menu and error message */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* --- Orb ring (the binder ring visual) --- */
+/* --- Orb icon (binder ring images) --- */
 
-.ai-orb-ring {
+.ai-orb-icon {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  border: 2px solid var(--accent);
-  box-shadow: 0 0 8px rgba(88, 166, 255, 0.4);
-  transition: border-color 0.3s, box-shadow 0.3s;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(88, 166, 255, 0.4));
+  transition: filter 0.3s, transform 0.3s;
 }
 
-/* --- State: idle — gentle box-shadow pulse --- */
+/* --- State: idle — gentle glow pulse --- */
 
-.ai-orb--idle .ai-orb-ring {
+.ai-orb--idle .ai-orb-icon {
   animation: orbIdlePulse 3s ease-in-out infinite;
 }
 
 @keyframes orbIdlePulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(88, 166, 255, 0.4); }
-  50%       { box-shadow: 0 0 20px rgba(88, 166, 255, 0.85), 0 0 8px rgba(88, 166, 255, 0.5); }
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(88, 166, 255, 0.4)); }
+  50%       { filter: drop-shadow(0 0 16px rgba(88, 166, 255, 0.85)) drop-shadow(0 0 6px rgba(88, 166, 255, 0.5)); }
 }
 
-/* --- State: thinking — dashed ring spins --- */
+/* --- State: thinking — icon spins --- */
 
-.ai-orb--thinking .ai-orb-ring {
+.ai-orb--thinking .ai-orb-icon {
   animation: orbThinkingSpin 1s linear infinite;
-  border-style: dashed;
 }
 
 @keyframes orbThinkingSpin {
@@ -3846,13 +3845,11 @@ kbd {
   to   { transform: rotate(360deg); }
 }
 
-/* --- State: streaming — conic-gradient "ring opening" with slow spin --- */
+/* --- State: streaming — scale in with slow spin --- */
 
-.ai-orb--streaming .ai-orb-ring {
+.ai-orb--streaming .ai-orb-icon {
   animation: orbStreamingOpen 0.5s ease-out forwards, orbThinkingSpin 2s linear infinite;
-  background: conic-gradient(var(--accent) 0%, transparent 60%);
-  border: none;
-  box-shadow: 0 0 12px rgba(88, 166, 255, 0.6);
+  filter: drop-shadow(0 0 10px rgba(88, 166, 255, 0.6));
 }
 
 @keyframes orbStreamingOpen {
@@ -3860,24 +3857,22 @@ kbd {
   to   { transform: scale(1); opacity: 1; }
 }
 
-/* --- State: error — brief red flash --- */
+/* --- State: error — red glow flash --- */
 
-.ai-orb--error .ai-orb-ring {
+.ai-orb--error .ai-orb-icon {
   animation: orbErrorFlash 1.5s ease-out forwards;
 }
 
 @keyframes orbErrorFlash {
-  0%   { border-color: var(--status-error); box-shadow: 0 0 20px rgba(248, 81, 73, 0.9), 0 0 8px rgba(248, 81, 73, 0.6); }
-  60%  { border-color: var(--status-error); box-shadow: 0 0 12px rgba(248, 81, 73, 0.5); }
-  100% { border-color: var(--accent); box-shadow: 0 0 8px rgba(88, 166, 255, 0.4); }
+  0%   { filter: drop-shadow(0 0 16px rgba(248, 81, 73, 0.9)) drop-shadow(0 0 6px rgba(248, 81, 73, 0.6)); }
+  60%  { filter: drop-shadow(0 0 8px rgba(248, 81, 73, 0.5)); }
+  100% { filter: drop-shadow(0 0 6px rgba(88, 166, 255, 0.4)); }
 }
 
-/* --- State: expanded — ring fully open (gap via conic-gradient) --- */
+/* --- State: expanded — brighter glow (open binder icon swapped in JSX) --- */
 
-.ai-orb--expanded .ai-orb-ring {
-  background: conic-gradient(var(--accent) 0%, var(--accent) 70%, transparent 70%, transparent 100%);
-  border: none;
-  box-shadow: 0 0 16px rgba(88, 166, 255, 0.7), 0 0 8px rgba(88, 166, 255, 0.4);
+.ai-orb--expanded .ai-orb-icon {
+  filter: drop-shadow(0 0 12px rgba(88, 166, 255, 0.7)) drop-shadow(0 0 6px rgba(88, 166, 255, 0.4));
   animation: none;
 }
 
@@ -3923,7 +3918,7 @@ kbd {
 .ai-radial-menu {
   position: absolute;
   bottom: calc(100% + 8px);
-  right: 0;
+  left: 0;
   width: 180px;
   height: 180px;
   z-index: 101;
@@ -3973,45 +3968,42 @@ kbd {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* --- 5 items at ~72deg intervals at radius 70px ---
-   Item 1: top           (0deg)   → translateY(-70px)
-   Item 2: top-right     (72deg)  → translate(56px, -42px)
-   Item 3: right         (144deg) → translate(67px, 22px)
-   Item 4: left          (216deg) → translate(-67px, 22px)  [mirrored item 3]
-   Item 5: top-left      (288deg) → translate(-56px, -42px) [mirrored item 2]
+/* --- 5 items fanning right and upward from lower-left orb ---
+   Arc from top (0deg) to lower-right (100deg) at radius 100px.
+   25deg spacing gives ~43px between 48px buttons — no overlap.
 */
 
 .ai-radial-item:nth-child(1) {
-  transform: translateY(-70px);
+  transform: translateY(-100px);
   animation-delay: 0ms;
 }
 
 .ai-radial-item:nth-child(2) {
-  transform: translate(56px, -42px);
+  transform: translate(42px, -91px);
   animation-delay: 40ms;
 }
 
 .ai-radial-item:nth-child(3) {
-  transform: translate(67px, 22px);
+  transform: translate(77px, -64px);
   animation-delay: 80ms;
 }
 
 .ai-radial-item:nth-child(4) {
-  transform: translate(-67px, 22px);
+  transform: translate(97px, -26px);
   animation-delay: 120ms;
 }
 
 .ai-radial-item:nth-child(5) {
-  transform: translate(-56px, -42px);
+  transform: translate(98px, 17px);
   animation-delay: 160ms;
 }
 
 /* Hover states must override the nth-child transforms */
-.ai-radial-item:nth-child(1):hover { transform: translateY(-70px) scale(1.08); }
-.ai-radial-item:nth-child(2):hover { transform: translate(56px, -42px) scale(1.08); }
-.ai-radial-item:nth-child(3):hover { transform: translate(67px, 22px) scale(1.08); }
-.ai-radial-item:nth-child(4):hover { transform: translate(-67px, 22px) scale(1.08); }
-.ai-radial-item:nth-child(5):hover { transform: translate(-56px, -42px) scale(1.08); }
+.ai-radial-item:nth-child(1):hover { transform: translateY(-100px) scale(1.08); }
+.ai-radial-item:nth-child(2):hover { transform: translate(42px, -91px) scale(1.08); }
+.ai-radial-item:nth-child(3):hover { transform: translate(77px, -64px) scale(1.08); }
+.ai-radial-item:nth-child(4):hover { transform: translate(97px, -26px) scale(1.08); }
+.ai-radial-item:nth-child(5):hover { transform: translate(98px, 17px) scale(1.08); }
 
 /* --- Primary action highlight --- */
 
@@ -4035,11 +4027,11 @@ kbd {
 }
 
 /* Primary item hover overrides — larger base margin */
-.ai-radial-item--primary:nth-child(1):hover { transform: translateY(-70px) scale(1.06); }
-.ai-radial-item--primary:nth-child(2):hover { transform: translate(56px, -42px) scale(1.06); }
-.ai-radial-item--primary:nth-child(3):hover { transform: translate(67px, 22px) scale(1.06); }
-.ai-radial-item--primary:nth-child(4):hover { transform: translate(-67px, 22px) scale(1.06); }
-.ai-radial-item--primary:nth-child(5):hover { transform: translate(-56px, -42px) scale(1.06); }
+.ai-radial-item--primary:nth-child(1):hover { transform: translateY(-100px) scale(1.06); }
+.ai-radial-item--primary:nth-child(2):hover { transform: translate(42px, -91px) scale(1.06); }
+.ai-radial-item--primary:nth-child(3):hover { transform: translate(77px, -64px) scale(1.06); }
+.ai-radial-item--primary:nth-child(4):hover { transform: translate(97px, -26px) scale(1.06); }
+.ai-radial-item--primary:nth-child(5):hover { transform: translate(98px, 17px) scale(1.06); }
 
 /* --- Radial item icon --- */
 

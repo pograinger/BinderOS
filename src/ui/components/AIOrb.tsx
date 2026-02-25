@@ -45,16 +45,16 @@ interface AIOrpProps {
 
 // --- Context-aware positioning ---
 
-function getOrbPosition(page: string): { bottom: string; right: string } {
+function getOrbPosition(page: string): { bottom: string; left: string } {
   switch (page) {
     case 'inbox':
       // Slightly higher on inbox to avoid overlap with triage card actions
-      return { bottom: 'calc(var(--status-bar-height) + 96px)', right: '16px' };
+      return { bottom: 'calc(var(--status-bar-height) + 96px)', left: '16px' };
     case 'all':
     case 'active-projects':
-      return { bottom: 'calc(var(--status-bar-height) + 72px)', right: '24px' };
+      return { bottom: 'calc(var(--status-bar-height) + 72px)', left: '24px' };
     default:
-      return { bottom: 'calc(var(--status-bar-height) + 72px)', right: '16px' };
+      return { bottom: 'calc(var(--status-bar-height) + 72px)', left: '16px' };
   }
 }
 
@@ -80,7 +80,7 @@ export function AIOrb(props: AIOrpProps) {
     const pos = getOrbPosition(state.activePage);
     if (orbRef) {
       orbRef.style.setProperty('--orb-bottom', pos.bottom);
-      orbRef.style.setProperty('--orb-right', pos.right);
+      orbRef.style.setProperty('--orb-left', pos.left);
     }
   });
 
@@ -172,7 +172,12 @@ export function AIOrb(props: AIOrpProps) {
         aria-label="AI assistant"
         aria-expanded={orbState() === 'expanded'}
       >
-        <div class="ai-orb-ring" />
+        <img
+          class="ai-orb-icon"
+          src={orbState() === 'expanded' ? '/icons/orb-open.png' : '/icons/orb-closed.png'}
+          alt=""
+          draggable={false}
+        />
 
         {/* Error message */}
         <Show when={orbState() === 'error'}>
