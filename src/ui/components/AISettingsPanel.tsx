@@ -26,6 +26,7 @@ import {
   setTriageEnabled,
   setReviewEnabled,
   setCompressionEnabled,
+  activateCloudAdapter,
 } from '../signals/store';
 import {
   setMemoryKey,
@@ -61,6 +62,8 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
   );
   const [showModelDetails, setShowModelDetails] = createSignal(false);
   const [logEntries, setLogEntries] = createSignal(getCloudRequestLog());
+  // Reactive wrapper for session consent (key-vault uses plain booleans, not signals)
+  const [consentGranted, setConsentGranted] = createSignal(hasSessionConsent());
 
   function formatTimestamp(ts: number): string {
     return new Date(ts).toLocaleTimeString();
@@ -78,6 +81,10 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
     }
     setMemoryKey(key);
     setApiKeyInput('');
+    // If cloud is already enabled, activate the adapter with the new key
+    if (state.cloudAPIEnabled) {
+      await activateCloudAdapter();
+    }
     setKeyFeedback('Key saved to memory. It will be cleared when you close the app.');
   }
 
@@ -117,6 +124,9 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
       const key = await decryptFromStore(passphrase);
       if (key) {
         setUnlockPassphraseInput('');
+        if (state.cloudAPIEnabled) {
+          await activateCloudAdapter();
+        }
         setKeyFeedback('Key unlocked and loaded into memory.');
       } else {
         setKeyFeedback('No stored key found.');
@@ -230,10 +240,10 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
                 <div class="ai-settings-progress">
                   <div
                     class="ai-settings-progress-bar"
-                    style={{ width: `${(state.llmDownloadProgress ?? 0) * 100}%` }}
+                    style={{ width: `${Math.min(state.llmDownloadProgress ?? 0, 100)}%` }}
                   />
                   <span class="ai-settings-progress-label">
-                    Downloading model: {Math.round((state.llmDownloadProgress ?? 0) * 100)}%
+                    Downloading model: {Math.min(Math.round(state.llmDownloadProgress ?? 0), 100)}%
                   </span>
                 </div>
               </Show>
@@ -413,11 +423,11 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
               <div class="ai-settings-consent">
                 <span class="ai-settings-consent-label">Session consent:</span>
                 <Show
-                  when={hasSessionConsent()}
+                  when={consentGranted()}
                   fallback={
                     <button
                       class="ai-settings-btn ai-settings-btn-primary"
-                      onClick={() => grantSessionConsent()}
+                      onClick={() => { grantSessionConsent(); setConsentGranted(true); }}
                     >
                       Grant consent for this session
                     </button>
@@ -426,7 +436,7 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
                   <span class="ai-settings-consent-granted">Granted for this session</span>
                   <button
                     class="ai-settings-btn ai-settings-btn-secondary"
-                    onClick={() => revokeSessionConsent()}
+                    onClick={() => { revokeSessionConsent(); setConsentGranted(false); }}
                   >
                     Revoke
                   </button>
@@ -583,7 +593,7 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
                 <tr>
                   <td>Cloud API</td>
                   <td class={`status-${state.cloudStatus}`}>{state.cloudStatus}</td>
-                  <td>claude-haiku-4-5</td>
+                  <td>claude-haiku-4-5-20251001</td>
                 </tr>
               </tbody>
             </table>

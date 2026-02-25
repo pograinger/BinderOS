@@ -163,6 +163,9 @@ onMessage((response) => {
         if (s.triageEnabled !== undefined) setState('triageEnabled', s.triageEnabled);
         if (s.reviewEnabled !== undefined) setState('reviewEnabled', s.reviewEnabled);
         if (s.compressionEnabled !== undefined) setState('compressionEnabled', s.compressionEnabled);
+        // Activate adapters that were enabled in a previous session
+        if (s.browserLLMEnabled) void activateBrowserLLM();
+        if (s.cloudAPIEnabled) void activateCloudAdapter();
       }
       break;
 
@@ -323,11 +326,85 @@ export function setAIEnabled(enabled: boolean): void {
 export function setBrowserLLMEnabled(enabled: boolean): void {
   setState('browserLLMEnabled', enabled);
   sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { browserLLMEnabled: enabled } });
+  if (enabled) {
+    void activateBrowserLLM();
+  } else {
+    void deactivateBrowserLLM();
+  }
+}
+
+/**
+ * Create a BrowserAdapter, initialize the LLM worker (downloads model on first run),
+ * and set it as the active adapter. Status callbacks update the store reactively.
+ */
+export async function activateBrowserLLM(): Promise<void> {
+  const { BrowserAdapter } = await import('../../ai/adapters/browser');
+  const { setActiveAdapter } = await import('../../ai/router');
+  const adapter = new BrowserAdapter();
+  adapter.onStatusChange = (update) => {
+    if (update.status !== undefined) setState('llmStatus', update.status);
+    if (update.modelId !== undefined) setState('llmModelId', update.modelId);
+    if (update.device !== undefined) setState('llmDevice', update.device as 'webgpu' | 'wasm' | null);
+    if (update.downloadProgress !== undefined) setState('llmDownloadProgress', update.downloadProgress);
+  };
+  setState('llmStatus', 'loading');
+  try {
+    await adapter.initialize();
+    setActiveAdapter(adapter);
+  } catch (err) {
+    console.error('[BinderOS] Browser LLM initialization failed:', err);
+    setState('llmStatus', 'error');
+  }
+}
+
+/**
+ * Deactivate browser LLM — terminate worker, fall back to NoOp, reset status.
+ */
+export async function deactivateBrowserLLM(): Promise<void> {
+  const { NoOpAdapter } = await import('../../ai/adapters/noop');
+  const { setActiveAdapter, getActiveAdapter } = await import('../../ai/router');
+  const current = getActiveAdapter();
+  if (current?.id === 'browser') {
+    current.dispose();
+    setActiveAdapter(new NoOpAdapter());
+  }
+  setState('llmStatus', 'disabled');
+  setState('llmModelId', null);
+  setState('llmDevice', null);
+  setState('llmDownloadProgress', null);
 }
 
 export function setCloudAPIEnabled(enabled: boolean): void {
   setState('cloudAPIEnabled', enabled);
   sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { cloudAPIEnabled: enabled } });
+  if (enabled) {
+    void activateCloudAdapter();
+  } else {
+    void deactivateCloudAdapter();
+  }
+}
+
+/**
+ * Create a CloudAdapter, initialize it with the current memory key, and set it as the
+ * active adapter. Updates cloudStatus reactively. Call after saving a key or toggling cloud on.
+ */
+export async function activateCloudAdapter(): Promise<void> {
+  const { CloudAdapter } = await import('../../ai/adapters/cloud');
+  const { setActiveAdapter } = await import('../../ai/router');
+  const adapter = new CloudAdapter();
+  adapter.initialize();
+  setActiveAdapter(adapter);
+  setState('cloudStatus', adapter.status);
+}
+
+/**
+ * Deactivate cloud adapter — fall back to NoOp and reset cloud status.
+ */
+export async function deactivateCloudAdapter(): Promise<void> {
+  const { NoOpAdapter } = await import('../../ai/adapters/noop');
+  const { setActiveAdapter } = await import('../../ai/router');
+  setActiveAdapter(new NoOpAdapter());
+  setState('cloudStatus', 'disabled');
 }
 
 export function setAIFirstRunComplete(complete: boolean): void {
@@ -651,3 +728,10 @@ export const cloudReady = createMemo(() => state.cloudStatus === 'available');
  * Reactive signal: true when any AI adapter is available (browser or cloud).
  */
 export const anyAIAvailable = createMemo(() => llmReady() || cloudReady());
+
+/**
+ * UI signal: controls AI settings panel visibility.
+ * Shared here to avoid circular dependencies (Shell → AIOrb → AIRadialMenu → Shell).
+ */
+const [showAISettings, setShowAISettings] = createSignal(false);
+export { showAISettings, setShowAISettings };

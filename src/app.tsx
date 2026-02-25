@@ -22,11 +22,11 @@
 
 import { createSignal, onMount, onCleanup, Show } from 'solid-js';
 import { initWorker } from './worker/bridge';
-import { sendCommand, state, setActivePage, setSelectedAtomId, setPersistenceGranted, dispatchAICommand } from './ui/signals/store';
+import { sendCommand, state, setActivePage, setSelectedAtomId, setPersistenceGranted, dispatchAICommand, setShowAISettings } from './ui/signals/store';
 import { initStoragePersistence } from './storage/persistence';
 import { setActiveAdapter } from './ai/router';
 import { NoOpAdapter } from './ai/adapters/noop';
-import { Shell, setShowAISettings } from './ui/layout/Shell';
+import { Shell } from './ui/layout/Shell';
 import { CaptureOverlay } from './ui/views/CaptureOverlay';
 import { SearchOverlay } from './ui/views/SearchOverlay';
 import { StorageWarning } from './ui/views/StorageWarning';

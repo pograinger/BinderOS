@@ -137,7 +137,7 @@ export class CloudAdapter implements AIAdapter {
       timestamp: Date.now(),
       sanitizedPrompt,
       provider: 'anthropic',
-      model: 'claude-haiku-4-5',
+      model: 'claude-haiku-4-5-20251001',
       status: 'pending',
     };
     addCloudRequestLog(logEntry);
@@ -154,7 +154,7 @@ export class CloudAdapter implements AIAdapter {
 
     try {
       const stream = this.client.messages.stream({
-        model: 'claude-haiku-4-5',  // Cost-efficient for classification/routing
+        model: 'claude-haiku-4-5-20251001',  // Cost-efficient for classification/routing
         max_tokens: request.maxTokens ?? 512,
         messages: [{ role: 'user', content: sanitizedPrompt }],
       });
@@ -176,7 +176,7 @@ export class CloudAdapter implements AIAdapter {
         requestId: request.requestId,
         text,
         provider: 'cloud',
-        model: 'claude-haiku-4-5',
+        model: 'claude-haiku-4-5-20251001',
       };
     } catch (err) {
       logEntry.status = 'error';

@@ -21,7 +21,10 @@
  */
 
 import { createSignal, createEffect, Show } from 'solid-js';
-import { state, anyAIAvailable, startTriageInbox } from '../signals/store';
+import { state, anyAIAvailable, startTriageInbox, setActivePage } from '../signals/store';
+
+/** Orb is visible when AI is enabled (user toggled on), even before adapters connect */
+const orbVisible = () => state.aiEnabled;
 import { AIRadialMenu } from './AIRadialMenu';
 import { setShowQuestionFlow, setQuestionFlowContext } from './AIQuestionFlow';
 
@@ -103,6 +106,7 @@ export function AIOrb(props: AIOrpProps) {
     // 'review', 'compress' are stubs for Phases 6-7
     if (action === 'triage') {
       setOrbState('idle');
+      setActivePage('inbox');
       startTriageInbox();
       return;
     }
@@ -159,7 +163,7 @@ export function AIOrb(props: AIOrpProps) {
   };
 
   return (
-    <Show when={anyAIAvailable()}>
+    <Show when={orbVisible()}>
       <div
         ref={orbRef}
         class={orbClass()}

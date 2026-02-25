@@ -97,24 +97,22 @@ export function StatusBar() {
         <span>{openTaskCount()} tasks</span>
       </div>
 
-      {/* Phase 4: AI activity indicator */}
+      {/* Phase 4: AI status — compact dot + short label */}
       <Show when={state.aiEnabled}>
         <div class="status-bar-item ai-status">
           <Show
             when={state.aiActivity}
             fallback={
               <span class="ai-status-idle">
-                {state.llmStatus === 'available'
-                  ? 'Local AI: Ready'
-                  : state.llmStatus === 'loading'
-                  ? 'Local AI: Loading...'
-                  : state.llmStatus === 'error'
-                  ? 'Local AI: Error'
-                  : 'AI: Disabled'}
+                <span class={`status-bar-dot ${state.llmStatus === 'available' || state.cloudStatus === 'available' ? 'granted' : state.llmStatus === 'loading' ? 'dev' : 'denied'}`} />
+                AI
               </span>
             }
           >
-            <span class="ai-status-active">{state.aiActivity}</span>
+            <span class="ai-status-active">
+              <span class="status-bar-dot dev" />
+              AI
+            </span>
           </Show>
         </div>
       </Show>

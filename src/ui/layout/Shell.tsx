@@ -27,14 +27,11 @@ import { AIGuidedSetup } from '../components/AIGuidedSetup';
 import { CloudRequestPreview } from '../components/CloudRequestPreview';
 import { AIOrb } from '../components/AIOrb';
 import { AIQuestionFlow } from '../components/AIQuestionFlow';
-import { state, setPendingCloudRequest } from '../signals/store';
+import { state, setPendingCloudRequest, showAISettings, setShowAISettings } from '../signals/store';
 import { getActiveAdapter } from '../../ai/router';
 import type { CloudAdapter } from '../../ai/adapters/cloud';
 
-// Module-level signal for AI settings panel visibility.
-// Exported so app.tsx can wire CommandPalette's onOpenAISettings callback.
-const [showAISettings, setShowAISettings] = createSignal(false);
-export { setShowAISettings };
+// showAISettings / setShowAISettings now live in store.ts to avoid circular deps.
 
 export function Shell() {
   const [isDesktop, setIsDesktop] = createSignal(false);

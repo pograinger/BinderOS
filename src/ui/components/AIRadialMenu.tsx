@@ -19,7 +19,7 @@
  */
 
 import { For } from 'solid-js';
-import { setShowAISettings } from '../layout/Shell';
+import { setShowAISettings } from '../signals/store';
 
 // --- Action definitions ---
 
@@ -97,7 +97,7 @@ export function AIRadialMenu(props: AIRadialMenuProps) {
       {/* Backdrop: click outside the orb area to close */}
       <div
         class="ai-radial-backdrop"
-        onClick={() => props.onClose()}
+        onClick={(e) => { e.stopPropagation(); props.onClose(); }}
         aria-hidden="true"
       />
 
@@ -115,7 +115,7 @@ export function AIRadialMenu(props: AIRadialMenuProps) {
                 class={`ai-radial-item${isPrimary() ? ' ai-radial-item--primary' : ''}`}
                 role="menuitem"
                 aria-label={action.label}
-                onClick={() => handleAction(action.id)}
+                onClick={(e) => { e.stopPropagation(); handleAction(action.id); }}
                 title={action.label}
               >
                 <span
