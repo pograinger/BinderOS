@@ -191,7 +191,7 @@ export function AIOrb(props: AIOrpProps) {
     >
       <img
         class="ai-orb-icon"
-        src={orbState() === 'expanded' ? '/icons/orb-open.png' : '/icons/orb-closed.png'}
+        src={orbState() === 'expanded' ? `${import.meta.env.BASE_URL}icons/orb-open.png` : `${import.meta.env.BASE_URL}icons/orb-closed.png`}
         alt=""
         draggable={false}
       />
