@@ -22,7 +22,7 @@
 
 import { createSignal, onMount, onCleanup, Show } from 'solid-js';
 import { initWorker } from './worker/bridge';
-import { sendCommand, state, setActivePage, setSelectedAtomId, setPersistenceGranted, dispatchAICommand, setShowAISettings } from './ui/signals/store';
+import { sendCommand, state, setActivePage, setSelectedAtomId, setPersistenceGranted, dispatchAICommand, setShowAISettings, showCapture, setShowCapture } from './ui/signals/store';
 import { initStoragePersistence } from './storage/persistence';
 import { setActiveAdapter } from './ai/router';
 import { NoOpAdapter } from './ai/adapters/noop';
@@ -105,7 +105,13 @@ function App() {
     // Ctrl+N / Cmd+N: Toggle capture overlay
     if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
       e.preventDefault();
-      setOverlay((prev) => (prev === 'capture' ? 'none' : 'capture'));
+      if (showCapture()) {
+        setShowCapture(false);
+        setOverlay('none');
+      } else {
+        setShowCapture(true);
+        setOverlay('capture');
+      }
       return;
     }
 
@@ -125,8 +131,9 @@ function App() {
 
     // Escape: close overlay, or close detail panel if no overlay
     if (e.key === 'Escape') {
-      if (overlay() !== 'none') {
+      if (overlay() !== 'none' || showCapture()) {
         setOverlay('none');
+        setShowCapture(false);
         return;
       }
       // Close detail panel if no overlay is open
@@ -173,9 +180,9 @@ function App() {
     <>
       <Shell />
 
-      {/* Capture overlay */}
-      <Show when={overlay() === 'capture'}>
-        <CaptureOverlay onClose={() => setOverlay('none')} />
+      {/* Capture overlay — triggered by Ctrl+N or orb double-click */}
+      <Show when={showCapture()}>
+        <CaptureOverlay onClose={() => { setShowCapture(false); setOverlay('none'); }} />
       </Show>
 
       {/* Search overlay (Ctrl+K) */}
@@ -205,17 +212,7 @@ function App() {
       {/* Cap enforcement modal — self-managing via state.capExceeded */}
       <CapEnforcementModal />
 
-      {/* Floating Action Button for mobile capture */}
-      <Show when={overlay() !== 'capture'}>
-        <button
-          class="fab-capture"
-          onClick={() => setOverlay('capture')}
-          title="Quick capture (Ctrl+N)"
-          aria-label="Quick capture"
-        >
-          +
-        </button>
-      </Show>
+      {/* FAB removed — orb double-click/tap replaces the + button for capture */}
     </>
   );
 }

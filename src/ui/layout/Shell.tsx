@@ -27,7 +27,7 @@ import { AIGuidedSetup } from '../components/AIGuidedSetup';
 import { CloudRequestPreview } from '../components/CloudRequestPreview';
 import { AIOrb } from '../components/AIOrb';
 import { AIQuestionFlow } from '../components/AIQuestionFlow';
-import { state, setPendingCloudRequest, showAISettings, setShowAISettings } from '../signals/store';
+import { state, setPendingCloudRequest, showAISettings, setShowAISettings, showCapture } from '../signals/store';
 import { getActiveAdapter } from '../../ai/router';
 import type { CloudAdapter } from '../../ai/adapters/cloud';
 
@@ -73,6 +73,7 @@ export function Shell() {
   // The orb shrinks to a dot when any overlay (settings, setup, cloud preview) is active.
   const isAnyOverlayOpen = () =>
     showAISettings() ||
+    showCapture() ||
     !state.aiFirstRunComplete ||
     state.pendingCloudRequest !== null;
 

@@ -735,3 +735,7 @@ export const anyAIAvailable = createMemo(() => llmReady() || cloudReady());
  */
 const [showAISettings, setShowAISettings] = createSignal(false);
 export { showAISettings, setShowAISettings };
+
+/** Capture overlay signal — shared between app.tsx and AIOrb double-tap */
+const [showCapture, setShowCapture] = createSignal(false);
+export { showCapture, setShowCapture };

@@ -17,14 +17,13 @@
  * Context-aware positioning: reads state.activePage to adjust bottom/right offsets.
  * Overlay suppression: isOverlayOpen prop shrinks orb to dot and hides menu.
  *
+ * Double-click/double-tap opens CaptureOverlay (replaces the old + FAB).
+ *
  * Phase 5: AIUX-01, AIUX-02
  */
 
 import { createSignal, createEffect, Show } from 'solid-js';
-import { state, anyAIAvailable, startTriageInbox, setActivePage } from '../signals/store';
-
-/** Orb is visible when AI is enabled (user toggled on), even before adapters connect */
-const orbVisible = () => state.aiEnabled;
+import { state, anyAIAvailable, startTriageInbox, setActivePage, setShowCapture } from '../signals/store';
 import { AIRadialMenu } from './AIRadialMenu';
 import { setShowQuestionFlow, setQuestionFlowContext } from './AIQuestionFlow';
 
@@ -45,16 +44,16 @@ interface AIOrpProps {
 
 // --- Context-aware positioning ---
 
-function getOrbPosition(page: string): { bottom: string; left: string } {
+function getOrbPosition(page: string): { bottom: string; right: string } {
   switch (page) {
     case 'inbox':
       // Slightly higher on inbox to avoid overlap with triage card actions
-      return { bottom: 'calc(var(--status-bar-height) + 96px)', left: '16px' };
+      return { bottom: 'calc(var(--status-bar-height) + 96px)', right: '16px' };
     case 'all':
     case 'active-projects':
-      return { bottom: 'calc(var(--status-bar-height) + 72px)', left: '24px' };
+      return { bottom: 'calc(var(--status-bar-height) + 72px)', right: '24px' };
     default:
-      return { bottom: 'calc(var(--status-bar-height) + 72px)', left: '16px' };
+      return { bottom: 'calc(var(--status-bar-height) + 72px)', right: '16px' };
   }
 }
 
@@ -80,23 +79,42 @@ export function AIOrb(props: AIOrpProps) {
     const pos = getOrbPosition(state.activePage);
     if (orbRef) {
       orbRef.style.setProperty('--orb-bottom', pos.bottom);
-      orbRef.style.setProperty('--orb-left', pos.left);
+      orbRef.style.setProperty('--orb-right', pos.right);
     }
   });
+
+  // Double-click/double-tap detection for quick capture
+  let lastClickTime = 0;
+  const DOUBLE_CLICK_MS = 350;
 
   function handleOrbClick() {
     if (props.isOverlayOpen) return;
 
-    const current = orbState();
-    if (current === 'error') {
-      // Retry: trigger triage and reset to idle
-      startTriageInbox();
+    const now = Date.now();
+    if (now - lastClickTime < DOUBLE_CLICK_MS) {
+      // Double-click/tap: open capture overlay
+      lastClickTime = 0;
       setOrbState('idle');
-    } else if (current === 'expanded') {
-      setOrbState('idle');
-    } else if (current === 'idle') {
-      setOrbState('expanded');
+      setShowCapture(true);
+      return;
     }
+    lastClickTime = now;
+
+    // Delay single-click action to distinguish from double-click
+    setTimeout(() => {
+      // If a double-click happened, lastClickTime was reset to 0
+      if (lastClickTime === 0) return;
+
+      const current = orbState();
+      if (current === 'error') {
+        startTriageInbox();
+        setOrbState('idle');
+      } else if (current === 'expanded') {
+        setOrbState('idle');
+      } else if (current === 'idle') {
+        setOrbState('expanded');
+      }
+    }, DOUBLE_CLICK_MS);
     // Do not toggle during thinking/streaming
   }
 
@@ -163,36 +181,34 @@ export function AIOrb(props: AIOrpProps) {
   };
 
   return (
-    <Show when={orbVisible()}>
-      <div
-        ref={orbRef}
-        class={orbClass()}
-        onClick={handleOrbClick}
-        role="button"
-        aria-label="AI assistant"
-        aria-expanded={orbState() === 'expanded'}
-      >
-        <img
-          class="ai-orb-icon"
-          src={orbState() === 'expanded' ? '/icons/orb-open.png' : '/icons/orb-closed.png'}
-          alt=""
-          draggable={false}
+    <div
+      ref={orbRef}
+      class={orbClass()}
+      onClick={handleOrbClick}
+      role="button"
+      aria-label="AI assistant — double-click to capture"
+      aria-expanded={orbState() === 'expanded'}
+    >
+      <img
+        class="ai-orb-icon"
+        src={orbState() === 'expanded' ? '/icons/orb-open.png' : '/icons/orb-closed.png'}
+        alt=""
+        draggable={false}
+      />
+
+      {/* Error message */}
+      <Show when={orbState() === 'error'}>
+        <span class="ai-orb-error-msg">Triage failed — tap to retry</span>
+      </Show>
+
+      {/* Radial menu — rendered when expanded, AI enabled, and no overlay active */}
+      <Show when={orbState() === 'expanded' && state.aiEnabled && !props.isOverlayOpen}>
+        <AIRadialMenu
+          primaryAction={primaryAction()}
+          onAction={handleMenuAction}
+          onClose={handleMenuClose}
         />
-
-        {/* Error message */}
-        <Show when={orbState() === 'error'}>
-          <span class="ai-orb-error-msg">Triage failed — tap to retry</span>
-        </Show>
-
-        {/* Radial menu — rendered when expanded and no overlay active */}
-        <Show when={orbState() === 'expanded' && !props.isOverlayOpen}>
-          <AIRadialMenu
-            primaryAction={primaryAction()}
-            onAction={handleMenuAction}
-            onClose={handleMenuClose}
-          />
-        </Show>
-      </div>
-    </Show>
+      </Show>
+    </div>
   );
 }

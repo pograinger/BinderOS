@@ -3799,13 +3799,13 @@ kbd {
 .ai-orb {
   position: fixed;
   bottom: var(--orb-bottom, calc(var(--status-bar-height) + 72px));
-  left: var(--orb-left, 16px);
+  right: var(--orb-right, 16px);
   width: 48px;
   height: 48px;
   border-radius: 50%;
   cursor: pointer;
   z-index: 100;
-  transition: bottom 0.3s ease-out, left 0.3s ease-out, transform 0.2s ease-out;
+  transition: bottom 0.3s ease-out, right 0.3s ease-out, transform 0.2s ease-out;
   /* Positioning context for radial menu and error message */
   display: flex;
   align-items: center;
@@ -3918,7 +3918,7 @@ kbd {
 .ai-radial-menu {
   position: absolute;
   bottom: calc(100% + 8px);
-  left: 0;
+  right: 0;
   width: 180px;
   height: 180px;
   z-index: 101;
@@ -3968,9 +3968,10 @@ kbd {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* --- 5 items fanning right and upward from lower-left orb ---
-   Arc from top (0deg) to lower-right (100deg) at radius 100px.
+/* --- 5 items fanning left and upward from bottom-right orb ---
+   Arc from top (0deg) to lower-left (100deg) at radius 100px.
    25deg spacing gives ~43px between 48px buttons — no overlap.
+   Mirror of the left-side layout: negative X values fan leftward.
 */
 
 .ai-radial-item:nth-child(1) {
@@ -3979,31 +3980,31 @@ kbd {
 }
 
 .ai-radial-item:nth-child(2) {
-  transform: translate(42px, -91px);
+  transform: translate(-42px, -91px);
   animation-delay: 40ms;
 }
 
 .ai-radial-item:nth-child(3) {
-  transform: translate(77px, -64px);
+  transform: translate(-77px, -64px);
   animation-delay: 80ms;
 }
 
 .ai-radial-item:nth-child(4) {
-  transform: translate(97px, -26px);
+  transform: translate(-97px, -26px);
   animation-delay: 120ms;
 }
 
 .ai-radial-item:nth-child(5) {
-  transform: translate(98px, 17px);
+  transform: translate(-98px, 17px);
   animation-delay: 160ms;
 }
 
 /* Hover states must override the nth-child transforms */
 .ai-radial-item:nth-child(1):hover { transform: translateY(-100px) scale(1.08); }
-.ai-radial-item:nth-child(2):hover { transform: translate(42px, -91px) scale(1.08); }
-.ai-radial-item:nth-child(3):hover { transform: translate(77px, -64px) scale(1.08); }
-.ai-radial-item:nth-child(4):hover { transform: translate(97px, -26px) scale(1.08); }
-.ai-radial-item:nth-child(5):hover { transform: translate(98px, 17px) scale(1.08); }
+.ai-radial-item:nth-child(2):hover { transform: translate(-42px, -91px) scale(1.08); }
+.ai-radial-item:nth-child(3):hover { transform: translate(-77px, -64px) scale(1.08); }
+.ai-radial-item:nth-child(4):hover { transform: translate(-97px, -26px) scale(1.08); }
+.ai-radial-item:nth-child(5):hover { transform: translate(-98px, 17px) scale(1.08); }
 
 /* --- Primary action highlight --- */
 
@@ -4028,10 +4029,10 @@ kbd {
 
 /* Primary item hover overrides — larger base margin */
 .ai-radial-item--primary:nth-child(1):hover { transform: translateY(-100px) scale(1.06); }
-.ai-radial-item--primary:nth-child(2):hover { transform: translate(42px, -91px) scale(1.06); }
-.ai-radial-item--primary:nth-child(3):hover { transform: translate(77px, -64px) scale(1.06); }
-.ai-radial-item--primary:nth-child(4):hover { transform: translate(97px, -26px) scale(1.06); }
-.ai-radial-item--primary:nth-child(5):hover { transform: translate(98px, 17px) scale(1.06); }
+.ai-radial-item--primary:nth-child(2):hover { transform: translate(-42px, -91px) scale(1.06); }
+.ai-radial-item--primary:nth-child(3):hover { transform: translate(-77px, -64px) scale(1.06); }
+.ai-radial-item--primary:nth-child(4):hover { transform: translate(-97px, -26px) scale(1.06); }
+.ai-radial-item--primary:nth-child(5):hover { transform: translate(-98px, 17px) scale(1.06); }
 
 /* --- Radial item icon --- */
 
