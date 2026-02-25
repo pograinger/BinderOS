@@ -40,6 +40,14 @@ Users can start a weekly review via the orb and receive an AI-generated briefing
 - Analysis atoms only appear within the review flow view — not shown in Inbox, Today, This Week, or other standard views. They exist as atoms (searchable, linkable) but are filtered out of page queries
 - Retention: keep the 4 most recent review briefings. Older ones auto-delete when a 5th is created
 
+### WebLLM migration (replaces Transformers.js + SmolLM2)
+- Replace `@xenova/transformers` with `@mlc-ai/web-llm` (v0.2.81) as the local AI engine
+- Default model: `Llama-3.2-3B-Instruct-q4f16_1-MLC` (~2.2GB download, ~2.2GB VRAM)
+- Use WebLLM's `response_format: { type: "json_object", schema }` for guaranteed structured JSON output — solves Phase 5 SmolLM2 limitation
+- Rewrite browser adapter and LLM worker to use WebLLM's OpenAI-compatible API
+- Offer model size selector in AI Settings (1B for low VRAM, 3B default, 3.8B for high VRAM)
+- WebGPU required (already was for Transformers.js WebGPU path)
+
 ### Claude's Discretion
 - Exact frosted glass CSS treatment and opacity values
 - Progress indicator animation design

@@ -485,6 +485,57 @@ const hasPendingReview = () => {
 
 ---
 
+## WebLLM Migration (User Decision: Include in Phase 6)
+
+The user decided to replace Transformers.js + SmolLM2 with WebLLM (`@mlc-ai/web-llm`) as part of Phase 6. This solves the Phase 5 limitation where SmolLM2 couldn't produce reliable structured JSON.
+
+### Why WebLLM
+- **Guaranteed JSON output** via XGrammar-based constrained generation at token sampling level (`response_format: { type: "json_object", schema }`)
+- **Larger models**: Llama-3.2-3B (2.2GB VRAM) vs SmolLM2-360M (380MB VRAM) — dramatically better instruction following
+- **Faster inference**: TVM-compiled WebGPU kernels vs ONNX Runtime — ~41-71 tok/s on M3 Max
+- **OpenAI-compatible API**: `engine.chat.completions.create()` — cleaner than Transformers.js pipeline API
+
+### Recommended Models
+| Model ID | Params | Download | VRAM | Use Case |
+|----------|--------|----------|------|----------|
+| `Llama-3.2-1B-Instruct-q4f16_1-MLC` | 1B | ~900MB | ~900MB | Low VRAM fallback |
+| `Llama-3.2-3B-Instruct-q4f16_1-MLC` | 3B | ~2.2GB | ~2.2GB | **Default — best balance** |
+| `Phi-3.5-mini-instruct-q4f16_1-MLC` | 3.8B | ~2.4GB | ~3.7GB | High VRAM, fast (71 tok/s) |
+
+### Migration Scope
+- Replace `@xenova/transformers` with `@mlc-ai/web-llm` (v0.2.81)
+- Rewrite `src/ai/llm-worker.ts` to use `WebWorkerMLCEngine` instead of Transformers.js pipeline
+- Rewrite `src/ai/adapters/browser.ts` to use WebLLM's OpenAI-compatible API
+- Use `response_format: { type: "json_object", schema }` for triage and analysis prompts
+- Update AI Settings panel: model selector dropdown (1B/3B/3.8B), VRAM guidance
+- WebGPU requirement unchanged (already required for Transformers.js WebGPU path)
+- Model caching: WebLLM uses Cache API or IndexedDB (`useIndexedDBCache: true`)
+
+### WebLLM API Pattern
+```typescript
+import { CreateMLCEngine } from "@mlc-ai/web-llm";
+
+const engine = await CreateMLCEngine("Llama-3.2-3B-Instruct-q4f16_1-MLC", {
+  initProgressCallback: (progress) => updateDownloadUI(progress),
+  useIndexedDBCache: true,
+});
+
+const reply = await engine.chat.completions.create({
+  messages: [{ role: "system", content: "..." }, { role: "user", content: "..." }],
+  response_format: { type: "json_object", schema: JSON.stringify(mySchema) },
+  max_tokens: 512,
+});
+const structured = JSON.parse(reply.choices[0].message.content);
+```
+
+### Risks
+- WebLLM requires WebGPU — no CPU fallback (unlike Transformers.js WASM path)
+- Older iOS Safari (<26) has no WebGPU support
+- Model download is larger (2.2GB vs 270MB for SmolLM2)
+- `@mlc-ai/web-llm` is less mature than Transformers.js ecosystem
+
+---
+
 ## Sources
 
 ### Primary (HIGH confidence)
