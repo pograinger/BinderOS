@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** v2.0 AI Orchestration — Phase 5: Triage AI
+**Current focus:** v2.0 AI Orchestration — Phase 5 complete, ready for Phase 6
 
 ## Current Position
 
-Phase: 5 of 7 (Triage AI)
-Plan: 3 of 4 in Phase 5 (complete — triage pipeline, similarity module, triage store signals)
-Status: Phase 5 active
-Last activity: 2026-02-24 — Phase 5 Plan 3 complete (triage.ts, similarity.ts, store triage signals, startTriageInbox)
+Phase: 5 of 7 (Triage AI) — COMPLETE
+Plan: 4 of 4 in Phase 5 (complete — all plans verified)
+Status: Phase 5 verified (12/12 criteria passed)
+Last activity: 2026-02-24 — Phase 5 verification passed; 12 UAT bugs fixed during checkpoint
 
-Progress: [███████░░░] 50% (v1.0 complete; v2.0 Phase 4 4/4 done; Phase 5 3/4 done)
+Progress: [██████████░] 57% (v1.0 complete; v2.0 Phases 4-5 done; Phases 6-7 remaining)
 
 ## Performance Metrics
 
 **Velocity (from v1.0):**
-- Total plans completed: 12
-- Average duration: 14 min
-- Total execution time: ~169 min
+- Total plans completed: 19
+- Average duration: ~12 min
+- Total execution time: ~230 min
 
 **By Phase (v1.0):**
 
@@ -31,7 +31,7 @@ Progress: [███████░░░] 50% (v1.0 complete; v2.0 Phase 4 4/4 
 | 2. Compute Engine | 3/3 | 33 min | 11 min |
 | 3. Pages/Nav/Search | 4/4 | 33 min | 8 min |
 
-*v2.0 metrics will populate as phases complete*
+*v2.0 metrics:*
 | Phase 04 P01 | 7 min | 2 tasks | 7 files |
 | Phase 04 P02 | 13 min | 2 tasks | 6 files |
 | Phase 04 P03 | 30 min | 3 tasks | 9 files |
@@ -39,6 +39,7 @@ Progress: [███████░░░] 50% (v1.0 complete; v2.0 Phase 4 4/4 
 | Phase 05 P01 | 5 min | 2 tasks | 5 files |
 | Phase 05 P02 | 8 min | 2 tasks | 10 files |
 | Phase 05 P03 | 7 min | 2 tasks | 3 files |
+| Phase 05 P04 | UAT session | 12 bugs fixed | 12 files |
 
 ## Accumulated Context
 
@@ -52,28 +53,11 @@ Recent decisions affecting current work:
 - [v2.0]: GSD-style question flows as core AI interaction pattern (3-4 options + freeform)
 - [v2.0]: Floating orb is the single AI entry point; AI mutations are additive, tagged, reversible
 - [v2.0]: Phases 6 and 7 flagged for research before planning (review session schema; GTD question flow design)
-- [04-04]: NoOpAdapter must be initialized on the main thread (app.tsx) not in the BinderCore worker — browser workers have separate module registries; the worker-side call had no effect on the main-thread router
-- [04-04]: Dev-only dispatchAICommand test dispatch added to app.tsx onMount behind import.meta.env.DEV guard; Vite tree-shakes it from production builds
-- [04-01]: NoOpAdapter initialized in worker INIT handler for immediate pipeline verification on startup (superseded by 04-04 fix)
-- [04-01]: AIRequest.prompt typed as string (not Atom) — privacy boundary enforced at TypeScript compile time
-- [04-01]: AI UI setters (setAIEnabled etc.) are pure local store state — settings persistence to Dexie deferred to Phase 5
-- [04-02]: AI dispatch moved from BinderCore worker to main thread — BrowserAdapter cannot run in BinderCore worker without Transformers.js contamination
-- [04-02]: GeneratorFn callable type alias for pipeline — ReturnType<typeof pipeline> too complex for TypeScript
-- [04-02]: BrowserAdapter.onStatusChange optional callback pattern — avoids circular dependency between adapter and store
-- [04-03]: CloudAdapter.setPreSendApprovalHandler() decouples adapter from UI — Shell.tsx owns the Promise lifecycle, adapter calls the callback
-- [04-03]: dangerouslyAllowBrowser: true safe — user provides own key, memory-only by default, never embedded in source
-- [04-03]: UI polish deferred after verification — settings panel and status bar noted as poor quality; follow-up required before Phase 5 ships
-- [04-03]: AIGuidedSetup first-run trigger did not fire on reload — aiFirstRunComplete state persistence to Dexie deferred to Phase 5
-- [05-01]: setOrbState exported at module level (not via prop/ref) — follows setShowAISettings pattern; allows triage pipeline to drive orb state without component coupling
-- [05-01]: startTriageInbox as mutable let export with registerTriageInboxFn override — avoids circular dependency between AIOrb (UI layer) and triage.ts (AI layer); Plan 03 wires real implementation
-- [05-01]: AIOrb placed in Shell.tsx (not app.tsx) — Shell owns all AI overlay state; orb needs showAISettings access for overlay suppression
-- [05-02]: aiSourced defaults to false on existing atoms via Dexie v3 upgrade() — clean index queries without undefined
-- [05-02]: SAVE_AI_SETTINGS is fire-and-forget (no flushAndSendState) — settings changes don't require full state update
-- [05-02]: source: 'user'|'ai' spread onto appendMutation result in inbox handler — preserves changelog abstraction, avoids changing appendMutation signature
-- [05-03]: Dynamic import of setOrbState from AIOrb in startTriageInbox — avoids circular dependency; defers resolution until function call time
-- [05-03]: startTriageInbox changed from mutable let to async function — cleaner API; AIOrb calls without await (fire-and-forget) which works correctly
-- [05-03]: Pending placeholder before AI call — onSuggestion called with status:pending so UI shows Analyzing... indicator during sequential processing
-- [05-03]: sectionItemId null-check includes string 'null' — AI models sometimes return literal string "null" instead of JSON null
+- [05-04]: showAISettings signal moved from Shell.tsx to store.ts — breaks circular dependency (Shell → AIOrb → AIRadialMenu → Shell)
+- [05-04]: Cloud/Browser adapter activation wired via dynamic imports in store.ts — activateCloudAdapter() and activateBrowserLLM() called on toggle, key save, and hydration
+- [05-04]: SmolLM2 too small for structured JSON triage output — cloud AI is primary triage path; local LLM suited for simpler tasks
+- [05-04]: Model ID must be fully qualified (claude-haiku-4-5-20251001 not claude-haiku-4-5)
+- [05-04]: Triage action navigates to inbox before triggering startTriageInbox()
 
 ### Pending Todos
 
@@ -84,11 +68,11 @@ None.
 - [Build]: pnpm build:wasm requires LIB env var set to MSVC + Windows SDK paths on Windows
 - [Phase 6]: Dexie schema for branching review session state needs design work before planning
 - [Phase 7]: GTD question flow design (specific questions per phase, preventing Get Creative from becoming open-ended chat) needs deliberate design work before planning
-- [UI/UX]: AISettingsPanel and StatusBar AI indicator need polish pass before Phase 5 ships — user reported both as "very ugly and not intuitive"
-- [RESOLVED 05-02]: aiFirstRunComplete and all AI toggles now persist via Dexie config table
+- [UI/UX]: AISettingsPanel needs polish pass — user reported "very ugly and not intuitive"
+- [AI]: SmolLM2 local LLM cannot produce reliable structured JSON for triage — acceptable limitation, cloud AI is the primary path
 
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed .planning/phases/05-triage-ai/05-03-PLAN.md
-Resume file: .planning/phases/05-triage-ai/05-04-PLAN.md (next plan)
+Stopped at: Phase 5 complete and verified
+Next: Phase 6 (Review AI) — requires /gsd:discuss-phase 6 before planning
