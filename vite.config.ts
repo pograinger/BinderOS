@@ -27,6 +27,8 @@ export default defineConfig({
     wasm(),
     topLevelAwait(),
     VitePWA({
+      // Exclude the 21.6MB ONNX WASM from service worker precache
+      buildExclude: [/ort-wasm/],
       registerType: 'autoUpdate',
       manifest: {
         name: 'BinderOS',
