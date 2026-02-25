@@ -5,6 +5,9 @@ import wasm from 'vite-plugin-wasm';
 import topLevelAwait from 'vite-plugin-top-level-await';
 
 export default defineConfig({
+  // GitHub Pages serves at /BinderOS/ — base path needed for asset URLs in production.
+  // Dev server uses '/' so local dev is unaffected.
+  base: process.env.GITHUB_ACTIONS ? '/BinderOS/' : '/',
   // Cross-origin isolation headers required for SharedArrayBuffer (used by ONNX WASM backend).
   // RESEARCH.md Pitfall 4: without COOP/COEP the WASM backend silently falls back to single-thread.
   server: {
@@ -32,7 +35,7 @@ export default defineConfig({
         background_color: '#0d1117',
         display: 'standalone',
         orientation: 'any',
-        start_url: '/',
+        start_url: './',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
