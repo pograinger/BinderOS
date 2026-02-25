@@ -74,5 +74,6 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Phase 5 complete and verified
-Next: Phase 6 (Review AI) — requires /gsd:discuss-phase 6 before planning
+Stopped at: Phase 6 context gathered
+Next: /gsd:plan-phase 6
+Resume file: .planning/phases/06-review-pre-analysis/06-CONTEXT.md
