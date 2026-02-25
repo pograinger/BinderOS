@@ -29,6 +29,9 @@ export default defineConfig({
     VitePWA({
       // Exclude the 21.6MB ONNX WASM from service worker precache
       buildExclude: [/ort-wasm/],
+      // Downgrade the maximumFileSizeToCacheInBytes error to a warning (added in 0.20.2).
+      // Without this, workbox warnings about large files (ONNX WASM) become fatal build errors.
+      showMaximumFileSizeToCacheInBytesWarning: true,
       registerType: 'autoUpdate',
       manifest: {
         name: 'BinderOS',
