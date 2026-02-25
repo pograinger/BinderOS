@@ -54,6 +54,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,wasm,png,svg,ico}'],
+        maximumFileSizeToCacheInBytes: 25 * 1024 * 1024, // 25MB — ONNX WASM is ~21.6MB
       },
     }),
   ],
