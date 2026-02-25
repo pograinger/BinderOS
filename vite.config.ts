@@ -53,8 +53,11 @@ export default defineConfig({
         },
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,wasm,png,svg,ico}'],
-        maximumFileSizeToCacheInBytes: 25 * 1024 * 1024, // 25MB — ONNX WASM is ~21.6MB
+        globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+        // Precache the small binderos_core WASM but skip the 21.6MB ONNX WASM
+        // (ONNX will be fetched on demand when browser LLM is activated)
+        globIgnores: ['**/ort-wasm-*'],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },
     }),
   ],
