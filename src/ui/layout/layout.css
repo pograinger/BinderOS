@@ -5437,3 +5437,382 @@ kbd {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ==========================================================================
+   Phase 7: GTD Analysis Flow
+   ========================================================================== */
+
+.gtd-flow-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.gtd-flow-panel {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  max-width: 440px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: gtdFlowIn 0.25s ease-out;
+}
+
+@keyframes gtdFlowIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.gtd-flow-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.gtd-flow-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.gtd-flow-atom-name {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gtd-flow-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.gtd-flow-close:hover {
+  color: var(--text-primary);
+}
+
+/* --- Step history chips --- */
+
+.gtd-flow-history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.gtd-flow-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: var(--bg-tertiary);
+  font-size: 11px;
+}
+
+.gtd-flow-chip-step {
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+.gtd-flow-chip-answer {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* --- Loading state --- */
+
+.gtd-flow-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.gtd-flow-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border-primary);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: gtdSpin 0.8s linear infinite;
+}
+
+@keyframes gtdSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- Question --- */
+
+.gtd-flow-question {
+  margin-bottom: 12px;
+}
+
+.gtd-flow-q-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.gtd-flow-ai-tag {
+  display: inline-block;
+  font-size: 10px;
+  color: var(--accent);
+  background: rgba(88, 166, 255, 0.1);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-bottom: 10px;
+}
+
+.gtd-flow-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gtd-flow-option {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.gtd-flow-option:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--accent);
+  transform: translateX(2px);
+}
+
+.gtd-flow-option:active {
+  transform: scale(0.98);
+}
+
+.gtd-flow-option-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.gtd-flow-option-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* --- Back button --- */
+
+.gtd-flow-back {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: none;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.gtd-flow-back:hover {
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}
+
+/* --- Error state --- */
+
+.gtd-flow-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 0;
+  color: var(--status-error);
+  font-size: 13px;
+}
+
+.gtd-flow-retry {
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.gtd-flow-retry:hover {
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Phase 7: GTD Suggestion Card
+   ========================================================================== */
+
+.gtd-suggestion-card {
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  padding: 16px;
+}
+
+.gtd-sc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.gtd-sc-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.gtd-sc-ai-badge {
+  font-size: 10px;
+  color: var(--accent);
+  background: rgba(88, 166, 255, 0.12);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: 500;
+}
+
+.gtd-sc-changes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.gtd-sc-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.gtd-sc-row--edit {
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gtd-sc-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  min-width: 72px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gtd-sc-value {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.gtd-sc-value--changed {
+  color: var(--status-success);
+}
+
+.gtd-sc-input,
+.gtd-sc-select {
+  width: 100%;
+  padding: 6px 8px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.gtd-sc-input:focus,
+.gtd-sc-select:focus {
+  border-color: var(--accent);
+}
+
+.gtd-sc-reasoning {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 8px 0;
+  border-top: 1px solid var(--border-primary);
+  margin-bottom: 12px;
+}
+
+.gtd-sc-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.gtd-sc-btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.gtd-sc-btn:active {
+  transform: scale(0.97);
+}
+
+.gtd-sc-btn--accept {
+  background: var(--accent);
+  color: #fff;
+}
+
+.gtd-sc-btn--accept:hover {
+  opacity: 0.9;
+}
+
+.gtd-sc-btn--modify {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--border-primary);
+}
+
+.gtd-sc-btn--modify:hover {
+  border-color: var(--border-secondary);
+}
+
+.gtd-sc-btn--dismiss {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-primary);
+}
+
+.gtd-sc-btn--dismiss:hover {
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}

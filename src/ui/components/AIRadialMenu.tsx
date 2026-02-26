@@ -18,7 +18,7 @@
  * Phase 5: AIUX-02
  */
 
-import { For } from 'solid-js';
+import { createMemo, For } from 'solid-js';
 import { setShowAISettings } from '../signals/store';
 
 // --- Action definitions ---
@@ -71,10 +71,20 @@ const ACTIONS: RadialAction[] = [
   },
 ];
 
+const ANALYZE_ACTION: RadialAction = {
+  id: 'analyze',
+  label: 'Analyze',
+  icon: () => `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 14l3-6 3 4 2-3 4 5"/>
+    <circle cx="12" cy="4" r="2.5"/>
+  </svg>`,
+};
+
 // --- Props ---
 
 interface AIRadialMenuProps {
   primaryAction: string;
+  selectedAtomId: string | null;
   onAction: (action: string) => void;
   onClose: () => void;
 }
@@ -82,6 +92,14 @@ interface AIRadialMenuProps {
 // --- Component ---
 
 export function AIRadialMenu(props: AIRadialMenuProps) {
+  // Swap "compress" for "analyze" when an atom is selected
+  const actions = createMemo(() => {
+    if (props.selectedAtomId) {
+      return ACTIONS.map(a => a.id === 'compress' ? ANALYZE_ACTION : a);
+    }
+    return ACTIONS;
+  });
+
   function handleAction(actionId: string) {
     if (actionId === 'settings') {
       setShowAISettings(true);
@@ -107,7 +125,7 @@ export function AIRadialMenu(props: AIRadialMenuProps) {
         role="menu"
         aria-label="AI actions"
       >
-        <For each={ACTIONS}>
+        <For each={actions()}>
           {(action) => {
             const isPrimary = () => action.id === props.primaryAction;
             return (

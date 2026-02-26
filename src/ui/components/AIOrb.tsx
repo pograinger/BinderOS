@@ -24,7 +24,7 @@
  */
 
 import { createSignal, createEffect, Show } from 'solid-js';
-import { state, anyAIAvailable, startTriageInbox, startReviewBriefing, setActivePage, setShowCapture } from '../signals/store';
+import { state, anyAIAvailable, startTriageInbox, startReviewBriefing, startGTDAnalysis, setActivePage, setShowCapture } from '../signals/store';
 import { AIRadialMenu } from './AIRadialMenu';
 import { setShowQuestionFlow, setQuestionFlowContext } from './AIQuestionFlow';
 
@@ -63,9 +63,11 @@ function getOrbPosition(page: string): { bottom: string; right: string } {
 export function AIOrb(props: AIOrpProps) {
   let orbRef: HTMLDivElement | undefined;
 
-  // Primary action determined by current page.
-  // If a pending review session exists, review is always primary (unless on inbox).
+  // Primary action determined by current page and selection state.
+  // If an atom is selected, analyze is primary. If a pending review session exists,
+  // review is always primary (unless on inbox).
   const primaryAction = () => {
+    if (state.selectedAtomId) return 'analyze';
     if (state.reviewSession && state.activePage !== 'inbox') return 'review';
     switch (state.activePage) {
       case 'inbox': return 'triage';
@@ -204,6 +206,14 @@ export function AIOrb(props: AIOrpProps) {
       return;
     }
 
+    if (action === 'analyze') {
+      setOrbState('idle');
+      if (state.selectedAtomId) {
+        startGTDAnalysis(state.selectedAtomId);
+      }
+      return;
+    }
+
     // Other actions ('compress') handled in their respective plans
   }
 
@@ -247,6 +257,7 @@ export function AIOrb(props: AIOrpProps) {
       <Show when={orbState() === 'expanded' && state.aiEnabled && !props.isOverlayOpen}>
         <AIRadialMenu
           primaryAction={primaryAction()}
+          selectedAtomId={state.selectedAtomId}
           onAction={handleMenuAction}
           onClose={handleMenuClose}
         />

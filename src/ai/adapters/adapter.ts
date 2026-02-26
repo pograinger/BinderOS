@@ -36,6 +36,8 @@ export interface AIRequest {
    */
   prompt: string;
   maxTokens?: number;
+  /** JSON schema for XGrammar-constrained structured output (used by BrowserAdapter). */
+  jsonSchema?: Record<string, unknown>;
   onChunk?: (chunk: string) => void;
   signal?: AbortSignal;
 }

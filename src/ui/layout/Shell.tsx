@@ -27,6 +27,7 @@ import { AIGuidedSetup } from '../components/AIGuidedSetup';
 import { CloudRequestPreview } from '../components/CloudRequestPreview';
 import { AIOrb } from '../components/AIOrb';
 import { AIQuestionFlow } from '../components/AIQuestionFlow';
+import { GTDAnalysisFlow } from '../components/GTDAnalysisFlow';
 import { state, setPendingCloudRequest, showAISettings, setShowAISettings, showCapture } from '../signals/store';
 import { getActiveAdapter } from '../../ai/router';
 import type { CloudAdapter } from '../../ai/adapters/cloud';
@@ -92,6 +93,9 @@ export function Shell() {
 
       {/* Phase 5: AI Question Flow — reusable conversational panel (opened by Discuss orb action) */}
       <AIQuestionFlow />
+
+      {/* Phase 7: GTD Analysis Flow — multi-step GTD decision tree (opened by Analyze orb action) */}
+      <GTDAnalysisFlow />
 
       {/* Phase 4: AI overlays */}
 

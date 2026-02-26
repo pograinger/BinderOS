@@ -954,3 +954,82 @@ export async function finishReviewSession(): Promise<void> {
   setState('reviewStatus', 'idle');
   await clearReviewSession();
 }
+
+// --- Phase 7: GTD analysis orchestration ---
+
+/**
+ * Start GTD next-action analysis for a specific atom.
+ *
+ * Finds the atom, gets related atoms via keyword similarity,
+ * kicks off the first GTD step, and opens GTDAnalysisFlow.
+ *
+ * Guards: requires the atom to exist. Works without AI (fallback questions).
+ */
+export async function startGTDAnalysis(atomId: string): Promise<void> {
+  const atom = state.atoms.find(a => a.id === atomId);
+  if (!atom) return;
+
+  // Lazy imports to avoid circular dependencies
+  const { findRelatedAtoms } = await import('../../ai/similarity');
+  const { executeGTDStep, createGTDAbortController } = await import('../../ai/gtd-analysis');
+  const { setShowGTDFlow, setGTDFlowState } = await import('../components/GTDAnalysisFlow');
+
+  // Find related atoms for context
+  const allAtoms = state.atoms
+    .filter(a => a.id !== atomId)
+    .map(a => ({ id: a.id, title: a.title, content: a.content }));
+  const relatedIds = findRelatedAtoms(atom.content + ' ' + atom.title, allAtoms);
+  const relatedAtoms = relatedIds
+    .map(id => state.atoms.find(a => a.id === id))
+    .filter((a): a is typeof state.atoms[0] => a != null);
+
+  // Create abort controller for this session
+  const controller = createGTDAbortController();
+
+  // Initialize flow state (loading first step)
+  setGTDFlowState({
+    atom: { ...atom },
+    relatedAtoms: relatedAtoms.map(a => ({ ...a })),
+    currentStep: null,
+    answers: [],
+    recommendation: null,
+    status: 'loading',
+    error: null,
+  });
+  setShowGTDFlow(true);
+
+  // Execute first step
+  try {
+    const step = await executeGTDStep(
+      'actionable',
+      atom,
+      relatedAtoms,
+      [],
+      controller.signal,
+    );
+    setGTDFlowState(prev => prev ? {
+      ...prev,
+      currentStep: step,
+      status: 'asking',
+    } : null);
+  } catch {
+    setGTDFlowState(prev => prev ? {
+      ...prev,
+      status: 'error',
+      error: 'Failed to start analysis',
+    } : null);
+  }
+}
+
+/**
+ * Apply a GTD recommendation to an atom.
+ *
+ * Dispatches UPDATE_ATOM with the recommended changes.
+ */
+export function applyGTDRecommendation(atomId: string, changes: Record<string, unknown>): void {
+  if (Object.keys(changes).length === 0) return;
+  sendCommand({
+    type: 'UPDATE_ATOM',
+    payload: { id: atomId, changes: changes as Partial<import('../../types/atoms').Atom> },
+  });
+}

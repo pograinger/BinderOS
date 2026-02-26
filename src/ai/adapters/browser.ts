@@ -95,7 +95,7 @@ export class BrowserAdapter implements AIAdapter {
     }
   }
 
-  async execute(request: AIRequest & { jsonSchema?: Record<string, unknown> }): Promise<AIResponse> {
+  async execute(request: AIRequest): Promise<AIResponse> {
     if (!this.engine || this._status !== 'available') {
       throw new Error('BrowserAdapter not initialized — call initialize() first');
     }
