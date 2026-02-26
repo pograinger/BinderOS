@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** v2.0 AI Orchestration — Phase 6 in progress (Plan 1 complete)
+**Current focus:** v2.0 AI Orchestration — Phase 6 complete (all 3 plans done)
 
 ## Current Position
 
-Phase: 6 of 7 (Review Pre-Analysis) — IN PROGRESS
-Plan: 1 of 3 in Phase 6 (complete — analysis pipeline and atom schema done)
-Status: Phase 6 Plan 1 complete — analysis atom type, Dexie v4, briefing pipeline, orb wiring
-Last activity: 2026-02-25 — Phase 6 Plan 1 executed; analysis pipeline + store review state complete
+Phase: 6 of 7 (Review Pre-Analysis) — COMPLETE
+Plan: 3 of 3 in Phase 6 (complete — WebLLM migration, model selector)
+Status: Phase 6 all plans complete — analysis pipeline, review page, WebLLM engine migration
+Last activity: 2026-02-26 — Phase 6 Plan 3 executed; WebLLM replaces Transformers.js with structured JSON output + model selector
 
-Progress: [███████████░] 62% (v1.0 complete; v2.0 Phases 4-5 done; Phase 6 in progress)
+Progress: [████████████░] 67% (v1.0 complete; v2.0 Phases 4-6 done; Phase 7 remaining)
 
 ## Performance Metrics
 
 **Velocity (from v1.0):**
-- Total plans completed: 19
+- Total plans completed: 22
 - Average duration: ~12 min
-- Total execution time: ~230 min
+- Total execution time: ~240 min
 
 **By Phase (v1.0):**
 
@@ -41,6 +41,7 @@ Progress: [███████████░] 62% (v1.0 complete; v2.0 Phases
 | Phase 05 P03 | 7 min | 2 tasks | 3 files |
 | Phase 05 P04 | UAT session | 12 bugs fixed | 12 files |
 | Phase 06 P01 | 9 min | 2 tasks | 9 files |
+| Phase 06 P03 | 10 min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -63,6 +64,10 @@ Recent decisions affecting current work:
 - [06-01]: No Dexie index changes for v4 migration — existing type index already covers 'analysis' value
 - [06-01]: generateBriefing uses single cloud AI call (max 100 tokens) with fallback template string on failure
 - [06-01]: Projects-without-next-action check scoped to sectionItems in the projects section only
+- [06-03]: WebLLM uses MLCEngineInterface (not MLCEngine) — CreateWebWorkerMLCEngine returns WebWorkerMLCEngine
+- [06-03]: @huggingface/transformers kept alongside @mlc-ai/web-llm — embedding-worker.ts needs it for MiniLM semantic search
+- [06-03]: chatCompletion() with stream: false used for typed non-streaming response (not chat.completions.create)
+- [06-03]: src/ai/llm-worker.ts is new WebLLM worker path; old src/worker/llm-worker.ts kept for legacy llm-bridge.ts
 
 ### Pending Todos
 
@@ -71,14 +76,12 @@ None.
 ### Blockers/Concerns
 
 - [Build]: pnpm build:wasm requires LIB env var set to MSVC + Windows SDK paths on Windows
-- [Phase 6]: Dexie schema for branching review session state needs design work before planning
 - [Phase 7]: GTD question flow design (specific questions per phase, preventing Get Creative from becoming open-ended chat) needs deliberate design work before planning
-- [UI/UX]: AISettingsPanel needs polish pass — user reported "very ugly and not intuitive"
-- [AI]: SmolLM2 local LLM cannot produce reliable structured JSON for triage — acceptable limitation, cloud AI is the primary path
+- [Cleanup]: src/worker/llm-worker.ts (Transformers.js based) is now dead code for AI path — should be removed when llm-bridge.ts is retired
 
 ## Session Continuity
 
-Last session: 2026-02-25
-Stopped at: Completed 06-01-PLAN.md — analysis pipeline, Dexie v4, orb wiring complete
-Next: Execute Phase 6 Plan 02 (ReviewBriefingView UI)
-Resume file: .planning/phases/06-review-pre-analysis/06-01-SUMMARY.md
+Last session: 2026-02-26
+Stopped at: Completed 06-03-PLAN.md — WebLLM migration, model selector, structured JSON output
+Next: /gsd:plan-phase 7
+Resume file: .planning/phases/06-review-pre-analysis/06-03-SUMMARY.md
