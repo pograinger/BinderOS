@@ -60,6 +60,8 @@ import { BrowserAdapter, DEFAULT_MODEL_ID } from '../../ai/adapters/browser';
 import { triageInbox, cancelTriage } from '../../ai/triage';
 import type { TriageSuggestion } from '../../ai/triage';
 import type { BriefingResult } from '../../ai/analysis';
+import type { ReviewSession } from '../../storage/review-session';
+import { saveReviewSession, loadReviewSession, clearReviewSession, REVIEW_SESSION_STALE_MS } from '../../storage/review-session';
 
 // --- State interface ---
 
@@ -106,6 +108,8 @@ export interface BinderState {
   reviewStatus: 'idle' | 'analyzing' | 'ready' | 'error';
   reviewProgress: string | null;
   reviewError: string | null;
+  // Phase 6: Review session persistence (AIRV-05)
+  reviewSession: ReviewSession | null;
 }
 
 const initialState: BinderState = {
@@ -151,6 +155,7 @@ const initialState: BinderState = {
   reviewStatus: 'idle',
   reviewProgress: null,
   reviewError: null,
+  reviewSession: null,
 };
 
 // --- Create the store ---
@@ -190,6 +195,15 @@ onMessage((response) => {
         if (s.browserLLMEnabled) void activateBrowserLLM();
         if (s.cloudAPIEnabled) void activateCloudAdapter();
       }
+      // Phase 6: hydrate review session from Dexie (AIRV-05)
+      loadReviewSession().then((session) => {
+        if (session) {
+          setState('reviewSession', session);
+          // Also restore briefing from session for immediate rendering
+          setState('reviewBriefing', session.briefingResult);
+          setState('reviewStatus', 'ready');
+        }
+      });
       break;
 
     case 'STATE_UPDATE':
@@ -817,6 +831,9 @@ export async function startReviewBriefing(): Promise<void> {
 
   try {
     // 5. Import and call analysis pipeline
+    // Retention: prune old briefings before creating a new one (keep 4 most recent)
+    await pruneOldBriefings();
+
     const { generateBriefing } = await import('../../ai/analysis');
     const result = await generateBriefing(
       state.atoms,
@@ -832,6 +849,18 @@ export async function startReviewBriefing(): Promise<void> {
     setState('reviewBriefing', result);
     setState('reviewStatus', 'ready');
     setState('reviewProgress', null);
+
+    // 6b. Save review session to Dexie (AIRV-05)
+    const session: ReviewSession = {
+      briefingResult: result,
+      expandedItemIds: [],
+      addressedItemIds: [],
+      scrollPosition: 0,
+      startedAt: Date.now(),
+      lastActiveAt: Date.now(),
+    };
+    setState('reviewSession', session);
+    await saveReviewSession(session);
 
     // 7. Create analysis atom via worker command
     sendCommand({
@@ -879,4 +908,49 @@ export function cancelReviewBriefing(): void {
     reviewAbortController.abort();
     reviewAbortController = null;
   }
+}
+
+/**
+ * Prune old analysis briefing atoms to keep only the 3 most recent
+ * (we're about to add a 4th, so total stays at 4).
+ *
+ * Called before creating a new analysis atom in startReviewBriefing.
+ */
+async function pruneOldBriefings(): Promise<void> {
+  const { db: dexie } = await import('../../storage/db');
+  const allAnalysis = await dexie.atoms
+    .where('type').equals('analysis')
+    .sortBy('created_at');
+  // Keep the 3 most recent — we're about to add one more (total = 4)
+  const toDelete = allAnalysis.slice(0, Math.max(0, allAnalysis.length - 3));
+  for (const a of toDelete) {
+    sendCommand({ type: 'DELETE_ATOM', payload: { id: a.id } });
+  }
+}
+
+/**
+ * Update the current review session with partial data.
+ *
+ * Called by ReviewBriefingView when items are expanded, addressed, or scrolled.
+ * Updates store state and persists to Dexie.
+ */
+export async function updateReviewSession(updates: Partial<ReviewSession>): Promise<void> {
+  const current = state.reviewSession;
+  if (!current) return;
+  const updated: ReviewSession = { ...current, ...updates, lastActiveAt: Date.now() };
+  setState('reviewSession', updated);
+  await saveReviewSession(updated);
+}
+
+/**
+ * Complete the review session — clears session state and Dexie entry.
+ *
+ * Called by "Finish Review" button in ReviewBriefingView.
+ * After this, the orb badge dot disappears and review state resets.
+ */
+export async function finishReviewSession(): Promise<void> {
+  setState('reviewSession', null);
+  setState('reviewBriefing', null);
+  setState('reviewStatus', 'idle');
+  await clearReviewSession();
 }

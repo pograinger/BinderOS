@@ -23,7 +23,9 @@ import { filteredAndSortedAtoms } from '../signals/queries';
 import type { FilterState } from '../signals/queries';
 import { InboxView } from '../views/InboxView';
 import { SectionView } from '../views/SectionView';
-import { ReviewView } from '../views/ReviewView';
+// ReviewView kept for Phase 7 re-integration (compression triage)
+// import { ReviewView } from '../views/ReviewView';
+import { ReviewBriefingView } from '../views/ReviewBriefingView';
 import { TodayPage } from '../views/pages/TodayPage';
 import { ThisWeekPage } from '../views/pages/ThisWeekPage';
 import { ActiveProjectsPage } from '../views/pages/ActiveProjectsPage';
@@ -141,7 +143,7 @@ export function MainPane() {
             <SectionView />
           </Match>
           <Match when={state.activePage === 'review'}>
-            <ReviewView />
+            <ReviewBriefingView />
           </Match>
           <Match when={state.activePage.startsWith('section-')}>
             <SectionView sectionId={sectionId()} />
