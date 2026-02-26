@@ -41,6 +41,7 @@ Progress: [████████████░] 67% (v1.0 complete; v2.0 Pha
 | Phase 05 P03 | 7 min | 2 tasks | 3 files |
 | Phase 05 P04 | UAT session | 12 bugs fixed | 12 files |
 | Phase 06 P01 | 9 min | 2 tasks | 9 files |
+| Phase 06 P02 | 6 min | 2 tasks | 6 files |
 | Phase 06 P03 | 10 min | 2 tasks | 7 files |
 
 ## Accumulated Context
@@ -68,6 +69,8 @@ Recent decisions affecting current work:
 - [06-03]: @huggingface/transformers kept alongside @mlc-ai/web-llm — embedding-worker.ts needs it for MiniLM semantic search
 - [06-03]: chatCompletion() with stream: false used for typed non-streaming response (not chat.completions.create)
 - [06-03]: src/ai/llm-worker.ts is new WebLLM worker path; old src/worker/llm-worker.ts kept for legacy llm-bridge.ts
+- [Phase 06-02]: Session hydration loads async after READY (not via worker payload) — keeps worker simple and consistent with other UI-only state
+- [Phase 06-02]: AIOrb resume path uses setActivePage only since READY handler already restores state.reviewBriefing+reviewStatus from session
 
 ### Pending Todos
 
@@ -82,6 +85,6 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-26
-Stopped at: Completed 06-03-PLAN.md — WebLLM migration, model selector, structured JSON output
+Stopped at: Completed 06-02-PLAN.md — ReviewBriefingView, session persistence, orb badge dot (previously skipped)
 Next: /gsd:plan-phase 7
-Resume file: .planning/phases/06-review-pre-analysis/06-03-SUMMARY.md
+Resume file: .planning/phases/06-review-pre-analysis/06-02-SUMMARY.md
