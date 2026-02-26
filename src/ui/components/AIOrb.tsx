@@ -63,8 +63,10 @@ function getOrbPosition(page: string): { bottom: string; right: string } {
 export function AIOrb(props: AIOrpProps) {
   let orbRef: HTMLDivElement | undefined;
 
-  // Primary action determined by current page
+  // Primary action determined by current page.
+  // If a pending review session exists, review is always primary (unless on inbox).
   const primaryAction = () => {
+    if (state.reviewSession && state.activePage !== 'inbox') return 'review';
     switch (state.activePage) {
       case 'inbox': return 'triage';
       case 'today':
@@ -74,6 +76,9 @@ export function AIOrb(props: AIOrpProps) {
       default: return 'discuss';
     }
   };
+
+  // Show badge dot when a pending review session exists
+  const hasPendingReview = () => state.reviewSession != null;
 
   // Update CSS custom properties when page changes
   createEffect(() => {
@@ -187,9 +192,15 @@ export function AIOrb(props: AIOrpProps) {
     }
 
     if (action === 'review') {
-      // Phase 6: wire review action to briefing pipeline (AIRV-01, AIRV-02)
+      // Phase 6: resume existing session or start fresh (AIRV-01, AIRV-02, AIRV-05)
       setOrbState('idle');
-      startReviewBriefing();
+      if (state.reviewSession) {
+        // Resume: briefing already hydrated from session in READY handler; just navigate
+        setActivePage('review');
+      } else {
+        // Fresh: generate new briefing
+        startReviewBriefing();
+      }
       return;
     }
 
@@ -221,6 +232,11 @@ export function AIOrb(props: AIOrpProps) {
         alt=""
         draggable={false}
       />
+
+      {/* Review-pending badge dot — shown when incomplete review session exists */}
+      <Show when={hasPendingReview() && orbState() !== 'expanded'}>
+        <span class="ai-orb-review-badge" />
+      </Show>
 
       {/* Error message */}
       <Show when={orbState() === 'error'}>
