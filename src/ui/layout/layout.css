@@ -4819,6 +4819,18 @@ kbd {
   border-color: var(--accent);
 }
 
+.ai-settings-field {
+  margin-top: 10px;
+}
+
+.ai-settings-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
 .ai-settings-log-header {
   display: flex;
   align-items: center;

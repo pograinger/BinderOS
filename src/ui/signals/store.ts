@@ -29,6 +29,14 @@
  * - aiActivity: current in-progress AI request description (null when idle)
  * - aiFirstRunComplete: whether user has completed initial AI onboarding
  * - llmReady / cloudReady / anyAIAvailable: derived reactive signals
+ *
+ * Phase 6 additions:
+ * - reviewBriefing (BriefingResult | null): latest generated briefing
+ * - reviewStatus ('idle' | 'analyzing' | 'ready' | 'error'): pipeline state
+ * - reviewProgress (string | null): incremental progress messages
+ * - reviewError (string | null): error message if pipeline fails
+ * - startReviewBriefing(): orchestrates two-phase briefing pipeline (AIRV-01, AIRV-02)
+ * - cancelReviewBriefing(): cancels in-flight briefing via AbortController
  */
 
 import { createMemo, createSignal, untrack } from 'solid-js';
@@ -51,6 +59,7 @@ import { dispatchAI } from '../../ai/router';
 import { BrowserAdapter, DEFAULT_MODEL_ID } from '../../ai/adapters/browser';
 import { triageInbox, cancelTriage } from '../../ai/triage';
 import type { TriageSuggestion } from '../../ai/triage';
+import type { BriefingResult } from '../../ai/analysis';
 
 // --- State interface ---
 
@@ -92,6 +101,11 @@ export interface BinderState {
   // Phase 4: Cloud request preview state (wired by Shell.tsx -> CloudAdapter pre-send approval handler)
   pendingCloudRequest: CloudRequestLogEntry | null;
   pendingCloudRequestResolve: ((approved: boolean) => void) | null;
+  // Phase 6: Review pre-analysis state
+  reviewBriefing: BriefingResult | null;
+  reviewStatus: 'idle' | 'analyzing' | 'ready' | 'error';
+  reviewProgress: string | null;
+  reviewError: string | null;
 }
 
 const initialState: BinderState = {
@@ -132,6 +146,11 @@ const initialState: BinderState = {
   // Phase 4: Cloud request preview state
   pendingCloudRequest: null,
   pendingCloudRequestResolve: null,
+  // Phase 6: Review pre-analysis state
+  reviewBriefing: null,
+  reviewStatus: 'idle',
+  reviewProgress: null,
+  reviewError: null,
 };
 
 // --- Create the store ---
@@ -431,6 +450,16 @@ export function setReviewEnabled(enabled: boolean): void {
 export function setCompressionEnabled(enabled: boolean): void {
   setState('compressionEnabled', enabled);
   sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { compressionEnabled: enabled } });
+}
+
+/**
+ * Set the selected WebLLM model ID for local AI inference.
+ * Persists via SAVE_AI_SETTINGS so the model choice survives reload.
+ * Note: changing the model takes effect on the next activateBrowserLLM() call.
+ */
+export function setSelectedLLMModel(modelId: string): void {
+  setState('llmModelId', modelId);
+  sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { selectedModelId: modelId } });
 }
 
 export function setPendingCloudRequest(
@@ -745,3 +774,109 @@ export { showAISettings, setShowAISettings };
 /** Capture overlay signal — shared between app.tsx and AIOrb double-tap */
 const [showCapture, setShowCapture] = createSignal(false);
 export { showCapture, setShowCapture };
+
+// --- Phase 6: Review briefing orchestration ---
+
+/** Module-level AbortController for in-flight briefing (same pattern as triage). */
+let reviewAbortController: AbortController | null = null;
+
+/**
+ * Start AI review briefing pipeline.
+ *
+ * Two-phase: sync pre-analysis (stale items, missing next actions, compression candidates)
+ * followed by a single cloud AI summary sentence. Sets orb to 'thinking', emits incremental
+ * progress via reviewProgress, creates an analysis atom on completion, and navigates to review page.
+ *
+ * Guards: requires AI adapter available. Cancels any in-progress briefing before starting.
+ *
+ * Phase 6: AIRV-01, AIRV-02
+ */
+export async function startReviewBriefing(): Promise<void> {
+  // 1. Guard: AI must be available
+  if (!anyAIAvailable()) {
+    setState('reviewError', 'No AI adapter available');
+    setState('reviewStatus', 'error');
+    return;
+  }
+
+  // 2. Cancel any in-progress briefing
+  if (reviewAbortController) {
+    reviewAbortController.abort();
+  }
+  reviewAbortController = new AbortController();
+
+  // 3. Set orb state to 'thinking' (dynamic import to avoid circular dep)
+  const { setOrbState } = await import('../components/AIOrb');
+  setOrbState('thinking');
+
+  // 4. Set review state
+  setState('reviewStatus', 'analyzing');
+  setState('reviewProgress', 'Analyzing system entropy...');
+  setState('reviewError', null);
+  setState('reviewBriefing', null);
+
+  try {
+    // 5. Import and call analysis pipeline
+    const { generateBriefing } = await import('../../ai/analysis');
+    const result = await generateBriefing(
+      state.atoms,
+      state.scores,
+      state.entropyScore,
+      state.sectionItems,
+      state.sections,
+      (msg) => setState('reviewProgress', msg),
+      reviewAbortController.signal,
+    );
+
+    // 6. Store result
+    setState('reviewBriefing', result);
+    setState('reviewStatus', 'ready');
+    setState('reviewProgress', null);
+
+    // 7. Create analysis atom via worker command
+    sendCommand({
+      type: 'CREATE_ATOM',
+      payload: {
+        type: 'analysis',
+        analysisKind: 'review-briefing',
+        isReadOnly: true,
+        title: `Review Briefing — ${new Date().toLocaleDateString()}`,
+        content: result.summaryText,
+        status: 'open',
+        links: [],
+        tags: [],
+        aiSourced: true,
+        briefingData: result,
+      },
+    });
+
+    // 8. Navigate to review page
+    setActivePage('review');
+    setOrbState('idle');
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      setState('reviewStatus', 'idle');
+      setState('reviewProgress', null);
+    } else {
+      setState('reviewStatus', 'error');
+      setState('reviewError', err instanceof Error ? err.message : 'Briefing failed');
+    }
+    const { setOrbState: setOrb } = await import('../components/AIOrb');
+    setOrb(err instanceof DOMException ? 'idle' : 'error');
+  } finally {
+    reviewAbortController = null;
+  }
+}
+
+/**
+ * Cancel any in-flight review briefing.
+ *
+ * Aborts the AbortController, which halts the generateBriefing pipeline and
+ * the in-flight AI call. reviewStatus returns to 'idle'.
+ */
+export function cancelReviewBriefing(): void {
+  if (reviewAbortController) {
+    reviewAbortController.abort();
+    reviewAbortController = null;
+  }
+}

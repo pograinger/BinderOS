@@ -27,7 +27,9 @@ import {
   setReviewEnabled,
   setCompressionEnabled,
   activateCloudAdapter,
+  setSelectedLLMModel,
 } from '../signals/store';
+import { WEBLLM_MODELS, DEFAULT_MODEL_ID } from '../../ai/adapters/browser';
 import {
   setMemoryKey,
   encryptAndStore,
@@ -207,7 +209,7 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
                 <label class="ai-settings-toggle-label" for="browser-llm-toggle">
                   <span class="ai-settings-toggle-name">Browser LLM</span>
                   <span class="ai-settings-toggle-desc">
-                    SmolLM2 running entirely on-device. No data leaves your machine.
+                    Local AI running entirely on-device via WebGPU. No data leaves your machine.
                   </span>
                 </label>
                 <input
@@ -218,6 +220,35 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
                   onChange={(e) => setBrowserLLMEnabled((e.target as HTMLInputElement).checked)}
                 />
               </div>
+
+              {/* Model selector — shown when browser LLM is enabled */}
+              <Show when={state.browserLLMEnabled}>
+                <div class="ai-settings-field">
+                  <label class="ai-settings-field-label" for="model-selector">
+                    Local Model
+                  </label>
+                  <select
+                    id="model-selector"
+                    class="ai-settings-select"
+                    value={state.llmModelId ?? DEFAULT_MODEL_ID}
+                    onChange={(e) => {
+                      const modelId = (e.target as HTMLSelectElement).value;
+                      setSelectedLLMModel(modelId);
+                    }}
+                  >
+                    <For each={[...WEBLLM_MODELS]}>
+                      {(model) => (
+                        <option value={model.id}>
+                          {model.label}
+                        </option>
+                      )}
+                    </For>
+                  </select>
+                  <span class="ai-settings-hint">
+                    Larger models are more accurate but require more VRAM. WebGPU required.
+                  </span>
+                </div>
+              </Show>
 
               <div class="ai-settings-status-row">
                 <span class="ai-settings-status-label">Status:</span>
@@ -231,7 +262,7 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
                     : state.llmStatus === 'error'
                     ? 'Error'
                     : state.llmStatus === 'unavailable'
-                    ? 'Unavailable (no WebGPU/WASM)'
+                    ? 'Unavailable (WebGPU required)'
                     : 'Disabled'}
                 </span>
               </div>
