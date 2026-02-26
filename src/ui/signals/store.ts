@@ -48,7 +48,7 @@ import type { SavedFilter } from '../../storage/db';
 import type { AIProviderStatus } from '../../ai/adapters/adapter';
 import type { CloudRequestLogEntry } from '../../ai/key-vault';
 import { dispatchAI } from '../../ai/router';
-import { BrowserAdapter } from '../../ai/adapters/browser';
+import { BrowserAdapter, DEFAULT_MODEL_ID } from '../../ai/adapters/browser';
 import { triageInbox, cancelTriage } from '../../ai/triage';
 import type { TriageSuggestion } from '../../ai/triage';
 
@@ -163,6 +163,10 @@ onMessage((response) => {
         if (s.triageEnabled !== undefined) setState('triageEnabled', s.triageEnabled);
         if (s.reviewEnabled !== undefined) setState('reviewEnabled', s.reviewEnabled);
         if (s.compressionEnabled !== undefined) setState('compressionEnabled', s.compressionEnabled);
+        // Phase 6: hydrate selected WebLLM model ID so activateBrowserLLM uses it
+        if ((s as { selectedModelId?: string }).selectedModelId !== undefined) {
+          setState('llmModelId', (s as { selectedModelId?: string }).selectedModelId ?? null);
+        }
         // Activate adapters that were enabled in a previous session
         if (s.browserLLMEnabled) void activateBrowserLLM();
         if (s.cloudAPIEnabled) void activateCloudAdapter();
@@ -338,9 +342,11 @@ export function setBrowserLLMEnabled(enabled: boolean): void {
  * and set it as the active adapter. Status callbacks update the store reactively.
  */
 export async function activateBrowserLLM(): Promise<void> {
-  const { BrowserAdapter } = await import('../../ai/adapters/browser');
+  const { BrowserAdapter, DEFAULT_MODEL_ID: DEFAULT_MODEL } = await import('../../ai/adapters/browser');
   const { setActiveAdapter } = await import('../../ai/router');
-  const adapter = new BrowserAdapter();
+  // Read selected model from store (set by model selector or hydrated from persisted settings)
+  const modelId = state.llmModelId ?? DEFAULT_MODEL;
+  const adapter = new BrowserAdapter(modelId);
   adapter.onStatusChange = (update) => {
     if (update.status !== undefined) setState('llmStatus', update.status);
     if (update.modelId !== undefined) setState('llmModelId', update.modelId);

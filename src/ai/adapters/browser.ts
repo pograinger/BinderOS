@@ -1,46 +1,45 @@
 /**
- * BrowserAdapter — routes AI requests through the dedicated LLM worker.
+ * BrowserAdapter — local AI via WebLLM (Phase 6 migration).
  *
- * Implements AIAdapter. Uses the llm-bridge to communicate with the
- * LLM worker (src/worker/llm-worker.ts) which runs SmolLM2 via Transformers.js.
+ * Uses @mlc-ai/web-llm's WebWorkerMLCEngine for GPU-accelerated inference
+ * with guaranteed structured JSON output via XGrammar.
+ *
+ * Replaces Phase 4's Transformers.js + SmolLM2 BrowserAdapter.
  *
  * Architecture:
- *   Main thread (BrowserAdapter) -> llm-bridge.ts -> llm-worker.ts (SmolLM2)
+ *   Main thread (BrowserAdapter) -> WebWorkerMLCEngine -> llm-worker.ts (WebLLM/WebGPU)
  *
- * The LLM worker is completely isolated from the BinderCore worker. This prevents
- * OOM crashes during model inference from affecting atom mutations.
- *
- * Browser LLM works fully offline after initial model download. When offline,
- * the BrowserAdapter status remains 'available' — the model is cached locally.
- * Cloud features (CloudAdapter) handle their own offline status separately.
+ * WebGPU is required — no CPU/WASM fallback (WebLLM does not support WASM inference).
  *
  * Status flow:
- *   disabled -> loading (initialize() called) -> available (LLM_READY received)
+ *   disabled -> loading (initialize() called) -> available (engine ready)
  *   disabled -> loading -> error (init failed)
  *
  * LLM worker status changes flow:
- *   LLM_STATUS/LLM_READY/LLM_DOWNLOAD_PROGRESS -> onStatusChange callback -> setState in store
+ *   initProgressCallback -> onStatusChange callback -> setState in store
  */
-
+import {
+  CreateWebWorkerMLCEngine,
+  type MLCEngineInterface,
+  type InitProgressReport,
+} from '@mlc-ai/web-llm';
 import type { AIAdapter, AIRequest, AIResponse, AIProviderStatus } from './adapter';
-import { dispatchLLM, onLLMMessage, initLLMWorker, terminateLLMWorker } from '../../worker/llm-bridge';
-import type { LLMResponse } from '../../types/ai-messages';
+
+// Model presets — label includes VRAM guidance shown in AI Settings panel
+export const WEBLLM_MODELS = [
+  { id: 'Llama-3.2-1B-Instruct-q4f16_1-MLC', label: '1B (Low VRAM ~900MB)', vram: '~900MB' },
+  { id: 'Llama-3.2-3B-Instruct-q4f16_1-MLC', label: '3B (Default ~2.2GB)', vram: '~2.2GB' },
+  { id: 'Phi-3.5-mini-instruct-q4f16_1-MLC', label: '3.8B (High VRAM ~3.7GB)', vram: '~3.7GB' },
+] as const;
+
+export const DEFAULT_MODEL_ID = 'Llama-3.2-3B-Instruct-q4f16_1-MLC';
 
 export class BrowserAdapter implements AIAdapter {
   readonly id = 'browser' as const;
-  private _status: AIProviderStatus = 'disabled';
-  private pendingRequests = new Map<
-    string,
-    {
-      resolve: (response: AIResponse) => void;
-      reject: (error: Error) => void;
-      onChunk?: (chunk: string) => void;
-    }
-  >();
 
-  get status(): AIProviderStatus {
-    return this._status;
-  }
+  private engine: MLCEngineInterface | null = null;
+  private modelId: string;
+  private _status: AIProviderStatus = 'disabled';
 
   /**
    * Optional callback for forwarding status changes to the store.
@@ -54,116 +53,99 @@ export class BrowserAdapter implements AIAdapter {
     downloadProgress?: number | null;
   }) => void;
 
+  constructor(modelId: string = DEFAULT_MODEL_ID) {
+    this.modelId = modelId;
+  }
+
+  get status(): AIProviderStatus {
+    return this._status;
+  }
+
   async initialize(): Promise<void> {
     this._status = 'loading';
     this.onStatusChange?.({ status: 'loading' });
 
-    // Set up message handler BEFORE init so download progress is captured during model load
-    onLLMMessage((response: LLMResponse) => {
-      this.handleWorkerMessage(response);
-    });
-
     try {
-      await initLLMWorker();
+      const worker = new Worker(
+        new URL('../llm-worker.ts', import.meta.url),
+        { type: 'module' },
+      );
+
+      this.engine = await CreateWebWorkerMLCEngine(worker, this.modelId, {
+        initProgressCallback: (report: InitProgressReport) => {
+          // report.progress is 0-1; multiply by 100 for percentage display
+          this.onStatusChange?.({
+            downloadProgress: Math.round(report.progress * 100),
+          });
+        },
+      });
+
       this._status = 'available';
-      this.onStatusChange?.({ status: 'available' });
+      this.onStatusChange?.({
+        status: 'available',
+        downloadProgress: null, // download complete
+        modelId: this.modelId,
+        device: 'webgpu',
+      });
     } catch (err) {
+      console.error('[BrowserAdapter] WebLLM init failed:', err);
       this._status = 'error';
       this.onStatusChange?.({ status: 'error' });
       throw err;
     }
   }
 
-  private handleWorkerMessage(response: LLMResponse): void {
-    switch (response.type) {
-      case 'LLM_COMPLETE': {
-        const pending = this.pendingRequests.get(response.payload.requestId);
-        if (pending) {
-          this.pendingRequests.delete(response.payload.requestId);
-          pending.resolve({
-            requestId: response.payload.requestId,
-            text: response.payload.text,
-            provider: 'browser',
-          });
-        }
-        break;
-      }
-      case 'LLM_PROGRESS': {
-        const pending = this.pendingRequests.get(response.payload.requestId);
-        pending?.onChunk?.(response.payload.chunk);
-        break;
-      }
-      case 'LLM_ERROR': {
-        if (response.payload.requestId) {
-          const pending = this.pendingRequests.get(response.payload.requestId);
-          if (pending) {
-            this.pendingRequests.delete(response.payload.requestId);
-            pending.reject(new Error(response.payload.message));
-          }
-        }
-        break;
-      }
-      case 'LLM_STATUS': {
-        this._status = response.payload.status;
-        this.onStatusChange?.({ status: response.payload.status });
-        break;
-      }
-      case 'LLM_READY': {
-        // Forward model identity to the store so StatusBar and AISettingsPanel can display it
-        this.onStatusChange?.({
-          status: 'available',
-          modelId: response.payload.modelId,
-          device: response.payload.device,
-          downloadProgress: null, // download complete
-        });
-        break;
-      }
-      case 'LLM_DOWNLOAD_PROGRESS': {
-        // Forward download progress to the store for the progress bar
-        this.onStatusChange?.({
-          downloadProgress: response.payload.progress,
-        });
-        break;
-      }
-    }
-  }
-
-  async execute(request: AIRequest): Promise<AIResponse> {
-    if (this._status !== 'available') {
-      throw new Error('Browser LLM not available');
+  async execute(request: AIRequest & { jsonSchema?: Record<string, unknown> }): Promise<AIResponse> {
+    if (!this.engine || this._status !== 'available') {
+      throw new Error('BrowserAdapter not initialized — call initialize() first');
     }
 
-    return new Promise<AIResponse>((resolve, reject) => {
-      this.pendingRequests.set(request.requestId, {
-        resolve,
-        reject,
-        onChunk: request.onChunk,
-      });
+    // Explicit non-streaming request — response_format with JSON schema for XGrammar constrained generation
+    const completionParams: {
+      messages: { role: string; content: string }[];
+      max_tokens: number;
+      temperature: number;
+      stream?: false;
+      response_format?: { type: string; schema: string };
+    } = {
+      messages: [
+        { role: 'system', content: 'You are a helpful GTD productivity assistant.' },
+        { role: 'user', content: request.prompt },
+      ],
+      max_tokens: request.maxTokens ?? 512,
+      temperature: 0.3,
+      stream: false,
+    };
 
-      dispatchLLM({
-        type: 'LLM_REQUEST',
-        payload: {
-          requestId: request.requestId,
-          prompt: request.prompt,
-          maxTokens: request.maxTokens,
-        },
-      });
+    // Structured JSON output via XGrammar constrained generation
+    if (request.jsonSchema) {
+      completionParams.response_format = {
+        type: 'json_object',
+        schema: JSON.stringify(request.jsonSchema),
+      };
+    }
 
-      // Handle abort signal (best-effort — LLM worker abort is not guaranteed mid-inference)
-      if (request.signal) {
-        request.signal.addEventListener('abort', () => {
-          dispatchLLM({ type: 'LLM_ABORT', payload: { requestId: request.requestId } });
-          this.pendingRequests.delete(request.requestId);
-          reject(new Error('Request aborted'));
-        });
-      }
-    });
+    // Use chatCompletion directly to get typed non-streaming response
+    const reply = await this.engine.chatCompletion(completionParams as Parameters<typeof this.engine.chatCompletion>[0]);
+    // At runtime, non-streaming returns ChatCompletion (has .choices); streaming returns AsyncIterable
+    const chatCompletion = reply as { choices: { message: { content: string | null } }[] };
+    const content = chatCompletion.choices?.[0]?.message?.content ?? '';
+
+    return {
+      requestId: request.requestId,
+      text: content,
+      provider: 'browser',
+      model: this.modelId,
+    };
   }
 
   dispose(): void {
-    terminateLLMWorker();
-    this.pendingRequests.clear();
+    if (this.engine) {
+      void this.engine.unload();
+      this.engine = null;
+    }
     this._status = 'disabled';
+    this.onStatusChange?.({ status: 'disabled' });
   }
 }
 

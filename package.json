@@ -20,6 +20,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
     "@huggingface/transformers": "^3.8.1",
+    "@mlc-ai/web-llm": "0.2.81",
     "@solidjs/router": "^0.15.4",
     "dexie": "^4.3.0",
     "dexie-export-import": "^4.1.4",
