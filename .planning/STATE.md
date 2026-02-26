@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** v2.0 AI Orchestration — Phase 5 complete, ready for Phase 6
+**Current focus:** v2.0 AI Orchestration — Phase 6 in progress (Plan 1 complete)
 
 ## Current Position
 
-Phase: 5 of 7 (Triage AI) — COMPLETE
-Plan: 4 of 4 in Phase 5 (complete — all plans verified)
-Status: Phase 5 verified (12/12 criteria passed)
-Last activity: 2026-02-24 — Phase 5 verification passed; 12 UAT bugs fixed during checkpoint
+Phase: 6 of 7 (Review Pre-Analysis) — IN PROGRESS
+Plan: 1 of 3 in Phase 6 (complete — analysis pipeline and atom schema done)
+Status: Phase 6 Plan 1 complete — analysis atom type, Dexie v4, briefing pipeline, orb wiring
+Last activity: 2026-02-25 — Phase 6 Plan 1 executed; analysis pipeline + store review state complete
 
-Progress: [██████████░] 57% (v1.0 complete; v2.0 Phases 4-5 done; Phases 6-7 remaining)
+Progress: [███████████░] 62% (v1.0 complete; v2.0 Phases 4-5 done; Phase 6 in progress)
 
 ## Performance Metrics
 
@@ -40,6 +40,7 @@ Progress: [██████████░] 57% (v1.0 complete; v2.0 Phases 4-
 | Phase 05 P02 | 8 min | 2 tasks | 10 files |
 | Phase 05 P03 | 7 min | 2 tasks | 3 files |
 | Phase 05 P04 | UAT session | 12 bugs fixed | 12 files |
+| Phase 06 P01 | 9 min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -58,6 +59,10 @@ Recent decisions affecting current work:
 - [05-04]: SmolLM2 too small for structured JSON triage output — cloud AI is primary triage path; local LLM suited for simpler tasks
 - [05-04]: Model ID must be fully qualified (claude-haiku-4-5-20251001 not claude-haiku-4-5)
 - [05-04]: Triage action navigates to inbox before triggering startTriageInbox()
+- [06-01]: Analysis atoms excluded from WASM scoring — AI-generated metadata records, not user content to score
+- [06-01]: No Dexie index changes for v4 migration — existing type index already covers 'analysis' value
+- [06-01]: generateBriefing uses single cloud AI call (max 100 tokens) with fallback template string on failure
+- [06-01]: Projects-without-next-action check scoped to sectionItems in the projects section only
 
 ### Pending Todos
 
@@ -73,7 +78,7 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-24
-Stopped at: Phase 6 context gathered
-Next: /gsd:plan-phase 6
-Resume file: .planning/phases/06-review-pre-analysis/06-CONTEXT.md
+Last session: 2026-02-25
+Stopped at: Completed 06-01-PLAN.md — analysis pipeline, Dexie v4, orb wiring complete
+Next: Execute Phase 6 Plan 02 (ReviewBriefingView UI)
+Resume file: .planning/phases/06-review-pre-analysis/06-01-SUMMARY.md

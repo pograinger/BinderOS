@@ -35,15 +35,15 @@ Requirements for AI Orchestration milestone. Each maps to roadmap phases.
 
 ### AI Reviews
 
-- [ ] **AIRV-01**: Background pre-analysis workers that read-only analyze entropy state and prepare briefings
-- [ ] **AIRV-02**: Review pre-analysis briefing — AI summary of stale tasks, projects without next actions, compression candidates
+- [x] **AIRV-01**: Background pre-analysis workers that read-only analyze entropy state and prepare briefings
+- [x] **AIRV-02**: Review pre-analysis briefing — AI summary of stale tasks, projects without next actions, compression candidates
 - [ ] **AIRV-03**: Guided GTD weekly review flow (Get Clear / Get Current / Get Creative) via conversational question-flow
 - [ ] **AIRV-04**: Compression coach — AI explains why specific atoms are compression candidates with contextual reasoning
 - [ ] **AIRV-05**: Review session persistence — resume incomplete reviews within 24 hours
 
 ### AI Generative
 
-- [ ] **AIGN-01**: AI generates analysis artifacts (briefings, trend insights, relationship maps) as distinct artifact type
+- [x] **AIGN-01**: AI generates analysis artifacts (briefings, trend insights, relationship maps) as distinct artifact type
 - [ ] **AIGN-02**: AI proposes draft atoms in staging area — user approves to promote to real atoms, rejects to discard
 - [ ] **AIGN-03**: AI can modify existing atom metadata (tags, priority hints, section, links) — additive, tagged, reversible
 - [ ] **AIGN-04**: All AI mutations tracked in changelog with `source: 'ai'` field, fully reversible via undo
@@ -115,12 +115,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AITG-03 | Phase 5 | Complete |
 | AITG-04 | Phase 5 | Complete |
 | AITG-05 | Phase 5 | Complete |
-| AIRV-01 | Phase 6 | Pending |
-| AIRV-02 | Phase 6 | Pending |
+| AIRV-01 | Phase 6 | Complete |
+| AIRV-02 | Phase 6 | Complete |
 | AIRV-03 | Phase 7 | Pending |
 | AIRV-04 | Phase 7 | Pending |
 | AIRV-05 | Phase 6 | Pending |
-| AIGN-01 | Phase 6 | Pending |
+| AIGN-01 | Phase 6 | Complete |
 | AIGN-02 | Phase 7 | Pending |
 | AIGN-03 | Phase 7 | Pending |
 | AIGN-04 | Phase 7 | Pending |

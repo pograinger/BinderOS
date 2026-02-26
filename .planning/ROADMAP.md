@@ -110,5 +110,5 @@ Phases execute in numeric order: 4 → 5 → 6 → 7
 | 3. Pages, Navigation, Search | v1.0 | 4/4 | Complete | 2026-02-22 |
 | 4. AI Infrastructure | 4/4 | Complete   | 2026-02-23 | 2026-02-22 |
 | 5. Triage AI | 3/4 | In Progress|  | - |
-| 6. Review Pre-Analysis | v2.0 | 0/3 | Not started | - |
+| 6. Review Pre-Analysis | 2/3 | In Progress|  | - |
 | 7. Guided Review + Compression Coach | v2.0 | 0/3 | Not started | - |
