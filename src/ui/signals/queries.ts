@@ -128,6 +128,8 @@ export const todayAtoms = createMemo((): Atom[] => {
 
   return state.atoms
     .filter((a) => {
+      // Exclude analysis atoms from all page queries (Phase 6: AIGN-01)
+      if (a.type === 'analysis') return false;
       // Exclude terminal states
       if (a.status === 'done' || a.status === 'cancelled' || a.status === 'archived') {
         return false;
@@ -175,6 +177,8 @@ export function createWeeklyAtoms(offset: () => WeekOffset) {
 
     return state.atoms
       .filter((a) => {
+        // Exclude analysis atoms from all page queries (Phase 6: AIGN-01)
+        if (a.type === 'analysis') return false;
         if (a.status === 'done' || a.status === 'cancelled' || a.status === 'archived') {
           return false;
         }
@@ -229,8 +233,10 @@ export const activeProjectAtoms = createMemo(
     if (!projectsSection) return [];
 
     // Gather atoms that belong to a project section item
+    // Exclude analysis atoms from all page queries (Phase 6: AIGN-01)
     const projectAtoms = state.atoms.filter((a) => {
       return (
+        a.type !== 'analysis' &&
         a.sectionId === projectsSection.id &&
         a.sectionItemId !== undefined &&
         (a.status === 'open' || a.status === 'in-progress')
@@ -287,6 +293,7 @@ export const activeProjectAtoms = createMemo(
  */
 export const waitingAtoms = createMemo((): Atom[] => {
   return state.atoms
+    // type === 'task' already excludes analysis atoms; explicit filter for clarity (Phase 6: AIGN-01)
     .filter((a) => a.type === 'task' && a.status === 'waiting')
     .sort((a, b) => a.updated_at - b.updated_at); // ascending: oldest first
 });
@@ -298,6 +305,7 @@ export const waitingAtoms = createMemo((): Atom[] => {
  */
 export const insightAtoms = createMemo((): Atom[] => {
   return state.atoms
+    // type === 'insight' already excludes analysis atoms; explicit filter for clarity (Phase 6: AIGN-01)
     .filter((a) => a.type === 'insight' && a.status !== 'archived')
     .sort((a, b) => b.created_at - a.created_at); // descending: newest first
 });
@@ -321,6 +329,9 @@ export function filteredAndSortedAtoms(
   return createMemo(() => {
     const f = filters();
     let result = source();
+
+    // Exclude analysis atoms from saved filter views (Phase 6: AIGN-01)
+    result = result.filter((a) => a.type !== 'analysis');
 
     // Type filter
     if (f.types.length > 0) {

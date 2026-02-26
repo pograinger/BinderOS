@@ -33,6 +33,7 @@ export const AtomType = z.enum([
   'event',
   'decision',
   'insight',
+  'analysis',
 ]);
 export type AtomType = z.infer<typeof AtomType>;
 
@@ -108,6 +109,34 @@ export const InsightAtomSchema = z.object({
 });
 export type InsightAtom = z.infer<typeof InsightAtomSchema>;
 
+export const AnalysisAtomSchema = z.object({
+  ...BaseAtomFields,
+  type: z.literal('analysis'),
+  analysisKind: z.enum(['review-briefing', 'trend-insight', 'relationship-map']),
+  isReadOnly: z.literal(true),
+  briefingData: z.object({
+    summaryText: z.string(),
+    staleItems: z.array(z.object({
+      atomId: z.string(),
+      title: z.string(),
+      staleDays: z.number().optional(),
+      linkCount: z.number().optional(),
+      entropyScore: z.number().optional(),
+    })),
+    projectsMissingNextAction: z.array(z.object({
+      atomId: z.string(),
+      title: z.string(),
+    })),
+    compressionCandidates: z.array(z.object({
+      atomId: z.string(),
+      title: z.string(),
+      staleDays: z.number().optional(),
+    })),
+    generatedAt: z.number(),
+  }).optional(),
+});
+export type AnalysisAtom = z.infer<typeof AnalysisAtomSchema>;
+
 // --- Discriminated union of all atom types ---
 
 export const AtomSchema = z.discriminatedUnion('type', [
@@ -116,6 +145,7 @@ export const AtomSchema = z.discriminatedUnion('type', [
   EventAtomSchema,
   DecisionAtomSchema,
   InsightAtomSchema,
+  AnalysisAtomSchema,
 ]);
 export type Atom = z.infer<typeof AtomSchema>;
 
@@ -136,5 +166,6 @@ export const CreateAtomInputSchema = z.discriminatedUnion('type', [
   EventAtomSchema.omit({ id: true, created_at: true, updated_at: true }),
   DecisionAtomSchema.omit({ id: true, created_at: true, updated_at: true }),
   InsightAtomSchema.omit({ id: true, created_at: true, updated_at: true }),
+  AnalysisAtomSchema.omit({ id: true, created_at: true, updated_at: true }),
 ]);
 export type CreateAtomInput = z.infer<typeof CreateAtomInputSchema>;

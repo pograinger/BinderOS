@@ -25,6 +25,7 @@ import type { Section, SectionItem } from '../types/sections';
 import { getDefaultSections } from './migrations/v1';
 import { applyV2Migration } from './migrations/v2';
 import { applyV3Migration } from './migrations/v3';
+import { applyV4Migration } from './migrations/v4';
 
 export interface ConfigEntry {
   key: string;
@@ -97,6 +98,9 @@ export class BinderDB extends Dexie {
 
     // Phase 5: v3 migration — aiSourced index on atoms
     applyV3Migration(this);
+
+    // Phase 6: v4 migration — analysis atom type support (no index changes needed)
+    applyV4Migration(this);
 
     // Seed the four stable sections on first database creation
     this.on('populate', (tx) => {

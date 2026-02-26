@@ -27,6 +27,9 @@
  * Phase 5 additions:
  * - SAVE_AI_SETTINGS command (persists AI settings to Dexie config table)
  * - READY payload extended with aiSettings (loaded from Dexie on INIT)
+ *
+ * Phase 6 additions:
+ * - READY payload extended with reviewSession (Phase 6 Plan 02 will define ReviewSession type)
  */
 
 import type { Atom, AtomType, CreateAtomInput, InboxItem } from './atoms';
@@ -84,6 +87,8 @@ export type Response =
         savedFilters: SavedFilter[];
         // Phase 5: persisted AI settings loaded from Dexie on startup
         aiSettings?: AISettings | null;
+        // Phase 6 Plan 02: review session state (ReviewSession type defined in Plan 02)
+        reviewSession?: unknown;
       };
     }
   | {

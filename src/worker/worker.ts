@@ -72,20 +72,22 @@ async function getFullState() {
  * but our TypeScript Atom type uses AtomLink[] with {targetId, relationshipType, direction}.
  */
 function flattenAtomLinksForWasm(atoms: Atom[]): unknown[] {
-  return atoms.map((atom) => ({
-    id: atom.id,
-    type: atom.type,
-    updated_at: atom.updated_at,
-    created_at: atom.created_at,
-    status: atom.status,
-    links: atom.links.map((l) => l.targetId),
-    due_date: 'dueDate' in atom ? atom.dueDate ?? null : null,
-    pinned_tier: atom.pinned_tier ?? null,
-    pinned_staleness: atom.pinned_staleness ?? false,
-    importance: atom.importance ?? null,
-    energy: atom.energy ?? null,
-    content: atom.content,
-  }));
+  return atoms
+    .filter((atom) => atom.type !== 'analysis')
+    .map((atom) => ({
+      id: atom.id,
+      type: atom.type,
+      updated_at: atom.updated_at,
+      created_at: atom.created_at,
+      status: atom.status,
+      links: atom.links.map((l) => l.targetId),
+      due_date: 'dueDate' in atom ? atom.dueDate ?? null : null,
+      pinned_tier: atom.pinned_tier ?? null,
+      pinned_staleness: atom.pinned_staleness ?? false,
+      importance: atom.importance ?? null,
+      energy: atom.energy ?? null,
+      content: atom.content,
+    }));
 }
 
 /**
