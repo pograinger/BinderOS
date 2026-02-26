@@ -20,10 +20,11 @@
  * Double-click/double-tap opens CaptureOverlay (replaces the old + FAB).
  *
  * Phase 5: AIUX-01, AIUX-02
+ * Phase 6: 'review' radial action wired to startReviewBriefing() (AIRV-01)
  */
 
 import { createSignal, createEffect, Show } from 'solid-js';
-import { state, anyAIAvailable, startTriageInbox, setActivePage, setShowCapture } from '../signals/store';
+import { state, anyAIAvailable, startTriageInbox, startReviewBriefing, setActivePage, setShowCapture } from '../signals/store';
 import { AIRadialMenu } from './AIRadialMenu';
 import { setShowQuestionFlow, setQuestionFlowContext } from './AIQuestionFlow';
 
@@ -185,7 +186,14 @@ export function AIOrb(props: AIOrpProps) {
       return;
     }
 
-    // Other actions ('review', 'compress') handled in their respective plans
+    if (action === 'review') {
+      // Phase 6: wire review action to briefing pipeline (AIRV-01, AIRV-02)
+      setOrbState('idle');
+      startReviewBriefing();
+      return;
+    }
+
+    // Other actions ('compress') handled in their respective plans
   }
 
   function handleMenuClose() {
