@@ -49,9 +49,9 @@ import type { AIProviderStatus } from '../ai/adapters/adapter';
 export type Command =
   | { type: 'INIT' }
   | { type: 'PING' }
-  | { type: 'CREATE_ATOM'; payload: CreateAtomInput }
-  | { type: 'UPDATE_ATOM'; payload: { id: string; changes: Partial<Atom> } }
-  | { type: 'DELETE_ATOM'; payload: { id: string } }
+  | { type: 'CREATE_ATOM'; payload: CreateAtomInput & { source?: 'user' | 'ai'; aiRequestId?: string } }
+  | { type: 'UPDATE_ATOM'; payload: { id: string; changes: Partial<Atom>; source?: 'user' | 'ai'; aiRequestId?: string } }
+  | { type: 'DELETE_ATOM'; payload: { id: string; source?: 'user' | 'ai'; aiRequestId?: string } }
   | { type: 'CREATE_INBOX_ITEM'; payload: { content: string; title?: string } }
   | { type: 'DELETE_INBOX_ITEM'; payload: { id: string } }
   | { type: 'CLASSIFY_INBOX_ITEM'; payload: { id: string; type: AtomType; sectionItemId?: string; aiSourced?: boolean } }

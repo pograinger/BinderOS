@@ -83,6 +83,8 @@ export function appendMutation(
   operation: MutationOperation,
   before: Atom | null,
   after: Atom | null,
+  source?: 'user' | 'ai',
+  aiRequestId?: string,
 ): MutationLogEntry {
   lamportClockCounter += 1;
 
@@ -95,5 +97,7 @@ export function appendMutation(
     timestamp: Date.now(),
     lamportClock: lamportClockCounter,
     deviceId: getDeviceId(),
+    source,         // NEW: flows to MutationLogEntry (Zod schema already has this field)
+    aiRequestId,    // NEW: flows to MutationLogEntry (Zod schema already has this field)
   };
 }

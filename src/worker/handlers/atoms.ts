@@ -36,11 +36,14 @@ async function countOpenTasks(): Promise<number> {
  * creates changelog entry, and enqueues writes.
  */
 export async function handleCreateAtom(
-  payload: CreateAtomInput,
+  payload: CreateAtomInput & { source?: 'user' | 'ai'; aiRequestId?: string },
 ): Promise<{ atom: Atom; logEntry: MutationLogEntry } | 'cap_exceeded'> {
+  // Extract source/aiRequestId before atom validation — they're not part of AtomSchema
+  const { source, aiRequestId, ...atomPayload } = payload;
+
   // Phase 2: task cap check
-  if (payload.type === 'task') {
-    const status = payload.status ?? 'open';
+  if (atomPayload.type === 'task') {
+    const status = atomPayload.status ?? 'open';
     if (status === 'open' || status === 'in-progress') {
       await writeQueue.flushImmediate();
       const capConfig = await getCapConfig();
@@ -51,12 +54,12 @@ export async function handleCreateAtom(
     }
   }
 
-  // Validate input shape
-  CreateAtomInputSchema.parse(payload);
+  // Validate input shape (without source/aiRequestId)
+  CreateAtomInputSchema.parse(atomPayload);
 
   const now = Date.now();
   const atom: Atom = {
-    ...payload,
+    ...atomPayload,
     id: crypto.randomUUID(),
     created_at: now,
     updated_at: now,
@@ -65,8 +68,8 @@ export async function handleCreateAtom(
   // Validate the full atom
   AtomSchema.parse(atom);
 
-  // Create changelog entry
-  const logEntry = appendMutation(atom.id, 'create', null, atom);
+  // Create changelog entry with source tracking
+  const logEntry = appendMutation(atom.id, 'create', null, atom, source, aiRequestId);
 
   // Enqueue writes
   writeQueue.enqueue(async () => {
@@ -89,7 +92,7 @@ export async function handleCreateAtom(
  * creates changelog entry, and enqueues writes.
  */
 export async function handleUpdateAtom(
-  payload: { id: string; changes: Partial<Atom> },
+  payload: { id: string; changes: Partial<Atom>; source?: 'user' | 'ai'; aiRequestId?: string },
 ): Promise<{ atom: Atom; logEntry: MutationLogEntry } | 'cap_exceeded'> {
   const existing = await db.atoms.get(payload.id);
   if (!existing) {
@@ -124,8 +127,8 @@ export async function handleUpdateAtom(
   // Validate the merged atom
   AtomSchema.parse(updated);
 
-  // Create changelog entry with before/after snapshots
-  const logEntry = appendMutation(updated.id, 'update', existing, updated);
+  // Create changelog entry with before/after snapshots and source tracking
+  const logEntry = appendMutation(updated.id, 'update', existing, updated, payload.source, payload.aiRequestId);
 
   // Enqueue writes
   writeQueue.enqueue(async () => {
@@ -145,15 +148,15 @@ export async function handleUpdateAtom(
  * creates changelog entry, and enqueues delete.
  */
 export async function handleDeleteAtom(
-  payload: { id: string },
+  payload: { id: string; source?: 'user' | 'ai'; aiRequestId?: string },
 ): Promise<{ logEntry: MutationLogEntry }> {
   const existing = await db.atoms.get(payload.id);
   if (!existing) {
     throw new Error(`Atom not found: ${payload.id}`);
   }
 
-  // Create changelog entry with before snapshot
-  const logEntry = appendMutation(existing.id, 'delete', existing, null);
+  // Create changelog entry with before snapshot and source tracking
+  const logEntry = appendMutation(existing.id, 'delete', existing, null, payload.source, payload.aiRequestId);
 
   // Enqueue delete + changelog write
   writeQueue.enqueue(async () => {
