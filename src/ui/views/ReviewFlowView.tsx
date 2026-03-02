@@ -17,8 +17,10 @@ import {
   cancelGuidedReview,
   completeGuidedReview,
   setActivePage,
+  stagingProposals,
 } from '../signals/store';
 import { ConversationTurnCard } from '../components/ConversationTurnCard';
+import { ReviewStagingArea } from '../components/ReviewStagingArea';
 
 // Phase display name helper
 const phaseDisplayName = () => {
@@ -96,19 +98,29 @@ export function ReviewFlowView() {
         />
       </Show>
 
-      {/* Staging state */}
+      {/* Staging state — review proposals */}
       <Show when={reviewFlowStatus() === 'staging'}>
-        <div class="review-flow-staging">
-          <p class="review-flow-staging-title">Review complete!</p>
-          <p class="review-flow-staging-msg">You have pending suggestions to review.</p>
-          <button
-            class="briefing-action-btn briefing-action-btn--primary"
-            type="button"
-            onClick={() => void completeGuidedReview()}
-          >
-            Finish Review
-          </button>
-        </div>
+        <Show
+          when={stagingProposals().length > 0}
+          fallback={
+            <div class="review-flow-staging">
+              <p class="review-flow-staging-title">Review complete!</p>
+              <p class="review-flow-staging-msg">No pending suggestions.</p>
+              <button
+                class="briefing-action-btn briefing-action-btn--primary"
+                type="button"
+                onClick={() => void completeGuidedReview()}
+              >
+                Finish Review
+              </button>
+            </div>
+          }
+        >
+          <div class="review-flow-staging-banner">
+            You have {stagingProposals().length} pending suggestion{stagingProposals().length === 1 ? '' : 's'}. Review now?
+          </div>
+          <ReviewStagingArea onComplete={() => void completeGuidedReview()} />
+        </Show>
       </Show>
 
       {/* Complete state */}
