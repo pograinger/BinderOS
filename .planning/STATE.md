@@ -73,6 +73,9 @@ Recent decisions affecting current work:
 - [06-03]: src/ai/llm-worker.ts is new WebLLM worker path; old src/worker/llm-worker.ts kept for legacy llm-bridge.ts
 - [Phase 06-02]: Session hydration loads async after READY (not via worker payload) — keeps worker simple and consistent with other UI-only state
 - [Phase 06-02]: AIOrb resume path uses setActivePage only since READY handler already restores state.reviewBriefing+reviewStatus from session
+- [07-01]: ReviewFlowStatus as ephemeral module-level signal — not in BinderState — prevents worker reconcile from touching live review flow state
+- [07-01]: executeStagingAction executes mutations immediately in Plan 01 — Plan 03 replaces with staging area proposals
+- [07-01]: AIOrb.handleMenuAction is synchronous, so reviewFlowStatus imported at module level (not via dynamic import)
 - [07-02]: CompressionCandidate type has id/reason/staleness (not score) — generateCompressionExplanations accepts actual CompressionCandidate[] from config.ts
 - [07-02]: source/aiRequestId stripped from payload before CreateAtomInputSchema.parse() in handleCreateAtom — not Atom fields
 - [07-02]: Single batched prompt for all compression candidates — one cloud API call = one approval modal (avoids approval fatigue)
@@ -84,7 +87,6 @@ None.
 ### Blockers/Concerns
 
 - [Build]: pnpm build:wasm requires LIB env var set to MSVC + Windows SDK paths on Windows
-- [Phase 7]: GTD question flow design (specific questions per phase, preventing Get Creative from becoming open-ended chat) needs deliberate design work before planning
 - [Cleanup]: src/worker/llm-worker.ts (Transformers.js based) is now dead code for AI path — should be removed when llm-bridge.ts is retired
 
 ## Session Continuity

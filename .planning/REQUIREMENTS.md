@@ -37,7 +37,7 @@ Requirements for AI Orchestration milestone. Each maps to roadmap phases.
 
 - [x] **AIRV-01**: Background pre-analysis workers that read-only analyze entropy state and prepare briefings
 - [x] **AIRV-02**: Review pre-analysis briefing — AI summary of stale tasks, projects without next actions, compression candidates
-- [ ] **AIRV-03**: Guided GTD weekly review flow (Get Clear / Get Current / Get Creative) via conversational question-flow
+- [x] **AIRV-03**: Guided GTD weekly review flow (Get Clear / Get Current / Get Creative) via conversational question-flow
 - [x] **AIRV-04**: Compression coach — AI explains why specific atoms are compression candidates with contextual reasoning
 - [x] **AIRV-05**: Review session persistence — resume incomplete reviews within 24 hours
 
@@ -117,7 +117,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AITG-05 | Phase 5 | Complete |
 | AIRV-01 | Phase 6 | Complete |
 | AIRV-02 | Phase 6 | Complete |
-| AIRV-03 | Phase 7 | Pending |
+| AIRV-03 | Phase 7 | Complete |
 | AIRV-04 | Phase 7 | Complete |
 | AIRV-05 | Phase 6 | Complete |
 | AIGN-01 | Phase 6 | Complete |
