@@ -26,6 +26,7 @@ import { SectionView } from '../views/SectionView';
 // ReviewView kept for Phase 7 re-integration (compression triage)
 // import { ReviewView } from '../views/ReviewView';
 import { ReviewBriefingView } from '../views/ReviewBriefingView';
+import { ReviewFlowView } from '../views/ReviewFlowView';
 import { TodayPage } from '../views/pages/TodayPage';
 import { ThisWeekPage } from '../views/pages/ThisWeekPage';
 import { ActiveProjectsPage } from '../views/pages/ActiveProjectsPage';
@@ -141,6 +142,9 @@ export function MainPane() {
           </Match>
           <Match when={state.activePage === 'all'}>
             <SectionView />
+          </Match>
+          <Match when={state.activePage === 'review-flow'}>
+            <ReviewFlowView />
           </Match>
           <Match when={state.activePage === 'review'}>
             <ReviewBriefingView />

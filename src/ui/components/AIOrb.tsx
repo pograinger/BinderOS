@@ -24,7 +24,7 @@
  */
 
 import { createSignal, createEffect, Show } from 'solid-js';
-import { state, anyAIAvailable, startTriageInbox, startReviewBriefing, startGTDAnalysis, setActivePage, setShowCapture } from '../signals/store';
+import { state, anyAIAvailable, startTriageInbox, startReviewBriefing, startGTDAnalysis, setActivePage, setShowCapture, reviewFlowStatus } from '../signals/store';
 import { AIRadialMenu } from './AIRadialMenu';
 import { setShowQuestionFlow, setQuestionFlowContext } from './AIQuestionFlow';
 
@@ -194,8 +194,13 @@ export function AIOrb(props: AIOrpProps) {
     }
 
     if (action === 'review') {
-      // Phase 6: resume existing session or start fresh (AIRV-01, AIRV-02, AIRV-05)
+      // Phase 6/7: resume existing session or start fresh (AIRV-01, AIRV-02, AIRV-05)
       setOrbState('idle');
+      // Phase 7: if review flow is already in progress, navigate back to it
+      if (reviewFlowStatus() !== 'idle' && reviewFlowStatus() !== 'complete') {
+        setActivePage('review-flow');
+        return;
+      }
       if (state.reviewSession) {
         // Resume: briefing already hydrated from session in READY handler; just navigate
         setActivePage('review');

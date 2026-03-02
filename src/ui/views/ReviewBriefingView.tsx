@@ -22,6 +22,7 @@ import {
   cancelReviewBriefing,
   startReviewBriefing,
   setActivePage,
+  startGuidedReview,
 } from '../signals/store';
 import type { BriefingItem } from '../../ai/analysis';
 import { updateReviewSession, finishReviewSession } from '../signals/store';
@@ -350,6 +351,16 @@ export function ReviewBriefingView() {
               onToggleExpand={toggleExpand}
             />
           </Show>
+
+          {/* Start guided review button */}
+          <div style="display: flex; justify-content: center; padding: 12px 0;">
+            <button
+              class="briefing-action-btn briefing-action-btn--primary"
+              onClick={() => void startGuidedReview()}
+            >
+              Start Guided Review
+            </button>
+          </div>
 
           {/* Finish review button */}
           <div style="display: flex; justify-content: center; padding: 8px 0 24px;">
