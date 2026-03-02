@@ -44,7 +44,7 @@ Requirements for AI Orchestration milestone. Each maps to roadmap phases.
 ### AI Generative
 
 - [x] **AIGN-01**: AI generates analysis artifacts (briefings, trend insights, relationship maps) as distinct artifact type
-- [ ] **AIGN-02**: AI proposes draft atoms in staging area — user approves to promote to real atoms, rejects to discard
+- [x] **AIGN-02**: AI proposes draft atoms in staging area — user approves to promote to real atoms, rejects to discard
 - [x] **AIGN-03**: AI can modify existing atom metadata (tags, priority hints, section, links) — additive, tagged, reversible
 - [x] **AIGN-04**: All AI mutations tracked in changelog with `source: 'ai'` field, fully reversible via undo
 
@@ -121,7 +121,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AIRV-04 | Phase 7 | Complete |
 | AIRV-05 | Phase 6 | Complete |
 | AIGN-01 | Phase 6 | Complete |
-| AIGN-02 | Phase 7 | Pending |
+| AIGN-02 | Phase 7 | Complete |
 | AIGN-03 | Phase 7 | Complete |
 | AIGN-04 | Phase 7 | Complete |
 | AIST-01 | Phase 4 | Complete |

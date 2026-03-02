@@ -27,7 +27,7 @@ See [Archive](.planning/milestones/v1.0-ROADMAP.md) for full detail.
 - [x] **Phase 4: AI Infrastructure** - Worker isolation, adapter interface, store extension, trust & safety model (complete 2026-02-22)
 - [ ] **Phase 5: Triage AI** - Floating orb, suggestion tray, question-flow UX, inbox triage suggestions
 - [x] **Phase 6: Review Pre-Analysis** - Background analysis briefings, session persistence, cloud API end-to-end (completed 2026-02-26)
-- [ ] **Phase 7: Guided Review + Compression Coach** - Full GTD weekly review, compression coach, draft atom staging, AI mutation tracking
+- [x] **Phase 7: Guided Review + Compression Coach** - Full GTD weekly review, compression coach, draft atom staging, AI mutation tracking (completed 2026-03-02)
 
 ## Phase Details
 
@@ -111,4 +111,4 @@ Phases execute in numeric order: 4 → 5 → 6 → 7
 | 4. AI Infrastructure | 4/4 | Complete   | 2026-02-23 | 2026-02-22 |
 | 5. Triage AI | 3/4 | In Progress|  | - |
 | 6. Review Pre-Analysis | 3/3 | Complete    | 2026-02-26 | - |
-| 7. Guided Review + Compression Coach | 2/3 | In Progress|  | - |
+| 7. Guided Review + Compression Coach | 3/3 | Complete   | 2026-03-02 | - |
