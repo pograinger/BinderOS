@@ -8,17 +8,23 @@
  */
 import { db } from './db';
 import type { BriefingResult } from '../ai/analysis';
+import type { ReviewPhase, ReviewPhaseContext } from '../types/review';
 
 export const REVIEW_SESSION_KEY = 'review-session';
 export const REVIEW_SESSION_STALE_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export interface ReviewSession {
+  // Phase 6 fields (unchanged):
   briefingResult: BriefingResult;
   expandedItemIds: string[];
   addressedItemIds: string[];
   scrollPosition: number;
   startedAt: number;       // Unix ms
   lastActiveAt: number;    // Unix ms — updated on each interaction
+  // Phase 7 additions (optional for backward compat):
+  reviewPhase?: ReviewPhase | null;
+  reviewPhaseContext?: ReviewPhaseContext | null;
+  reviewCompleted?: boolean;
 }
 
 export async function saveReviewSession(session: ReviewSession): Promise<void> {

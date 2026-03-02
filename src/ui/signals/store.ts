@@ -62,6 +62,7 @@ import type { TriageSuggestion } from '../../ai/triage';
 import type { BriefingResult } from '../../ai/analysis';
 import type { ReviewSession } from '../../storage/review-session';
 import { saveReviewSession, loadReviewSession, clearReviewSession, REVIEW_SESSION_STALE_MS } from '../../storage/review-session';
+import type { ReviewPhaseContext, ReviewFlowStep, ReviewAction, ReviewPhase, StagingAction } from '../../types/review';
 
 // --- State interface ---
 
@@ -953,6 +954,279 @@ export async function finishReviewSession(): Promise<void> {
   setState('reviewBriefing', null);
   setState('reviewStatus', 'idle');
   await clearReviewSession();
+}
+
+// --- Phase 7: Review flow state (ephemeral) ---
+
+export type ReviewFlowStatus = 'idle' | 'get-clear' | 'get-current' | 'get-creative' | 'staging' | 'complete';
+
+const [reviewFlowStatus, setReviewFlowStatus] = createSignal<ReviewFlowStatus>('idle');
+const [reviewFlowStep, setReviewFlowStep] = createSignal<ReviewFlowStep | null>(null);
+const [reviewFlowQueue, setReviewFlowQueue] = createSignal<ReviewFlowStep[]>([]);
+const [reviewPhaseContext, setReviewPhaseContext] = createSignal<ReviewPhaseContext | null>(null);
+const [reviewStepIndex, setReviewStepIndex] = createSignal(0);
+const [reviewTotalSteps, setReviewTotalSteps] = createSignal(0);
+
+export { reviewFlowStatus, reviewFlowStep, reviewPhaseContext, reviewStepIndex, reviewTotalSteps };
+
+/** Module-level AbortController for in-flight review flow. */
+let reviewFlowAbortController: AbortController | null = null;
+
+/**
+ * Start a guided GTD weekly review.
+ *
+ * Initializes the review flow state machine, builds Get Clear steps from inbox items,
+ * and navigates to the review-flow page.
+ *
+ * Phase 7: AIRV-03
+ */
+export async function startGuidedReview(): Promise<void> {
+  // 1. Guard: AI must be available
+  if (!anyAIAvailable()) return;
+
+  // 2. Cancel any in-flight review flow
+  reviewFlowAbortController?.abort();
+  reviewFlowAbortController = new AbortController();
+
+  // 3. Set orb state to 'thinking'
+  const { setOrbState } = await import('../components/AIOrb');
+  setOrbState('thinking');
+
+  // 4. Build Get Clear step queue from current inbox items
+  const { buildGetClearSteps } = await import('../../ai/review-flow');
+  const steps = buildGetClearSteps(state.inboxItems);
+
+  // 5. Initialize ReviewPhaseContext
+  const context: ReviewPhaseContext = {
+    phase: 'get-clear',
+    phaseSummaries: [],
+    currentStep: 0,
+    atomsReviewed: [],
+    actionsTaken: [],
+  };
+
+  // 6. Set signals
+  setReviewFlowStatus('get-clear');
+  setReviewFlowQueue(steps);
+  setReviewFlowStep(steps[0] ?? null);
+  setReviewPhaseContext(context);
+  setReviewStepIndex(0);
+  setReviewTotalSteps(steps.length);
+
+  // 7. Persist phase state to review session
+  await updateReviewSession({ reviewPhase: 'get-clear', reviewPhaseContext: context });
+
+  // 8. Navigate to review-flow page
+  setActivePage('review-flow');
+  setOrbState('idle');
+}
+
+/**
+ * Advance the review flow to the next step.
+ *
+ * Records the user's action, executes any staging action from the selected option,
+ * and either dequeues the next step or transitions to the next phase.
+ *
+ * Phase 7: AIRV-03
+ */
+export async function advanceReviewStep(selectedOptionId: string, freeformText?: string): Promise<void> {
+  const currentStep = reviewFlowStep();
+  const ctx = reviewPhaseContext();
+  if (!currentStep || !ctx) return;
+
+  // 1. Record action
+  const action: ReviewAction = {
+    stepId: currentStep.stepId,
+    selectedOptionId,
+    selectedLabel: currentStep.options.find(o => o.id === selectedOptionId)?.label ?? selectedOptionId,
+    freeformText,
+    phase: ctx.phase,
+    timestamp: Date.now(),
+  };
+
+  const updatedContext: ReviewPhaseContext = {
+    ...ctx,
+    actionsTaken: [...ctx.actionsTaken, action],
+    currentStep: ctx.currentStep + 1,
+    atomsReviewed: currentStep.atomId
+      ? [...ctx.atomsReviewed, currentStep.atomId]
+      : ctx.atomsReviewed,
+  };
+  setReviewPhaseContext(updatedContext);
+
+  // 2. Execute staging action from selected option (if applicable)
+  const selectedOption = currentStep.options.find(o => o.id === selectedOptionId);
+  if (selectedOption?.stagingAction) {
+    await executeStagingAction(selectedOption.stagingAction, freeformText);
+  } else if (freeformText && currentStep.allowFreeform) {
+    // Freeform text submitted without a specific option — treat as capture
+    await executeStagingAction({ type: 'capture', content: freeformText });
+  }
+
+  // 3. Dequeue next step
+  const queue = reviewFlowQueue();
+  const nextIndex = queue.indexOf(currentStep) + 1;
+
+  if (nextIndex < queue.length) {
+    // More steps in current phase
+    setReviewFlowStep(queue[nextIndex] ?? null);
+    setReviewStepIndex(nextIndex);
+    await updateReviewSession({ reviewPhaseContext: updatedContext });
+  } else {
+    // Phase complete — transition
+    await transitionToNextPhase(updatedContext);
+  }
+}
+
+/**
+ * Execute a staging action from a review step option.
+ * Phase 7 Plan 03 will add a proper staging area; for now, execute immediately.
+ */
+async function executeStagingAction(action: StagingAction, freeformText?: string): Promise<void> {
+  switch (action.type) {
+    case 'archive':
+      sendCommand({ type: 'UPDATE_ATOM', payload: { id: action.atomId, changes: { status: 'archived' } } });
+      break;
+    case 'delete':
+      sendCommand({ type: 'DELETE_ATOM', payload: { id: action.atomId } });
+      break;
+    case 'defer':
+      sendCommand({ type: 'UPDATE_ATOM', payload: { id: action.atomId, changes: { updated_at: Date.now() } } });
+      break;
+    case 'add-next-action': {
+      const content = freeformText || `Next action for: ${action.projectName}`;
+      sendCommand({ type: 'CREATE_INBOX_ITEM', payload: { content } });
+      break;
+    }
+    case 'capture':
+      if (freeformText) {
+        sendCommand({ type: 'CREATE_INBOX_ITEM', payload: { content: freeformText } });
+      }
+      break;
+    case 'skip':
+    case 'none':
+      break;
+  }
+}
+
+/**
+ * Transition from one review phase to the next.
+ *
+ * Generates a phase summary via AI, builds the next phase's step queue,
+ * and updates all review flow signals.
+ */
+async function transitionToNextPhase(context: ReviewPhaseContext): Promise<void> {
+  const signal = reviewFlowAbortController?.signal;
+
+  // 1. Generate phase summary via AI
+  const { generatePhaseSummary, buildGetCurrentSteps, buildGetCreativeSteps } = await import('../../ai/review-flow');
+  const summary = await generatePhaseSummary(context.phase, context.actionsTaken, signal);
+
+  const updatedSummaries = [...context.phaseSummaries, summary];
+  const currentPhase = context.phase;
+
+  // 2. Determine next phase
+  let nextPhase: ReviewPhase | 'staging';
+  if (currentPhase === 'get-clear') nextPhase = 'get-current';
+  else if (currentPhase === 'get-current') nextPhase = 'get-creative';
+  else nextPhase = 'staging'; // get-creative is done → go to staging review
+
+  if (nextPhase === 'staging') {
+    // Review complete — show staging area
+    setReviewFlowStatus('staging');
+    setReviewFlowStep(null);
+    setReviewPhaseContext({ ...context, phaseSummaries: updatedSummaries });
+    await updateReviewSession({ reviewPhase: null, reviewCompleted: true, reviewPhaseContext: { ...context, phaseSummaries: updatedSummaries } });
+    return;
+  }
+
+  // 3. Build next phase step queue
+  let steps: ReviewFlowStep[];
+  if (nextPhase === 'get-current') {
+    // Build from briefing data (already computed in Phase 6)
+    const briefing = state.reviewBriefing;
+    const staleAtoms = briefing?.staleItems.map(si => state.atoms.find(a => a.id === si.atomId)).filter((a): a is NonNullable<typeof a> => a != null) ?? [];
+    const projectsMissing = briefing?.projectsMissingNextAction.map(p => state.sectionItems.find(si => si.id === p.atomId)).filter((si): si is NonNullable<typeof si> => si != null) ?? [];
+    steps = buildGetCurrentSteps(staleAtoms, projectsMissing, state.compressionCandidates);
+  } else {
+    // get-creative — needs AI for pattern surfacing
+    const { setOrbState } = await import('../components/AIOrb');
+    setOrbState('thinking');
+    const recentDecisions = state.atoms.filter(a => a.type === 'decision').slice(-10);
+    const recentInsights = state.atoms.filter(a => a.type === 'insight').slice(-10);
+    steps = await buildGetCreativeSteps(state.sections, recentDecisions, recentInsights, updatedSummaries, signal);
+    setOrbState('idle');
+  }
+
+  // 4. Initialize new phase context
+  const newContext: ReviewPhaseContext = {
+    phase: nextPhase,
+    phaseSummaries: updatedSummaries,
+    currentStep: 0,
+    atomsReviewed: context.atomsReviewed, // carry forward
+    actionsTaken: [], // reset per phase
+  };
+
+  // 5. Set signals
+  setReviewFlowStatus(nextPhase);
+  setReviewFlowQueue(steps);
+  setReviewFlowStep(steps[0] ?? null);
+  setReviewPhaseContext(newContext);
+  setReviewStepIndex(0);
+  setReviewTotalSteps(steps.length);
+
+  // 6. Persist
+  await updateReviewSession({ reviewPhase: nextPhase, reviewPhaseContext: newContext });
+}
+
+/**
+ * Cancel the guided review flow and reset all state.
+ */
+export function cancelGuidedReview(): void {
+  reviewFlowAbortController?.abort();
+  reviewFlowAbortController = null;
+  setReviewFlowStatus('idle');
+  setReviewFlowStep(null);
+  setReviewFlowQueue([]);
+  setReviewPhaseContext(null);
+  setReviewStepIndex(0);
+  setReviewTotalSteps(0);
+}
+
+/**
+ * Complete the guided review — saves a final analysis atom summarizing the review,
+ * clears flow state, and navigates back to inbox.
+ */
+export async function completeGuidedReview(): Promise<void> {
+  // Save a final analysis atom summarizing the review
+  const ctx = reviewPhaseContext();
+  if (ctx && ctx.phaseSummaries.length > 0) {
+    const summaryContent = ctx.phaseSummaries.join('\n\n');
+    sendCommand({
+      type: 'CREATE_ATOM',
+      payload: {
+        type: 'analysis',
+        analysisKind: 'review-briefing',
+        isReadOnly: true,
+        title: `Weekly Review Summary — ${new Date().toLocaleDateString()}`,
+        content: summaryContent,
+        status: 'open',
+        links: [],
+        tags: ['weekly-review'],
+        aiSourced: true,
+      },
+    });
+  }
+
+  // Clear flow state
+  cancelGuidedReview();
+  setReviewFlowStatus('complete');
+
+  // Clean up session
+  await finishReviewSession();
+
+  // Navigate back
+  setActivePage('inbox');
 }
 
 // --- Phase 7: GTD analysis orchestration ---
