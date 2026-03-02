@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** v2.0 AI Orchestration — Phase 6 complete (all 3 plans done)
+**Current focus:** v2.0 AI Orchestration — Phase 7 in progress (Plans 01+02 of 03 complete)
 
 ## Current Position
 
-Phase: 6 of 7 (Review Pre-Analysis) — COMPLETE
-Plan: 3 of 3 in Phase 6 (complete — WebLLM migration, model selector)
-Status: Phase 6 all plans complete — analysis pipeline, review page, WebLLM engine migration
-Last activity: 2026-02-26 — Phase 6 Plan 3 executed; WebLLM replaces Transformers.js with structured JSON output + model selector
+Phase: 7 of 7 (Guided Review + Compression Coach) — IN PROGRESS
+Plan: 2 of 3 in Phase 7 (complete — review flow, compression coach engine)
+Status: Phase 7 Plans 01+02 complete — GTD three-phase review flow + compression coach engine + mutation pipeline
+Last activity: 2026-03-02 — Phase 7 Plan 01 executed; GTD review flow, ConversationTurnCard, ReviewFlowView, store orchestration
 
-Progress: [████████████░] 67% (v1.0 complete; v2.0 Phases 4-6 done; Phase 7 remaining)
+Progress: [████████████░] 80% (v1.0 complete; v2.0 Phases 4-7 in progress; Phase 7 Plan 03 remaining)
 
 ## Performance Metrics
 
@@ -43,6 +43,8 @@ Progress: [████████████░] 67% (v1.0 complete; v2.0 Pha
 | Phase 06 P01 | 9 min | 2 tasks | 9 files |
 | Phase 06 P02 | 6 min | 2 tasks | 6 files |
 | Phase 06 P03 | 10 min | 2 tasks | 7 files |
+| Phase 07 P01 | 14 min | 2 tasks | 10 files |
+| Phase 07 P02 | 13 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -71,6 +73,9 @@ Recent decisions affecting current work:
 - [06-03]: src/ai/llm-worker.ts is new WebLLM worker path; old src/worker/llm-worker.ts kept for legacy llm-bridge.ts
 - [Phase 06-02]: Session hydration loads async after READY (not via worker payload) — keeps worker simple and consistent with other UI-only state
 - [Phase 06-02]: AIOrb resume path uses setActivePage only since READY handler already restores state.reviewBriefing+reviewStatus from session
+- [07-02]: CompressionCandidate type has id/reason/staleness (not score) — generateCompressionExplanations accepts actual CompressionCandidate[] from config.ts
+- [07-02]: source/aiRequestId stripped from payload before CreateAtomInputSchema.parse() in handleCreateAtom — not Atom fields
+- [07-02]: Single batched prompt for all compression candidates — one cloud API call = one approval modal (avoids approval fatigue)
 
 ### Pending Todos
 
@@ -84,7 +89,7 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-26
-Stopped at: Completed 06-02-PLAN.md — ReviewBriefingView, session persistence, orb badge dot (previously skipped)
-Next: /gsd:plan-phase 7
-Resume file: .planning/phases/06-review-pre-analysis/06-02-SUMMARY.md
+Last session: 2026-03-02
+Stopped at: Completed 07-02-PLAN.md — compression coach engine, AI mutation pipeline source tracking
+Next: Execute 07-03-PLAN.md — staging area for approved compression changes
+Resume file: .planning/phases/07-guided-review-compression-coach/07-02-SUMMARY.md

@@ -38,15 +38,15 @@ Requirements for AI Orchestration milestone. Each maps to roadmap phases.
 - [x] **AIRV-01**: Background pre-analysis workers that read-only analyze entropy state and prepare briefings
 - [x] **AIRV-02**: Review pre-analysis briefing — AI summary of stale tasks, projects without next actions, compression candidates
 - [ ] **AIRV-03**: Guided GTD weekly review flow (Get Clear / Get Current / Get Creative) via conversational question-flow
-- [ ] **AIRV-04**: Compression coach — AI explains why specific atoms are compression candidates with contextual reasoning
+- [x] **AIRV-04**: Compression coach — AI explains why specific atoms are compression candidates with contextual reasoning
 - [x] **AIRV-05**: Review session persistence — resume incomplete reviews within 24 hours
 
 ### AI Generative
 
 - [x] **AIGN-01**: AI generates analysis artifacts (briefings, trend insights, relationship maps) as distinct artifact type
 - [ ] **AIGN-02**: AI proposes draft atoms in staging area — user approves to promote to real atoms, rejects to discard
-- [ ] **AIGN-03**: AI can modify existing atom metadata (tags, priority hints, section, links) — additive, tagged, reversible
-- [ ] **AIGN-04**: All AI mutations tracked in changelog with `source: 'ai'` field, fully reversible via undo
+- [x] **AIGN-03**: AI can modify existing atom metadata (tags, priority hints, section, links) — additive, tagged, reversible
+- [x] **AIGN-04**: All AI mutations tracked in changelog with `source: 'ai'` field, fully reversible via undo
 
 ### AI Trust & Safety
 
@@ -118,12 +118,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AIRV-01 | Phase 6 | Complete |
 | AIRV-02 | Phase 6 | Complete |
 | AIRV-03 | Phase 7 | Pending |
-| AIRV-04 | Phase 7 | Pending |
+| AIRV-04 | Phase 7 | Complete |
 | AIRV-05 | Phase 6 | Complete |
 | AIGN-01 | Phase 6 | Complete |
 | AIGN-02 | Phase 7 | Pending |
-| AIGN-03 | Phase 7 | Pending |
-| AIGN-04 | Phase 7 | Pending |
+| AIGN-03 | Phase 7 | Complete |
+| AIGN-04 | Phase 7 | Complete |
 | AIST-01 | Phase 4 | Complete |
 | AIST-02 | Phase 4 | Complete |
 | AIST-03 | Phase 4 | Complete |
