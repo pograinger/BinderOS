@@ -162,8 +162,8 @@ export function buildGetCurrentSteps(
     steps.push({
       stepId: 'get-current-compression',
       phase: 'get-current',
-      question: `${compressionCandidates.length} items might be noise. Plan 02 will generate AI explanations for each. Review them in the staging area at the end.`,
-      options: [{ id: 'continue', label: 'Continue' }],
+      question: `${compressionCandidates.length} compression candidate${compressionCandidates.length === 1 ? '' : 's'} detected. AI explanations have been generated — you'll review them in the staging area at the end.`,
+      options: [{ id: 'continue', label: 'Got it, continue' }],
       allowFreeform: false,
     });
   }

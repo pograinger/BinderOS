@@ -653,6 +653,127 @@ export function acceptAllAISuggestions(): void {
   setTriageSuggestions(new Map());
 }
 
+// --- Phase 7: Staging area (ephemeral — NOT in BinderState) ---
+
+export type StagingProposalType = 'new-atom' | 'mutation' | 'deletion';
+
+export interface NewAtomProposal {
+  type: 'new-atom';
+  id: string;                         // ephemeral proposal ID
+  proposedTitle: string;
+  proposedContent: string;
+  proposedType: 'task' | 'fact' | 'event' | 'decision' | 'insight';
+  proposedSection?: string;
+  proposedTags?: string[];
+  reasoning: string;
+  source: 'get-clear' | 'get-current' | 'get-creative';
+}
+
+export interface MutationProposal {
+  type: 'mutation';
+  id: string;                         // ephemeral proposal ID
+  atomId: string;                     // real atom to mutate
+  currentAtomTitle: string;           // snapshot for display
+  proposedChanges: Partial<Atom>;     // what to change
+  reasoning: string;
+  source: 'compression-coach' | 'get-current' | 'get-creative';
+}
+
+export interface DeletionProposal {
+  type: 'deletion';
+  id: string;                         // ephemeral proposal ID
+  atomId: string;
+  atomTitle: string;                  // snapshot for display
+  proposedAction: 'archive' | 'delete';
+  reasoning: string;
+  source: 'compression-coach';
+}
+
+export type StagingProposal = NewAtomProposal | MutationProposal | DeletionProposal;
+
+// Module-level signals (NOT in BinderState — ephemeral per review session)
+const [stagingProposals, setStagingProposals] = createSignal<StagingProposal[]>([]);
+export { stagingProposals };
+
+export function addStagingProposal(proposal: StagingProposal): void {
+  setStagingProposals((prev) => [...prev, proposal]);
+}
+
+export function removeStagingProposal(proposalId: string): void {
+  setStagingProposals((prev) => prev.filter((p) => p.id !== proposalId));
+}
+
+export function clearStagingArea(): void {
+  setStagingProposals([]);
+}
+
+export function approveProposal(proposalId: string): void {
+  const proposals = stagingProposals();
+  const proposal = proposals.find((p) => p.id === proposalId);
+  if (!proposal) return;
+
+  switch (proposal.type) {
+    case 'new-atom':
+      sendCommand({
+        type: 'CREATE_INBOX_ITEM',
+        payload: {
+          content: proposal.proposedContent,
+          title: proposal.proposedTitle,
+        },
+      });
+      break;
+
+    case 'mutation': {
+      // Re-read current atom from state to avoid stale snapshot (Pitfall 3 from research)
+      const currentAtom = state.atoms.find((a) => a.id === proposal.atomId);
+      if (!currentAtom) break;
+      sendCommand({
+        type: 'UPDATE_ATOM',
+        payload: {
+          id: proposal.atomId,
+          changes: proposal.proposedChanges,
+          source: 'ai',
+          aiRequestId: proposal.id,
+        },
+      });
+      break;
+    }
+
+    case 'deletion':
+      if (proposal.proposedAction === 'archive') {
+        sendCommand({
+          type: 'UPDATE_ATOM',
+          payload: {
+            id: proposal.atomId,
+            changes: { status: 'archived' },
+            source: 'ai',
+            aiRequestId: proposal.id,
+          },
+        });
+      } else {
+        sendCommand({
+          type: 'DELETE_ATOM',
+          payload: {
+            id: proposal.atomId,
+            source: 'ai',
+            aiRequestId: proposal.id,
+          },
+        });
+      }
+      break;
+  }
+
+  removeStagingProposal(proposalId);
+}
+
+export function approveAllProposals(): void {
+  // Copy array because approveProposal removes items
+  const allProposals = [...stagingProposals()];
+  for (const proposal of allProposals) {
+    approveProposal(proposal.id);
+  }
+}
+
 /**
  * Dispatch an AI request directly from the main thread.
  *
@@ -1080,29 +1201,63 @@ export async function advanceReviewStep(selectedOptionId: string, freeformText?:
 
 /**
  * Execute a staging action from a review step option.
- * Phase 7 Plan 03 will add a proper staging area; for now, execute immediately.
+ * Destructive actions (archive, delete) are staged during Get Current/Creative.
+ * Non-destructive actions (defer, capture, add-next-action) execute immediately.
  */
 async function executeStagingAction(action: StagingAction, freeformText?: string): Promise<void> {
+  const currentPhase = reviewPhaseContext()?.phase;
+
   switch (action.type) {
     case 'archive':
-      sendCommand({ type: 'UPDATE_ATOM', payload: { id: action.atomId, changes: { status: 'archived' } } });
+      // During Get Current or Get Creative, stage; during Get Clear, execute immediately
+      if (currentPhase === 'get-current' || currentPhase === 'get-creative') {
+        const atom = state.atoms.find((a) => a.id === action.atomId);
+        addStagingProposal({
+          type: 'deletion',
+          id: crypto.randomUUID(),
+          atomId: action.atomId,
+          atomTitle: atom?.title || atom?.content.slice(0, 60) || action.atomId,
+          proposedAction: 'archive',
+          reasoning: 'Flagged during guided review',
+          source: 'compression-coach',
+        });
+      } else {
+        sendCommand({ type: 'UPDATE_ATOM', payload: { id: action.atomId, changes: { status: 'archived' } } });
+      }
       break;
-    case 'delete':
-      sendCommand({ type: 'DELETE_ATOM', payload: { id: action.atomId } });
+
+    case 'delete': {
+      // Always stage deletions for safety
+      const delAtom = state.atoms.find((a) => a.id === action.atomId);
+      addStagingProposal({
+        type: 'deletion',
+        id: crypto.randomUUID(),
+        atomId: action.atomId,
+        atomTitle: delAtom?.title || delAtom?.content.slice(0, 60) || action.atomId,
+        proposedAction: 'delete',
+        reasoning: 'Marked for deletion during guided review',
+        source: 'compression-coach',
+      });
       break;
+    }
+
     case 'defer':
+      // Defers execute immediately (non-destructive — just touches timestamp)
       sendCommand({ type: 'UPDATE_ATOM', payload: { id: action.atomId, changes: { updated_at: Date.now() } } });
       break;
+
     case 'add-next-action': {
       const content = freeformText || `Next action for: ${action.projectName}`;
       sendCommand({ type: 'CREATE_INBOX_ITEM', payload: { content } });
       break;
     }
+
     case 'capture':
       if (freeformText) {
         sendCommand({ type: 'CREATE_INBOX_ITEM', payload: { content: freeformText } });
       }
       break;
+
     case 'skip':
     case 'none':
       break;
@@ -1148,6 +1303,62 @@ async function transitionToNextPhase(context: ReviewPhaseContext): Promise<void>
     const staleAtoms = briefing?.staleItems.map(si => state.atoms.find(a => a.id === si.atomId)).filter((a): a is NonNullable<typeof a> => a != null) ?? [];
     const projectsMissing = briefing?.projectsMissingNextAction.map(p => state.sectionItems.find(si => si.id === p.atomId)).filter((si): si is NonNullable<typeof si> => si != null) ?? [];
     steps = buildGetCurrentSteps(staleAtoms, projectsMissing, state.compressionCandidates);
+
+    // Generate compression explanations and add to staging if candidates exist
+    if (state.compressionCandidates.length > 0) {
+      try {
+        const { generateCompressionExplanations } = await import('../../ai/compression');
+        const explanations = await generateCompressionExplanations(
+          state.compressionCandidates,
+          state.atoms,
+          state.scores,
+          signal,
+        );
+
+        for (const exp of explanations) {
+          if (exp.recommendedAction === 'tag-someday') {
+            // Tag-someday → mutation proposal (add tag)
+            const atom = state.atoms.find((a) => a.id === exp.atomId);
+            addStagingProposal({
+              type: 'mutation',
+              id: crypto.randomUUID(),
+              atomId: exp.atomId,
+              currentAtomTitle: exp.title,
+              proposedChanges: { tags: [...(atom?.tags ?? []), 'someday-maybe'] },
+              reasoning: exp.explanation,
+              source: 'compression-coach',
+            });
+          } else if (exp.recommendedAction === 'add-link') {
+            // Add-link → mutation proposal with empty link (deferred)
+            addStagingProposal({
+              type: 'mutation',
+              id: crypto.randomUUID(),
+              atomId: exp.atomId,
+              currentAtomTitle: exp.title,
+              proposedChanges: {},
+              reasoning: exp.explanation,
+              source: 'compression-coach',
+            });
+          } else {
+            // Archive or delete → deletion proposal
+            const proposedAction = exp.recommendedAction === 'delete' ? 'delete' : 'archive';
+            addStagingProposal({
+              type: 'deletion',
+              id: crypto.randomUUID(),
+              atomId: exp.atomId,
+              atomTitle: exp.title,
+              proposedAction,
+              reasoning: exp.explanation,
+              source: 'compression-coach',
+            });
+          }
+        }
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') throw err;
+        console.warn('[review-flow] Compression explanation generation failed:', err);
+        // Non-critical — review continues without AI explanations
+      }
+    }
   } else {
     // get-creative — needs AI for pattern surfacing
     const { setOrbState } = await import('../components/AIOrb');
@@ -1181,10 +1392,12 @@ async function transitionToNextPhase(context: ReviewPhaseContext): Promise<void>
 
 /**
  * Cancel the guided review flow and reset all state.
+ * Clears staging area — unapproved proposals are discarded per ephemeral design.
  */
 export function cancelGuidedReview(): void {
   reviewFlowAbortController?.abort();
   reviewFlowAbortController = null;
+  clearStagingArea();
   setReviewFlowStatus('idle');
   setReviewFlowStep(null);
   setReviewFlowQueue([]);
@@ -1217,6 +1430,9 @@ export async function completeGuidedReview(): Promise<void> {
       },
     });
   }
+
+  // Clear staging area (unapproved proposals are discarded — ephemeral design)
+  clearStagingArea();
 
   // Clear flow state
   cancelGuidedReview();
