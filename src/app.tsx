@@ -78,6 +78,12 @@ function App() {
         }).catch((err) => {
           console.error('[BinderOS] AI round-trip FAILED:', err);
         });
+
+        // Expose dev seed function on window for console access
+        import('./dev/seed').then(({ seedDevData }) => {
+          (window as never as Record<string, unknown>).__seedDevData = seedDevData;
+          console.log('[BinderOS] Dev seed available: window.__seedDevData()');
+        });
       }
     } catch (err) {
       console.error('[BinderOS] Worker initialization failed:', err);

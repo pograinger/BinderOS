@@ -195,6 +195,8 @@ onMessage((response) => {
         // Activate adapters that were enabled in a previous session
         if (s.browserLLMEnabled) void activateBrowserLLM();
         if (s.cloudAPIEnabled) void activateCloudAdapter();
+        // Phase 8: Initialize tiered pipeline when AI is enabled
+        if (s.aiEnabled) void initTieredAI();
       }
       // Phase 6: hydrate review session from Dexie (AIRV-05)
       loadReviewSession().then((session) => {
@@ -359,6 +361,8 @@ export function setPersistenceGranted(granted: boolean): void {
 export function setAIEnabled(enabled: boolean): void {
   setState('aiEnabled', enabled);
   sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { aiEnabled: enabled } });
+  // Phase 8: Initialize tiered pipeline when AI is first enabled
+  if (enabled) void initTieredAI();
 }
 
 export function setBrowserLLMEnabled(enabled: boolean): void {
@@ -570,6 +574,7 @@ export async function startTriageInbox(): Promise<void> {
           return next;
         });
       },
+      tieredEnabled(),  // Phase 8: use tiered pipeline when initialized
     );
     setTriageStatus('complete');
     setOrbState('idle');
@@ -910,6 +915,40 @@ export { showAISettings, setShowAISettings };
 /** Capture overlay signal — shared between app.tsx and AIOrb double-tap */
 const [showCapture, setShowCapture] = createSignal(false);
 export { showCapture, setShowCapture };
+
+// --- Phase 8: Tiered pipeline state ---
+
+export type Tier2Status = 'inactive' | 'initializing' | 'ready' | 'error';
+
+const [tier2Status, setTier2Status] = createSignal<Tier2Status>('inactive');
+const [tieredEnabled, setTieredEnabledSignal] = createSignal(false);
+
+export { tier2Status, tieredEnabled };
+
+/**
+ * Initialize the tiered AI pipeline (Phase 8: 3-Ring Binder).
+ *
+ * Registers Tier 1 (deterministic) + Tier 3 (generative) handlers immediately.
+ * Tier 2 (ONNX embedding) is registered when the embedding worker reports MODEL_READY.
+ *
+ * Called once after AI is first enabled and classification history is available.
+ */
+export async function initTieredAI(): Promise<void> {
+  if (tier2Status() !== 'inactive') return;
+  setTier2Status('initializing');
+
+  try {
+    const { initTieredPipeline } = await import('../../ai/tier2');
+    const { getClassificationHistory } = await import('../../storage/classification-log');
+    const history = await getClassificationHistory();
+    initTieredPipeline(history);
+    setTieredEnabledSignal(true);
+    setTier2Status('ready');
+  } catch (err) {
+    console.error('[BinderOS] Tiered pipeline init failed:', err);
+    setTier2Status('error');
+  }
+}
 
 // --- Phase 6: Review briefing orchestration ---
 

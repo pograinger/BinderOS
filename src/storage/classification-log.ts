@@ -24,6 +24,12 @@ export interface ClassificationEvent {
   sectionItemId: string | null;
   sectionItemName: string | null;
   timestamp: number;
+  /** Which tier suggested this classification (Phase 8) */
+  tier?: 1 | 2 | 3;
+  /** Confidence score from the suggesting tier (Phase 8) */
+  confidence?: number;
+  /** Cached 384-dim MiniLM embedding vector for centroid rebuild (Phase 8) */
+  embedding?: number[];
 }
 
 const CONFIG_KEY = 'classification-events';

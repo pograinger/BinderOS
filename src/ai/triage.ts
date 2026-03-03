@@ -13,6 +13,8 @@
  * - Pure module: no imports from store.ts — all state passed in by caller (store.ts orchestrates)
  *
  * Phase 5: AITG-01, AITG-02, AITG-03, AITG-04, AITG-05, AIUX-06
+ * Phase 8: Tiered pipeline integration — uses dispatchTiered() for classify-type
+ *   when tiered mode is enabled, falling back to direct dispatchAI() if not.
  */
 
 import type { AtomType, InboxItem } from '../types/atoms';
@@ -20,6 +22,7 @@ import type { AtomScore, EntropyScore } from '../types/config';
 import type { SectionItem, Section } from '../types/sections';
 import { dispatchAI } from './router';
 import { findRelatedAtoms } from './similarity';
+import { dispatchTiered } from './tier2';
 
 // --- TriageSuggestion interface ---
 
@@ -32,6 +35,10 @@ export interface TriageSuggestion {
   relatedAtomIds: string[];
   status: 'pending' | 'complete' | 'error';
   errorMessage?: string;
+  /** Which tier produced this suggestion (Phase 8: 1=deterministic, 2=ONNX, 3=LLM) */
+  tier?: 1 | 2 | 3;
+  /** Whether the result was escalated past the first tier */
+  escalated?: boolean;
 }
 
 // --- Module-level AbortController for cancellation ---
@@ -160,6 +167,7 @@ export function parseTriageResponse(
  * @param atoms - All atoms for related-atom keyword similarity (AITG-04)
  * @param onSuggestion - Called for each item: first with pending placeholder, then with result
  * @param onError - Called when an individual item fails (not aborted)
+ * @param useTiered - When true, uses dispatchTiered() for classify-type (Phase 8)
  */
 export async function triageInbox(
   inboxItems: InboxItem[],
@@ -170,6 +178,7 @@ export async function triageInbox(
   atoms: Array<{ id: string; title?: string; content: string }>,
   onSuggestion: (suggestion: TriageSuggestion) => void,
   onError: (itemId: string, error: string) => void,
+  useTiered = false,
 ): Promise<void> {
   // Cancel any previous in-flight triage
   triageAbortController?.abort();
@@ -209,7 +218,40 @@ export async function triageInbox(
       // Build structured prompt with entropy signals (AITG-03)
       const prompt = buildTriagePrompt(item, scores[item.id], entropyScore, resolvedSectionItems);
 
-      // Dispatch to active AI adapter (main thread — not the BinderCore worker)
+      // Phase 8: Use tiered pipeline when enabled — tries Tier 1/2 before Tier 3
+      if (useTiered) {
+        const tieredResponse = await dispatchTiered({
+          requestId: crypto.randomUUID(),
+          task: 'classify-type',
+          features: {
+            content: item.content,
+            title: item.title,
+            sectionItems: resolvedSectionItems,
+            promptOverride: prompt,
+            signal,
+          },
+        });
+
+        if (signal.aborted) break;
+
+        const result = tieredResponse.result;
+        if (result.type) {
+          onSuggestion({
+            inboxItemId: item.id,
+            suggestedType: result.type,
+            suggestedSectionItemId: result.sectionItemId ?? null,
+            reasoning: result.reasoning ?? '',
+            confidence: result.confidence >= 0.75 ? 'high' : 'low',
+            relatedAtomIds,
+            status: 'complete',
+            tier: result.tier,
+            escalated: tieredResponse.escalated,
+          });
+          continue;
+        }
+      }
+
+      // Direct dispatchAI path (original behavior, also used as fallback)
       const response = await dispatchAI({
         requestId: crypto.randomUUID(),
         prompt,
@@ -224,6 +266,7 @@ export async function triageInbox(
 
       if (suggestion) {
         // Complete suggestion — replaces the pending placeholder
+        suggestion.tier = 3;
         onSuggestion(suggestion);
       } else {
         // Parse failure — set error status on this card (RESEARCH.md Pitfall 4)

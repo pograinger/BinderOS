@@ -488,6 +488,22 @@ body {
   flex: 1;
 }
 
+.dev-seed-btn {
+  background: transparent;
+  border: 1px solid var(--status-warning);
+  color: var(--status-warning);
+  font-size: 11px;
+  padding: 1px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.dev-seed-btn:hover {
+  background: var(--status-warning);
+  color: var(--bg-primary);
+}
+
 /* --- Scrollbar Styling (dark theme) --- */
 
 ::-webkit-scrollbar {

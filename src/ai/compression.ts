@@ -15,6 +15,7 @@ import type { Atom } from '../types/atoms';
 import type { CompressionCandidate, AtomScore } from '../types/config';
 import { findRelatedAtoms } from './similarity';
 import { dispatchAI } from './router';
+import { dispatchTiered } from './tier2';
 
 /**
  * Per-candidate AI explanation with contextual signal references.
@@ -197,7 +198,60 @@ function buildFallbackExplanations(enriched: EnrichedCandidate[]): CompressionEx
 }
 
 /**
+ * Pre-filter candidates with Tier 1 assess-staleness.
+ *
+ * Phase 8: Uses the tiered pipeline to generate Tier 1 staleness assessments
+ * for candidates where deterministic assessment is high-confidence. These
+ * candidates get template explanations immediately, reducing the batch sent to Tier 3.
+ *
+ * @returns [preFiltered, remaining] — pre-filtered get Tier 1 explanations, remaining go to LLM
+ */
+async function tier1PreFilter(
+  enriched: EnrichedCandidate[],
+): Promise<[CompressionExplanation[], EnrichedCandidate[]]> {
+  const preFiltered: CompressionExplanation[] = [];
+  const remaining: EnrichedCandidate[] = [];
+
+  for (const c of enriched) {
+    try {
+      const response = await dispatchTiered({
+        requestId: crypto.randomUUID(),
+        task: 'assess-staleness',
+        features: {
+          content: `staleness=${(c.staleDays / 365).toFixed(2)} linkCount=${c.linkCount} similarCount=${c.similarAtomTitles.length}`,
+        },
+      });
+
+      // If Tier 1 is confident AND the item is clearly stale, use template explanation
+      if (!response.escalated && response.result.confidence >= 0.70 && c.staleDays > 30) {
+        preFiltered.push({
+          atomId: c.atomId,
+          title: c.atom.title || c.atom.content.slice(0, 60),
+          explanation: response.result.assessment ?? `Stale for ${c.staleDays} days${c.linkCount === 0 ? ', orphaned' : ''}.`,
+          staleDays: c.staleDays,
+          linkCount: c.linkCount,
+          similarAtomCount: c.similarAtomTitles.length,
+          similarAtomTitles: c.similarAtomTitles,
+          decisionContext: c.relatedDecisionTitles[0],
+          recommendedAction: c.staleDays > 60 && c.linkCount === 0 ? 'archive' : 'tag-someday',
+          confidence: 'medium',
+        });
+      } else {
+        remaining.push(c);
+      }
+    } catch {
+      remaining.push(c);
+    }
+  }
+
+  return [preFiltered, remaining];
+}
+
+/**
  * Generate per-candidate AI explanations for compression candidates.
+ *
+ * Phase 8: Optionally uses Tier 1 assess-staleness pre-filter to reduce
+ * the batch sent to Tier 3 LLM, saving cloud API calls.
  *
  * Uses a single batched cloud API call to avoid multiple approval modals.
  * Falls back to template explanations if the AI call fails.
@@ -207,6 +261,7 @@ function buildFallbackExplanations(enriched: EnrichedCandidate[]): CompressionEx
  * @param scores - Per-atom scores from compute engine
  * @param signal - AbortSignal for cancellation
  * @param onProgress - Progress callback (count, total)
+ * @param useTieredPreFilter - When true, uses Tier 1 assess-staleness pre-filter (Phase 8)
  * @returns Array of CompressionExplanation with AI reasoning
  */
 export async function generateCompressionExplanations(
@@ -215,6 +270,7 @@ export async function generateCompressionExplanations(
   scores: Record<string, AtomScore>,
   signal?: AbortSignal,
   onProgress?: (count: number, total: number) => void,
+  useTieredPreFilter = false,
 ): Promise<CompressionExplanation[]> {
   if (candidates.length === 0) return [];
 
@@ -227,26 +283,40 @@ export async function generateCompressionExplanations(
   // 2. Check abort
   if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
 
-  // 3. Single batched prompt → one cloud approval modal
-  const prompt = buildCompressionBatchPrompt(enriched);
+  // Phase 8: Tier 1 pre-filter — handle clear-cut staleness deterministically
+  let preFilteredResults: CompressionExplanation[] = [];
+  let toSendToLLM = enriched;
+
+  if (useTieredPreFilter) {
+    [preFilteredResults, toSendToLLM] = await tier1PreFilter(enriched);
+    // If all candidates handled by Tier 1, skip LLM entirely
+    if (toSendToLLM.length === 0) {
+      onProgress?.(enriched.length, enriched.length);
+      return preFilteredResults;
+    }
+  }
+
+  // 3. Single batched prompt → one cloud approval modal (for remaining candidates)
+  const prompt = buildCompressionBatchPrompt(toSendToLLM);
 
   try {
     const response = await dispatchAI({
       requestId: crypto.randomUUID(),
       prompt,
-      maxTokens: Math.min(enriched.length * 150, 2000), // ~150 tokens per candidate, cap at 2000
+      maxTokens: Math.min(toSendToLLM.length * 150, 2000), // ~150 tokens per candidate, cap at 2000
       signal,
     });
 
     onProgress?.(enriched.length, enriched.length);
-    return parseCompressionBatchResponse(response.text, enriched);
+    const llmResults = parseCompressionBatchResponse(response.text, toSendToLLM);
+    return [...preFilteredResults, ...llmResults];
   } catch (err) {
     // Re-throw abort errors
     if (err instanceof DOMException && err.name === 'AbortError') throw err;
 
-    // AI call failed — use fallback explanations
+    // AI call failed — use fallback explanations for remaining
     console.warn('[compression] AI batch call failed, using fallback explanations:', err);
     onProgress?.(enriched.length, enriched.length);
-    return buildFallbackExplanations(enriched);
+    return [...preFilteredResults, ...buildFallbackExplanations(toSendToLLM)];
   }
 }

@@ -20,8 +20,15 @@ import { createSignal, createMemo, onMount, Show } from 'solid-js';
 import { state, inboxCapStatus, taskCapStatus } from '../signals/store';
 // Note: state imported above includes Phase 4 AI fields (aiEnabled, aiActivity, llmStatus)
 
+// Dev-only: lazy-loaded seed function (tree-shaken in prod)
+let seedFn: (() => Promise<void>) | null = null;
+if (import.meta.env.DEV) {
+  import('../../dev/seed').then((m) => { seedFn = m.seedDevData; });
+}
+
 export function StatusBar() {
   const [storageUsed, setStorageUsed] = createSignal<string>('');
+  const [seedStatus, setSeedStatus] = createSignal<'idle' | 'running' | 'done' | 'error'>('idle');
 
   onMount(() => {
     // Poll storage estimate periodically
@@ -116,6 +123,36 @@ export function StatusBar() {
           </Show>
         </div>
       </Show>
+
+      {/* Dev-only: seed data button */}
+      {import.meta.env.DEV && (
+        <button
+          class={`status-bar-item dev-seed-btn ${seedStatus() !== 'idle' ? 'dev-seed-btn--busy' : ''}`}
+          disabled={seedStatus() !== 'idle'}
+          onClick={async () => {
+            if (!seedFn) {
+              setSeedStatus('error');
+              console.error('[seed] Seed module not loaded yet — try again in a moment');
+              setTimeout(() => setSeedStatus('idle'), 2000);
+              return;
+            }
+            setSeedStatus('running');
+            try {
+              await seedFn();
+              setSeedStatus('done');
+            } catch (err) {
+              console.error('[seed] Failed:', err);
+              setSeedStatus('error');
+            }
+            setTimeout(() => setSeedStatus('idle'), 3000);
+          }}
+        >
+          {seedStatus() === 'running' ? 'Seeding...'
+            : seedStatus() === 'done' ? 'Seeded!'
+            : seedStatus() === 'error' ? 'Failed'
+            : 'Seed Data'}
+        </button>
+      )}
 
       {/* Spacer to push storage to the right */}
       <div class="status-bar-spacer" />

@@ -14,9 +14,13 @@
  * Incoming:
  *   { type: 'EMBED'; id: string; texts: string[] }
  *   { type: 'EMBED_ATOMS'; atoms: { id: string; text: string }[] }
+ *   { type: 'CLASSIFY_TYPE'; id: string; text: string; centroids: Record<string, number[]> }
+ *   { type: 'ROUTE_SECTION'; id: string; text: string; centroids: Record<string, number[]> }
  * Outgoing:
  *   { type: 'EMBED_RESULT'; id: string; vectors: number[][]; atomIds?: string[] }
  *   { type: 'EMBED_ERROR'; id: string; error: string }
+ *   { type: 'CLASSIFY_RESULT'; id: string; scores: Record<string, number>; vector: number[] }
+ *   { type: 'CLASSIFY_ERROR'; id: string; error: string }
  *   { type: 'MODEL_READY' }
  *   { type: 'MODEL_LOADING' }
  *
@@ -89,12 +93,49 @@ async function embedTexts(texts: string[]): Promise<number[][]> {
   return tensor.tolist();
 }
 
+// --- Cosine similarity for centroid comparison ---
+
+function cosineSimilarity(a: number[], b: number[]): number {
+  if (a.length !== b.length) return 0;
+  let dot = 0, normA = 0, normB = 0;
+  for (let i = 0; i < a.length; i++) {
+    const ai = a[i] ?? 0;
+    const bi = b[i] ?? 0;
+    dot += ai * bi;
+    normA += ai * ai;
+    normB += bi * bi;
+  }
+  const mag = Math.sqrt(normA) * Math.sqrt(normB);
+  return mag === 0 ? 0 : Math.max(0, dot / mag);
+}
+
+/**
+ * Classify text against centroids by computing cosine similarity of its
+ * embedding vector against each centroid vector.
+ */
+async function classifyAgainstCentroids(
+  text: string,
+  centroids: Record<string, number[]>,
+): Promise<{ scores: Record<string, number>; vector: number[] }> {
+  const vectors = await embedTexts([text]);
+  const vector = vectors[0] ?? [];
+  const scores: Record<string, number> = {};
+  for (const [label, centroid] of Object.entries(centroids)) {
+    scores[label] = cosineSimilarity(vector, centroid);
+  }
+  return { scores, vector };
+}
+
 // --- Message handler ---
 
+type WorkerIncoming =
+  | { type: 'EMBED'; id: string; texts: string[] }
+  | { type: 'EMBED_ATOMS'; atoms: { id: string; text: string }[] }
+  | { type: 'CLASSIFY_TYPE'; id: string; text: string; centroids: Record<string, number[]> }
+  | { type: 'ROUTE_SECTION'; id: string; text: string; centroids: Record<string, number[]> };
+
 self.onmessage = async (event: MessageEvent) => {
-  const msg = event.data as
-    | { type: 'EMBED'; id: string; texts: string[] }
-    | { type: 'EMBED_ATOMS'; atoms: { id: string; text: string }[] };
+  const msg = event.data as WorkerIncoming;
 
   if (msg.type === 'EMBED') {
     try {
@@ -121,6 +162,17 @@ self.onmessage = async (event: MessageEvent) => {
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       self.postMessage({ type: 'EMBED_ERROR', id: '__atoms__', error });
+    }
+    return;
+  }
+
+  if (msg.type === 'CLASSIFY_TYPE' || msg.type === 'ROUTE_SECTION') {
+    try {
+      const { scores, vector } = await classifyAgainstCentroids(msg.text, msg.centroids);
+      self.postMessage({ type: 'CLASSIFY_RESULT', id: msg.id, scores, vector });
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      self.postMessage({ type: 'CLASSIFY_ERROR', id: msg.id, error });
     }
   }
 };
