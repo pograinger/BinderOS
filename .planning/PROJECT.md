@@ -32,13 +32,17 @@ Every piece of stored information must encode predictive value about your future
 
 ### Active
 
-<!-- Next milestone scope — to be defined. -->
+<!-- Current scope: v3.0 Local AI + Polish -->
 
-(None — next milestone requirements defined via `/gsd:new-milestone`)
+- Fine-tuned ONNX models for all GTD classification tasks (triage, priority, staleness, review, compression)
+- Synthetic data pipeline — LLM-generated labeled GTD training examples, refined with curated data
+- Full offline GTD intelligence — Tier 2 upgraded to real ML classifiers, system works without cloud
+- Cloud LLM becomes optional quality boost, not a dependency
+- Tech debt cleanup — settings panel, dead code, isReadOnly enforcement, status bar, stale comments
 
 ### Out of Scope
 
-- PARA section views — full section-specific experiences (deferred to v3.0)
+- PARA section views — full section-specific experiences (deferred to v4.0)
 - CRDT sync — P2P multi-device sync (deferred to v3.0+)
 - Data encryption at rest — IndexedDB encryption (deferred to v3.0+)
 - Mobile optimization — touch-first responsive experience (deferred to v3.0+)
@@ -54,7 +58,7 @@ Every piece of stored information must encode predictive value about your future
 
 **Architecture evolution:** v2.0 added 3 workers (BinderCore, LLM/WebLLM, Embedding/MiniLM), 3 AI adapters, a tiered pipeline (deterministic → ONNX centroid → LLM), and a review state machine. The store grew from ~800 to ~1500+ lines as the orchestration hub.
 
-**Tech debt carried forward:** Settings panel UX rough, status bar AI indicator verbose, stale comments in AIOrb, dead code in src/worker/llm-worker.ts, resume UX uses badge dot instead of explicit prompt, isReadOnly not enforced at UI level.
+**Tech debt carried forward:** Settings panel UX rough, status bar AI indicator verbose, stale comments in AIOrb, dead code in src/worker/llm-worker.ts, resume UX uses badge dot instead of explicit prompt, isReadOnly not enforced at UI level. **Targeted for cleanup in v3.0.**
 
 ## Constraints
 
@@ -87,5 +91,8 @@ Every piece of stored information must encode predictive value about your future
 | Single batched prompt for compression candidates | One cloud API call = one approval modal, avoids approval fatigue | Validated v2.0 |
 | 3-Ring Binder tiered pipeline | Tier 1 deterministic → Tier 2 ONNX centroid → Tier 3 LLM escalation | Validated v2.0 — reduces cloud API usage for clear-cut classifications |
 
+| Fine-tuned ONNX for Tier 2 | Real ML classifiers replace centroid matching, full offline capability | — Pending |
+| Synthetic-then-curated training pipeline | Bootstrap labeled data from cloud LLM, refine with curated examples | — Pending |
+
 ---
-*Last updated: 2026-03-03 — after v2.0 milestone*
+*Last updated: 2026-03-03 — after v3.0 milestone kickoff*

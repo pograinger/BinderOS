@@ -1,14 +1,14 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.0
-milestone_name: AI Orchestration
-status: completed
-last_updated: "2026-03-03T05:30:00.000Z"
+milestone: v3.0
+milestone_name: Local AI + Polish
+status: defining_requirements
+last_updated: "2026-03-03T06:00:00.000Z"
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 25
-  completed_plans: 25
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
@@ -18,18 +18,28 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-03)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** v2.0 AI Orchestration — SHIPPED 2026-03-03
+**Current focus:** v3.0 Local AI + Polish — Fine-tuned ONNX models for full offline GTD intelligence
 
 ## Current Position
 
-Milestone: v2.0 AI Orchestration — COMPLETE
-Status: All phases shipped. Milestone archived. Planning next milestone.
-Last activity: 2026-03-03 — Milestone audit passed (30/30), archived, PROJECT.md evolved
+Milestone: v3.0 Local AI + Polish
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-03 — Milestone v3.0 started
 
-Progress: [█████████████] 100% (v2.0 shipped)
+Progress: [░░░░░░░░░░] 0%
+
+## Accumulated Context
+
+### From v2.0
+- 3-Ring Binder tiered pipeline foundation exists (Tier 1 deterministic, Tier 2 ONNX centroids, Tier 3 LLM)
+- Embedding worker with Xenova/all-MiniLM-L6-v2 already running
+- Classification log in Dexie for pattern learning already wired
+- Tech debt items identified and carried forward for cleanup
 
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: v2.0 milestone completed and archived
-Next: /gsd:new-milestone for v3.0
+Stopped at: Defining v3.0 milestone, proceeding to research
+Resume file: none
