@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Local AI + Polish
 status: ready_to_plan
-last_updated: "2026-03-04T18:13:47Z"
+last_updated: "2026-03-04T18:20:29Z"
 progress:
   total_phases: 8
   completed_phases: 8
@@ -24,9 +24,9 @@ See: .planning/PROJECT.md (updated 2026-03-03)
 
 Milestone: v3.0 Local AI + Polish
 Phase: 10 of 12 (Browser Inference Integration)
-Plan: 2 of TBD in current phase
+Plan: 3 of TBD in current phase
 Status: In progress
-Last activity: 2026-03-04 — Phase 10 Plan 02 complete (ONNX pipeline wiring, classifier lifecycle signals, shared embedding worker, modelSuggestion capture)
+Last activity: 2026-03-04 — Phase 10 Plan 03 complete (StatusBar classifier download progress, ambiguous two-button type UX in InboxAISuggestion, type pre-fill guard in InboxView)
 
 Progress: [████░░░░░░] 30% (v3.0 scope)
 
@@ -37,6 +37,13 @@ Progress: [████░░░░░░] 30% (v3.0 scope)
 - Embedding worker with Xenova/all-MiniLM-L6-v2 already running
 - Classification log in Dexie for pattern learning already wired
 - Tech debt items identified and carried forward for cleanup
+
+### Decisions (Phase 10 Plan 03)
+
+- Ambiguous ONNX classification path shows two-button UX instead of pre-filled type — user must actively choose when ONNX confidence spread < 0.15.
+- Ambiguous path has only Dismiss button (not Accept) — clicking either type button selects-and-accepts in one tap; separate Accept would be redundant.
+- Three pre-fill guard sites in InboxView (swipe-right, Enter key, desktop Classify button) all check alternativeType before calling setSelectedType.
+- StatusBar classifier progress uses existing status-bar-dot dev class (amber dot) — no new CSS; segment disappears completely from DOM when classifierLoadProgress is null.
 
 ### Decisions (Phase 10 Plan 02)
 
@@ -86,5 +93,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Phase 10 Plan 02 complete — ONNX pipeline wired to Tier 2 handler, classifier lifecycle signals in store, shared embedding worker, modelSuggestion captured. Next: Phase 10 Plan 03 (StatusBar progress indicator for classifier download).
-Resume file: .planning/phases/10-browser-inference-integration/10-02-SUMMARY.md
+Stopped at: Phase 10 Plan 03 complete — StatusBar classifier download progress indicator, ambiguous two-button type UX in InboxAISuggestion, type pre-fill guard in InboxView. All Phase 10 user-facing UX complete.
+Resume file: .planning/phases/10-browser-inference-integration/10-03-SUMMARY.md
