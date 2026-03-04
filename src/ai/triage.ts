@@ -39,6 +39,12 @@ export interface TriageSuggestion {
   tier?: 1 | 2 | 3;
   /** Whether the result was escalated past the first tier */
   escalated?: boolean;
+  /** Second-best type when model is uncertain (ONNX spread < 0.15) */
+  alternativeType?: AtomType;
+  /** Confidence spread between top-1 and top-2 ONNX probabilities (for logging) */
+  confidenceSpread?: number;
+  /** Model's original top-1 suggestion before user interaction (CONF-03: prevents model-collapse feedback loops) */
+  modelSuggestion?: AtomType;
 }
 
 // --- Module-level AbortController for cancellation ---
@@ -246,6 +252,9 @@ export async function triageInbox(
             status: 'complete',
             tier: result.tier,
             escalated: tieredResponse.escalated,
+            alternativeType: result.alternativeType,            // Phase 10: ambiguity from ONNX spread
+            confidenceSpread: result.confidenceSpread,         // Phase 10: spread for logging
+            modelSuggestion: result.type,                      // Phase 10: capture BEFORE user interaction (CONF-03)
           });
           continue;
         }
@@ -267,6 +276,7 @@ export async function triageInbox(
       if (suggestion) {
         // Complete suggestion — replaces the pending placeholder
         suggestion.tier = 3;
+        suggestion.modelSuggestion = suggestion.suggestedType;  // Phase 10: capture model's choice (CONF-03)
         onSuggestion(suggestion);
       } else {
         // Parse failure — set error status on this card (RESEARCH.md Pitfall 4)

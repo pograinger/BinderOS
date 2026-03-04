@@ -99,6 +99,10 @@ export interface TieredResult {
   entities?: Array<{ kind: string; value: string }>;
   /** Staleness assessment (for assess-staleness task) */
   assessment?: string;
+  /** Second-best type when spread < 0.15 (ambiguous ONNX classification) */
+  alternativeType?: AtomType;
+  /** Confidence spread between top-1 and top-2 ONNX probabilities (for logging) */
+  confidenceSpread?: number;
 }
 
 /**

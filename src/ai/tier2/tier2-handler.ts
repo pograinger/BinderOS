@@ -2,17 +2,22 @@
  * Tier 2: Compact Neural Models handler.
  *
  * Uses the existing MiniLM embedding model (shared with search) for classification
- * via centroid comparison — zero new model downloads needed.
+ * via ONNX inference (primary path) or centroid comparison (fallback).
  *
- * Process:
- * 1. Embed the input text via the shared embedding worker
+ * Primary path (when ONNX classifier is ready):
+ * 1. Send CLASSIFY_ONNX to embedding worker (embeds text + runs ONNX in one round-trip)
+ * 2. ONNX returns per-class probabilities (Platt-calibrated, 0-1)
+ * 3. Top-1 = suggested type; compute confidenceSpread for ambiguity detection
+ *
+ * Fallback path (when ONNX classifier is not yet loaded):
+ * 1. Embed the input text via the shared embedding worker (CLASSIFY_TYPE)
  * 2. Compare against per-type centroids (cosine similarity)
  * 3. Highest similarity score = suggested type
  *
  * Always on-device, sub-second. Privacy: embeddings never leave the device.
  *
- * The handler communicates with the embedding worker via postMessage,
- * using CLASSIFY_TYPE and ROUTE_SECTION message types added in Phase 8B.
+ * Phase 10: ONNX path added via CLASSIFY_ONNX worker message. Centroid path preserved
+ *   for backward compatibility and warm-up before ONNX classifier loads.
  */
 
 import type { TierHandler } from './handler';
@@ -20,7 +25,7 @@ import type { AITaskType, TieredRequest, TieredResult } from './types';
 import type { AtomType } from '../../types/atoms';
 import type { CentroidSet } from './centroid-builder';
 
-// --- Worker communication ---
+// --- Worker communication: centroid path ---
 
 type ClassifyResultMsg = {
   type: 'CLASSIFY_RESULT';
@@ -35,8 +40,23 @@ type ClassifyErrorMsg = {
   error: string;
 };
 
+// --- Worker communication: ONNX path ---
+
+type OnnxResultMsg = {
+  type: 'ONNX_RESULT';
+  id: string;
+  scores: Record<string, number>;
+  vector: number[];
+};
+
+type OnnxErrorMsg = {
+  type: 'ONNX_ERROR';
+  id: string;
+  error: string;
+};
+
 /**
- * Send a classification request to the embedding worker and wait for the result.
+ * Send a centroid-based classification request to the embedding worker and wait for the result.
  */
 function classifyViaWorker(
   worker: Worker,
@@ -64,19 +84,49 @@ function classifyViaWorker(
   });
 }
 
+/**
+ * Send an ONNX classification request to the embedding worker and wait for the result.
+ * Worker embeds the text via MiniLM, then runs ONNX inference in one round-trip.
+ */
+function classifyViaONNX(
+  worker: Worker,
+  text: string,
+): Promise<{ scores: Record<string, number>; vector: number[] }> {
+  return new Promise((resolve, reject) => {
+    const id = crypto.randomUUID();
+
+    const handler = (event: MessageEvent) => {
+      const msg = event.data as OnnxResultMsg | OnnxErrorMsg;
+      if (msg.id !== id) return;
+
+      worker.removeEventListener('message', handler);
+      if (msg.type === 'ONNX_RESULT') {
+        resolve({ scores: msg.scores, vector: msg.vector });
+      } else if (msg.type === 'ONNX_ERROR') {
+        reject(new Error(msg.error));
+      }
+    };
+
+    worker.addEventListener('message', handler);
+    worker.postMessage({ type: 'CLASSIFY_ONNX', id, text });
+  });
+}
+
 // --- Tier 2 Handler ---
 
 /**
- * Create a Tier 2 handler for ONNX embedding centroid classification.
+ * Create a Tier 2 handler for ONNX classification (primary) or centroid fallback.
  *
  * @param getWorker - Function that returns the shared embedding worker (or null if not ready)
  * @param getTypeCentroids - Function that returns current type centroids (or null if not built)
  * @param getSectionCentroids - Function that returns current section centroids (or null)
+ * @param getClassifierReady - Function that returns true when ONNX session is loaded
  */
 export function createTier2Handler(
   getWorker: () => Worker | null,
   getTypeCentroids: () => CentroidSet | null,
   getSectionCentroids: () => CentroidSet | null,
+  getClassifierReady: () => boolean,
 ): TierHandler & { lastVector: () => number[] | null } {
   let _lastVector: number[] | null = null;
 
@@ -91,6 +141,9 @@ export function createTier2Handler(
       if (!worker) return false;
 
       if (task === 'classify-type') {
+        // ONNX path: classifier ready means we can handle without centroids
+        if (getClassifierReady()) return true;
+        // Centroid fallback: need centroids built from history
         const centroids = getTypeCentroids();
         return centroids !== null && Object.keys(centroids.centroids).length > 0;
       }
@@ -113,6 +166,53 @@ export function createTier2Handler(
       const text = (features.title ?? '') + ' ' + features.content;
 
       if (task === 'classify-type') {
+        // --- ONNX path (primary when classifier is ready) ---
+        if (getClassifierReady()) {
+          const { scores, vector } = await classifyViaONNX(worker, text);
+          _lastVector = vector;
+
+          const validTypes: AtomType[] = ['task', 'fact', 'event', 'decision', 'insight'];
+
+          // Find top-1 and top-2 types
+          let bestType: AtomType = 'fact';
+          let bestScore = 0;
+          let secondType: AtomType = 'fact';
+          let secondScore = 0;
+
+          for (const [label, score] of Object.entries(scores)) {
+            if (!validTypes.includes(label as AtomType)) continue;
+            if (score > bestScore) {
+              secondType = bestType;
+              secondScore = bestScore;
+              bestScore = score;
+              bestType = label as AtomType;
+            } else if (score > secondScore) {
+              secondScore = score;
+              secondType = label as AtomType;
+            }
+          }
+
+          // ONNX probabilities are Platt-calibrated: use bestScore directly as confidence
+          const confidenceSpread = bestScore - secondScore;
+          // Ambiguous when spread < 0.15 (locked decision)
+          const isAmbiguous = confidenceSpread < 0.15;
+
+          const result: TieredResult = {
+            tier: 2,
+            confidence: bestScore,
+            type: bestType,
+            confidenceSpread,
+            reasoning: `ONNX classifier: ${bestType} (p=${bestScore.toFixed(3)}, spread=${confidenceSpread.toFixed(3)})`,
+          };
+
+          if (isAmbiguous) {
+            result.alternativeType = secondType;
+          }
+
+          return result;
+        }
+
+        // --- Centroid fallback path (when ONNX not yet loaded) ---
         const centroidSet = getTypeCentroids();
         if (!centroidSet || Object.keys(centroidSet.centroids).length === 0) {
           return { tier: 2, confidence: 0, reasoning: 'No type centroids available' };
