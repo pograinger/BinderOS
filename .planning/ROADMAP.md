@@ -35,7 +35,7 @@ See [Archive](.planning/milestones/v2.0-ROADMAP.md) for full detail.
 
 **Milestone Goal:** Replace centroid-similarity Tier 2 with real fine-tuned ONNX classifiers for full offline GTD intelligence. Cloud LLM becomes an optional quality boost, not a dependency. Ship with v2.0 tech debt resolved.
 
-- [ ] **Phase 9: Python Training Infrastructure** - Synthetic data corpus, classifier training, ONNX export, browser-runtime validation
+- [x] **Phase 9: Python Training Infrastructure** - Synthetic data corpus, classifier training, ONNX export, browser-runtime validation (completed 2026-03-04)
 - [ ] **Phase 10: Browser Inference Integration** - ONNX inference in embedding worker, confidence calibration UX, graceful fallback, model caching
 - [ ] **Phase 11: Tech Debt, Settings + Correction Utility** - Settings panel cleanup, v2.0 tech debt, model status display, correction export script
 - [ ] **Phase 12: Section Routing** - Offline nearest-neighbor section routing, graceful degradation, no new model download
@@ -51,7 +51,7 @@ See [Archive](.planning/milestones/v2.0-ROADMAP.md) for full detail.
   2. Developer runs a second script that trains the classifier head on MiniLM embeddings, applies Platt/temperature confidence calibration, and exports a validated `triage-type.onnx` file to `public/models/classifiers/`
   3. A browser-runtime validation harness confirms >95% top-1 prediction match between Python inference and ONNX Runtime Web on the same 50+ inputs
   4. A new developer can reproduce the entire pipeline (data generation through browser-validated ONNX export) using only `scripts/train/` and the committed `requirements.txt`
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 09-01-PLAN.md — Project scaffold, synthetic data generation, and MiniLM embedding scripts
 - [ ] 09-02-PLAN.md — Classifier training, ONNX export, and browser-runtime validation harness
@@ -100,7 +100,7 @@ Plans:
 | 5. Triage AI | v2.0 | 4/4 | Complete | 2026-02-24 |
 | 6. Review Pre-Analysis | v2.0 | 3/3 | Complete | 2026-02-26 |
 | 7. Guided Review + Compression Coach | v2.0 | 3/3 | Complete | 2026-03-02 |
-| 9. Python Training Infrastructure | 1/2 | In Progress|  | - |
+| 9. Python Training Infrastructure | 2/2 | Complete   | 2026-03-04 | - |
 | 10. Browser Inference Integration | v3.0 | 0/TBD | Not started | - |
 | 11. Tech Debt, Settings + Correction Utility | v3.0 | 0/TBD | Not started | - |
 | 12. Section Routing | v3.0 | 0/TBD | Not started | - |

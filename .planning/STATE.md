@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Local AI + Polish
 status: in_progress
-last_updated: "2026-03-04T05:29:00.000Z"
+last_updated: "2026-03-04T05:38:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -24,11 +24,11 @@ See: .planning/PROJECT.md (updated 2026-03-03)
 
 Milestone: v3.0 Local AI + Polish
 Phase: 9 of 12 (Python Training Infrastructure)
-Plan: 1 of 2 complete in current phase
+Plan: 2 of 2 complete in current phase
 Status: In progress
-Last activity: 2026-03-04 — Phase 9 Plan 01 complete (training scaffold, data generation scripts)
+Last activity: 2026-03-04 — Phase 9 Plan 02 complete (classifier training script, ONNX export, browser-runtime validation harness)
 
-Progress: [█░░░░░░░░░] 5% (v3.0 scope)
+Progress: [██░░░░░░░░] 10% (v3.0 scope)
 
 ## Accumulated Context
 
@@ -45,6 +45,12 @@ Progress: [█░░░░░░░░░] 5% (v3.0 scope)
 - `modelSuggestion` field added to ClassificationEvent schema in Phase 9, before classifier ships in Phase 10. Retrofitting after production data is costly.
 - Phase 10 browser integration can start with placeholder ONNX (random-weight export) to validate worker wiring independently of Phase 9 training timeline.
 - Confidence threshold for `classify-type` starts at 0.78 (not current 0.65) — requires one empirical calibration iteration after first model is trained.
+
+### Decisions (Phase 9 Plan 02)
+
+- `onnxruntime-web/wasm` import (not `onnxruntime-web/node`) used in validation harness — forces WASM execution path matching browsers exactly, satisfying TRAIN-03 browser-parity requirement.
+- Python validation artifacts derived from Python onnxruntime on ONNX model (not sklearn predict) — catches ONNX export bugs that sklearn would not reveal.
+- argmax over probability output used for top-1 in both Python and Node.js — avoids dtype inconsistency in the ONNX label output across ort versions.
 
 ### Decisions (Phase 9 Plan 01)
 
@@ -66,5 +72,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed Phase 9 Plan 01 (09-01-PLAN.md) — training scaffold, data generation scripts, modelSuggestion field.
+Stopped at: Completed Phase 9 Plan 02 (09-02-PLAN.md) — classifier training script, ONNX export (opset=17, zipmap=False), browser-runtime validation harness. Phase 9 complete.
 Resume file: None
