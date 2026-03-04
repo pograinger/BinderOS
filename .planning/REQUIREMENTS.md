@@ -17,7 +17,7 @@ Requirements for the Local AI + Polish milestone. Each maps to roadmap phases.
 ### Model Inference
 
 - [x] **INFER-01**: User's inbox triage type classification (task/fact/event/decision/insight) works fully offline using the fine-tuned ONNX model in Tier 2
-- [ ] **INFER-02**: User sees a progress indicator during first-time model download with clear messaging ("one-time download")
+- [x] **INFER-02**: User sees a progress indicator during first-time model download with clear messaging ("one-time download")
 - [x] **INFER-03**: User's triage continues working via Tier 1 keyword heuristics if the ONNX model fails to load or errors during inference
 - [x] **INFER-04**: User experiences no UI blocking during model loading — all ONNX inference runs in the embedding worker off main thread
 - [x] **INFER-05**: ONNX model files are cached in browser Cache API across sessions — no re-download on subsequent visits
@@ -26,7 +26,7 @@ Requirements for the Local AI + Polish milestone. Each maps to roadmap phases.
 
 - [x] **CONF-01**: ONNX model confidence scores are calibrated (Platt/temperature scaling) so pipeline escalation thresholds produce correct Tier 2→3 escalation rates
 - [ ] **CONF-02**: When top-2 class probabilities are within 0.15 of each other, user sees both options rather than a single pre-filled suggestion
-- [ ] **CONF-03**: Classification log captures `modelSuggestion` separately from `userChoice` to prevent model-collapse feedback loops
+- [x] **CONF-03**: Classification log captures `modelSuggestion` separately from `userChoice` to prevent model-collapse feedback loops
 
 ### Section Routing
 
@@ -87,12 +87,12 @@ Deferred to v3.x or later. Tracked but not in current roadmap.
 | TRAIN-04 | Phase 9 | Complete |
 | CONF-01 | Phase 9 | Complete |
 | INFER-01 | Phase 10 | Complete |
-| INFER-02 | Phase 10 | Pending |
+| INFER-02 | Phase 10 | Complete |
 | INFER-03 | Phase 10 | Complete |
 | INFER-04 | Phase 10 | Complete |
 | INFER-05 | Phase 10 | Complete |
 | CONF-02 | Phase 10 | Pending |
-| CONF-03 | Phase 10 | Pending |
+| CONF-03 | Phase 10 | Complete |
 | CORR-01 | Phase 11 | Pending |
 | CORR-02 | Phase 11 | Pending |
 | POLISH-01 | Phase 11 | Pending |

@@ -66,7 +66,7 @@ Plans:
   3. When the ONNX model fails to load or errors, triage continues working via Tier 1 keyword heuristics with no crash or blank suggestion
   4. When two atom type probabilities are within 0.15 of each other, user sees both options presented rather than a single pre-filled type
   5. Classification log records `modelSuggestion` separately from `userChoice`, preserving the ability to detect and prevent model-collapse feedback loops
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 Plans:
 - [ ] 10-01-PLAN.md -- ONNX classifier loading in embedding worker with Cache API and progress reporting
 - [ ] 10-02-PLAN.md -- Pipeline wiring: Tier 2 ONNX switch, store signals, modelSuggestion capture
@@ -105,6 +105,6 @@ Plans:
 | 6. Review Pre-Analysis | v2.0 | 3/3 | Complete | 2026-02-26 |
 | 7. Guided Review + Compression Coach | v2.0 | 3/3 | Complete | 2026-03-02 |
 | 9. Python Training Infrastructure | 2/2 | Complete   | 2026-03-04 | - |
-| 10. Browser Inference Integration | 1/3 | In Progress|  | - |
+| 10. Browser Inference Integration | 2/3 | In Progress|  | - |
 | 11. Tech Debt, Settings + Correction Utility | v3.0 | 0/TBD | Not started | - |
 | 12. Section Routing | v3.0 | 0/TBD | Not started | - |
