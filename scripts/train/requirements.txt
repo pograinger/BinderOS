@@ -1,0 +1,12 @@
+# Python training pipeline dependencies for BinderOS GTD classifier
+# Pinned for reproducibility — see scripts/train/README.md for setup instructions
+
+sentence-transformers==5.2.3
+scikit-learn>=1.6,<1.7
+skl2onnx==1.20.0
+onnxruntime>=1.20,<1.22
+anthropic>=0.45,<1.0
+python-dotenv>=1.0,<2.0
+numpy>=1.26,<2.0
+onnx>=1.17,<1.18
+tqdm>=4.66,<5.0

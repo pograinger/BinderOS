@@ -30,6 +30,8 @@ export interface ClassificationEvent {
   confidence?: number;
   /** Cached 384-dim MiniLM embedding vector for centroid rebuild (Phase 8) */
   embedding?: number[];
+  /** Model's top-1 suggestion BEFORE user interaction (Phase 9+). Used to detect model-collapse feedback loops. */
+  modelSuggestion?: AtomType;
 }
 
 const CONFIG_KEY = 'classification-events';

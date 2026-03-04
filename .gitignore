@@ -29,3 +29,9 @@ Thumbs.db
 # Local ONNX model files (binary, downloaded by pnpm postinstall:models)
 # These are large binary files (~22MB) — download via: node scripts/download-model.cjs
 public/models/
+!public/models/classifiers/
+
+# Python training intermediates (re-generated from committed JSONL)
+scripts/train/__pycache__/
+scripts/train/*.npy
+scripts/train/*.pyc
