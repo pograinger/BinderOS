@@ -261,8 +261,11 @@ export function InboxView() {
       setCardTranslateX(0);
       setCardTranslateY(0);
       setShowClassify(true);
-      // Pre-select suggested type
-      setSelectedType(suggestedType());
+      // Phase 10: Don't pre-fill when suggestion is ambiguous — user must pick via two-button UX
+      const activeSuggestion = currentItem() ? triageSuggestions().get(currentItem()!.id) : undefined;
+      if (!activeSuggestion?.alternativeType) {
+        setSelectedType(suggestedType());
+      }
       return;
     }
 
@@ -312,7 +315,11 @@ export function InboxView() {
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !showClassify() && currentItem()) {
       setShowClassify(true);
-      setSelectedType(suggestedType());
+      // Phase 10: Don't pre-fill when suggestion is ambiguous — user must pick via two-button UX
+      const activeSuggestion = currentItem() ? triageSuggestions().get(currentItem()!.id) : undefined;
+      if (!activeSuggestion?.alternativeType) {
+        setSelectedType(suggestedType());
+      }
     }
   };
 
@@ -390,6 +397,7 @@ export function InboxView() {
                 onAccept={() => acceptAISuggestion(currentItem()!.id)}
                 onDismiss={() => dismissAISuggestion(currentItem()!.id)}
                 onAtomClick={(atomId) => setSelectedAtomId(atomId)}
+                onSelectType={(type) => setSelectedType(type)}
                 atoms={state.atoms}
                 sectionItems={state.sectionItems}
               />
@@ -489,7 +497,11 @@ export function InboxView() {
               class="inbox-action-btn classify"
               onClick={() => {
                 setShowClassify(true);
-                setSelectedType(suggestedType());
+                // Phase 10: Don't pre-fill when suggestion is ambiguous — user must pick via two-button UX
+                const activeSuggestion = currentItem() ? triageSuggestions().get(currentItem()!.id) : undefined;
+                if (!activeSuggestion?.alternativeType) {
+                  setSelectedType(suggestedType());
+                }
               }}
             >
               Classify

@@ -4285,6 +4285,47 @@ kbd {
   color: var(--text-primary);
 }
 
+/* ============================================
+   Phase 10: Ambiguous type classification UX
+   Two side-by-side type buttons when ONNX spread < 0.15
+   ============================================ */
+
+.ai-suggestion-ambiguous {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.ai-suggestion-ambiguous-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.ai-suggestion-ambiguous-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.ai-suggestion-type-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: border-color 0.15s;
+}
+
+.ai-suggestion-type-btn:hover {
+  border-color: var(--accent);
+}
+
 /* Accept all bulk button */
 .inbox-accept-all {
   display: block;
