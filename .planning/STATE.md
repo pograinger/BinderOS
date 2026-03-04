@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Local AI + Polish
-status: ready_to_plan
-last_updated: "2026-03-03T08:00:00.000Z"
+status: in_progress
+last_updated: "2026-03-04T05:29:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
 ---
 
 # Project State
@@ -24,11 +24,11 @@ See: .planning/PROJECT.md (updated 2026-03-03)
 
 Milestone: v3.0 Local AI + Polish
 Phase: 9 of 12 (Python Training Infrastructure)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-03 — v3.0 roadmap created, phases 9-12 defined
+Plan: 1 of 2 complete in current phase
+Status: In progress
+Last activity: 2026-03-04 — Phase 9 Plan 01 complete (training scaffold, data generation scripts)
 
-Progress: [░░░░░░░░░░] 0% (v3.0 scope)
+Progress: [█░░░░░░░░░] 5% (v3.0 scope)
 
 ## Accumulated Context
 
@@ -46,6 +46,13 @@ Progress: [░░░░░░░░░░] 0% (v3.0 scope)
 - Phase 10 browser integration can start with placeholder ONNX (random-weight export) to validate worker wiring independently of Phase 9 training timeline.
 - Confidence threshold for `classify-type` starts at 0.78 (not current 0.65) — requires one empirical calibration iteration after first model is trained.
 
+### Decisions (Phase 9 Plan 01)
+
+- `modelSuggestion?: AtomType` added as optional field to ClassificationEvent — no Dexie migration needed since ClassificationEvent is a JSON blob in the config table, not indexed records.
+- embeddings_cache.npy and labels_cache.npy gitignored (reproducible from committed JSONL); label_map.json committed (needed by browser in Phase 10).
+- JSONL corpus in scripts/training-data/ committed — small files, auditable, needed for TRAIN-04 reproducibility without API key.
+- `!public/models/classifiers/` gitignore exception so trained classifier heads can be committed for Phase 10 browser integration.
+
 ### Blockers/Concerns
 
 - [Phase 9]: 0.78 confidence threshold is a research estimate — measure escalation rate on held-out set and adjust before Phase 10 integration.
@@ -58,6 +65,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-03
-Stopped at: Roadmap created for v3.0 milestone (phases 9-12). Ready to plan Phase 9.
+Last session: 2026-03-04
+Stopped at: Completed Phase 9 Plan 01 (09-01-PLAN.md) — training scaffold, data generation scripts, modelSuggestion field.
 Resume file: None

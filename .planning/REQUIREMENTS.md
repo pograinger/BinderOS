@@ -9,10 +9,10 @@ Requirements for the Local AI + Polish milestone. Each maps to roadmap phases.
 
 ### Training Pipeline
 
-- [ ] **TRAIN-01**: Developer can generate 300–500 labeled synthetic GTD training examples per atom type (task, fact, event, decision, insight) via cloud LLM script
+- [x] **TRAIN-01**: Developer can generate 300–500 labeled synthetic GTD training examples per atom type (task, fact, event, decision, insight) via cloud LLM script
 - [ ] **TRAIN-02**: Developer can fine-tune a classification head on MiniLM embeddings using the synthetic training corpus and export a validated ONNX model
 - [ ] **TRAIN-03**: Developer can validate the exported ONNX model in a browser-runtime harness with >95% top-1 prediction match vs Python inference
-- [ ] **TRAIN-04**: Developer can reproduce the full training pipeline from synthetic data generation through ONNX export via committed scripts in `scripts/train/`
+- [x] **TRAIN-04**: Developer can reproduce the full training pipeline from synthetic data generation through ONNX export via committed scripts in `scripts/train/`
 
 ### Model Inference
 
@@ -81,10 +81,10 @@ Deferred to v3.x or later. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TRAIN-01 | Phase 9 | Pending |
+| TRAIN-01 | Phase 9 | Complete |
 | TRAIN-02 | Phase 9 | Pending |
 | TRAIN-03 | Phase 9 | Pending |
-| TRAIN-04 | Phase 9 | Pending |
+| TRAIN-04 | Phase 9 | Complete |
 | CONF-01 | Phase 9 | Pending |
 | INFER-01 | Phase 10 | Pending |
 | INFER-02 | Phase 10 | Pending |
