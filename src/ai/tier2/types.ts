@@ -32,7 +32,7 @@ export type AITaskType =
  * Lower thresholds = more trust in that tier for that task.
  */
 export const CONFIDENCE_THRESHOLDS: Record<AITaskType, number> = {
-  'classify-type':    0.65,
+  'classify-type':    0.78,  // Calibrated for Platt-scaled ONNX probabilities (was 0.65 for centroid similarity)
   'route-section':    0.60,
   'extract-entities': 0.50,
   'assess-staleness': 0.70,
