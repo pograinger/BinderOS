@@ -25,7 +25,7 @@ Requirements for the Local AI + Polish milestone. Each maps to roadmap phases.
 ### Confidence & Calibration
 
 - [x] **CONF-01**: ONNX model confidence scores are calibrated (Platt/temperature scaling) so pipeline escalation thresholds produce correct Tier 2→3 escalation rates
-- [ ] **CONF-02**: When top-2 class probabilities are within 0.15 of each other, user sees both options rather than a single pre-filled suggestion
+- [x] **CONF-02**: When top-2 class probabilities are within 0.15 of each other, user sees both options rather than a single pre-filled suggestion
 - [x] **CONF-03**: Classification log captures `modelSuggestion` separately from `userChoice` to prevent model-collapse feedback loops
 
 ### Section Routing
@@ -91,7 +91,7 @@ Deferred to v3.x or later. Tracked but not in current roadmap.
 | INFER-03 | Phase 10 | Complete |
 | INFER-04 | Phase 10 | Complete |
 | INFER-05 | Phase 10 | Complete |
-| CONF-02 | Phase 10 | Pending |
+| CONF-02 | Phase 10 | Complete |
 | CONF-03 | Phase 10 | Complete |
 | CORR-01 | Phase 11 | Pending |
 | CORR-02 | Phase 11 | Pending |
