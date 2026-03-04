@@ -18,7 +18,7 @@
  */
 
 import { createSignal, createEffect, For, Show, onCleanup } from 'solid-js';
-import { state, sendCommand, setSelectedAtomId } from '../signals/store';
+import { state, sendCommand, setSelectedAtomId, ensureEmbeddingWorker } from '../signals/store';
 import { rebuildIndex, searchAtoms, autoSuggest } from '../../search/search-index';
 import {
   normalizeTextScore,
@@ -63,20 +63,11 @@ type WorkerMessage =
   | { type: 'MODEL_LOADING' };
 
 // --- Worker singleton (module-level, persists across overlay open/close) ---
+// Phase 10: Use shared embedding worker from store to prevent duplicate instances.
+// The store's ensureEmbeddingWorker() creates and manages the single worker.
 
-let embeddingWorker: Worker | null = null;
 let atomVectorMap = new Map<string, number[]>();
 let workerReady = false;
-
-function getOrCreateWorker(): Worker {
-  if (!embeddingWorker) {
-    embeddingWorker = new Worker(
-      new URL('../../search/embedding-worker.ts', import.meta.url),
-      { type: 'module' },
-    );
-  }
-  return embeddingWorker;
-}
 
 // --- Date range helpers ---
 
@@ -130,8 +121,10 @@ export function SearchOverlay(props: SearchOverlayProps) {
   });
 
   // --- Worker setup on mount ---
+  // Phase 10: ensureEmbeddingWorker() returns the shared singleton from store.
+  // This prevents creating a second worker instance when both search and classification are active.
 
-  const worker = getOrCreateWorker();
+  const worker = ensureEmbeddingWorker();
 
   const handleWorkerMessage = (event: MessageEvent<WorkerMessage>) => {
     const msg = event.data;

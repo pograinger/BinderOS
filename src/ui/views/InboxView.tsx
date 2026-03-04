@@ -144,6 +144,9 @@ export function InboxView() {
     const sectionItem = sectionItemId
       ? state.sectionItems.find((si) => si.id === sectionItemId) ?? null
       : null;
+
+    // Phase 10: include tier, confidence, and modelSuggestion for ONNX feedback loop prevention (CONF-03)
+    const currentSuggestion = triageSuggestions().get(item.id);
     logClassification({
       inboxItemId: item.id,
       content: item.content,
@@ -152,6 +155,9 @@ export function InboxView() {
       sectionItemId: sectionItemId,
       sectionItemName: sectionItem ? sectionItem.name : null,
       timestamp: Date.now(),
+      tier: currentSuggestion?.tier,
+      confidence: currentSuggestion?.confidence === 'high' ? 0.85 : 0.5,
+      modelSuggestion: currentSuggestion?.modelSuggestion,
     });
 
     sendCommand({

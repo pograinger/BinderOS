@@ -925,11 +925,77 @@ const [tieredEnabled, setTieredEnabledSignal] = createSignal(false);
 
 export { tier2Status, tieredEnabled };
 
+// --- Phase 10: Classifier load state ---
+
 /**
- * Initialize the tiered AI pipeline (Phase 8: 3-Ring Binder).
+ * Download progress for the ONNX classifier model.
+ * null = not loading / already ready
+ * 0-100 = download progress percentage
+ * -1 = indeterminate (loading from cache or unknown progress)
+ */
+const [classifierLoadProgress, setClassifierLoadProgress] = createSignal<number | null>(null);
+
+/**
+ * Whether the ONNX classifier session is loaded and ready in the embedding worker.
+ */
+const [classifierReady, setClassifierReady] = createSignal(false);
+
+export { classifierLoadProgress, classifierReady };
+
+// --- Phase 10: Shared embedding worker singleton ---
+// Single instance shared between SearchOverlay (semantic search) and Tier 2 handler (classification).
+// Avoids duplicate model downloads and double memory usage.
+
+let _embeddingWorker: Worker | null = null;
+
+/**
+ * Get the shared embedding worker, or null if not yet created.
+ * Used by Tier 2 handler to send CLASSIFY_ONNX / CLASSIFY_TYPE messages.
+ */
+export function getEmbeddingWorker(): Worker | null {
+  return _embeddingWorker;
+}
+
+/**
+ * Get or create the shared embedding worker singleton.
+ * Attaches lifecycle listeners for CLASSIFIER_PROGRESS/READY/ERROR on first creation.
+ * Called by initTieredAI() and by SearchOverlay.tsx on first open.
+ */
+export function ensureEmbeddingWorker(): Worker {
+  if (!_embeddingWorker) {
+    _embeddingWorker = new Worker(
+      new URL('../../search/embedding-worker.ts', import.meta.url),
+      { type: 'module' },
+    );
+
+    // Listen for classifier lifecycle events from the ONNX loader
+    _embeddingWorker.addEventListener('message', (event: MessageEvent) => {
+      const msg = event.data as { type: string; percent?: number; error?: string };
+      switch (msg.type) {
+        case 'CLASSIFIER_PROGRESS':
+          setClassifierLoadProgress(msg.percent ?? -1);
+          break;
+        case 'CLASSIFIER_READY':
+          setClassifierLoadProgress(null);  // Hide progress indicator once ready
+          setClassifierReady(true);
+          break;
+        case 'CLASSIFIER_ERROR':
+          // Silent fallback per locked decision — ONNX errors degrade to centroid path
+          setClassifierLoadProgress(null);
+          console.warn('[BinderOS] Classifier load failed:', msg.error);
+          break;
+      }
+    });
+  }
+  return _embeddingWorker;
+}
+
+/**
+ * Initialize the tiered AI pipeline (Phase 8 + Phase 10: 3-Ring Binder).
  *
- * Registers Tier 1 (deterministic) + Tier 3 (generative) handlers immediately.
- * Tier 2 (ONNX embedding) is registered when the embedding worker reports MODEL_READY.
+ * Registers Tier 1 (deterministic) + Tier 2 (ONNX/centroid) + Tier 3 (generative) handlers.
+ * Phase 10: Creates shared embedding worker, sends LOAD_CLASSIFIER for eager ONNX loading,
+ * registers Tier 2 handler with classifierReady getter for ONNX path when ready.
  *
  * Called once after AI is first enabled and classification history is available.
  */
@@ -938,16 +1004,64 @@ export async function initTieredAI(): Promise<void> {
   setTier2Status('initializing');
 
   try {
-    const { initTieredPipeline } = await import('../../ai/tier2');
+    const { initTieredPipeline, registerHandler } = await import('../../ai/tier2');
+    const { createTier2Handler } = await import('../../ai/tier2/tier2-handler');
     const { getClassificationHistory } = await import('../../storage/classification-log');
+    const { loadTypeCentroids, loadSectionCentroids } = await import('../../ai/tier2/centroid-builder');
+
     const history = await getClassificationHistory();
     initTieredPipeline(history);
+
+    // Load persisted centroids for the centroid fallback path
+    const typeCentroids = await loadTypeCentroids();
+    const sectionCentroids = await loadSectionCentroids();
+
+    // Module-level centroid references (updated after each rebuild)
+    let _typeCentroids = typeCentroids;
+    let _sectionCentroids = sectionCentroids;
+
+    // Create and configure shared embedding worker
+    const worker = ensureEmbeddingWorker();
+
+    // Send LOAD_CLASSIFIER to trigger eager ONNX model loading
+    worker.postMessage({ type: 'LOAD_CLASSIFIER' });
+
+    // Register Tier 2 handler with both ONNX and centroid capabilities
+    const tier2 = createTier2Handler(
+      getEmbeddingWorker,
+      () => _typeCentroids,
+      () => _sectionCentroids,
+      () => classifierReady(),
+    );
+    registerHandler(tier2);
+
+    // Expose centroid update function for post-classification rebuilds
+    // (store on module scope so classification-log callbacks can call it)
+    _updateTier2Centroids = (type, section) => {
+      _typeCentroids = type;
+      _sectionCentroids = section;
+    };
+
     setTieredEnabledSignal(true);
     setTier2Status('ready');
   } catch (err) {
     console.error('[BinderOS] Tiered pipeline init failed:', err);
     setTier2Status('error');
   }
+}
+
+/** Internal: update centroid references after rebuild. Set by initTieredAI. */
+let _updateTier2Centroids: ((type: import('../../ai/tier2/centroid-builder').CentroidSet | null, section: import('../../ai/tier2/centroid-builder').CentroidSet | null) => void) | null = null;
+
+/**
+ * Update Tier 2 centroid references after a classification event triggers a rebuild.
+ * Called by the centroid rebuild pipeline (outside this module) via dynamic import.
+ */
+export function updateTier2Centroids(
+  typeCentroids: import('../../ai/tier2/centroid-builder').CentroidSet | null,
+  sectionCentroids: import('../../ai/tier2/centroid-builder').CentroidSet | null,
+): void {
+  _updateTier2Centroids?.(typeCentroids, sectionCentroids);
 }
 
 // --- Phase 6: Review briefing orchestration ---
