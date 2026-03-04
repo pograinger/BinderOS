@@ -1,16 +1,24 @@
 # Feature Research
 
-**Domain:** AI orchestration layer for local-first PKM / GTD tool (BinderOS v2.0)
-**Researched:** 2026-02-22
-**Confidence:** MEDIUM — pattern-level findings are HIGH (market well-documented); specific BinderOS interaction designs are MEDIUM (novel combination of existing patterns)
+**Domain:** Fine-tuned in-browser ML classification models for GTD intelligence (BinderOS v3.0)
+**Researched:** 2026-03-03
+**Confidence:** MEDIUM-HIGH — ONNX/Transformers.js pipeline HIGH (official docs verified); synthetic data pipeline MEDIUM (general LLM-labeling well-documented, GTD-specific is novel); model drift / incremental learning MEDIUM (research-backed, but browser-specific adaptation is LOW)
 
 ---
 
 ## Context
 
-This research targets BinderOS v2.0 specifically. v1.0 ships with: typed atoms (Task/Fact/Event/Decision/Insight), entropy engine (staleness decay, priority scoring, compression candidates), advisory-first inbox/task caps, query-based pages, full-text + semantic search, command palette, keyboard navigation, tags, backlinks, saved filters, and card-by-card triage UX. The v2.0 AI layer builds on these foundations — it does not replace them.
+This research targets BinderOS **v3.0** specifically. The v2.0 AI layer (shipped 2026-03-03) built:
 
-**What "AI orchestration" means in BinderOS:** AI reads the entropy state and helps the user maintain low-entropy through guided reviews and intelligent triage, while the user stays the author of all content.
+- Tiered pipeline: Tier 1 (keyword heuristics + Jaccard history) → Tier 2 (MiniLM embedding cosine similarity to centroids) → Tier 3 (cloud LLM escalation)
+- Classification log in Dexie: stores `ClassificationEvent` with content, suggestedType, chosenType, sectionItemId, tier, confidence, and cached MiniLM embedding
+- Centroid builder: computes per-type average embedding vectors from classification history
+- Tasks handled: `classify-type`, `route-section`, `extract-entities`, `assess-staleness`
+- All AI features require explicit user approval before any atom mutations
+
+**What v3.0 changes about the Tier 2 layer:** Replace centroid-similarity matching with real fine-tuned ONNX classification models — one model per task domain. Models trained on synthetic GTD data (LLM-generated, then human-curated), then converted to quantized ONNX via HuggingFace Optimum. Loaded in the existing embedding worker via `onnxruntime-web`. Tier 3 cloud LLM becomes optional quality enhancement, not a dependency.
+
+**Scope boundary for this research:** Features new to v3.0 only. The floating orb, conversational flows, approval modal, changelog tagging, and all v2.0 UX patterns are existing baseline. Research here covers what must be built, evaluated, and managed for the ML layer itself.
 
 ---
 
@@ -18,145 +26,149 @@ This research targets BinderOS v2.0 specifically. v1.0 ships with: typed atoms (
 
 ### Table Stakes (Users Expect These)
 
-Features users assume exist in an "AI-powered" productivity tool. Missing these = the AI layer feels broken or untrustworthy.
+Features the system must have for "offline GTD intelligence" to feel complete and trustworthy. Missing these = the offline mode feels half-baked or untrustworthy compared to the cloud-backed path.
 
 | Feature | Why Expected | Complexity | Dependency on Existing System |
 |---------|--------------|------------|-------------------------------|
-| AI-suggested atom type during triage | Todoist AI (2025), n8n workflows, email triage tools all classify incoming items. Users who know BinderOS has typed atoms expect AI to suggest the type. | LOW | Requires: inbox card-by-card triage UX (shipped v1.0), five atom types (shipped v1.0) |
-| AI-suggested section/project during triage | Todoist AI learns from patterns and suggests project/section. Users expect the same in atom triage. | LOW | Requires: section structure (shipped v1.0), existing atoms as pattern corpus |
-| AI-suggested priority or urgency signal | Todoist AI analyzes deadlines, project history, dependencies to suggest P1-P4. Users expect at least a "this looks urgent" signal. | MEDIUM | Requires: computed priority scoring (shipped v1.0), entropy engine signals |
-| Explanation/reasoning for AI suggestions | 2025 UX research: users distrust AI suggestions with no reasoning. Confidence indicators + brief rationale are expected. | LOW | No upstream dependency |
-| Accept / dismiss individual suggestions | Every serious 2025 AI tool has per-suggestion accept/reject. Copilot, Notion AI, GitHub Copilot all follow this. Missing it = users feel railroaded. | LOW | Requires: additive AI mutation model (v2.0 design) |
-| AI that doesn't touch data without approval | Core trust requirement — users know AI can write atoms; they expect an approval gate. HBR (2025) documents AI productivity backlash from over-automation. | LOW | Requires: additive mutation model + changelog tagging |
-| Opt-in / opt-out of AI features | Privacy-conscious users (BinderOS's target audience) need explicit control. Any cloud API use requires explicit consent. | LOW | No upstream dependency |
-| Visual distinction of AI-generated content | GitHub Copilot, Notion AI: suggestions are visually distinct from user content. If AI touches something, it must be labeled. | LOW | Requires: changelog source field (v2.0) |
+| **Offline triage type classification** | If v3.0 promises "works without cloud," the atom type suggestion (task/fact/event/decision/insight) must work offline. Users who have disabled cloud API expect this to just work. | MEDIUM | Requires: existing embedding worker (`src/search/embedding-worker.ts`), Tier 2 handler (`src/ai/tier2/tier2-handler.ts`), classification log with embeddings. Replace centroid lookup with ONNX model inference in the same worker. |
+| **Offline section routing** | Same expectation — if type classification works offline, PARA section routing should too. Users do not want one feature to work offline and the other to require cloud. | MEDIUM | Requires: existing `route-section` task in pipeline, section centroid logic. Replace centroids with a dedicated section-routing ONNX model or extend the type classifier with a routing head. |
+| **Model quality parity or better vs. Tier 2 centroids** | Users experience Tier 2 today via centroid similarity. v3.0 must not regress. If fine-tuned model produces worse suggestions than centroids, the whole v3.0 rationale collapses. | MEDIUM | Requires: evaluation harness comparing centroid accuracy vs. model accuracy on the same held-out classification log data. |
+| **Model loads without blocking UI** | Transformers.js v3 caches models to IndexedDB/Cache API after first download. Subsequent loads must not block the UI or delay triage. Cold start (first-ever load) needs a visible progress indicator. | MEDIUM | Requires: model loading in the existing embedding worker (off main thread already). Add first-load progress message back to main thread. |
+| **Model stored in browser cache across sessions** | Users must not re-download the model on every session. Transformers.js caches automatically to Cache API; confirm this works for custom fine-tuned models loaded from a local path or bundled URL. | LOW-MEDIUM | Requires: model hosting strategy (bundle with app vs. serve from CDN vs. OPFS). First-load size budget must be declared to user. |
+| **Graceful fallback if model fails to load** | Browser storage quotas, network errors, or corrupt caches can cause model load failures. The pipeline must fall through to Tier 1 (keyword heuristics) if Tier 2 ONNX fails. | LOW | Requires: existing tiered pipeline escalation logic — already handles Tier 2 absence. Verify failure path when model file is missing or corrupt. |
+| **Training data visible and auditable** | Privacy-first users will ask: "What did you train this on?" Synthetic data must be generated without including any user's personal atom content. Training data must be inspectable (stored in repo). | LOW | No code dependency. Policy and generation discipline. Training corpus lives in `scripts/training-data/` — user can inspect. |
+| **User corrections feed back into model quality** | Every time a user overrides an AI suggestion, that is a labeled correction. The classification log already captures `chosenType` vs `suggestedType`. This signal must be surfaced for retraining, not silently discarded. | MEDIUM | Requires: classification log query to extract correction events (chosenType != suggestedType at suggestedTier === 2). These become priority retraining examples. |
+| **Confidence score calibration** | Current centroid confidence is a heuristic (cosine similarity × separation). Fine-tuned model outputs softmax probabilities — these must be calibrated to the same 0–1 confidence scale the pipeline uses for escalation thresholds. | MEDIUM | Requires: calibration step post-training (Platt scaling or temperature scaling). Must not break the CONFIDENCE_THRESHOLDS logic in `src/ai/tier2/types.ts`. |
+
+---
 
 ### Differentiators (Competitive Advantage)
 
-Features that set BinderOS's AI layer apart from Notion AI, Todoist AI, and generic chat assistants. Not required for trust, but define the product identity.
+Features that go beyond "ONNX model in browser" to make the v3.0 ML layer genuinely novel for a GTD tool.
 
 | Feature | Value Proposition | Complexity | Dependency on Existing System |
 |---------|-------------------|------------|-------------------------------|
-| Entropy-informed triage suggestions | No competitor AI reads a staleness/entropy model before suggesting classification. BinderOS's AI can say "this looks like a Fact — and you have 3 similar stale Facts in the Resources section." Generic classifiers can't. | MEDIUM | Requires: entropy engine (shipped v1.0), semantic embeddings (shipped v1.0), link density tracking (shipped v1.0) |
-| GTD-structured guided weekly review (conversational) | FacileThings has a guided review with steps, but no AI. GTD Connect's 2025 podcast acknowledges AI in GTD is nascent. A conversational review that walks through Get Clear → Get Current → Get Creative with AI pre-analysis is genuinely novel. | HIGH | Requires: all atom types + entropy signals (shipped v1.0); requires conversational question-flow UX (v2.0) |
-| Compression coach: AI explains *why* an atom is stale | v1.0 surfaces compression candidates mechanically (zero-link, decayed score). AI can explain: "This Fact hasn't been linked since October, has 3 semantically similar Facts, and predates your decision to switch to X — consider archiving or merging." | MEDIUM | Requires: semantic embeddings (shipped v1.0), staleness decay (shipped v1.0), link graph (shipped v1.0) |
-| Context-aware floating orb with GTD menu | Raycast AI (2025) is the closest model: single hotkey, floating window, context-aware. No PKM tool has a floating entry point that reads the current view's entropy state and surfaces a relevant AI action at top. | HIGH | Requires: page context awareness, entropy signals (shipped v1.0) |
-| Conversational question-flow AI UX (GSD pattern) | Most productivity AI is a chat sidebar (Notion AI) or inline ghost text (GitHub Copilot). A structured 3-4 option + freeform question flow for reviews is different — less open-ended, more guided, matches how GTD reviews actually work. | MEDIUM | Requires: conversational UX component (v2.0) |
-| Tiered LLM: browser WASM for fast tasks, cloud for reasoning | WebLLM (MLC, 2024) achieves 80% native GPU performance in-browser. Small models (Phi-3-mini, SmolLM) handle classification. Cloud APIs handle review conversations. No PKM tool does this tiering explicitly. | HIGH | Requires: pluggable AI interface (v2.0), WASM worker infrastructure (shipped v1.0 for scoring) |
-| AI mutations tagged + reversible via existing changelog | BinderOS's changelog already tracks all mutations. AI suggestions use the same infrastructure with a source field. Users can "undo the AI's last 3 suggestions" the same way they undo their own edits. | MEDIUM | Requires: changelog (shipped v1.0), source field extension (v2.0) |
-| AI-surfaced related atoms during triage | When classifying an inbox item, AI shows 2-3 semantically similar existing atoms: "This looks related to your Decision: Switch to Postgres from March." Reduces duplication without forcing merge. | MEDIUM | Requires: semantic embeddings (shipped v1.0) |
-| Review pre-analysis: AI summarizes entropy state before review begins | Before weekly review, AI generates a briefing: "You have 7 stale Tasks, 2 Projects with no next action, and 4 compression candidates. Here's where to focus." Notion AI requires manual prompt; this is proactive and review-specific. | MEDIUM | Requires: entropy engine + all scoring signals (shipped v1.0) |
+| **GTD-domain fine-tuned classifier (not generic)** | Generic text classifiers (DistilBERT on SST-2, BERT on news categories) do not understand GTD semantics. "Buy milk" is a task; "Milk is a dairy product" is a fact. A model fine-tuned on GTD-domain examples outperforms a generic classifier on these distinctions. No competitor ships a GTD-domain ONNX model. | HIGH | Requires: synthetic training data generation pipeline (LLM-generated GTD examples per atom type), Python fine-tuning environment (separate from app). Output: ONNX file committed to repo or served as asset. |
+| **Synthetic training data pipeline for personal productivity** | Using a cloud LLM to generate labeled GTD training examples (100–500 examples per class) is a novel data source for this domain. The training corpus itself becomes a reusable asset. Users can contribute curated corrections back to the public dataset (opt-in). | HIGH | Requires: Python script (`scripts/generate-training-data.py`) calling Anthropic/OpenAI API. Output: JSONL files (`scripts/training-data/*.jsonl`). No app-side dependency. |
+| **Correction-driven retraining loop** | Most in-browser ML classifiers are static — the model ships, never improves. BinderOS captures every user correction (chosen type differs from suggested type). These corrections become the highest-quality training data for the next model version. The retraining loop: export corrections from Dexie → add to training corpus → retrain → re-export ONNX → ship. | HIGH | Requires: Dexie export utility for classification log, Python retraining script, CI/CD or manual retrain process. The app-side hook is already in `logClassification()`. |
+| **Staleness score model (ML-based)** | Current staleness assessment is WASM-computed decay + Tier 1 score interpretation (threshold-based string output). A fine-tuned regression or classification model that predicts "compress now / review soon / still fresh" from content features + entropy signals would outperform threshold-based rules — especially for edge cases (long-lived tasks that are still active vs. truly stale). | HIGH | Requires: staleness regression model, training data from historical classification log (atoms with known decay trajectories). Needs >100 labeled staleness examples per class — bootstrapped via synthetic data + WASM score labels. |
+| **Priority prediction model** | Current priority is a deterministic WASM function (entropy × recency × link density). ML model trained on user behavior (which atoms did they work on? which did they ignore?) could predict behavioral priority better than the formula alone. | VERY HIGH | Requires: behavioral signal capture (not currently stored). High privacy sensitivity. Defer to future milestone unless the WASM formula proves insufficient. Flag as research item. |
+| **Compression candidate model (beyond centroid similarity)** | Current compression coach uses WASM staleness + semantic similarity to surface candidates. A classification model fine-tuned to predict "compress-worthy / keep / review" from combined signals (staleness, link count, type, age, similarity cluster) would give higher-precision candidates with less noise. | HIGH | Requires: compression candidate training data (labeled atoms from user's own history — privacy-sensitive). Synthetic examples can bootstrap, but real user corrections matter most here. |
+| **Model quality dashboard in settings panel** | Show users: model version, accuracy on their correction history, number of corrections incorporated, last retrain date. Gives power users confidence in the system. No competitor shows this. | MEDIUM | Requires: metadata stored with model (version, training date, accuracy on hold-out set). Settings panel UX already identified as tech debt target in v3.0. |
+| **Offline-first with cloud-quality results** | With fine-tuned ONNX models, Tier 2 achieves quality close to cloud LLM for the fixed-label classification tasks (type and section). Cloud LLM becomes an escalation path for ambiguous or novel cases only. The system works fully offline — no API key, no network — and produces good results rather than degraded ones. This is the core v3.0 value proposition. | HIGH (system-level) | Requires: all of the above. The differentiator is the sum of parts. |
+
+---
 
 ### Anti-Features (Commonly Requested, Often Problematic)
 
-Features that seem like obvious AI additions but create serious problems in BinderOS's context.
-
 | Feature | Why Requested | Why Problematic | Alternative |
 |---------|---------------|-----------------|-------------|
-| AI auto-creates atoms from capture | "Just let AI classify and save my capture automatically" | Defeats the entire BinderOS thesis — the act of classification is where value is encoded. Auto-created atoms bypass type enforcement, can add noise instead of signal, and undermine user trust in the system model of their life. HBR 2025 documents AI content ("workslop") eroding trust. | AI *suggests* type/section/priority, user confirms with one click. Fast, but never automatic. |
-| AI-generated atom content (summaries, notes) | Notion AI writes summaries; users want the same | AI-authored atoms mean the system contains facts the user didn't validate. BinderOS's core value is that every atom encodes the user's verified understanding. AI can suggest a label, not write a Fact. | AI suggests *metadata* (type, section, links, priority signal) — never content. User remains the sole author. |
-| AI that runs on a schedule / autonomous agent | "Run the weekly review automatically overnight" | Autonomous AI agents that modify the system without the user present violate the human-in-loop principle BinderOS is built on. Also breaks the review ritual itself — the value of GTD review is the *thinking*, not the processing. | Proactive briefing on demand: user triggers review, AI pre-analyzes and presents findings. Never runs autonomously. |
-| Chat sidebar as primary AI interface | Notion AI, ChatGPT-style sidebar is familiar | Open-ended chat invites prompt engineering, off-topic queries, and turns the AI into a general assistant rather than a focused orchestrator. Also adds cognitive load during review. | Structured question flows (3-4 options + freeform) for all AI interactions. Constrains AI to productive, review-relevant actions. |
-| AI priority override (AI sets priority, not entropy engine) | "Let AI decide what I should do today" | BinderOS's computed priority is a deterministic formula users can understand and trust. AI priority labels are probabilistic and opaque. Two systems disagreeing on priority creates confusion. | AI surfaces entropy signals and patterns *as context* during review. Priority remains the computed function. AI explains *why* the engine scores something high; doesn't override it. |
-| AI-suggested new tasks / projects (creative suggestions) | "AI should suggest what I should be working on" | Scope creep into personal coaching / second brain territory. Adds atoms the user didn't intend to add. Violates the anti-accumulation philosophy. | AI flags *existing* atoms that need attention; never proposes new ones. |
-| Persistent AI learning / personalization model | "AI should learn my patterns over time" | Requires storing behavioral data and model weights, adds significant complexity, and creates a privacy surface. Small WASM models can't do this; cloud models introduce data-leaving-device risk. | Stateless AI per-session: AI reads the current entropy state and atom graph at review time. No persistent behavioral model. Session context is sufficient for classification quality. |
-| AI confidence scores as primary display | "Show me how confident AI is about each suggestion" | Displaying confidence percentages invites users to game the threshold, creates anxiety about borderline suggestions, and adds visual noise. Research shows confidence indicators improve trust only when paired with reasoning, not when shown in isolation. | Show reasoning ("This looks like a Fact because it's a statement of truth, not an action") rather than a number. Dismiss option is always available. |
+| **Bundle large model with app** | "Ship the model so there's no download" | Fine-tuned DistilBERT-base-uncased INT8 is ~60–80MB. Bundling this doubles the app size and breaks Vite's chunk optimization. Browser cache is the right mechanism. | Host model as a separate static asset (same CDN as app or GitHub Releases). Transformers.js caches to browser Cache API automatically after first download. Show first-load progress indicator. |
+| **Re-train the model in-browser** | "Let the model learn from my corrections locally, continuously" | In-browser retraining of transformer models is not feasible — ONNX Runtime Web is an inference runtime only, not a training runtime. The model graph is frozen at export. In-browser "retraining" would require PyTorch.js or TensorFlow.js with a full training graph, adding 10–50MB+ and significant memory pressure. | Use the correction log as input to an offline retraining script (Python, run periodically). Ship updated ONNX file as a new model version. Incremental improvement via version releases, not live in-browser adaptation. |
+| **Auto-tune confidence thresholds per user** | "Learn my tolerance for AI suggestions" | Dynamic thresholds that vary per-user create a moving target for the pipeline escalation logic. A user whose threshold drifts means Tier 3 fires more or less often unpredictably. Hard to debug, hard to trust. | Fixed thresholds per task type (already in `CONFIDENCE_THRESHOLDS`). Allow user to set a global "AI assertiveness" slider (conservative / balanced / assertive) that maps to pre-defined threshold profiles. Simple, transparent, user-controlled. |
+| **Separate models per user** | "Fine-tune a personal model on my data" | GTD atom content is personal. Using it as training data requires explicit consent, secure handling, and a training infrastructure with privacy guarantees. The privacy surface is too large for an open-source tool without a backend. | Shared base model (trained on synthetic GTD data) + user-specific correction signals stored locally in the classification log. Corrections influence retraining of the shared model (anonymized, opt-in), but not per-user personalization. |
+| **Online learning / incremental model updates** | "Update the model weights immediately when I correct a suggestion" | Catastrophic forgetting: neural networks updated on a single example destroy prior learned patterns. A single correction from "task" to "insight" would corrupt the model for future "task" items unless proper continual learning techniques are applied — techniques that are not supported in ONNX Runtime Web (inference only). | Log corrections in Dexie. Run offline retraining script against accumulated corrections + original training data (prevents forgetting). Corrections only affect the model after deliberate retrain + ship cycle. |
+| **Model accuracy guarantees ("95% accurate")** | "Tell me this model is X% accurate" | Accuracy on a generic benchmark is meaningless for a personal productivity tool. The user's atom content distribution differs from any training set. Synthetic training data further decouples synthetic-world accuracy from real-world performance. | Report: "Model trained on N examples. You've made M corrections. Corrections are queued for next retrain." Show trend (is accuracy improving or stable?) not a single number. |
+| **Multi-task single model (type + section + staleness in one forward pass)** | "Efficient — one model does everything" | Multi-task learning requires a shared backbone architecture. Section routing depends on user-specific sections (dynamic labels), making it impossible to pre-train a single shared model for all tasks. Type classification labels are fixed (5 classes); section routing labels vary per user. These must be separate models or separate heads with different output layers. | Type classifier: shared fine-tuned model (fixed 5-class output). Section routing: embed + nearest-neighbor to existing atom section embeddings (reuse MiniLM already loaded). Staleness: separate lightweight model or continue WASM rule-based with ML refinement. |
+| **WebGPU acceleration for model inference** | "Make it faster with WebGPU" | WebGPU is not universally available (Firefox: flag only; iOS: not supported). The MiniLM model already runs <50ms on CPU ONNX. For a 5-class classification task, CPU inference is adequate. Adding a WebGPU path creates a maintenance bifurcation for negligible real-world gain on short inputs. | CPU ONNX is the default path. If WebGPU becomes universally available in future, add `{device: 'webgpu'}` as an optional accelerator behind a settings flag. Don't build it now. |
 
 ---
 
 ## Feature Dependencies
 
 ```
-[Floating Orb UI]
-    └──requires──> [Context reader: current page + entropy state]
-                       └──requires──> [Entropy engine signals (shipped v1.0)]
-    └──requires──> [Conversational question-flow UX]
-    └──provides──> [Entry point to all AI features]
+[Fine-tuned Type Classifier ONNX]
+    └──requires──> [Training data: synthetic GTD examples (task/fact/event/decision/insight)]
+    └──requires──> [Python fine-tuning script (PyTorch + HuggingFace Transformers)]
+    └──requires──> [ONNX export via HuggingFace Optimum (INT8 quantization)]
+    └──replaces──> [Centroid similarity in Tier 2 handler for classify-type task]
+    └──uses──> [Existing embedding worker for model loading + inference]
 
-[Smart Inbox Triage]
-    └──requires──> [Card-by-card triage UX (shipped v1.0)]
-    └──requires──> [Pluggable AI interface]
-    └──requires──> [Browser WASM LLM or cloud API]
-    └──enhances──> [Entropy engine] (better-classified atoms = better scores)
-    └──reads──> [Semantic embeddings (shipped v1.0)]
+[Synthetic Training Data Pipeline]
+    └──requires──> [Cloud LLM access (Anthropic/OpenAI) for generation script]
+    └──requires──> [Labeled JSONL output format matching classifier input schema]
+    └──provides──> [Training corpus for all fine-tuned models]
+    └──note──> [No app-side code dependency — pure Python + LLM API]
 
-[Conversational Question-Flow UX]
-    └──requires──> [Pluggable AI interface]
-    └──provides──> [Interaction pattern for all AI features]
-    └──note──> [Must work with: triage, reviews, compression coach]
+[Section Routing (Offline)]
+    └──option-A──> [Fine-tuned section classifier: requires dynamic-label handling — user sections vary]
+    └──option-B──> [MiniLM embed + nearest-neighbor to existing section atom embeddings]
+    └──note──> [Option B reuses existing MiniLM worker with no new model download]
+    └──depends-on──> [Section atoms existing in Dexie with embeddings]
 
-[Guided Weekly Review]
-    └──requires──> [Conversational question-flow UX]
-    └──requires──> [Review pre-analysis briefing]
-    └──requires──> [Cloud API or capable local model]
-    └──reads──> [All entropy signals (shipped v1.0)]
-    └──reads──> [All atom types and their scores]
+[Correction-Driven Retraining Loop]
+    └──requires──> [Classification log query: chosenType != suggestedType AND suggestedTier === 2]
+    └──requires──> [Dexie export utility (offline script, not in-app)]
+    └──requires──> [Python retraining script that merges corrections + original training data]
+    └──outputs──> [New ONNX model version to replace previous]
+    └──note──> [The app-side hook already exists in logClassification()]
 
-[Review Pre-Analysis Briefing]
-    └──requires──> [Pluggable AI interface]
-    └──requires──> [Entropy engine aggregate state (shipped v1.0)]
-    └──can use──> [Browser WASM LLM] (summarization, low complexity)
+[Staleness Score Model]
+    └──requires──> [Training data: atoms labeled with WASM staleness score + manual compress/keep/review label]
+    └──requires──> [WASM score signals passed as features alongside text content]
+    └──enhances──> [assess-staleness task in Tier 1 handler (replaces threshold logic)]
 
-[Compression Coach]
-    └──requires──> [Staleness decay (shipped v1.0)]
-    └──requires──> [Semantic embeddings (shipped v1.0)]
-    └──requires──> [Link density tracking (shipped v1.0)]
-    └──requires──> [Pluggable AI interface]
-    └──enhances──> [Existing compression candidate list (shipped v1.0)]
+[Compression Candidate Model]
+    └──requires──> [Staleness Score Model] (shares signal space)
+    └──requires──> [Training data: labeled compress-worthy / keep / review examples]
+    └──enhances──> [Compression coach: replaces heuristic candidate selection]
 
-[AI Mutation Tracking]
-    └──requires──> [Changelog with source field (extends shipped v1.0)]
-    └──provides──> [Reversibility for all AI suggestions]
-    └──required by──> [All AI features that propose changes]
+[Model Quality Dashboard (Settings)]
+    └──requires──> [Model metadata: version, training date, training corpus size, accuracy on hold-out]
+    └──requires──> [Settings panel tech debt cleanup (already in v3.0 scope)]
+    └──reads──> [Classification log: count of corrections, correction rate trend]
 
-[Pluggable AI Interface]
-    └──requires──> [Abstract LLM provider interface]
-    └──provides──> [Swappable backends: WASM / cloud / disabled]
-    └──required by──> [All AI features]
+[Confidence Calibration]
+    └──requires──> [Fine-tuned model outputs softmax probabilities]
+    └──requires──> [Calibration step: Platt scaling or temperature scaling on hold-out set]
+    └──ensures──> [Pipeline escalation thresholds in CONFIDENCE_THRESHOLDS remain valid]
 
-[Tiered LLM Infrastructure]
-    └──requires──> [Pluggable AI interface]
-    └──requires──> [WASM worker infrastructure (extends shipped v1.0)]
-    └──provides──> [Fast classification (browser) + reasoning (cloud)]
+[Model Storage / Caching]
+    └──uses──> [Transformers.js automatic Cache API caching (built-in)]
+    └──requires──> [Model hosting: static asset URL (same CDN, GitHub Releases, or bundled as separate chunk)]
+    └──requires──> [First-load progress indicator in existing embedding worker → main thread message]
+    └──note──> [IndexedDB is NOT the storage mechanism — Cache API is. No Dexie conflict.]
 ```
 
 ### Dependency Notes
 
-- **Pluggable AI interface is the foundation:** All AI features depend on an abstract interface that can route to browser WASM model, cloud API, or null provider. Must be built before any AI feature.
-- **Conversational question-flow UX is the shared interaction layer:** Triage suggestions, review flows, and compression coaching all use the same question-flow component. Build once, use everywhere.
-- **Smart triage is the lowest-risk entry point:** It enhances an existing interaction (card-by-card triage) with suggestions. Lower stakes than review automation. Build first to establish AI suggestion patterns.
-- **Weekly review requires the most capable model:** Get Clear/Get Current/Get Creative with conversational AI requires multi-turn context. Must escalate to cloud API. Don't ship this with WASM-only.
-- **Changelog source field is low-effort, high-trust:** The existing changelog needs only a `source: "ai" | "user"` field. This small addition enables full reversibility of all AI changes without a new system.
-- **Floating orb is the delivery mechanism, not the feature:** Build AI features first, then wire them to the orb. Don't build the orb and ship it empty.
+- **Synthetic data pipeline is the critical path.** Without training data, there is no fine-tuned model to deploy. This is the first thing to build — before any app-side code changes.
+- **Type classifier is the highest-ROI first model.** It handles the highest-frequency task (inbox triage). Five fixed output classes (task/fact/event/decision/insight) means a shared model works for all users.
+- **Section routing is user-specific.** Section labels differ per user setup. Do not attempt a fine-tuned section routing model shared across users — use embedding-based nearest-neighbor to the user's own section atoms instead (Option B). This avoids the dynamic-label problem entirely and reuses the MiniLM model already loaded.
+- **Staleness and compression models are optional v3.0 scope.** The type classifier alone is a meaningful v3.0 upgrade. Staleness and compression models add value but require additional training data and are higher-risk on quality.
+- **Confidence calibration must happen before the model goes into the pipeline.** Uncalibrated softmax probabilities will misfire escalation thresholds. Platt scaling on a small hold-out set (20% of training data) is sufficient.
+- **Correction loop does not require in-app tooling for v3.0.** Export classification log from Dexie via DevTools or a one-time export script, retrain offline, ship new ONNX. The infrastructure need not be polished for v3.0.
 
 ---
 
 ## MVP Definition
 
-### Launch With (v2.0)
+### Launch With (v3.0 — Local AI + Polish milestone)
 
-Minimum viable AI layer — validates that AI orchestration improves the review ritual without breaking the human-in-loop trust model.
+The minimum set that delivers "full offline GTD intelligence" as a meaningful upgrade over centroid similarity.
 
-- [ ] **Pluggable AI interface** — abstract provider that routes to WASM / cloud API / null. Without this, no other AI feature can be built or tested.
-- [ ] **Tiered LLM infrastructure** — browser WASM model for fast classification, cloud API for conversational review. Enables appropriate model for each use case.
-- [ ] **AI-suggested type + section during inbox triage** — lowest-risk, highest-frequency interaction. User sees suggestion on every triage card. Validates accept/dismiss pattern.
-- [ ] **Conversational question-flow UX component** — shared component for all AI interactions (3-4 options + freeform). Used by triage, review, compression. Build once.
-- [ ] **AI mutation changelog tagging** — source field on all AI-originated changes. Enables reversibility. Required for trust, low implementation cost.
-- [ ] **Floating orb** — always-present entry point. Context-aware (reads current page + entropy state). GTD action menu. Without delivery mechanism, AI features are hard to discover.
-- [ ] **Review pre-analysis briefing** — AI-generated entropy state summary before weekly review begins. Low model requirement (can use WASM). High value: sets review agenda.
+- [ ] **Synthetic training data corpus (type classification)** — 300–500 labeled GTD examples per atom type (task, fact, event, decision, insight) generated via cloud LLM. Stored in `scripts/training-data/type-classification.jsonl`. This is the prerequisite to everything else.
+- [ ] **Python fine-tuning script** — Fine-tune DistilBERT (or MiniLM classification head) on GTD corpus. Export to ONNX INT8 via HuggingFace Optimum. Reproducible, committed to `scripts/train-type-classifier.py`. Produces `public/models/type-classifier/` output.
+- [ ] **ONNX type classifier integrated into Tier 2** — Load the fine-tuned model in the existing embedding worker. Replace centroid cosine similarity with a proper classification forward pass for the `classify-type` task. Confidence score from softmax probabilities (calibrated).
+- [ ] **First-load model download UX** — Progress indicator when model downloads for the first time. Clear message ("Downloading offline classifier, ~60MB, one-time only"). Subsequent loads from Cache API: silent.
+- [ ] **Graceful fallback if model fails** — If ONNX model fails to load or errors during inference, fall through to Tier 1 keyword heuristics. Log the failure. No user-visible crash.
+- [ ] **Correction-driven retraining utility** — Offline script (`scripts/export-corrections.ts` or similar) that exports classification corrections from Dexie as JSONL for the next retraining run. App-side: no changes needed (classification log already captures corrections).
+- [ ] **Settings panel: model status display** — In the existing settings panel (v3.0 tech debt target), show: model version, download status, number of corrections logged. Simple, not a full dashboard.
+- [ ] **Tech debt cleanup** — Settings panel UX, status bar AI indicator, dead code in llm-worker.ts, isReadOnly enforcement, stale AIOrb comments (already in v3.0 scope).
 
-### Add After Validation (v2.x)
+### Add After Validation (v3.x)
 
-- [ ] **Guided GTD weekly review flow** — full Get Clear / Get Current / Get Creative with conversational AI. Requires cloud API. Add once basic triage suggestions are validated.
-- [ ] **Compression coach with AI explanations** — today v1.0 surfaces candidates mechanically. Upgrade to AI-explained reasoning ("stale because X, similar to Y"). Add when users engage with compression candidates.
-- [ ] **Related atoms during triage** — show 2-3 semantically related existing atoms when classifying inbox item. Already have embeddings; upgrade triage UI to show them.
-- [ ] **AI-suggested priority signal** — overlay on existing computed priority. Show only during review, not persistently. Validate that users find it useful vs. noise.
+- [ ] **Staleness score classifier** — Fine-tuned model for compress/review/keep prediction. Add once the type classifier is validated and the correction loop is producing quality data. Needs 100+ labeled staleness examples per class.
+- [ ] **Compression candidate model** — Replaces heuristic candidate selection in compression coach. Higher complexity; add after staleness model is stable.
+- [ ] **Section routing via nearest-neighbor** — Upgrade offline section routing from centroid average to per-atom embedding nearest-neighbor. Uses existing embeddings stored in classification log. Higher accuracy, same model.
+- [ ] **Model quality dashboard** — Full settings panel view: correction count, model accuracy trend, training date, corpus size. Add when enough users are running the correction loop.
+- [ ] **Priority prediction (research spike)** — Investigate whether behavioral signal capture is feasible without privacy violation. High risk, high reward. Treat as a spike before committing.
 
-### Future Consideration (v3+)
+### Future Consideration (v4+)
 
-- [ ] **On-device model selection UX** — let users choose which WASM model to load. Requires model download + management UI. High complexity, low priority until WASM model ecosystem matures.
-- [ ] **Review history and trends** — track weekly review completion rates, entropy scores over time. AI can spot patterns ("your inbox spikes every Thursday"). Requires historical data accumulation.
-- [ ] **AI-assisted natural language capture** — capture in free text, AI parses to structured atom. High complexity, high risk of bypassing classification ritual. Defer and validate desire first.
+- [ ] **Community training data contributions** — Opt-in mechanism for users to contribute anonymized corrections to a shared public corpus. Requires consent UX, anonymization pipeline, and a governance model. Significant complexity.
+- [ ] **Domain-specific model variants** — Users with very specific GTD domains (legal, medical, academic) might benefit from domain-adapted models. Feasible with fine-tuning tooling but requires more training data per domain.
+- [ ] **WebGPU acceleration** — Add `{device: 'webgpu'}` inference path for users on Chrome/Edge with discrete GPUs. Only after WebGPU achieves broader browser support.
 
 ---
 
@@ -164,122 +176,119 @@ Minimum viable AI layer — validates that AI orchestration improves the review 
 
 | Feature | User Value | Implementation Cost | Priority | Notes |
 |---------|------------|---------------------|----------|-------|
-| Pluggable AI interface | HIGH | MEDIUM | P1 | Foundation — nothing else works without it |
-| AI mutation changelog tagging | HIGH | LOW | P1 | Trust-critical, low effort (extends existing changelog) |
-| Conversational question-flow UX | HIGH | MEDIUM | P1 | Shared component used by all AI features |
-| Floating orb | HIGH | HIGH | P1 | Discovery mechanism — without it, AI features are buried |
-| AI-suggested type during triage | HIGH | LOW | P1 | Highest-frequency AI interaction, lowest stakes |
-| AI-suggested section during triage | HIGH | LOW | P1 | Same interaction, same cost |
-| Review pre-analysis briefing | HIGH | MEDIUM | P1 | High value, feasible with WASM |
-| Tiered LLM infrastructure | HIGH | HIGH | P1 | Enables appropriate model per task |
-| Related atoms during triage | MEDIUM | MEDIUM | P2 | Already have embeddings; upgrade triage UI |
-| AI-suggested priority signal | MEDIUM | MEDIUM | P2 | Validate after basic triage suggestions work |
-| Guided weekly review flow | HIGH | HIGH | P2 | Cloud API required; add after triage is stable |
-| Compression coach with AI explanations | MEDIUM | MEDIUM | P2 | Upgrade existing compression candidate UX |
-| On-device model selection | LOW | HIGH | P3 | WASM ecosystem still maturing |
-| Review history + trend analysis | MEDIUM | HIGH | P3 | Requires data accumulation over time |
+| Synthetic training data corpus | HIGH | MEDIUM | P1 | Prerequisite — nothing else builds without it |
+| Python fine-tuning + ONNX export script | HIGH | MEDIUM | P1 | Reproducible pipeline; output feeds all model features |
+| ONNX type classifier in Tier 2 | HIGH | MEDIUM | P1 | Core v3.0 upgrade — replaces centroid similarity |
+| Confidence calibration | HIGH | LOW | P1 | Required for pipeline escalation correctness |
+| First-load download UX | HIGH | LOW | P1 | User trust — must know why app is pausing |
+| Graceful fallback on model failure | HIGH | LOW | P1 | Resilience — degrades to Tier 1, never crashes |
+| Correction export utility | MEDIUM | LOW | P1 | Enables future retraining cycles |
+| Settings: model status display | MEDIUM | LOW | P1 | Tech debt target anyway; add model info here |
+| Section routing via nearest-neighbor | HIGH | MEDIUM | P2 | Better offline routing, no new model download |
+| Staleness score classifier | MEDIUM | HIGH | P2 | Add after type classifier is validated |
+| Compression candidate model | MEDIUM | HIGH | P2 | Higher complexity; needs staleness model first |
+| Model quality dashboard | LOW | MEDIUM | P3 | Nice for power users; not blocking for v3.0 |
+| Priority prediction (spike) | MEDIUM | VERY HIGH | P3 | Research only — don't commit to shipping |
+| Community corpus contributions | LOW | VERY HIGH | P3 | Requires governance — defer |
 
 **Priority key:**
-- P1: Ship in v2.0 — required to validate the AI orchestration thesis
-- P2: Ship in v2.x — adds meaningful value once core is working
-- P3: Future consideration — high complexity or unclear demand
+- P1: Must ship in v3.0 to deliver the milestone promise
+- P2: Add after v3.0 core is validated
+- P3: Future consideration or research spike
 
 ---
 
-## Competitor Feature Analysis
+## Technical Constraints Specific to This Feature Set
 
-| Feature | Notion AI | Todoist AI | FacileThings | Obsidian + plugins | BinderOS v2.0 Approach |
-|---------|-----------|------------|--------------|--------------------|-----------------------|
-| Inbox triage / classification | Auto-label in Notion Mail (natural language rules, not per-item AI suggestion) | Suggests project, section, labels per task; learns from history | No AI — guided steps only | Plugin ecosystem (Copilot plugin, Ollama integration) — varies | Per-card AI suggestion during triage: type + section + related atoms |
-| Priority suggestion | No explicit priority AI | P1-P4 suggestion based on deadline + history | No AI | No native | Entropy-signal-informed priority overlay during review only |
-| Weekly review automation | No guided review | No guided review | Structured step-by-step (no AI) | No native | AI-guided conversational review: pre-analysis briefing + Get Clear/Get Current/Get Creative flows |
-| AI interaction pattern | Chat sidebar + inline block commands | Sidebar AI assistant panel | N/A | Sidebar chat or inline | Floating orb → structured question flow (3-4 options + freeform) |
-| AI-proposes / human-disposes | Inline accept/dismiss on suggestions | Suggestions in sidebar, user applies manually | N/A | Accept/reject on Copilot suggestions | Per-suggestion accept/dismiss; all AI changes tagged in changelog; one-click revert |
-| Ambient / contextual AI trigger | AI button in toolbar; inline / block level | AI button in sidebar | N/A | Plugin hotkey | Floating orb: always visible, reads current page context, surfaces most relevant action at top |
-| Local / offline AI | No | No | N/A | Yes (Ollama plugin) | Yes — WASM browser model for fast tasks; cloud API optional for reasoning |
-| AI content authorship | Yes — AI writes content | Task description rewriting | N/A | Yes via plugins | No — AI never authors content; suggests metadata only |
-| Compression / pruning AI | No | No | No | No | AI explains why atoms are stale; suggests archive/merge; never executes without approval |
-| Model choice | Anthropic Claude (Notion's internal model + Claude API) | Proprietary | N/A | OpenAI / Ollama / any | Pluggable: WASM model (Phi-3-mini, SmolLM) + pluggable cloud API; user controls data residency |
+### Model Size Budget
 
----
+| Model | Architecture | INT8 Size | Cold Start (4G) | Inference Time (CPU) |
+|-------|-------------|-----------|-----------------|----------------------|
+| DistilBERT-base INT8 (type classifier) | 6-layer BERT, 66M params → ~66MB FP32, ~17–20MB INT8 | ~20MB | 5–8 sec download | 30–80ms per item |
+| MiniLM-L6-v2 (already loaded for embeddings) | 6-layer, 22M params → ~23MB INT8 | Already cached | 0 sec (shared) | 20–40ms per item |
+| Combined (MiniLM + type classifier) | Two separate models | ~43MB total new download | 8–15 sec first-time | — |
 
-## What the GTD Weekly Review Actually Needs (From Research)
+**Decision rationale:** MiniLM (already in the embedding worker) can be repurposed as the backbone for the type classifier by adding a classification head and fine-tuning. This avoids downloading a second model entirely. The classification head is a single linear layer (~5 × 384 = ~2K parameters). **Recommended approach: fine-tune a classification head on top of the existing MiniLM backbone** rather than introducing DistilBERT as a second model.
 
-The GTD weekly review has three phases (David Allen / FacileThings):
+### Browser Storage Constraints
 
-**Get Clear** — process all open loops
-- Collect all loose ends from capture buckets
-- Process inbox to zero: classify, assign, or trash
-- Empty head via mind sweep
+Transformers.js caches models to the **Cache API** (not IndexedDB). This avoids Dexie collision. Quota: Chrome allocates a fraction of available disk (typically 10–20% of disk space). Safari: ~1GB per origin. For a ~20MB INT8 MiniLM classifier, storage pressure is minimal on modern devices. Wrap cache writes in `QuotaExceededError` handler — fall back to in-memory-only mode (re-download on next session).
 
-**Get Current** — ensure lists reflect reality
-- Review next actions list (what's stale? what's done?)
-- Review waiting-for list (any follow-ups needed?)
-- Review calendar (past + future)
-- Review projects list (every project has a next action?)
-- Review someday/maybe list
+### Training Data Quality Requirements
 
-**Get Creative** — look at the bigger picture
-- Review Areas of Responsibility (anything neglected?)
-- Review goals and vision
-- Capture any new ideas or projects
+Based on research (arXiv 2310.07849 — LLM synthetic data for text classification), models trained on synthetic data:
+- Perform best when examples are topic-guided (diverse GTD scenarios, not repetitive patterns)
+- Degrade on subjective tasks (a "decision" vs. "insight" is genuinely ambiguous — expect higher error rates on these two classes)
+- Improve significantly when a small number of real user corrections are mixed in (few-shot curated data)
 
-**AI's role in each phase:**
+**Implication:** Generate 400–500 synthetic examples per class for the initial model. Prioritize real correction data for the decision/insight boundary — these are the hardest cases.
 
-| GTD Phase | AI Opportunity | Model Tier |
-|-----------|---------------|------------|
-| Get Clear | Pre-analysis: "You have 11 inbox items, here are type + section suggestions for each" | WASM (classification) |
-| Get Clear | Compression candidates surfaced with reasoning | WASM + embeddings |
-| Get Current | Staleness summary: "7 tasks haven't moved in 14+ days, 2 projects have no next action" | WASM (summarization) |
-| Get Current | Per-list AI commentary: "3 of your Waiting items are overdue for follow-up" | WASM |
-| Get Creative | Conversational reflection: "What did you accomplish this week? What's unfinished?" | Cloud API (nuanced) |
-| Get Creative | Pattern observation: "Your Insights section has grown but links to no active projects" | Cloud API |
+### Confidence Calibration
+
+Softmax probabilities from fine-tuned classifiers are often overconfident. The current pipeline uses fixed thresholds (`classify-type: 0.65`, `route-section: 0.60`). After fine-tuning:
+
+1. Hold out 20% of training data before training.
+2. Run model on hold-out set; collect softmax probabilities and true labels.
+3. Apply Platt scaling (logistic regression over raw probabilities) to calibrate.
+4. Verify calibrated confidence tracks actual accuracy within 5% across the 0.5–0.9 range.
+5. Only then integrate into the pipeline with existing thresholds.
+
+If calibration fails (overconfidence persists), raise the threshold for `classify-type` from 0.65 to 0.75 for the ONNX model specifically.
 
 ---
 
-## Key Insight for Roadmap
+## Interaction with Existing Pipeline
 
-**The AI entry sequence matters more than the features themselves.**
+The existing pipeline in `src/ai/tier2/` does not need to be restructured — only the Tier 2 handler's `handle()` function for `classify-type` changes. The interface contract is unchanged:
 
-Three patterns observed across the market:
+```
+TieredRequest → TieredResult { tier: 2, confidence: number, type: AtomType, reasoning: string }
+```
 
-1. **Chat sidebar** (Notion AI, most tools): Open-ended, high friction, general-purpose. Users must know what to ask. Review use case requires the user to already know what a good GTD review looks like.
+The ONNX model inference replaces the centroid lookup:
 
-2. **Inline suggestions** (GitHub Copilot, Todoist AI): Low friction, passive, per-item. Works for triage. Breaks down for multi-step workflows like weekly reviews.
+```
+Old: embed(text) → cosine_similarity(embedding, centroid) → top class + score
+New: tokenize(text) → model.run(tokens) → softmax(logits) → top class + calibrated confidence
+```
 
-3. **Guided question flows** (FacileThings manual, GSD pattern): High value for structured workflows. Users don't need to know what to ask — the system asks for them. Rare in AI tools, but matches how GTD reviews actually work.
-
-BinderOS's floating orb + structured question flows is option 3 with AI analysis behind it. This is the correct interaction model for a GTD review tool. The research validates it as novel (no direct competitor does this specifically) and appropriate (FacileThings proves users want guided review steps; AI adds pre-analysis value on top).
-
-**The single biggest anti-pattern risk for v2.0:** AI suggestions that interrupt the user's existing workflow rather than enhancing it. The card-by-card triage UX already works. AI must slot into it, not replace it. Suggestion UX must be dismissible in one keystroke, never blocking.
+The centroid builder (`centroid-builder.ts`) and its persistence to Dexie can remain — the centroid still serves as a useful fallback if the ONNX model fails to load. The `canHandle()` method in the Tier 2 handler will check for ONNX model availability first, falling back to centroid mode if the model is not loaded.
 
 ---
 
 ## Sources
 
-- Notion AI 2026 Review (max-productive.ai): [https://max-productive.ai/ai-tools/notion-ai/](https://max-productive.ai/ai-tools/notion-ai/)
-- Notion AI Features 2025 (cybernews.com): [https://cybernews.com/ai-tools/notion-ai-review/](https://cybernews.com/ai-tools/notion-ai-review/)
-- Notion AI capabilities (kipwise.com): [https://kipwise.com/blog/notion-ai-features-capabilities](https://kipwise.com/blog/notion-ai-features-capabilities)
-- Todoist AI review (aitoolscouts.com): [https://aitoolscouts.com/reviews/todoist-ai.html](https://aitoolscouts.com/reviews/todoist-ai.html)
-- Use AI to organize Todoist Inbox (aivaceo.com): [https://aivaceo.com/2025/01/01/use-ai-to-organize-your-todoist-inbox/](https://aivaceo.com/2025/01/01/use-ai-to-organize-your-todoist-inbox/)
-- Todoist AI assistant extension (todoist.com): [https://www.todoist.com/help/articles/use-the-task-assist-extension-with-todoist-ZgldtcPeT](https://www.todoist.com/help/articles/use-the-task-assist-extension-with-todoist-ZgldtcPeT)
-- Raycast AI context-aware (raycast.com): [https://www.raycast.com/core-features/ai](https://www.raycast.com/core-features/ai)
-- FacileThings updated weekly review: [https://facilethings.com/blog/en/the-weekly-review-updated](https://facilethings.com/blog/en/the-weekly-review-updated)
-- AI in your GTD practice (gettingthingsdone.com): [https://gettingthingsdone.com/2025/07/ai-in-your-gtd-practice/](https://gettingthingsdone.com/2025/07/ai-in-your-gtd-practice/)
-- Top GTD tools 2025 (sparkco.ai): [https://sparkco.ai/blog/top-gtd-tools-a-comprehensive-2025-guide](https://sparkco.ai/blog/top-gtd-tools-a-comprehensive-2025-guide)
-- Agentic AI design patterns — enterprise guide (aufaitux.com): [https://www.aufaitux.com/blog/agentic-ai-design-patterns-enterprise-guide/](https://www.aufaitux.com/blog/agentic-ai-design-patterns-enterprise-guide/)
-- What UX for AI must solve 2025 (think.design): [https://think.design/blog/what-ux-for-ai-products-must-solve-in-2025/](https://think.design/blog/what-ux-for-ai-products-must-solve-in-2025/)
-- WebLLM in-browser inference (webllm.mlc.ai): [https://webllm.mlc.ai/](https://webllm.mlc.ai/)
-- 3W for in-browser AI: WebLLM + WASM + WebWorkers (blog.mozilla.ai): [https://blog.mozilla.ai/3w-for-in-browser-ai-webllm-wasm-webworkers/](https://blog.mozilla.ai/3w-for-in-browser-ai-webllm-wasm-webworkers/)
-- AI doesn't reduce work — it intensifies it (hbr.org): [https://hbr.org/2026/02/ai-doesnt-reduce-work-it-intensifies-it](https://hbr.org/2026/02/ai-doesnt-reduce-work-it-intensifies-it)
-- AI-generated workslop is destroying productivity (hbr.org): [https://hbr.org/2025/09/ai-generated-workslop-is-destroying-productivity](https://hbr.org/2025/09/ai-generated-workslop-is-destroying-productivity)
-- AI fatigue is widespread (medium.com): [https://medium.com/@asarav/ai-fatigue-is-widespread-now-211ad4dd9656](https://medium.com/@asarav/ai-fatigue-is-widespread-now-211ad4dd9656)
-- GTD weekly review guide (super-productivity.com): [https://super-productivity.com/blog/gtd-weekly-review-guide/](https://super-productivity.com/blog/gtd-weekly-review-guide/)
-- Todoist weekly review methodology: [https://www.todoist.com/productivity-methods/weekly-review](https://www.todoist.com/productivity-methods/weekly-review)
-- Obsidian local LLM plugins (xda-developers.com): [https://www.xda-developers.com/using-my-local-llm-with-obsidian/](https://www.xda-developers.com/using-my-local-llm-with-obsidian/)
-- Cross-browser local LLM via WebAssembly (picovoice.ai): [https://picovoice.ai/blog/cross-browser-local-llm-inference-using-webassembly/](https://picovoice.ai/blog/cross-browser-local-llm-inference-using-webassembly/)
+- [From PyTorch to Browser: full client-side ONNX + Transformers.js](https://bandarra.me/posts/from-pytorch-to-browser-a-full-client-side-solution-with-onnx-and-transformers-js) — confirmed MiniLM + custom ONNX classifier pattern; HIGH confidence
+- [Transformers.js official docs — model loading](https://huggingface.co/docs/transformers.js/en/index) — `env.localModelPath`, `env.allowRemoteModels`, custom ONNX pipeline; HIGH confidence
+- [HuggingFace Optimum — ONNX quantization docs](https://huggingface.co/docs/optimum-onnx/onnxruntime/usage_guides/quantization) — `ORTQuantizer`, `ORTModelForSequenceClassification`, INT8 dynamic quantization; HIGH confidence
+- [Optimum CLI export](https://github.com/huggingface/optimum-onnx) — `optimum-cli export onnx` command; HIGH confidence
+- [Synthetic Data Generation Using LLMs — arXiv 2503.14023](https://arxiv.org/abs/2503.14023) — topic-guided generation, diversity strategies, text classification results; MEDIUM confidence
+- [Synthetic Data for Text Classification: Potential and Limitations — ACL/EMNLP 2023](https://aclanthology.org/2023.emnlp-main.647/) — subjectivity degrades synthetic data quality; MEDIUM confidence (2023, but findings still applicable)
+- [Active Learning in ML — Encord 2025](https://encord.com/blog/active-learning-machine-learning-guide/) — uncertainty sampling reduces annotation needs 50–80%; MEDIUM confidence
+- [Cleanlab for label quality](https://encord.com/blog/active-learning-machine-learning-guide/) — label noise detection; MEDIUM confidence
+- [ONNX Runtime Web — large model storage](https://onnxruntime.ai/docs/tutorials/web/large-models.html) — Cache API vs IndexedDB for ONNX models; HIGH confidence
+- [Optimizing Transformers.js for production — SitePoint](https://www.sitepoint.com/optimizing-transformers-js-production/) — cold-start latency breakdown, q8 recommendations; MEDIUM confidence
+- [Model Drift Best Practices — Encord 2025](https://encord.com/blog/model-drift-best-practices/) — concept drift, retraining strategies, catastrophic forgetting; MEDIUM confidence
+- [F1 Score for imbalanced classification — Analytics Vidhya 2025](https://www.analyticsvidhya.com/blog/2025/12/what-is-f1-score-in-machine-learning/) — evaluation metric selection; HIGH confidence
+- [Transformers.js GitHub — custom ONNX model issue #1018](https://github.com/huggingface/transformers.js/issues/1018) — known limitations with custom ONNX models outside standard pipeline; MEDIUM confidence (community-reported)
+- [Running AI models in browser — Worldline Tech Blog 2026](https://blog.worldline.tech/2026/01/13/transformersjs-intro.html) — general Transformers.js v3 patterns, Jan 2026; MEDIUM confidence
 
 ---
 
-*Feature research for: AI orchestration layer — BinderOS v2.0*
-*Researched: 2026-02-22*
+## Confidence Assessment
+
+| Area | Confidence | Notes |
+|------|------------|-------|
+| ONNX fine-tune → Transformers.js deployment pipeline | HIGH | Official docs + multiple verified community examples confirm the pattern end-to-end |
+| MiniLM as classification backbone (add head, fine-tune) | HIGH | Standard HuggingFace pattern; MiniLM for sequence classification is well-documented |
+| Synthetic GTD training data quality | MEDIUM | General LLM-labeling research is solid; GTD-specific synthetic data is novel and untested |
+| Section routing via nearest-neighbor (Option B) | MEDIUM | Embedding-based classification is well understood; relies on sufficient section atom coverage |
+| Staleness / compression models | LOW-MEDIUM | Domain is novel (personal productivity signals); training data construction is research-level |
+| Confidence calibration (Platt scaling) | MEDIUM | Standard ML technique; browser-side pipeline integration requires care |
+| Model drift / correction loop | MEDIUM | Browser storage patterns confirmed; retraining cadence is project-specific |
+| Priority prediction | LOW | Behavioral signal capture raises privacy concerns; no clear training data source defined |
+
+---
+
+*Feature research for: fine-tuned in-browser ONNX classification models — BinderOS v3.0*
+*Researched: 2026-03-03*
