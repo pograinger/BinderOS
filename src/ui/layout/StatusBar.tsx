@@ -17,14 +17,11 @@
  */
 
 import { createSignal, createMemo, onMount, Show } from 'solid-js';
-import { state, inboxCapStatus, taskCapStatus } from '../signals/store';
+import { state, inboxCapStatus, taskCapStatus, classifierLoadProgress } from '../signals/store';
 // Note: state imported above includes Phase 4 AI fields (aiEnabled, aiActivity, llmStatus)
+// Phase 10: classifierLoadProgress is null when not downloading, 0-100 when downloading, -1 for indeterminate
 
-// Dev-only: lazy-loaded seed function (tree-shaken in prod)
-let seedFn: (() => Promise<void>) | null = null;
-if (import.meta.env.DEV) {
-  import('../../dev/seed').then((m) => { seedFn = m.seedDevData; });
-}
+// Dev-only: seed function loaded on demand (tree-shaken in prod)
 
 export function StatusBar() {
   const [storageUsed, setStorageUsed] = createSignal<string>('');
@@ -104,6 +101,18 @@ export function StatusBar() {
         <span>{openTaskCount()} tasks</span>
       </div>
 
+      {/* Phase 10: Classifier download progress — only visible during first-time ONNX model download */}
+      <Show when={classifierLoadProgress() !== null}>
+        <div class="status-bar-item classifier-loading">
+          <span class="status-bar-dot dev" />
+          <span>
+            {classifierLoadProgress() === -1
+              ? 'AI model (one-time download)...'
+              : `AI model ${classifierLoadProgress()}% (one-time download)`}
+          </span>
+        </div>
+      </Show>
+
       {/* Phase 4: AI status — compact dot + short label */}
       <Show when={state.aiEnabled}>
         <div class="status-bar-item ai-status">
@@ -127,24 +136,22 @@ export function StatusBar() {
       {/* Dev-only: seed data button */}
       {import.meta.env.DEV && (
         <button
-          class={`status-bar-item dev-seed-btn ${seedStatus() !== 'idle' ? 'dev-seed-btn--busy' : ''}`}
-          disabled={seedStatus() !== 'idle'}
+          class="status-bar-item dev-seed-btn"
           onClick={async () => {
-            if (!seedFn) {
-              setSeedStatus('error');
-              console.error('[seed] Seed module not loaded yet — try again in a moment');
-              setTimeout(() => setSeedStatus('idle'), 2000);
-              return;
-            }
+            console.log('[seed] Button clicked, importing seed module...');
             setSeedStatus('running');
             try {
-              await seedFn();
+              const mod = await import('../../dev/seed');
+              console.log('[seed] Module loaded, calling seedDevData...');
+              await mod.seedDevData();
+              console.log('[seed] Seed complete!');
               setSeedStatus('done');
+              setTimeout(() => setSeedStatus('idle'), 5000);
             } catch (err) {
               console.error('[seed] Failed:', err);
               setSeedStatus('error');
+              setTimeout(() => setSeedStatus('idle'), 5000);
             }
-            setTimeout(() => setSeedStatus('idle'), 3000);
           }}
         >
           {seedStatus() === 'running' ? 'Seeding...'
