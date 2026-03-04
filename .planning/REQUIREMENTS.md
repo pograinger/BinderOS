@@ -81,36 +81,36 @@ Deferred to v3.x or later. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TRAIN-01 | — | Pending |
-| TRAIN-02 | — | Pending |
-| TRAIN-03 | — | Pending |
-| TRAIN-04 | — | Pending |
-| INFER-01 | — | Pending |
-| INFER-02 | — | Pending |
-| INFER-03 | — | Pending |
-| INFER-04 | — | Pending |
-| INFER-05 | — | Pending |
-| CONF-01 | — | Pending |
-| CONF-02 | — | Pending |
-| CONF-03 | — | Pending |
-| ROUTE-01 | — | Pending |
-| ROUTE-02 | — | Pending |
-| ROUTE-03 | — | Pending |
-| CORR-01 | — | Pending |
-| CORR-02 | — | Pending |
-| POLISH-01 | — | Pending |
-| POLISH-02 | — | Pending |
-| POLISH-03 | — | Pending |
-| POLISH-04 | — | Pending |
-| POLISH-05 | — | Pending |
-| POLISH-06 | — | Pending |
-| POLISH-07 | — | Pending |
+| TRAIN-01 | Phase 9 | Pending |
+| TRAIN-02 | Phase 9 | Pending |
+| TRAIN-03 | Phase 9 | Pending |
+| TRAIN-04 | Phase 9 | Pending |
+| CONF-01 | Phase 9 | Pending |
+| INFER-01 | Phase 10 | Pending |
+| INFER-02 | Phase 10 | Pending |
+| INFER-03 | Phase 10 | Pending |
+| INFER-04 | Phase 10 | Pending |
+| INFER-05 | Phase 10 | Pending |
+| CONF-02 | Phase 10 | Pending |
+| CONF-03 | Phase 10 | Pending |
+| CORR-01 | Phase 11 | Pending |
+| CORR-02 | Phase 11 | Pending |
+| POLISH-01 | Phase 11 | Pending |
+| POLISH-02 | Phase 11 | Pending |
+| POLISH-03 | Phase 11 | Pending |
+| POLISH-04 | Phase 11 | Pending |
+| POLISH-05 | Phase 11 | Pending |
+| POLISH-06 | Phase 11 | Pending |
+| POLISH-07 | Phase 11 | Pending |
+| ROUTE-01 | Phase 12 | Pending |
+| ROUTE-02 | Phase 12 | Pending |
+| ROUTE-03 | Phase 12 | Pending |
 
 **Coverage:**
 - v3.0 requirements: 24 total
-- Mapped to phases: 0
-- Unmapped: 24
+- Mapped to phases: 24
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-03*
-*Last updated: 2026-03-03 after initial definition*
+*Last updated: 2026-03-03 after roadmap creation — all 24 requirements mapped to phases 9-12*
