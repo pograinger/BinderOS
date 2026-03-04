@@ -28,8 +28,12 @@ Thumbs.db
 
 # Local ONNX model files (binary, downloaded by pnpm postinstall:models)
 # These are large binary files (~22MB) — download via: node scripts/download-model.cjs
-public/models/
-!public/models/classifiers/
+# Note: public/models/classifiers/ is NOT ignored — trained classifier heads are committed.
+# Git cannot re-include a subdirectory of an excluded parent, so we exclude by subdirectory:
+public/models/Xenova/
+public/models/*.json
+public/models/*.onnx
+public/models/.keep
 
 # Python training intermediates (re-generated from committed JSONL)
 scripts/train/__pycache__/
