@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Local AI + Polish
 status: ready_to_plan
-last_updated: "2026-03-04T05:46:57.787Z"
+last_updated: "2026-03-04T18:01:11Z"
 progress:
   total_phases: 8
   completed_phases: 8
-  total_plans: 27
-  completed_plans: 27
+  total_plans: 28
+  completed_plans: 28
 ---
 
 # Project State
@@ -24,11 +24,11 @@ See: .planning/PROJECT.md (updated 2026-03-03)
 
 Milestone: v3.0 Local AI + Polish
 Phase: 10 of 12 (Browser Inference Integration)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-04 — Phase 9 complete (Python training infrastructure: synthetic data, classifier training, ONNX export, browser validation)
+Plan: 1 of TBD in current phase
+Status: In progress
+Last activity: 2026-03-04 — Phase 10 Plan 01 complete (ONNX classifier in embedding worker, Cache API model persistence, confidence threshold 0.78)
 
-Progress: [███░░░░░░░] 25% (v3.0 scope)
+Progress: [████░░░░░░] 30% (v3.0 scope)
 
 ## Accumulated Context
 
@@ -37,6 +37,13 @@ Progress: [███░░░░░░░] 25% (v3.0 scope)
 - Embedding worker with Xenova/all-MiniLM-L6-v2 already running
 - Classification log in Dexie for pattern learning already wired
 - Tech debt items identified and carried forward for cleanup
+
+### Decisions (Phase 10 Plan 01)
+
+- Placeholder ONNX (sklearn LogisticRegression, random weights, 10KB) committed to `public/models/classifiers/` to validate worker wiring independently of Phase 9 training timeline.
+- `.gitignore` fixed: parent-dir exclusion `public/models/` + negation pattern does not work in Git. Changed to per-subdirectory exclusion `public/models/Xenova/` to properly allow `public/models/classifiers/` to be committed.
+- `ort.env.wasm.numThreads = 1` set in worker to avoid SharedArrayBuffer requirement and ORT issue #26858 (hanging with external data + multi-threading).
+- `CLASSIFY_ONNX` receives text (not embedding): worker embeds then classifies in one step, same external interface as `CLASSIFY_TYPE`.
 
 ### Decisions (v3.0 kickoff)
 
@@ -57,7 +64,7 @@ Progress: [███░░░░░░░] 25% (v3.0 scope)
 - `modelSuggestion?: AtomType` added as optional field to ClassificationEvent — no Dexie migration needed since ClassificationEvent is a JSON blob in the config table, not indexed records.
 - embeddings_cache.npy and labels_cache.npy gitignored (reproducible from committed JSONL); label_map.json committed (needed by browser in Phase 10).
 - JSONL corpus in scripts/training-data/ committed — small files, auditable, needed for TRAIN-04 reproducibility without API key.
-- `!public/models/classifiers/` gitignore exception so trained classifier heads can be committed for Phase 10 browser integration.
+- `public/models/classifiers/` committed via per-subdirectory gitignore fix in Phase 10 Plan 01 (negation on excluded parent dir does not work in Git).
 
 ### Blockers/Concerns
 
@@ -72,5 +79,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Phase 10 context gathered — model download UX, ambiguous classification display, loading timing, fallback visibility decisions captured.
-Resume file: .planning/phases/10-browser-inference-integration/10-CONTEXT.md
+Stopped at: Phase 10 Plan 01 complete — ONNX classifier worker integration and confidence threshold update. Next: Phase 10 Plan 02 (tier2-handler ONNX path + StatusBar progress indicator).
+Resume file: .planning/phases/10-browser-inference-integration/10-01-SUMMARY.md

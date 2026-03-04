@@ -16,11 +16,11 @@ Requirements for the Local AI + Polish milestone. Each maps to roadmap phases.
 
 ### Model Inference
 
-- [ ] **INFER-01**: User's inbox triage type classification (task/fact/event/decision/insight) works fully offline using the fine-tuned ONNX model in Tier 2
+- [x] **INFER-01**: User's inbox triage type classification (task/fact/event/decision/insight) works fully offline using the fine-tuned ONNX model in Tier 2
 - [ ] **INFER-02**: User sees a progress indicator during first-time model download with clear messaging ("one-time download")
-- [ ] **INFER-03**: User's triage continues working via Tier 1 keyword heuristics if the ONNX model fails to load or errors during inference
-- [ ] **INFER-04**: User experiences no UI blocking during model loading — all ONNX inference runs in the embedding worker off main thread
-- [ ] **INFER-05**: ONNX model files are cached in browser Cache API across sessions — no re-download on subsequent visits
+- [x] **INFER-03**: User's triage continues working via Tier 1 keyword heuristics if the ONNX model fails to load or errors during inference
+- [x] **INFER-04**: User experiences no UI blocking during model loading — all ONNX inference runs in the embedding worker off main thread
+- [x] **INFER-05**: ONNX model files are cached in browser Cache API across sessions — no re-download on subsequent visits
 
 ### Confidence & Calibration
 
@@ -86,11 +86,11 @@ Deferred to v3.x or later. Tracked but not in current roadmap.
 | TRAIN-03 | Phase 9 | Complete |
 | TRAIN-04 | Phase 9 | Complete |
 | CONF-01 | Phase 9 | Complete |
-| INFER-01 | Phase 10 | Pending |
+| INFER-01 | Phase 10 | Complete |
 | INFER-02 | Phase 10 | Pending |
-| INFER-03 | Phase 10 | Pending |
-| INFER-04 | Phase 10 | Pending |
-| INFER-05 | Phase 10 | Pending |
+| INFER-03 | Phase 10 | Complete |
+| INFER-04 | Phase 10 | Complete |
+| INFER-05 | Phase 10 | Complete |
 | CONF-02 | Phase 10 | Pending |
 | CONF-03 | Phase 10 | Pending |
 | CORR-01 | Phase 11 | Pending |
