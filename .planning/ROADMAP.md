@@ -80,7 +80,11 @@ Plans:
   2. User opens settings and finds a clean, readable panel (v2.0 rough UX resolved)
   3. Developer runs a script that exports all classification corrections (`chosenType != suggestedType`) from Dexie as JSONL, with the original synthetic corpus preserved as a floor
   4. Dead code in `llm-worker.ts` is removed, `isReadOnly` is enforced at UI level, and stale AIOrb comments and verbose status bar are cleaned up
-**Plans**: TBD
+**Plans:** 3 plans
+Plans:
+- [ ] 11-01-PLAN.md -- Correction export utility, model info card, and settings panel polish
+- [ ] 11-02-PLAN.md -- StatusBar simplification, llm-worker verification, AIOrb cleanup, isReadOnly enforcement
+- [ ] 11-03-PLAN.md -- Resume toast notification for pending review sessions
 
 ### Phase 12: Section Routing (DEFERRED to v3.x)
 **Status**: Deferred from v3.0 milestone audit — section routing moved to future milestone
@@ -102,5 +106,5 @@ Plans:
 | 7. Guided Review + Compression Coach | v2.0 | 3/3 | Complete | 2026-03-02 |
 | 9. Python Training Infrastructure | 2/2 | Complete   | 2026-03-04 | - |
 | 10. Browser Inference Integration | 3/3 | Complete    | 2026-03-04 | - |
-| 11. Tech Debt, Settings + Correction Utility | v3.0 | 0/TBD | Not started | - |
+| 11. Tech Debt, Settings + Correction Utility | v3.0 | 0/3 | Planned | - |
 | 12. Section Routing | deferred | — | Deferred to v3.x | - |
