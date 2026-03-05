@@ -3823,7 +3823,6 @@ kbd {
   right: var(--orb-right, 16px);
   width: 48px;
   height: 48px;
-  border-radius: 50%;
   cursor: pointer;
   z-index: 101;
   /* Disable browser double-tap-to-zoom so our custom double-tap handler works on iOS */
