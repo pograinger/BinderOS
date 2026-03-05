@@ -251,8 +251,8 @@ export function AIOrb(props: AIOrpProps) {
         <span class="ai-orb-error-msg">Triage failed — tap to retry</span>
       </Show>
 
-      {/* Radial menu — rendered when expanded, AI enabled, and no overlay active */}
-      <Show when={orbState() === 'expanded' && state.aiEnabled && !props.isOverlayOpen}>
+      {/* Radial menu — rendered when expanded and no overlay active */}
+      <Show when={orbState() === 'expanded' && !props.isOverlayOpen}>
         <AIRadialMenu
           primaryAction={primaryAction()}
           selectedAtomId={state.selectedAtomId}
