@@ -47,7 +47,7 @@ Requirements for the Local AI + Polish milestone. Each maps to roadmap phases.
 - [ ] **POLISH-04**: Dead code in `src/worker/llm-worker.ts` is removed
 - [ ] **POLISH-05**: `isReadOnly` is enforced at UI level — read-only atoms cannot be edited
 - [ ] **POLISH-06**: Stale comments in AIOrb component are cleaned up
-- [ ] **POLISH-07**: Resume UX uses explicit prompt instead of badge dot
+- [x] **POLISH-07**: Resume UX uses explicit prompt instead of badge dot
 
 ## Future Requirements
 
@@ -101,7 +101,7 @@ Deferred to v3.x or later. Tracked but not in current roadmap.
 | POLISH-04 | Phase 11 | Pending |
 | POLISH-05 | Phase 11 | Pending |
 | POLISH-06 | Phase 11 | Pending |
-| POLISH-07 | Phase 11 | Pending |
+| POLISH-07 | Phase 11 | Complete |
 | ROUTE-01 | Deferred (v3.x) | Deferred |
 | ROUTE-02 | Deferred (v3.x) | Deferred |
 | ROUTE-03 | Deferred (v3.x) | Deferred |

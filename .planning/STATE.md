@@ -2,13 +2,16 @@
 gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Local AI + Polish
-status: unknown
-last_updated: "2026-03-04T18:31:22.683Z"
+status: executing
+stopped_at: Completed 11-03-PLAN.md
+last_updated: "2026-03-05T01:09:13.082Z"
+last_activity: 2026-03-04 — Phase 10 Plan 03 complete (StatusBar classifier download progress, ambiguous two-button type UX in InboxAISuggestion, type pre-fill guard in InboxView)
 progress:
-  total_phases: 9
-  completed_phases: 9
-  total_plans: 30
-  completed_plans: 30
+  total_phases: 4
+  completed_phases: 2
+  total_plans: 8
+  completed_plans: 6
+  percent: 30
 ---
 
 # Project State
@@ -18,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-03)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 10 — Browser Inference Integration
+**Current focus:** Phase 11 — Tech Debt + Settings Correction
 
 ## Current Position
 
 Milestone: v3.0 Local AI + Polish
-Phase: 10 of 12 (Browser Inference Integration)
-Plan: 3 of TBD in current phase
+Phase: 11 of 12 (Tech Debt + Settings Correction)
+Plan: 3 of 3 in current phase (complete)
 Status: In progress
-Last activity: 2026-03-04 — Phase 10 Plan 03 complete (StatusBar classifier download progress, ambiguous two-button type UX in InboxAISuggestion, type pre-fill guard in InboxView)
+Last activity: 2026-03-05 — Phase 11 Plan 03 complete (ReviewResumeToast — pending review session toast notification with sessionStorage show-once and auto-dismiss)
 
-Progress: [████░░░░░░] 30% (v3.0 scope)
+Progress: [█████████░] 94% (v3.0 scope)
 
 ## Accumulated Context
 
@@ -37,6 +40,13 @@ Progress: [████░░░░░░] 30% (v3.0 scope)
 - Embedding worker with Xenova/all-MiniLM-L6-v2 already running
 - Classification log in Dexie for pattern learning already wired
 - Tech debt items identified and carried forward for cleanup
+
+### Decisions (Phase 11 Plan 03)
+
+- createEffect used instead of onMount in ReviewResumeToast — state.reviewSession is hydrated async from Dexie after app load; onMount fires before data arrives.
+- sessionStorage (not localStorage) for show-once tracking — resets per browser tab/session, so new sessions see the toast again; correct UX scope.
+- Auto-dismiss at 15 seconds with onCleanup timeout teardown to prevent memory leaks on component unmount.
+- AIOrb badge dot left untouched — remains as persistent fallback after toast dismissal.
 
 ### Decisions (Phase 10 Plan 03)
 
@@ -92,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04
-Stopped at: Phase 11 context gathered — settings model info card, settings cleanup, status bar simplification, resume toast UX decisions captured
-Resume file: .planning/phases/11-tech-debt-settings-correction/11-CONTEXT.md
+Last session: 2026-03-05T01:09:13.079Z
+Stopped at: Completed 11-03-PLAN.md
+Resume file: None
