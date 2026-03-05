@@ -106,5 +106,5 @@ Plans:
 | 7. Guided Review + Compression Coach | v2.0 | 3/3 | Complete | 2026-03-02 |
 | 9. Python Training Infrastructure | 2/2 | Complete   | 2026-03-04 | - |
 | 10. Browser Inference Integration | 3/3 | Complete    | 2026-03-04 | - |
-| 11. Tech Debt, Settings + Correction Utility | 3/3 | Complete   | 2026-03-05 | - |
+| 11. Tech Debt, Settings + Correction Utility | 3/3 | Complete    | 2026-03-05 | - |
 | 12. Section Routing | deferred | — | Deferred to v3.x | - |
