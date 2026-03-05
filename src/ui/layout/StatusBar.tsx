@@ -18,8 +18,7 @@
 
 import { createSignal, createMemo, onMount, Show } from 'solid-js';
 import { state, inboxCapStatus, taskCapStatus, classifierLoadProgress } from '../signals/store';
-// Note: state imported above includes Phase 4 AI fields (aiEnabled, aiActivity, llmStatus)
-// Phase 10: classifierLoadProgress is null when not downloading, 0-100 when downloading, -1 for indeterminate
+// classifierLoadProgress is null when not downloading, 0-100 when downloading, -1 for indeterminate
 
 // Dev-only: seed function loaded on demand (tree-shaken in prod)
 
@@ -113,23 +112,10 @@ export function StatusBar() {
         </div>
       </Show>
 
-      {/* Phase 4: AI status — compact dot + short label */}
-      <Show when={state.aiEnabled}>
+      {/* AI status — green dot when enabled and ready */}
+      <Show when={state.aiEnabled && (state.llmStatus === 'available' || state.cloudStatus === 'available')}>
         <div class="status-bar-item ai-status">
-          <Show
-            when={state.aiActivity}
-            fallback={
-              <span class="ai-status-idle">
-                <span class={`status-bar-dot ${state.llmStatus === 'available' || state.cloudStatus === 'available' ? 'granted' : state.llmStatus === 'loading' ? 'dev' : 'denied'}`} />
-                AI
-              </span>
-            }
-          >
-            <span class="ai-status-active">
-              <span class="status-bar-dot dev" />
-              AI
-            </span>
-          </Show>
+          <span class="status-bar-dot granted" />
         </div>
       </Show>
 

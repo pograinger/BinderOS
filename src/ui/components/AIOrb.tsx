@@ -18,9 +18,6 @@
  * Overlay suppression: isOverlayOpen prop shrinks orb to dot and hides menu.
  *
  * Double-click/double-tap opens CaptureOverlay (replaces the old + FAB).
- *
- * Phase 5: AIUX-01, AIUX-02
- * Phase 6: 'review' radial action wired to startReviewBriefing() (AIRV-01)
  */
 
 import { createSignal, createEffect, Show } from 'solid-js';
@@ -144,9 +141,7 @@ export function AIOrb(props: AIOrpProps) {
   }
 
   function handleMenuAction(action: string) {
-    // Action callbacks — triage wired in Plan 03
-    // 'discuss' wired to AIQuestionFlow in Plan 04
-    // 'review', 'compress' are stubs for Phases 6-7
+    // Action callbacks — discuss, review, compress
     if (action === 'triage') {
       setOrbState('idle');
       setActivePage('inbox');
@@ -177,13 +172,11 @@ export function AIOrb(props: AIOrpProps) {
               { id: 'connections', label: 'Suggest connections', description: 'Find related atoms and patterns' },
             ],
         allowFreeform: true,
-        onSelect: (optionId) => {
-          // Phase 5 stub — actual AI conversation wired in Phases 6-7
-          console.log('[AIOrb] Discuss option selected:', optionId);
+        onSelect: (_optionId) => {
+          // Discuss option handling — conversation wired in future phase
         },
-        onFreeform: (text) => {
-          // Phase 5 stub — actual AI conversation wired in Phases 6-7
-          console.log('[AIOrb] Discuss freeform input:', text);
+        onFreeform: (_text) => {
+          // Discuss freeform handling — conversation wired in future phase
         },
         onClose: () => {
           // No additional cleanup needed
@@ -194,9 +187,9 @@ export function AIOrb(props: AIOrpProps) {
     }
 
     if (action === 'review') {
-      // Phase 6/7: resume existing session or start fresh (AIRV-01, AIRV-02, AIRV-05)
+      // Resume existing session or start fresh
       setOrbState('idle');
-      // Phase 7: if review flow is already in progress, navigate back to it
+      // If review flow is already in progress, navigate back to it
       if (reviewFlowStatus() !== 'idle' && reviewFlowStatus() !== 'complete') {
         setActivePage('review-flow');
         return;
