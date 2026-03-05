@@ -93,5 +93,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Phase 10 Plan 03 complete — StatusBar classifier download progress indicator, ambiguous two-button type UX in InboxAISuggestion, type pre-fill guard in InboxView. All Phase 10 user-facing UX complete.
-Resume file: .planning/phases/10-browser-inference-integration/10-03-SUMMARY.md
+Stopped at: Phase 11 context gathered — settings model info card, settings cleanup, status bar simplification, resume toast UX decisions captured
+Resume file: .planning/phases/11-tech-debt-settings-correction/11-CONTEXT.md
