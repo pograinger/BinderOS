@@ -4975,6 +4975,58 @@ kbd {
 }
 
 /* ============================================
+   AI Settings — Classifier Info Card
+   ============================================ */
+
+.ai-settings-classifier-card {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ai-settings-classifier-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ai-settings-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.ai-settings-detail-row--with-action {
+  align-items: center;
+}
+
+.ai-settings-detail-value {
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.ai-settings-btn--small {
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.ai-settings-classifier-hint {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ============================================
    AI Guided Setup (first-run wizard)
    ============================================ */
 

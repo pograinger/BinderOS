@@ -8,7 +8,7 @@
  *   - Local AI: Browser LLM toggle, status, model details, download progress
  *   - Cloud AI: Cloud API toggle, API key input (memory-only default + encrypted persistence),
  *     security disclosure, stored-key unlock, per-session consent
- *   - Feature Toggles: Triage, Review, Compression (UI-only in Phase 4 — used by Phases 5-7)
+ *   - Feature Toggles: Triage, Review, Compression toggles
  *   - Privacy: Sanitization level selector with description
  *   - Communication Log: History of cloud requests this session
  *   - Provider Status: Table showing provider name, status, model
@@ -16,7 +16,7 @@
  * CRITICAL: Never destructure props or state — breaks SolidJS reactivity.
  */
 
-import { createSignal, Show, For } from 'solid-js';
+import { createSignal, onMount, Show, For } from 'solid-js';
 import {
   state,
   setAIEnabled,
@@ -28,8 +28,12 @@ import {
   setCompressionEnabled,
   activateCloudAdapter,
   setSelectedLLMModel,
+  classifierReady,
+  classifierLoadProgress,
+  classifierVersion,
 } from '../signals/store';
 import { WEBLLM_MODELS, DEFAULT_MODEL_ID } from '../../ai/adapters/browser';
+import { getClassificationHistory } from '../../storage/classification-log';
 import {
   setMemoryKey,
   encryptAndStore,
@@ -66,6 +70,27 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
   const [logEntries, setLogEntries] = createSignal(getCloudRequestLog());
   // Reactive wrapper for session consent (key-vault uses plain booleans, not signals)
   const [consentGranted, setConsentGranted] = createSignal(hasSessionConsent());
+  // Classifier correction count — loaded once on panel open, reloaded after export
+  const [correctionCountLocal, setCorrectionCountLocal] = createSignal(0);
+
+  async function loadCorrectionCount() {
+    const history = await getClassificationHistory();
+    const count = history.filter(
+      (e) => e.suggestedType !== undefined && e.suggestedType !== e.chosenType,
+    ).length;
+    setCorrectionCountLocal(count);
+  }
+
+  onMount(() => {
+    void loadCorrectionCount();
+  });
+
+  async function handleExportCorrections() {
+    const { exportCorrectionLog } = await import('../../storage/export');
+    await exportCorrectionLog();
+    // Reload count to reflect current state after export
+    await loadCorrectionCount();
+  }
 
   function formatTimestamp(ts: number): string {
     return new Date(ts).toLocaleTimeString();
@@ -298,6 +323,41 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
                   </div>
                 </div>
               </Show>
+
+              {/* Triage Type Classifier — ONNX model info and correction export */}
+              <div class="ai-settings-classifier-card">
+                <h4 class="ai-settings-classifier-title">Triage Type Classifier</h4>
+                <div class="ai-settings-detail-row">
+                  <span class="ai-settings-detail-label">Version:</span>
+                  <span class="ai-settings-detail-value">{classifierVersion() ?? '—'}</span>
+                </div>
+                <div class="ai-settings-detail-row">
+                  <span class="ai-settings-detail-label">Status:</span>
+                  <span class="ai-settings-detail-value">
+                    {classifierReady()
+                      ? 'Ready'
+                      : classifierLoadProgress() !== null
+                      ? `Downloading ${classifierLoadProgress() === -1 ? '...' : `${classifierLoadProgress() ?? 0}%`}`
+                      : 'Not loaded'}
+                  </span>
+                </div>
+                <div class="ai-settings-detail-row ai-settings-detail-row--with-action">
+                  <span class="ai-settings-detail-label">Corrections:</span>
+                  <span class="ai-settings-detail-value">{correctionCountLocal()}</span>
+                  <button
+                    class="ai-settings-btn ai-settings-btn-secondary ai-settings-btn--small"
+                    onClick={() => void handleExportCorrections()}
+                    disabled={correctionCountLocal() === 0}
+                    title={correctionCountLocal() === 0 ? 'No corrections to export' : 'Download corrections as JSONL'}
+                  >
+                    Export
+                  </button>
+                </div>
+                <p class="ai-settings-classifier-hint">
+                  Corrections are classification events where you chose a different type than suggested.
+                  Export for model retraining — the original training corpus is never overwritten.
+                </p>
+              </div>
             </div>
 
             {/* Section: Cloud AI */}
@@ -479,7 +539,7 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
             <div class="ai-settings-section">
               <h3 class="ai-settings-section-title">Features</h3>
               <p class="ai-settings-section-desc">
-                Control which AI features are active. Features built in Phases 5-7.
+                Control which AI features are active.
               </p>
 
               <div class="ai-settings-toggle-row">
