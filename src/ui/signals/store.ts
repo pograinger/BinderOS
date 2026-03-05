@@ -940,7 +940,15 @@ const [classifierLoadProgress, setClassifierLoadProgress] = createSignal<number 
  */
 const [classifierReady, setClassifierReady] = createSignal(false);
 
-export { classifierLoadProgress, classifierReady };
+/**
+ * Version string for the loaded ONNX classifier model.
+ * Set to 'v1' on CLASSIFIER_READY — hardcoded until triage-type-classes.json
+ * includes a version field from the training pipeline.
+ * null = classifier not yet loaded.
+ */
+const [classifierVersion, setClassifierVersion] = createSignal<string | null>(null);
+
+export { classifierLoadProgress, classifierReady, classifierVersion };
 
 // --- Phase 10: Shared embedding worker singleton ---
 // Single instance shared between SearchOverlay (semantic search) and Tier 2 handler (classification).
@@ -978,6 +986,7 @@ export function ensureEmbeddingWorker(): Worker {
         case 'CLASSIFIER_READY':
           setClassifierLoadProgress(null);  // Hide progress indicator once ready
           setClassifierReady(true);
+          setClassifierVersion('v1');  // Hardcoded until triage-type-classes.json includes version field
           break;
         case 'CLASSIFIER_ERROR':
           // Silent fallback per locked decision — ONNX errors degrade to centroid path

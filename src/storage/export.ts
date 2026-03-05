@@ -115,6 +115,53 @@ function formatAtomAsMarkdown(
 }
 
 /**
+ * Export classification corrections as a JSONL file for model retraining.
+ *
+ * A "correction" is any classification event where the user chose a different
+ * type than what was suggested (suggestedType !== chosenType). Events with no
+ * suggestion recorded (suggestedType === undefined) are excluded — they cannot
+ * be corrections if no suggestion was made.
+ *
+ * The exported file supplements the synthetic training corpus at
+ * scripts/training-data/type-classification.jsonl — it never replaces it.
+ * Developers merge corrections manually into the training pipeline.
+ *
+ * Filename: binderos-corrections-YYYY-MM-DD.jsonl
+ * Returns: count of corrections exported (0 if none — no download triggered)
+ */
+export async function exportCorrectionLog(): Promise<number> {
+  const { getClassificationHistory } = await import('./classification-log');
+  const history = await getClassificationHistory();
+
+  // Only events where a suggestion was made AND user chose a different type
+  const corrections = history.filter(
+    (e) => e.suggestedType !== undefined && e.suggestedType !== e.chosenType,
+  );
+
+  if (corrections.length === 0) {
+    return 0;
+  }
+
+  const lines = corrections.map((e) =>
+    JSON.stringify({
+      content: e.content,
+      suggestedType: e.suggestedType,
+      chosenType: e.chosenType,
+      tier: e.tier ?? null,
+      confidence: e.confidence ?? null,
+      timestamp: e.timestamp,
+    }),
+  );
+
+  const dateStr = new Date().toISOString().split('T')[0];
+  // Trailing newline required — Python JSONL parsers expect it on the last record
+  const blob = new Blob([lines.join('\n') + '\n'], { type: 'application/x-ndjson' });
+  triggerDownload(blob, `binderos-corrections-${dateStr}.jsonl`);
+
+  return corrections.length;
+}
+
+/**
  * Trigger a file download in the browser via programmatic anchor click.
  */
 function triggerDownload(blob: Blob, filename: string): void {
