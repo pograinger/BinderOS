@@ -31,6 +31,8 @@ interface MentionAutocompleteProps {
   onLinkCreated: (targetId: string) => void;
   /** Current atom ID — excluded from suggestions (can't link to yourself) */
   excludeId?: string;
+  /** When true, textarea is visually disabled and read-only */
+  disabled?: boolean;
 }
 
 // --- Helper: extract @mention query from textarea value and cursor position ---
@@ -200,6 +202,7 @@ export function MentionAutocomplete(props: MentionAutocompleteProps) {
         onKeyDown={handleKeyDown}
         onSelect={handleSelect}
         onBlur={handleBlur}
+        disabled={props.disabled}
         aria-label="Atom content"
         aria-autocomplete="list"
         rows={6}

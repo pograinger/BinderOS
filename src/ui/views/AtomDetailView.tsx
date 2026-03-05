@@ -91,6 +91,12 @@ export function AtomDetailView() {
     state.atoms.find((a) => a.id === state.selectedAtomId) ?? null,
   );
 
+  // Read-only guard — AnalysisAtom has isReadOnly: true; uses safe cast (same pattern as getAtomDate)
+  const isReadOnly = createMemo(() => {
+    const a = atom();
+    return a != null && (a as Record<string, unknown>)['isReadOnly'] === true;
+  });
+
   // Local editing state — only for fields being actively edited
   const [editingTitle, setEditingTitle] = createSignal(false);
   const [titleDraft, setTitleDraft] = createSignal('');
@@ -111,6 +117,7 @@ export function AtomDetailView() {
   // --- Title editing ---
 
   const startEditTitle = () => {
+    if (isReadOnly()) return;
     const a = atom();
     if (!a) return;
     setTitleDraft(a.title || (a.content.split('\n')[0] ?? ''));
@@ -143,6 +150,7 @@ export function AtomDetailView() {
 
   // --- Status change ---
   const handleStatusChange = (newStatus: AtomStatus) => {
+    if (isReadOnly()) return;
     const a = atom();
     if (!a) return;
     sendCommand({
@@ -153,6 +161,7 @@ export function AtomDetailView() {
 
   // --- Date change handler (auto-saves on input) ---
   const handleDateField = (field: 'dueDate' | 'scheduledDate' | 'eventDate') => (e: Event) => {
+    if (isReadOnly()) return;
     const a = atom();
     if (!a) return;
     const input = e.target as HTMLInputElement;
@@ -184,6 +193,7 @@ export function AtomDetailView() {
   let contentDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   const handleContentChange = (newContent: string) => {
+    if (isReadOnly()) return;
     setContentDraft(newContent);
     // Debounce saves by 300ms
     if (contentDebounceTimer !== null) clearTimeout(contentDebounceTimer);
@@ -262,12 +272,12 @@ export function AtomDetailView() {
         <div class="atom-detail-header">
           <AtomTypeIcon type={atom()!.type} size={18} />
 
-          {/* Title — editable on click */}
+          {/* Title — editable on click (disabled for read-only atoms) */}
           <Show when={!editingTitle()}>
             <span
-              class="atom-detail-title"
+              class={`atom-detail-title${isReadOnly() ? ' atom-detail-readonly' : ''}`}
               onClick={startEditTitle}
-              title="Click to edit title"
+              title={isReadOnly() ? 'Read-only atom' : 'Click to edit title'}
               role="button"
               tabindex={0}
               onKeyDown={(e) => { if (e.key === 'Enter') startEditTitle(); }}
@@ -278,12 +288,13 @@ export function AtomDetailView() {
 
           <Show when={editingTitle()}>
             <input
-              class="atom-detail-title-input"
+              class={`atom-detail-title-input${isReadOnly() ? ' atom-detail-readonly' : ''}`}
               type="text"
               value={titleDraft()}
               onInput={(e) => setTitleDraft(e.currentTarget.value)}
               onBlur={commitTitle}
               onKeyDown={handleTitleKeyDown}
+              disabled={isReadOnly()}
               autofocus
               aria-label="Edit title"
             />
@@ -361,6 +372,7 @@ export function AtomDetailView() {
                   class="atom-detail-date-input"
                   value={tsToDateInput(getAtomDate(atom()!, 'dueDate'))}
                   onInput={handleDateField('dueDate')}
+                  disabled={isReadOnly()}
                   aria-label="Due date"
                 />
               </label>
@@ -371,6 +383,7 @@ export function AtomDetailView() {
                   class="atom-detail-date-input"
                   value={tsToDateInput(getAtomDate(atom()!, 'scheduledDate'))}
                   onInput={handleDateField('scheduledDate')}
+                  disabled={isReadOnly()}
                   aria-label="Scheduled date"
                 />
               </label>
@@ -387,6 +400,7 @@ export function AtomDetailView() {
               class="atom-detail-date-input"
               value={tsToDateInput(getAtomDate(atom()!, 'eventDate'))}
               onInput={handleDateField('eventDate')}
+              disabled={isReadOnly()}
               aria-label="Event date"
             />
           </div>
@@ -398,7 +412,9 @@ export function AtomDetailView() {
           <select
             class="atom-detail-select"
             value={atom()!.sectionItemId ?? ''}
+            disabled={isReadOnly()}
             onChange={(e) => {
+              if (isReadOnly()) return;
               const value = e.currentTarget.value;
               sendCommand({
                 type: 'UPDATE_ATOM',
@@ -429,6 +445,7 @@ export function AtomDetailView() {
             onValueChange={handleContentChange}
             onLinkCreated={handleLinkCreated}
             excludeId={atom()!.id}
+            disabled={isReadOnly()}
           />
         </div>
 
