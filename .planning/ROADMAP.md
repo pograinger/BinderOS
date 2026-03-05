@@ -4,7 +4,7 @@
 
 - [x] **v1.0** — Foundation + Compute Engine + Pages/Navigation/Search (45/45 requirements, 11 plans, shipped 2026-02-22) → [Archive](.planning/milestones/v1.0-ROADMAP.md)
 - [x] **v2.0 AI Orchestration** — Phases 4-7 (30/30 requirements, 14 plans, shipped 2026-03-03) → [Archive](.planning/milestones/v2.0-ROADMAP.md)
-- [ ] **v3.0 Local AI + Polish** — Phases 9-12 (24 requirements, in progress)
+- [ ] **v3.0 Local AI + Polish** — Phases 9-11 (21 requirements, in progress)
 
 ## Phases
 
@@ -31,14 +31,13 @@ See [Archive](.planning/milestones/v2.0-ROADMAP.md) for full detail.
 
 </details>
 
-### v3.0 Local AI + Polish (Phases 9-12)
+### v3.0 Local AI + Polish (Phases 9-11)
 
 **Milestone Goal:** Replace centroid-similarity Tier 2 with real fine-tuned ONNX classifiers for full offline GTD intelligence. Cloud LLM becomes an optional quality boost, not a dependency. Ship with v2.0 tech debt resolved.
 
 - [x] **Phase 9: Python Training Infrastructure** - Synthetic data corpus, classifier training, ONNX export, browser-runtime validation (completed 2026-03-04)
 - [x] **Phase 10: Browser Inference Integration** - ONNX inference in embedding worker, confidence calibration UX, graceful fallback, model caching (completed 2026-03-04)
 - [ ] **Phase 11: Tech Debt, Settings + Correction Utility** - Settings panel cleanup, v2.0 tech debt, model status display, correction export script
-- [ ] **Phase 12: Section Routing** - Offline nearest-neighbor section routing, graceful degradation, no new model download
 
 ## Phase Details
 
@@ -83,15 +82,12 @@ Plans:
   4. Dead code in `llm-worker.ts` is removed, `isReadOnly` is enforced at UI level, and stale AIOrb comments and verbose status bar are cleaned up
 **Plans**: TBD
 
-### Phase 12: Section Routing
+### Phase 12: Section Routing (DEFERRED to v3.x)
+**Status**: Deferred from v3.0 milestone audit — section routing moved to future milestone
 **Goal**: Users' section suggestions work offline using embedding nearest-neighbor against their own section atoms, with no new model download
 **Depends on**: Phase 10 (embedding worker must handle CLASSIFY_ONNX; nearest-neighbor reuses same MiniLM worker)
 **Requirements**: ROUTE-01, ROUTE-02, ROUTE-03
-**Success Criteria** (what must be TRUE):
-  1. User triages an inbox atom with no internet connection and receives a section suggestion derived from similarity to existing section atoms (no cloud API call)
-  2. Section suggestion uses per-atom embedding similarity rather than centroid averaging, matching more precisely to the user's existing content
-  3. When a user has insufficient section atoms for reliable nearest-neighbor matching, section routing falls back to the existing centroid or Tier 1 path without error
-**Plans**: TBD
+**Plans**: Deferred
 
 ## Progress
 
@@ -107,4 +103,4 @@ Plans:
 | 9. Python Training Infrastructure | 2/2 | Complete   | 2026-03-04 | - |
 | 10. Browser Inference Integration | 3/3 | Complete    | 2026-03-04 | - |
 | 11. Tech Debt, Settings + Correction Utility | v3.0 | 0/TBD | Not started | - |
-| 12. Section Routing | v3.0 | 0/TBD | Not started | - |
+| 12. Section Routing | deferred | — | Deferred to v3.x | - |

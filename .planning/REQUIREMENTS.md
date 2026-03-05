@@ -28,11 +28,11 @@ Requirements for the Local AI + Polish milestone. Each maps to roadmap phases.
 - [x] **CONF-02**: When top-2 class probabilities are within 0.15 of each other, user sees both options rather than a single pre-filled suggestion
 - [x] **CONF-03**: Classification log captures `modelSuggestion` separately from `userChoice` to prevent model-collapse feedback loops
 
-### Section Routing
+### Section Routing (DEFERRED to v3.x)
 
-- [ ] **ROUTE-01**: User's section routing works offline using embedding nearest-neighbor against existing section atoms (no cloud dependency)
-- [ ] **ROUTE-02**: Section routing uses per-atom embedding similarity rather than centroid averaging for higher accuracy
-- [ ] **ROUTE-03**: Section routing gracefully degrades when insufficient section atoms exist (falls back to existing centroid or Tier 1)
+- [ ] **ROUTE-01**: User's section routing works offline using embedding nearest-neighbor against existing section atoms (no cloud dependency) *(deferred)*
+- [ ] **ROUTE-02**: Section routing uses per-atom embedding similarity rather than centroid averaging for higher accuracy *(deferred)*
+- [ ] **ROUTE-03**: Section routing gracefully degrades when insufficient section atoms exist (falls back to existing centroid or Tier 1) *(deferred)*
 
 ### Correction & Retraining
 
@@ -102,15 +102,16 @@ Deferred to v3.x or later. Tracked but not in current roadmap.
 | POLISH-05 | Phase 11 | Pending |
 | POLISH-06 | Phase 11 | Pending |
 | POLISH-07 | Phase 11 | Pending |
-| ROUTE-01 | Phase 12 | Pending |
-| ROUTE-02 | Phase 12 | Pending |
-| ROUTE-03 | Phase 12 | Pending |
+| ROUTE-01 | Deferred (v3.x) | Deferred |
+| ROUTE-02 | Deferred (v3.x) | Deferred |
+| ROUTE-03 | Deferred (v3.x) | Deferred |
 
 **Coverage:**
-- v3.0 requirements: 24 total
-- Mapped to phases: 24
+- v3.0 requirements: 21 total (3 deferred to v3.x)
+- Mapped to phases: 21
+- Deferred: 3 (ROUTE-01, ROUTE-02, ROUTE-03)
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-03*
-*Last updated: 2026-03-03 after roadmap creation — all 24 requirements mapped to phases 9-12*
+*Last updated: 2026-03-04 — ROUTE-01/02/03 deferred to v3.x per milestone audit*
