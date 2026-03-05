@@ -36,13 +36,13 @@ Requirements for the Local AI + Polish milestone. Each maps to roadmap phases.
 
 ### Correction & Retraining
 
-- [ ] **CORR-01**: Developer can export classification corrections (chosenType != suggestedType) from Dexie as JSONL for retraining via offline script
-- [ ] **CORR-02**: Correction export preserves the original synthetic training corpus as a floor — corrections augment, never replace
+- [x] **CORR-01**: Developer can export classification corrections (chosenType != suggestedType) from Dexie as JSONL for retraining via offline script
+- [x] **CORR-02**: Correction export preserves the original synthetic training corpus as a floor — corrections augment, never replace
 
 ### Settings & Polish
 
-- [ ] **POLISH-01**: User can see model version, download status, and correction count in the settings panel
-- [ ] **POLISH-02**: Settings panel UX is cleaned up (v2.0 tech debt)
+- [x] **POLISH-01**: User can see model version, download status, and correction count in the settings panel
+- [x] **POLISH-02**: Settings panel UX is cleaned up (v2.0 tech debt)
 - [ ] **POLISH-03**: Status bar AI indicator is less verbose (v2.0 tech debt)
 - [ ] **POLISH-04**: Dead code in `src/worker/llm-worker.ts` is removed
 - [ ] **POLISH-05**: `isReadOnly` is enforced at UI level — read-only atoms cannot be edited
@@ -93,10 +93,10 @@ Deferred to v3.x or later. Tracked but not in current roadmap.
 | INFER-05 | Phase 10 | Complete |
 | CONF-02 | Phase 10 | Complete |
 | CONF-03 | Phase 10 | Complete |
-| CORR-01 | Phase 11 | Pending |
-| CORR-02 | Phase 11 | Pending |
-| POLISH-01 | Phase 11 | Pending |
-| POLISH-02 | Phase 11 | Pending |
+| CORR-01 | Phase 11 | Complete |
+| CORR-02 | Phase 11 | Complete |
+| POLISH-01 | Phase 11 | Complete |
+| POLISH-02 | Phase 11 | Complete |
 | POLISH-03 | Phase 11 | Pending |
 | POLISH-04 | Phase 11 | Pending |
 | POLISH-05 | Phase 11 | Pending |

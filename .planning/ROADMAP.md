@@ -37,7 +37,7 @@ See [Archive](.planning/milestones/v2.0-ROADMAP.md) for full detail.
 
 - [x] **Phase 9: Python Training Infrastructure** - Synthetic data corpus, classifier training, ONNX export, browser-runtime validation (completed 2026-03-04)
 - [x] **Phase 10: Browser Inference Integration** - ONNX inference in embedding worker, confidence calibration UX, graceful fallback, model caching (completed 2026-03-04)
-- [ ] **Phase 11: Tech Debt, Settings + Correction Utility** - Settings panel cleanup, v2.0 tech debt, model status display, correction export script
+- [x] **Phase 11: Tech Debt, Settings + Correction Utility** - Settings panel cleanup, v2.0 tech debt, model status display, correction export script (completed 2026-03-05)
 
 ## Phase Details
 
@@ -80,7 +80,7 @@ Plans:
   2. User opens settings and finds a clean, readable panel (v2.0 rough UX resolved)
   3. Developer runs a script that exports all classification corrections (`chosenType != suggestedType`) from Dexie as JSONL, with the original synthetic corpus preserved as a floor
   4. Dead code in `llm-worker.ts` is removed, `isReadOnly` is enforced at UI level, and stale AIOrb comments and verbose status bar are cleaned up
-**Plans:** 1/3 plans executed
+**Plans:** 3/3 plans complete
 Plans:
 - [ ] 11-01-PLAN.md -- Correction export utility, model info card, and settings panel polish
 - [ ] 11-02-PLAN.md -- StatusBar simplification, llm-worker verification, AIOrb cleanup, isReadOnly enforcement
@@ -106,5 +106,5 @@ Plans:
 | 7. Guided Review + Compression Coach | v2.0 | 3/3 | Complete | 2026-03-02 |
 | 9. Python Training Infrastructure | 2/2 | Complete   | 2026-03-04 | - |
 | 10. Browser Inference Integration | 3/3 | Complete    | 2026-03-04 | - |
-| 11. Tech Debt, Settings + Correction Utility | 1/3 | In Progress|  | - |
+| 11. Tech Debt, Settings + Correction Utility | 3/3 | Complete   | 2026-03-05 | - |
 | 12. Section Routing | deferred | — | Deferred to v3.x | - |

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Local AI + Polish
 status: executing
-stopped_at: Completed 11-03-PLAN.md
-last_updated: "2026-03-05T01:09:13.082Z"
-last_activity: 2026-03-04 — Phase 10 Plan 03 complete (StatusBar classifier download progress, ambiguous two-button type UX in InboxAISuggestion, type pre-fill guard in InboxView)
+stopped_at: Completed 11-01-PLAN.md
+last_updated: "2026-03-05T01:16:53.906Z"
+last_activity: 2026-03-05 — Phase 11 Plan 03 complete (ReviewResumeToast — pending review session toast notification with sessionStorage show-once and auto-dismiss)
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 8
-  completed_plans: 6
-  percent: 30
+  completed_plans: 8
+  percent: 94
 ---
 
 # Project State
@@ -40,6 +40,13 @@ Progress: [█████████░] 94% (v3.0 scope)
 - Embedding worker with Xenova/all-MiniLM-L6-v2 already running
 - Classification log in Dexie for pattern learning already wired
 - Tech debt items identified and carried forward for cleanup
+
+### Decisions (Phase 11 Plan 01)
+
+- classifierVersion hardcoded to 'v1' on CLASSIFIER_READY — no version metadata in ONNX file; add version field to triage-type-classes.json in next training cycle.
+- exportCorrectionLog returns Promise<number> (not void) — caller can update correctionCountLocal without a second Dexie round-trip.
+- Correction count loaded on onMount as local panel signal — panel opens infrequently; reactive LiveQuery would be unnecessary overhead.
+- correctionCountLocal reloaded after each export to avoid stale count display.
 
 ### Decisions (Phase 11 Plan 03)
 
@@ -102,6 +109,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-05T01:09:13.079Z
-Stopped at: Completed 11-03-PLAN.md
+Last session: 2026-03-05T01:12:40Z
+Stopped at: Completed 11-01-PLAN.md
 Resume file: None
