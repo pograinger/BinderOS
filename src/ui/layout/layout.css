@@ -6305,3 +6305,74 @@ kbd {
   font-size: 14px;
   color: var(--text-secondary);
 }
+
+/* ============================================
+   Phase 11: Review Resume Toast
+   ============================================ */
+
+.review-resume-toast {
+  position: fixed;
+  bottom: 48px; /* Above status bar */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--surface-secondary, #2a2a2a);
+  border: 1px solid var(--border-primary, #444);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: toast-slide-up 0.3s ease-out;
+}
+
+@keyframes toast-slide-up {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.review-resume-toast-msg {
+  font-size: 0.875rem;
+  color: var(--text-primary, #e0e0e0);
+}
+
+.review-resume-toast-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.review-resume-toast-btn {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.review-resume-toast-resume {
+  background: var(--accent, #4a9eff);
+  color: white;
+  border-color: var(--accent, #4a9eff);
+}
+
+.review-resume-toast-resume:hover {
+  filter: brightness(1.1);
+}
+
+.review-resume-toast-discard {
+  background: transparent;
+  color: var(--text-secondary, #999);
+  border-color: var(--border-primary, #444);
+}
+
+.review-resume-toast-discard:hover {
+  border-color: var(--text-secondary, #999);
+}

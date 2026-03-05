@@ -28,6 +28,7 @@ import { CloudRequestPreview } from '../components/CloudRequestPreview';
 import { AIOrb } from '../components/AIOrb';
 import { AIQuestionFlow } from '../components/AIQuestionFlow';
 import { GTDAnalysisFlow } from '../components/GTDAnalysisFlow';
+import { ReviewResumeToast } from '../components/ReviewResumeToast';
 import { state, setPendingCloudRequest, showAISettings, setShowAISettings, showCapture } from '../signals/store';
 import { getActiveAdapter } from '../../ai/router';
 import type { CloudAdapter } from '../../ai/adapters/cloud';
@@ -96,6 +97,9 @@ export function Shell() {
 
       {/* Phase 7: GTD Analysis Flow — multi-step GTD decision tree (opened by Analyze orb action) */}
       <GTDAnalysisFlow />
+
+      {/* Phase 11: Review resume toast — prompts user to resume pending review session on app load */}
+      <ReviewResumeToast />
 
       {/* Phase 4: AI overlays */}
 
