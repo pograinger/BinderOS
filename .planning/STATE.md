@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v3.0
 milestone_name: Local AI + Polish
 status: executing
-stopped_at: Completed 11-01-PLAN.md
-last_updated: "2026-03-05T01:16:53.906Z"
-last_activity: 2026-03-05 — Phase 11 Plan 03 complete (ReviewResumeToast — pending review session toast notification with sessionStorage show-once and auto-dismiss)
+stopped_at: Completed 11-02-PLAN.md
+last_updated: "2026-03-05T01:27:00.000Z"
+last_activity: 2026-03-05 — Phase 11 Plan 02 complete (StatusBar dot-only AI indicator, AIOrb stale comment cleanup, AtomDetailView isReadOnly guard on all edit handlers)
 progress:
   total_phases: 4
   completed_phases: 3
@@ -27,9 +27,9 @@ See: .planning/PROJECT.md (updated 2026-03-03)
 
 Milestone: v3.0 Local AI + Polish
 Phase: 11 of 12 (Tech Debt + Settings Correction)
-Plan: 3 of 3 in current phase (complete)
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-03-05 — Phase 11 Plan 03 complete (ReviewResumeToast — pending review session toast notification with sessionStorage show-once and auto-dismiss)
+Last activity: 2026-03-05 — Phase 11 Plan 02 complete (StatusBar dot-only AI indicator, AIOrb stale comment cleanup, AtomDetailView isReadOnly guard on all edit handlers)
 
 Progress: [█████████░] 94% (v3.0 scope)
 
@@ -40,6 +40,13 @@ Progress: [█████████░] 94% (v3.0 scope)
 - Embedding worker with Xenova/all-MiniLM-L6-v2 already running
 - Classification log in Dexie for pattern learning already wired
 - Tech debt items identified and carried forward for cleanup
+
+### Decisions (Phase 11 Plan 02)
+
+- StatusBar AI indicator: dot-only when aiEnabled and provider available (llmStatus or cloudStatus === 'available') — no busy state, no text label (POLISH-03).
+- llm-worker.ts verified clean — abort handler is documented Transformers.js limitation, not dead code; abortControllers map is real functionality (POLISH-04).
+- isReadOnly memo uses safe cast `(a as Record<string, unknown>)['isReadOnly'] === true` not 'in' operator — avoids SolidJS proxy reactivity pitfall (POLISH-05).
+- MentionAutocomplete gained optional disabled prop to thread visual disable through to content textarea — minimal surface change (POLISH-06).
 
 ### Decisions (Phase 11 Plan 01)
 

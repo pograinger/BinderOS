@@ -43,10 +43,10 @@ Requirements for the Local AI + Polish milestone. Each maps to roadmap phases.
 
 - [x] **POLISH-01**: User can see model version, download status, and correction count in the settings panel
 - [x] **POLISH-02**: Settings panel UX is cleaned up (v2.0 tech debt)
-- [ ] **POLISH-03**: Status bar AI indicator is less verbose (v2.0 tech debt)
-- [ ] **POLISH-04**: Dead code in `src/worker/llm-worker.ts` is removed
-- [ ] **POLISH-05**: `isReadOnly` is enforced at UI level — read-only atoms cannot be edited
-- [ ] **POLISH-06**: Stale comments in AIOrb component are cleaned up
+- [x] **POLISH-03**: Status bar AI indicator is less verbose (v2.0 tech debt)
+- [x] **POLISH-04**: Dead code in `src/worker/llm-worker.ts` is removed
+- [x] **POLISH-05**: `isReadOnly` is enforced at UI level — read-only atoms cannot be edited
+- [x] **POLISH-06**: Stale comments in AIOrb component are cleaned up
 - [x] **POLISH-07**: Resume UX uses explicit prompt instead of badge dot
 
 ## Future Requirements
@@ -97,10 +97,10 @@ Deferred to v3.x or later. Tracked but not in current roadmap.
 | CORR-02 | Phase 11 | Complete |
 | POLISH-01 | Phase 11 | Complete |
 | POLISH-02 | Phase 11 | Complete |
-| POLISH-03 | Phase 11 | Pending |
-| POLISH-04 | Phase 11 | Pending |
-| POLISH-05 | Phase 11 | Pending |
-| POLISH-06 | Phase 11 | Pending |
+| POLISH-03 | Phase 11 | Complete |
+| POLISH-04 | Phase 11 | Complete |
+| POLISH-05 | Phase 11 | Complete |
+| POLISH-06 | Phase 11 | Complete |
 | POLISH-07 | Phase 11 | Complete |
 | ROUTE-01 | Deferred (v3.x) | Deferred |
 | ROUTE-02 | Deferred (v3.x) | Deferred |
