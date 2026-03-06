@@ -370,7 +370,7 @@ describe('derivePatternSteps per-section empty detection', () => {
     const steps = derivePatternSteps([sec1, sec2], atoms, 2);
     // sec-2 (Areas) has no atoms — should trigger empty-section step
     expect(steps.length).toBe(1);
-    expect(steps[0].question).toContain('Areas');
+    expect(steps[0]?.question).toContain('Areas');
   });
 
   it('does not flag section that has open atoms', () => {

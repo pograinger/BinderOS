@@ -231,15 +231,10 @@ export function derivePatternSteps(
   for (const section of sections) {
     if (steps.length >= 3) break;
 
-    const sectionAtoms = openAtoms.filter((a) => {
-      // Check if atom is tied to this section via sectionItemId or direct check
-      // We use a broad check here since we don't have sectionItems in scope
-      return false; // Section activity check requires sectionItems — skip in pattern detection
-    });
+    // Filter open atoms belonging to this section via sectionId
+    const sectionOpenAtoms = openAtoms.filter((a) => a.sectionId === section.id);
 
-    // Only flag truly empty sections (no open atoms linked to it) via atom count at section level
-    // Since we can't match without sectionItems here, we detect via type match
-    if (section.type !== 'archive' && openAtoms.length === 0) {
+    if (section.type !== 'archive' && sectionOpenAtoms.length === 0) {
       steps.push({
         stepId: `pattern-empty-${section.id.slice(0, 5)}-${Math.random().toString(36).slice(2, 7)}`,
         phase: 'get-creative',
