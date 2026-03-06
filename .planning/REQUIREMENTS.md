@@ -78,30 +78,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DLLM-01 | — | Pending |
-| DLLM-02 | — | Pending |
-| DLLM-03 | — | Pending |
-| DLLM-04 | — | Pending |
-| DLLM-05 | — | Pending |
-| TMPL-01 | — | Pending |
-| TMPL-02 | — | Pending |
-| TMPL-03 | — | Pending |
-| SNTZ-01 | — | Pending |
-| SNTZ-02 | — | Pending |
-| SNTZ-03 | — | Pending |
-| CLOUD-01 | — | Pending |
-| CLOUD-02 | — | Pending |
-| CLOUD-03 | — | Pending |
-| CLOUD-04 | — | Pending |
-| ONNX-01 | — | Pending |
-| ONNX-02 | — | Pending |
-| ONNX-03 | — | Pending |
+| DLLM-01 | Phase 15 | Pending |
+| DLLM-02 | Phase 15 | Pending |
+| DLLM-03 | Phase 15 | Pending |
+| DLLM-04 | Phase 15 | Pending |
+| DLLM-05 | Phase 15 | Pending |
+| TMPL-01 | Phase 12 | Pending |
+| TMPL-02 | Phase 12 | Pending |
+| TMPL-03 | Phase 12 | Pending |
+| SNTZ-01 | Phase 14 | Pending |
+| SNTZ-02 | Phase 14 | Pending |
+| SNTZ-03 | Phase 14 | Pending |
+| CLOUD-01 | Phase 13 | Pending |
+| CLOUD-02 | Phase 13 | Pending |
+| CLOUD-03 | Phase 13 | Pending |
+| CLOUD-04 | Phase 13 | Pending |
+| ONNX-01 | Phase 16 | Pending |
+| ONNX-02 | Phase 16 | Pending |
+| ONNX-03 | Phase 15 | Pending |
 
 **Coverage:**
 - v4.0 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-05*
-*Last updated: 2026-03-05 after initial definition*
+*Last updated: 2026-03-05 after roadmap creation — 18/18 requirements mapped*

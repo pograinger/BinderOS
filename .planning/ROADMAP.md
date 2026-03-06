@@ -5,6 +5,7 @@
 - [x] **v1.0** — Foundation + Compute Engine + Pages/Navigation/Search (45/45 requirements, 11 plans, shipped 2026-02-22) → [Archive](.planning/milestones/v1.0-ROADMAP.md)
 - [x] **v2.0 AI Orchestration** — Phases 4-7 (30/30 requirements, 14 plans, shipped 2026-03-03) → [Archive](.planning/milestones/v2.0-ROADMAP.md)
 - [x] **v3.0 Local AI + Polish** — Phases 9-11 (18/18 requirements, 8 plans, shipped 2026-03-05) → [Archive](.planning/milestones/v3.0-ROADMAP.md)
+- 🚧 **v4.0 Device-Adaptive AI** — Phases 12-16 (18 requirements, in progress)
 
 ## Phases
 
@@ -42,11 +43,78 @@ See [Archive](.planning/milestones/v3.0-ROADMAP.md) for full detail.
 
 </details>
 
-### Deferred
+### v4.0 Device-Adaptive AI (In Progress)
 
-- **Phase 12: Section Routing** — Deferred from v3.0 to future milestone. Offline section routing via embedding nearest-neighbor (ROUTE-01, ROUTE-02, ROUTE-03)
+**Milestone Goal:** Restructure AI tiers for device-adaptive inference — local LLMs on every device, expanded ONNX classifiers, multi-provider cloud, and a privacy gate — so the app is fully functional offline on any device.
+
+- [ ] **Phase 12: Template Engine** - Offline structured text generation for reviews, compression explanations, and GTD flow prompts without any LLM call
+- [ ] **Phase 13: Multi-Provider Cloud** - Refactor CloudAdapter to provider-agnostic shell; add OpenAI, Grok, and corporate endpoints via openai SDK
+- [ ] **Phase 14: Sanitization Classifier** - ONNX NER privacy gate in embedding worker; Python training pipeline; branded SanitizedPrompt type enforcing execution order
+- [ ] **Phase 15: Device-Adaptive Local LLM** - DeviceAdapter selects WebLLM (desktop) or WASM LLM (mobile); wllama integration; iOS explicitly excluded; adaptive confidence thresholds
+- [ ] **Phase 16: ONNX Section Routing** - ONNX classifier replaces centroid fallback for section routing; Python training pipeline; classifier-worker.ts for memory isolation
+
+## Phase Details
+
+### Phase 12: Template Engine
+**Goal**: Users receive review briefings, compression explanations, and GTD flow prompts generated from entropy signals without triggering any LLM call
+**Depends on**: Nothing (first v4.0 phase)
+**Requirements**: TMPL-01, TMPL-02, TMPL-03
+**Success Criteria** (what must be TRUE):
+  1. User opens weekly review on a device with no AI enabled and receives a structured briefing populated with real stale task counts, section names, and entropy scores — not a blank state
+  2. User views a compression candidate and sees an explanation citing the atom's staleness age and last-accessed date, generated with zero network requests
+  3. User enters GTD Get Clear flow and all prompt cards render with context-aware questions derived from their inbox count and section load — without an LLM call
+  4. App running fully offline on mobile produces identical review briefing output to online mode (no degraded fallback message for structural content)
+**Plans**: TBD
+
+### Phase 13: Multi-Provider Cloud
+**Goal**: Users can send AI requests to OpenAI, Grok, or a custom corporate endpoint using their own API keys, with all safety gates preserved in one place and provider identity shown in the communication log
+**Depends on**: Phase 12
+**Requirements**: CLOUD-01, CLOUD-02, CLOUD-03, CLOUD-04
+**Success Criteria** (what must be TRUE):
+  1. User enters an OpenAI API key in settings and AI requests route to gpt-4o-mini; pre-send approval modal displays "OpenAI" as the provider before dispatch
+  2. User configures Grok via xAI API key and receives responses from Grok; communication log entry shows "Grok" as the provider
+  3. User enters a custom base URL (Ollama, LM Studio, Azure) with a Bearer token and AI requests route to that endpoint without code changes
+  4. Communication log shows which provider handled each request; switching providers does not require app restart
+  5. Anthropic adapter continues working identically — refactor is non-breaking for existing users
+**Plans**: TBD
+
+### Phase 14: Sanitization Classifier
+**Goal**: All atom content is checked for sensitive entities by an ONNX NER classifier before the pre-send approval modal appears, and users can see exactly what was redacted before approving cloud dispatch
+**Depends on**: Phase 13 (refactored CloudAdapter safety shell)
+**Requirements**: SNTZ-01, SNTZ-02, SNTZ-03
+**Success Criteria** (what must be TRUE):
+  1. User initiates a cloud AI request containing a name and a financial reference; the pre-send modal shows a diff with those entities redacted before the user can approve
+  2. Python training pipeline at scripts/train/train-sanitizer.py runs end-to-end and produces a sanitize-check.onnx model that passes the recall >= 0.85 gate on the soft-PII test set
+  3. Sanitization runs in under 50ms for a typical atom (no perceptible delay between tapping the AI action and the pre-send modal appearing)
+  4. Cloud API never receives unsanitized content — the TypeScript compiler rejects any code path that constructs a log entry before SanitizedPrompt is produced
+**Plans**: TBD
+
+### Phase 15: Device-Adaptive Local LLM
+**Goal**: Users on any device (desktop with WebGPU, mobile without WebGPU, iOS) get the appropriate local AI mode selected automatically, with a visible indication of which mode is active and a download-with-progress flow for the mobile WASM model
+**Depends on**: Phase 12 (independent of 13-14; can run in parallel with Phase 14 on separate branch)
+**Requirements**: DLLM-01, DLLM-02, DLLM-03, DLLM-04, DLLM-05
+**Success Criteria** (what must be TRUE):
+  1. User on a desktop with WebGPU enables local AI and the app loads WebLLM (GPU mode) automatically; the settings panel displays "Local AI: GPU mode (~2.2GB)"
+  2. User on an Android device without WebGPU enables local AI and the app loads the WASM LLM (wllama + SmolLM2-360M-Q4) with a download progress indicator; model persists via Cache API and does not re-download on next launch
+  3. User on iOS enables local AI and the app displays "Lightweight mode — using offline classifiers + cloud" with no WASM LLM download attempted
+  4. On a mobile device, Tier 2→3 confidence thresholds are raised so that fewer requests escalate to LLM inference, reducing latency on slower WASM execution
+  5. Integrated GPU machine that fails the VRAM sentinel check falls back to WASM mode within 30 seconds rather than hanging in "loading" state indefinitely
+**Plans**: TBD
+
+### Phase 16: ONNX Section Routing
+**Goal**: Section routing uses a trained ONNX classifier instead of the centroid fallback, working reliably for new users who have no atom history, with the new model loaded in a dedicated classifier worker to preserve memory budget on mobile
+**Depends on**: Phase 14 (worker architecture from sanitization phase establishes classifier-worker.ts pattern)
+**Requirements**: ONNX-01, ONNX-02, ONNX-03
+**Success Criteria** (what must be TRUE):
+  1. New user with zero atoms triages their first inbox item and receives a section suggestion from the ONNX classifier (not a centroid fallback or blank); section suggestions match PARA semantics with accuracy comparable to the v3.0 type classifier
+  2. Python training pipeline at scripts/train/train-section-router.py runs end-to-end and produces a section-router.onnx model following the same pattern as the v3.0 type classifier pipeline
+  3. On a mobile device, the section routing ONNX model loads in classifier-worker.ts (not embedding-worker.ts); embedding worker heap stays under its v3.0 baseline
+**Plans**: TBD
 
 ## Progress
+
+**Execution Order:** 12 → 13 → 14 → 15 → 16
+Note: Phase 15 is independent of 13-14 and may execute in parallel with Phase 14 on a separate branch.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -60,4 +128,8 @@ See [Archive](.planning/milestones/v3.0-ROADMAP.md) for full detail.
 | 9. Python Training Infrastructure | v3.0 | 2/2 | Complete | 2026-03-04 |
 | 10. Browser Inference Integration | v3.0 | 3/3 | Complete | 2026-03-04 |
 | 11. Tech Debt, Settings + Correction Utility | v3.0 | 3/3 | Complete | 2026-03-05 |
-| 12. Section Routing | deferred | — | Deferred to v3.x | - |
+| 12. Template Engine | v4.0 | 0/TBD | Not started | - |
+| 13. Multi-Provider Cloud | v4.0 | 0/TBD | Not started | - |
+| 14. Sanitization Classifier | v4.0 | 0/TBD | Not started | - |
+| 15. Device-Adaptive Local LLM | v4.0 | 0/TBD | Not started | - |
+| 16. ONNX Section Routing | v4.0 | 0/TBD | Not started | - |
