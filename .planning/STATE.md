@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Device-Adaptive AI
 status: planning
-stopped_at: Phase 12 context gathered
-last_updated: "2026-03-06T01:45:53.619Z"
+stopped_at: Completed 12-01-PLAN.md
+last_updated: "2026-03-06T02:25:24.579Z"
 last_activity: 2026-03-05 — Roadmap created
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
   percent: 0
 ---
 
@@ -47,6 +47,7 @@ Progress: [░░░░░░░░░░] 0%
 | 11. Tech Debt + Settings | 3 | 2026-03-05 |
 
 *v4.0 metrics will populate as plans complete.*
+| Phase 12 P01 | 15 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -59,6 +60,8 @@ Recent decisions affecting v4.0:
 - [v4.0 research] CloudAdapter refactor must precede sanitization wiring (avoids double-refactor)
 - [v4.0 research] Sanitization runs in embedding worker or dedicated sanitization-worker (memory budget TBD)
 - [v4.0 research] SanitizedPrompt branded type enforces sanitization-before-logEntry at compile time
+- [Phase 12]: Template engine uses TypeScript template literals (not Eta.js) — zero dependencies, matches codebase pattern
+- [Phase 12]: Briefing is fully offline — anyAIAvailable() guard removed from startReviewBriefing and startGuidedReview
 
 ### Phase Ordering Note
 
@@ -75,6 +78,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06T01:45:53.609Z
-Stopped at: Phase 12 context gathered
-Resume file: .planning/phases/12-template-engine/12-CONTEXT.md
+Last session: 2026-03-06T02:25:24.577Z
+Stopped at: Completed 12-01-PLAN.md
+Resume file: None
