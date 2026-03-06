@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Device-Adaptive AI
 status: planning
-stopped_at: Completed 12-02-PLAN.md
-last_updated: "2026-03-06T02:35:29.641Z"
+stopped_at: Completed 12-03-PLAN.md
+last_updated: "2026-03-06T03:10:02.482Z"
 last_activity: 2026-03-05 — Roadmap created
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 3
+  completed_plans: 3
   percent: 0
 ---
 
@@ -49,6 +49,7 @@ Progress: [░░░░░░░░░░] 0%
 *v4.0 metrics will populate as plans complete.*
 | Phase 12 P01 | 15 | 2 tasks | 4 files |
 | Phase 12 P02 | 10 | 2 tasks | 3 files |
+| Phase 12 P03 | 5 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,7 @@ Recent decisions affecting v4.0:
 - [Phase 12]: Briefing is fully offline — anyAIAvailable() guard removed from startReviewBriefing and startGuidedReview
 - [Phase 12]: compression.ts dead code removed (buildCompressionBatchPrompt, parseCompressionBatchResponse, buildFallbackExplanations, tier1PreFilter) -- all replaced by template path
 - [Phase 12]: generatePhaseSummary stays LLM-eligible -- intentionally not replaced by templates (phase transition summaries benefit from AI synthesis)
+- [Phase 12]: Fixed dead sectionAtoms filter in derivePatternSteps: a.sectionId === section.id replaces return false, enabling real per-section empty detection
 
 ### Phase Ordering Note
 
@@ -81,6 +83,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06T02:35:29.639Z
-Stopped at: Completed 12-02-PLAN.md
+Last session: 2026-03-06T03:10:02.479Z
+Stopped at: Completed 12-03-PLAN.md
 Resume file: None
