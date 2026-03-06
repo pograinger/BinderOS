@@ -81,17 +81,66 @@
 
 ---
 
+## Milestone: v3.0 — Local AI + Polish
+
+**Shipped:** 2026-03-05
+**Phases:** 3 | **Plans:** 8 | **Commits:** 47
+**Timeline:** 2 days (2026-03-03 to 2026-03-04)
+
+### What Was Built
+- Python training pipeline: synthetic data generation (Claude Haiku), MiniLM embedding, MLP classifier with Platt calibration, ONNX export
+- Browser-runtime ONNX validation harness with >95% top-1 parity gate
+- Fully offline atom type classification via fine-tuned ONNX model in embedding worker
+- Classifier download progress indicator, Cache API persistence, ambiguous two-button classification UX
+- Correction export utility for retraining, model info card in settings panel
+- Tech debt cleanup: StatusBar simplified, AIOrb cleaned, isReadOnly enforced, review resume toast
+
+### What Worked
+- Placeholder ONNX strategy (random-weight model committed first) let Phase 10 browser wiring proceed independently of Phase 9 training
+- Embedding worker reuse: MiniLM worker handles both search embeddings and ONNX classification without a second worker
+- Cache API for model persistence was the right abstraction — survives IndexedDB clears, one-time download UX
+- 0.78 confidence threshold calibrated via Platt scaling produced correct Tier 2→3 escalation rates
+- Phase 11 tech debt cleanup was efficient — targeted items from v2.0 UAT were well-scoped
+
+### What Was Inefficient
+- Milestone audit ran before Phase 11 was executed, showing stale gaps — timing of audit should be after all phases complete
+- Section routing (Phase 12) was planned, researched, then deferred — could have been excluded from initial roadmap
+- Summary one-liners not populated in SUMMARY.md frontmatter — summary-extract returns null, requiring manual extraction
+
+### Patterns Established
+- ONNX opset 17 + zipmap=False as standard for browser-compatible ML models
+- `CLASSIFY_ONNX` worker message pattern: send text, worker embeds + classifies in one step
+- Platt-calibrated confidence thresholds stored in STATE.md as locked decisions
+- createEffect (not onMount) for async-hydrated state from Dexie
+
+### Key Lessons
+1. Placeholder models are a powerful decoupling tool — validate worker wiring before real training completes
+2. ONNX Runtime Web threading (SharedArrayBuffer) is fragile — `numThreads = 1` avoids COOP/COEP issues
+3. Synthetic training data from Claude Haiku is cost-effective ($0.50-2.00 for full corpus) and quality is sufficient for 5-class classification
+4. Milestone audits should run after all phases are executed, not mid-milestone
+5. Summary one-liners should be explicitly written in SUMMARY.md frontmatter for automated extraction
+
+### Cost Observations
+- Model mix: Primarily Sonnet for execution (balanced profile), Opus for planning
+- Sessions: ~6 sessions across 2 days
+- Notable: Fastest milestone — 8 plans in 2 days. Python training scripts and ONNX wiring were well-scoped and self-contained.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
 
-| Milestone | Phases | Plans | Key Change |
-|-----------|--------|-------|------------|
-| v1.0 | 3 | 11 | Established worker architecture + pure module pattern |
-| v2.0 | 4 | 14 | Added AI adapter abstraction + tiered pipeline + staged mutations |
+| Milestone | Phases | Plans | Timeline | Key Change |
+|-----------|--------|-------|----------|------------|
+| v1.0 | 3 | 11 | — | Established worker architecture + pure module pattern |
+| v2.0 | 4 | 14 | 9 days | Added AI adapter abstraction + tiered pipeline + staged mutations |
+| v3.0 | 3 | 8 | 2 days | Upgraded Tier 2 to real ONNX classifiers + Python training pipeline |
 
 ### Top Lessons (Verified Across Milestones)
 
-1. Pure modules with no store imports scale well — confirmed in both v1.0 (scoring) and v2.0 (AI pipeline)
-2. Worker isolation prevents coupling — BinderCore worker, LLM worker, embedding worker all run independently
-3. Advisory-first patterns build trust — soft caps in v1.0, staged AI mutations in v2.0
+1. Pure modules with no store imports scale well — confirmed in v1.0 (scoring), v2.0 (AI pipeline), v3.0 (training scripts)
+2. Worker isolation prevents coupling — BinderCore, LLM, Embedding workers all independent; v3.0 added ONNX to embedding worker cleanly
+3. Advisory-first patterns build trust — soft caps in v1.0, staged AI mutations in v2.0, ambiguous two-button UX in v3.0
+4. Placeholder/decoupling strategies pay off — v2.0 adapter pattern enabled v3.0 tiered upgrade; v3.0 placeholder ONNX enabled parallel development
+5. Milestone velocity increases as architecture matures — v1.0 (11 plans), v2.0 (14 plans/9 days), v3.0 (8 plans/2 days)

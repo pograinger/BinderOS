@@ -1,5 +1,26 @@
 # Milestones
 
+## v3.0 Local AI + Polish (Shipped: 2026-03-05)
+
+**Phases completed:** 3 phases (9-11), 8 plans
+**Timeline:** 2 days (2026-03-03 → 2026-03-04)
+**Scope:** 68 files changed, +10,278 / -1,634 lines (28,169 LOC total)
+**Requirements:** 18/18 satisfied (3 ROUTE deferred to v3.x)
+**Audit:** gaps_found (stale — gaps were Phase 11 pre-execution; all resolved)
+**Git range:** 26006ee..3183117
+
+**Delivered:** Full offline GTD intelligence via fine-tuned ONNX classifiers, Python training pipeline for model reproduction, and v2.0 tech debt cleanup — cloud LLM becomes optional quality boost, not a dependency.
+
+**Key accomplishments:**
+- Python training pipeline: synthetic data generation via Claude Haiku, MiniLM embedding, MLP classifier with Platt calibration, ONNX export
+- Browser-runtime ONNX validation harness ensuring >95% top-1 parity with Python inference
+- Fully offline atom type classification via ONNX model in embedding worker (Tier 2 upgraded from centroid matching)
+- Classifier download progress indicator, Cache API persistence, ambiguous two-button classification UX
+- Correction export utility for retraining cycles, model info card in settings panel
+- Tech debt cleanup: StatusBar simplified, AIOrb cleaned, isReadOnly enforced, review resume toast added
+
+---
+
 ## v1.0 Foundation (Shipped: 2026-02-22)
 
 **Phases completed:** 3 phases (1-3), 11 plans

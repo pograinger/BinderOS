@@ -68,7 +68,7 @@ Each task was committed atomically:
 
 1. **Task 1: Create ReviewResumeToast component and wire in Shell** - `4545da8` (feat)
 
-**Plan metadata:** (docs commit follows)
+**Plan metadata:** `faa72e1` (docs)
 
 ## Files Created/Modified
 

@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A local-first, browser-based personal information management system built on information theory principles. BinderOS treats your life data as a compressible model — structured atoms (tasks, facts, events, decisions, insights) organized into a 3-ring binder metaphor with sections, pages, and entropy management. AI orchestrates knowledge reviews through a floating orb with conversational question flows, tiered LLM inference, and a compression coach — while the user stays in the driver's seat. Open-source, self-hostable, designed for people who want a "thinking surface" for their life, not another dumping ground.
+A local-first, browser-based personal information management system built on information theory principles. BinderOS treats your life data as a compressible model — structured atoms (tasks, facts, events, decisions, insights) organized into a 3-ring binder metaphor with sections, pages, and entropy management. AI orchestrates knowledge reviews through a floating orb with conversational question flows, tiered ML inference (fully offline via ONNX classifiers), and a compression coach — while the user stays in the driver's seat. Open-source, self-hostable, designed for people who want a "thinking surface" for their life, not another dumping ground.
 
 ## Core Value
 
@@ -29,36 +29,41 @@ Every piece of stored information must encode predictive value about your future
 - Compression coach — AI explains staleness per candidate with contextual signals, staged for approval (v2.0)
 - Additive AI mutations — AI suggestions tagged with `source: 'ai'`, staged in approval area, fully reversible (v2.0)
 - AI mutation tracking — changelog extended with source/aiRequestId fields, undo system works unchanged (v2.0)
+- Reproducible training pipeline — synthetic data generation, MiniLM embedding, MLP training, ONNX export via `scripts/train/` (v3.0)
+- Fully offline type classification — fine-tuned ONNX classifier in embedding worker replaces centroid matching (v3.0)
+- Calibrated confidence — Platt-scaled ONNX probabilities drive correct Tier 2→3 escalation and ambiguous two-button UX (v3.0)
+- Classification correction export — JSONL export for retraining with synthetic corpus preserved as floor (v3.0)
+- Model lifecycle UX — download progress, Cache API persistence, model info in settings, correction count (v3.0)
+- Tech debt cleanup — StatusBar simplified, AIOrb cleaned, isReadOnly enforced, review resume toast (v3.0)
 
 ### Active
 
-<!-- Current scope: v3.0 Local AI + Polish -->
+<!-- Next milestone scope TBD -->
 
-- Fine-tuned ONNX models for all GTD classification tasks (triage, priority, staleness, review, compression)
-- Synthetic data pipeline — LLM-generated labeled GTD training examples, refined with curated data
-- Full offline GTD intelligence — Tier 2 upgraded to real ML classifiers, system works without cloud
-- Cloud LLM becomes optional quality boost, not a dependency
-- Tech debt cleanup — settings panel, dead code, isReadOnly enforcement, status bar, stale comments
+- Section routing offline via embedding nearest-neighbor (deferred from v3.0)
+- PARA section views — full section-specific experiences
+- Advanced classifiers — staleness score, compression candidate, priority prediction models
 
 ### Out of Scope
 
-- PARA section views — full section-specific experiences (deferred to v4.0)
-- CRDT sync — P2P multi-device sync (deferred to v3.0+)
-- Data encryption at rest — IndexedDB encryption (deferred to v3.0+)
-- Mobile optimization — touch-first responsive experience (deferred to v3.0+)
-- IronCalc spreadsheets — embedded computational content (deferred to v3.0+)
+- CRDT sync — P2P multi-device sync (deferred to future)
+- Data encryption at rest — IndexedDB encryption (deferred to future)
+- Mobile optimization — touch-first responsive experience (deferred to future)
+- IronCalc spreadsheets — embedded computational content (deferred to future)
 - AI-generated content — AI proposes, never authors; auto-generated atoms undermine trust
 - Autonomous AI actions — AI never modifies/deletes atoms without user approval for destructive changes
+- In-browser model retraining — ONNX Runtime Web is inference-only; use Python offline pipeline
+- Per-user personalized models — privacy surface too large without backend
 
 ## Context
 
 **v1.0 shipped** (2026-02-22) — 45/45 requirements, 23/23 UAT tests, 3 phases, 11 plans.
 
-**v2.0 shipped** (2026-03-03) — 30/30 requirements, 4 phases, 14 plans, 9 days. 106 TS/TSX files, ~19,680 LOC. AI orchestration layer with tiered LLM inference, floating orb, guided reviews, compression coaching, and staged mutation approval.
+**v2.0 shipped** (2026-03-03) — 30/30 requirements, 4 phases, 14 plans, 9 days. AI orchestration layer with tiered LLM inference, floating orb, guided reviews, compression coaching, and staged mutation approval.
 
-**Architecture evolution:** v2.0 added 3 workers (BinderCore, LLM/WebLLM, Embedding/MiniLM), 3 AI adapters, a tiered pipeline (deterministic → ONNX centroid → LLM), and a review state machine. The store grew from ~800 to ~1500+ lines as the orchestration hub.
+**v3.0 shipped** (2026-03-05) — 18/18 requirements, 3 phases, 8 plans, 2 days. Fine-tuned ONNX classifiers replace centroid matching for full offline GTD intelligence. Python training pipeline for model reproduction. Tech debt cleanup from v2.0.
 
-**Tech debt carried forward:** Settings panel UX rough, status bar AI indicator verbose, stale comments in AIOrb, dead code in src/worker/llm-worker.ts, resume UX uses badge dot instead of explicit prompt, isReadOnly not enforced at UI level. **Targeted for cleanup in v3.0.**
+**Architecture:** 28,169 LOC across TS/TSX/Python/CSS. 3 workers (BinderCore, LLM/WebLLM, Embedding/MiniLM+ONNX), 3 AI adapters, tiered pipeline (Tier 1 deterministic → Tier 2 ONNX classifier → Tier 3 LLM), review state machine, Cache API model persistence.
 
 ## Constraints
 
@@ -82,17 +87,16 @@ Every piece of stored information must encode predictive value about your future
 | Rust/WASM for scoring | Off main thread, performant, type-safe | Validated v1.0 |
 | Advisory-first cap enforcement | Soft warnings before hard blocks, user stays in control | Validated v1.0 |
 | IndexedDB + in-memory graph | Dexie.js for persistence, Rust petgraph for traversal | Validated v1.0 |
-| Tiered LLM (browser + cloud) | Small WASM model for fast tasks, cloud API for complex reasoning | Validated v2.0 — WebLLM replaced SmolLM2/Transformers.js; Anthropic cloud for reviews |
-| GSD-style question flows for AI UX | User validated this pattern through GSD usage; 3-4 options + freeform is effective | Validated v2.0 — AIQuestionFlow + ConversationTurnCard shipped |
-| Additive AI mutations with changelog tracking | AI adds suggestions (tagged), destructive changes need approval, everything reversible | Validated v2.0 — source/aiRequestId in changelog, undo unchanged |
-| Floating orb as AI entry point | Context-aware + GTD menu, always available, non-intrusive | Validated v2.0 — 5-state machine, radial menu, context-aware primary action |
+| Tiered LLM (browser + cloud) | Small WASM model for fast tasks, cloud API for complex reasoning | Validated v2.0 |
+| GSD-style question flows for AI UX | 3-4 options + freeform is effective interaction pattern | Validated v2.0 |
+| Additive AI mutations with changelog tracking | AI adds suggestions (tagged), destructive changes need approval, everything reversible | Validated v2.0 |
+| Floating orb as AI entry point | Context-aware + GTD menu, always available, non-intrusive | Validated v2.0 |
 | Dedicated LLM worker separate from BinderCore | Prevents OOM crashes and unblocks atom mutations during inference | Validated v2.0 |
-| Ephemeral module-level signals for review/staging state | Prevents worker reconcile from touching live review flow state | Validated v2.0 |
-| Single batched prompt for compression candidates | One cloud API call = one approval modal, avoids approval fatigue | Validated v2.0 |
-| 3-Ring Binder tiered pipeline | Tier 1 deterministic → Tier 2 ONNX centroid → Tier 3 LLM escalation | Validated v2.0 — reduces cloud API usage for clear-cut classifications |
-
-| Fine-tuned ONNX for Tier 2 | Real ML classifiers replace centroid matching, full offline capability | — Pending |
-| Synthetic-then-curated training pipeline | Bootstrap labeled data from cloud LLM, refine with curated examples | — Pending |
+| 3-Ring Binder tiered pipeline | Tier 1 deterministic → Tier 2 ONNX → Tier 3 LLM escalation | Validated v2.0/v3.0 |
+| Fine-tuned ONNX for Tier 2 | Real ML classifiers replace centroid matching, full offline capability | Validated v3.0 |
+| Synthetic-then-curated training pipeline | Bootstrap labeled data from cloud LLM, refine with curated examples | Validated v3.0 |
+| 0.78 confidence threshold for ONNX | Platt-calibrated; balances Tier 2 accuracy vs Tier 3 escalation rate | Validated v3.0 |
+| Cache API for model persistence | Browser-native, survives IndexedDB clears, one-time download UX | Validated v3.0 |
 
 ---
-*Last updated: 2026-03-03 — after v3.0 milestone kickoff*
+*Last updated: 2026-03-05 — after v3.0 milestone completion*
