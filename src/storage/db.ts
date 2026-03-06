@@ -26,6 +26,8 @@ import { getDefaultSections } from './migrations/v1';
 import { applyV2Migration } from './migrations/v2';
 import { applyV3Migration } from './migrations/v3';
 import { applyV4Migration } from './migrations/v4';
+import { applyV5Migration } from './migrations/v5';
+import type { EntityRegistryEntry } from '../ai/sanitization/types';
 
 export interface ConfigEntry {
   key: string;
@@ -80,6 +82,8 @@ export class BinderDB extends Dexie {
   // Phase 3 tables
   savedFilters!: Table<SavedFilter, string>;
   interactions!: Table<InteractionEvent, string>;
+  // Phase 14: entity-to-pseudonym registry for sanitization
+  entityRegistry!: Table<EntityRegistryEntry, string>;
 
   constructor() {
     super('BinderOS');
@@ -101,6 +105,9 @@ export class BinderDB extends Dexie {
 
     // Phase 6: v4 migration — analysis atom type support (no index changes needed)
     applyV4Migration(this);
+
+    // Phase 14: v5 migration — entityRegistry table for sanitization pseudonyms
+    applyV5Migration(this);
 
     // Seed the four stable sections on first database creation
     this.on('populate', (tx) => {
