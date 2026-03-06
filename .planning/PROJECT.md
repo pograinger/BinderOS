@@ -38,11 +38,21 @@ Every piece of stored information must encode predictive value about your future
 
 ### Active
 
-<!-- Next milestone scope TBD -->
+<!-- v4.0 Device-Adaptive AI -->
+
+- Tier 1 device-adaptive local LLMs (WebLLM on desktop, WASM-based small LLM on mobile)
+- Tier 2 ONNX expansion: section routing, compression candidate detection, priority prediction, sanitization classifier
+- Tier 2 template engine for review briefings, compression explanations, GTD flow prompts from entropy signals
+- Tier 2 sanitization model: ONNX classifier to detect/flag sensitive data before cloud transmission
+- New Python training pipeline for sanitization model
+- Tier 3 multi-provider cloud: Anthropic, OpenAI, Grok, corporate LLM support
+- Fully functional offline mobile experience (Tier 1 + Tier 2 only, no cloud dependency)
+
+### Deferred
 
 - Section routing offline via embedding nearest-neighbor (deferred from v3.0)
 - PARA section views — full section-specific experiences
-- Advanced classifiers — staleness score, compression candidate, priority prediction models
+- CRDT sync — multi-device P2P sync (planned for future milestone)
 
 ### Out of Scope
 
@@ -98,5 +108,16 @@ Every piece of stored information must encode predictive value about your future
 | 0.78 confidence threshold for ONNX | Platt-calibrated; balances Tier 2 accuracy vs Tier 3 escalation rate | Validated v3.0 |
 | Cache API for model persistence | Browser-native, survives IndexedDB clears, one-time download UX | Validated v3.0 |
 
+## Current Milestone: v4.0 Device-Adaptive AI
+
+**Goal:** Restructure AI tiers for device-adaptive inference — local LLMs on every device, ONNX sanitization/classification expansion, multi-provider cloud support — so the app is fully functional offline on any device.
+
+**Target features:**
+- Device-adaptive Tier 1 local LLMs (WebLLM desktop, WASM small LLM mobile)
+- Expanded Tier 2 ONNX classifiers (section routing, sanitization, compression, priority)
+- Template-based generation for reviews/coaching from entropy signals
+- Tier 3 multi-provider cloud (Anthropic, OpenAI, Grok, corporate)
+- Privacy gate: Tier 2 sanitization model scrubs data before cloud transmission
+
 ---
-*Last updated: 2026-03-05 — after v3.0 milestone completion*
+*Last updated: 2026-03-05 — after v4.0 milestone start*
