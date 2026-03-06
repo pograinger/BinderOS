@@ -29,9 +29,9 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 
 ### Multi-Provider Cloud
 
-- [ ] **CLOUD-01**: User can send AI requests to OpenAI (gpt-4o-mini) via user-provided API key
-- [ ] **CLOUD-02**: User can send AI requests to xAI Grok via user-provided API key
-- [ ] **CLOUD-03**: User can configure a custom OpenAI-compatible endpoint (Ollama, LM Studio, Azure)
+- [x] **CLOUD-01**: User can send AI requests to OpenAI (gpt-4o-mini) via user-provided API key
+- [x] **CLOUD-02**: User can send AI requests to xAI Grok via user-provided API key
+- [x] **CLOUD-03**: User can configure a custom OpenAI-compatible endpoint (Ollama, LM Studio, Azure)
 - [ ] **CLOUD-04**: Communication log displays which provider handled each cloud request
 
 ### ONNX Expansion
@@ -89,9 +89,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SNTZ-01 | Phase 14 | Pending |
 | SNTZ-02 | Phase 14 | Pending |
 | SNTZ-03 | Phase 14 | Pending |
-| CLOUD-01 | Phase 13 | Pending |
-| CLOUD-02 | Phase 13 | Pending |
-| CLOUD-03 | Phase 13 | Pending |
+| CLOUD-01 | Phase 13 | Complete |
+| CLOUD-02 | Phase 13 | Complete |
+| CLOUD-03 | Phase 13 | Complete |
 | CLOUD-04 | Phase 13 | Pending |
 | ONNX-01 | Phase 16 | Pending |
 | ONNX-02 | Phase 16 | Pending |

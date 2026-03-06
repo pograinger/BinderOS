@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Device-Adaptive AI
 status: planning
-stopped_at: Phase 13 context gathered
-last_updated: "2026-03-06T03:34:18.766Z"
+stopped_at: Completed 13-multi-provider-cloud 13-01-PLAN.md
+last_updated: "2026-03-06T04:45:02.281Z"
 last_activity: 2026-03-05 — Roadmap created
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 5
+  completed_plans: 4
   percent: 0
 ---
 
@@ -50,6 +50,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 12 P01 | 15 | 2 tasks | 4 files |
 | Phase 12 P02 | 10 | 2 tasks | 3 files |
 | Phase 12 P03 | 5 | 1 tasks | 2 files |
+| Phase 13-multi-provider-cloud P01 | 12 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,9 @@ Recent decisions affecting v4.0:
 - [Phase 12]: compression.ts dead code removed (buildCompressionBatchPrompt, parseCompressionBatchResponse, buildFallbackExplanations, tier1PreFilter) -- all replaced by template path
 - [Phase 12]: generatePhaseSummary stays LLM-eligible -- intentionally not replaced by templates (phase transition summaries benefit from AI synthesis)
 - [Phase 12]: Fixed dead sectionAtoms filter in derivePatternSteps: a.sectionId === section.id replaces return false, enabling real per-section empty detection
+- [Phase 13-01]: OpenAI SDK used for OpenAI-compatible providers — streaming support via for-await loop
+- [Phase 13-01]: v2 key storage format: per-provider encrypted entries; v1 (single Anthropic key) auto-migrated on decryptAllFromStore
+- [Phase 13-01]: Duck-typing replaces CloudAdapter type-cast in Shell.tsx — both adapters supported via setPreSendApprovalHandler check
 
 ### Phase Ordering Note
 
@@ -83,6 +87,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06T03:34:18.764Z
-Stopped at: Phase 13 context gathered
-Resume file: .planning/phases/13-multi-provider-cloud/13-CONTEXT.md
+Last session: 2026-03-06T04:45:02.278Z
+Stopped at: Completed 13-multi-provider-cloud 13-01-PLAN.md
+Resume file: None
