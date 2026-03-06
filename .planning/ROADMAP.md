@@ -64,7 +64,10 @@ See [Archive](.planning/milestones/v3.0-ROADMAP.md) for full detail.
   2. User views a compression candidate and sees an explanation citing the atom's staleness age and last-accessed date, generated with zero network requests
   3. User enters GTD Get Clear flow and all prompt cards render with context-aware questions derived from their inbox count and section load — without an LLM call
   4. App running fully offline on mobile produces identical review briefing output to online mode (no degraded fallback message for structural content)
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 12-01-PLAN.md — Template engine module + briefing integration (TMPL-01)
+- [ ] 12-02-PLAN.md — Compression + GTD flow template wiring (TMPL-02, TMPL-03)
 
 ### Phase 13: Multi-Provider Cloud
 **Goal**: Users can send AI requests to OpenAI, Grok, or a custom corporate endpoint using their own API keys, with all safety gates preserved in one place and provider identity shown in the communication log
@@ -128,7 +131,7 @@ Note: Phase 15 is independent of 13-14 and may execute in parallel with Phase 14
 | 9. Python Training Infrastructure | v3.0 | 2/2 | Complete | 2026-03-04 |
 | 10. Browser Inference Integration | v3.0 | 3/3 | Complete | 2026-03-04 |
 | 11. Tech Debt, Settings + Correction Utility | v3.0 | 3/3 | Complete | 2026-03-05 |
-| 12. Template Engine | v4.0 | 0/TBD | Not started | - |
+| 12. Template Engine | v4.0 | 0/2 | Not started | - |
 | 13. Multi-Provider Cloud | v4.0 | 0/TBD | Not started | - |
 | 14. Sanitization Classifier | v4.0 | 0/TBD | Not started | - |
 | 15. Device-Adaptive Local LLM | v4.0 | 0/TBD | Not started | - |
