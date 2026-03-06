@@ -3821,8 +3821,8 @@ kbd {
   position: fixed;
   bottom: var(--orb-bottom, calc(var(--status-bar-height) + 72px));
   right: var(--orb-right, 16px);
-  width: 48px;
-  height: 48px;
+  width: 72px;
+  height: 72px;
   cursor: pointer;
   z-index: 101;
   /* Disable browser double-tap-to-zoom so our custom double-tap handler works on iOS */
@@ -4976,6 +4976,87 @@ kbd {
 .ai-settings-provider-table td {
   padding: 4px 8px;
   color: var(--text-primary);
+}
+
+/* ============================================
+   Phase 13: Multi-provider cloud UI
+   ============================================ */
+
+/* Provider selection dropdown */
+.ai-settings-provider-select {
+  /* Inherits .ai-settings-select — no additional overrides needed */
+}
+
+/* Key validation feedback */
+.ai-settings-key-valid {
+  color: #4caf50;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.ai-settings-key-invalid {
+  color: #f44336;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.ai-settings-key-validating {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Custom endpoint config form */
+.ai-settings-endpoint-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  background: var(--bg-raised, #1e1e1e);
+}
+
+.ai-settings-endpoint-form .ai-settings-input {
+  width: 100%;
+}
+
+/* Provider badge in communication log */
+.ai-settings-log-provider {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--bg-raised, #2a2a2a);
+  border: 1px solid var(--border-primary);
+}
+
+/* Cloud preview URL for custom endpoints */
+.cloud-preview-url {
+  font-family: monospace;
+  font-size: 0.85rem;
+  word-break: break-all;
+  color: var(--text-muted);
+}
+
+/* StatusBar cloud provider label */
+.status-bar-item.ai-cloud-status span:last-child {
+  font-size: 0.75rem;
+}
+
+/* Active provider row highlight in status table */
+.ai-settings-provider-table tr.active-provider {
+  background: var(--bg-raised, #1e1e1e);
+}
+
+/* Model override field hint */
+.ai-settings-model-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
 }
 
 /* ============================================
