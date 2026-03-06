@@ -12,59 +12,63 @@
  * Sanitization levels (user-controlled per CONTEXT.md):
  *   'abstract'    — Only counts, types, scores. E.g., "15 tasks, 3 stale. Entropy: yellow."
  *   'structured'  — Metadata without content. E.g., title, type, status, scores — no body text.
- *   'full'        — Titles and full content included.
+ *   'full'        — Full context with automatic PII pseudonymization via NER + regex.
  *
- * Default is 'abstract' (most private). Users can raise the level in AI Settings > Privacy.
+ * Default is 'full' (NER pseudonymization active). Users can lower the level in AI Settings > Privacy.
  *
- * Phase 4: This is a passthrough with level validation.
- * Phase 5+: Local LLM summarizes atoms at the selected level before cloud dispatch.
- *           The summary string produced by the local LLM is what gets passed here.
+ * Phase 14: sanitizeForCloud returns Promise<SanitizedResult> at 'full' level,
+ * running NER + regex PII detection and pseudonymization via the sanitization pipeline.
  */
+
+import type { SanitizedResult } from './sanitization/types';
+import { createSanitizedPrompt } from './sanitization/types';
+import { sanitizeText } from './sanitization/sanitizer';
 
 /**
  * Sanitization level controlling how much atom data reaches cloud AI providers.
  *
  * 'abstract'   — Aggregate statistics only (counts, types, scores). No titles or content.
  * 'structured' — Metadata summaries (title, type, status, scores). No body content.
- * 'full'       — Full atom content including titles and body text.
+ * 'full'       — Full atom content with automatic PII pseudonymization.
  */
 export type SanitizationLevel = 'abstract' | 'structured' | 'full';
 
 /**
- * Default sanitization level — most private option.
- * Users can raise this in AI Settings > Privacy.
+ * Default sanitization level — full context with NER pseudonymization.
+ * Users can lower this in AI Settings > Privacy.
  */
-export const DEFAULT_SANITIZATION_LEVEL: SanitizationLevel = 'abstract';
+export const DEFAULT_SANITIZATION_LEVEL: SanitizationLevel = 'full';
 
 /**
  * Sanitize a context string for cloud dispatch at the specified level.
  *
- * In Phase 4: validates the level and returns the (already string) context.
- * The context string is prepared by the calling code (or local LLM summary).
+ * At 'full' level: runs NER + regex PII detection, replaces entities with
+ * pseudonym tags, returns SanitizedResult with entity maps for de-pseudonymization.
  *
- * In Phase 5+: the local LLM will produce the summary at the selected level,
- * and this function will enforce that the output matches the level's constraints.
+ * At 'abstract' and 'structured' levels: wraps text as-is in SanitizedPrompt
+ * (these levels already strip sensitive content before reaching this function).
  *
  * @param rawContext - Pre-prepared context string (never raw Atom objects)
  * @param level - Sanitization level to apply
- * @returns Sanitized context string safe for cloud transmission
+ * @returns SanitizedResult with sanitized prompt and entity maps
  */
-export function sanitizeForCloud(
+export async function sanitizeForCloud(
   rawContext: string,
   level: SanitizationLevel,
-): string {
-  // Type boundary is the real protection: AIRequest.prompt is string, never Atom.
-  // In Phase 4, the rawContext is already a string prepared by the local LLM or calling code.
-  // The sanitization level controls how the local LLM summarizes before passing to cloud.
-  //
-  // Phase 5+ will implement the actual local-LLM-as-proxy flow where the local model
-  // summarizes atoms at the selected level before sending the summary to the cloud adapter.
-  if (level === 'abstract') {
-    // Phase 4: validate that no raw atom content appears
-    // (enforcement; actual summarization added in Phase 5)
-    return rawContext;
+): Promise<SanitizedResult> {
+  if (level === 'full') {
+    // NER + regex pseudonymization
+    return sanitizeText(rawContext);
   }
-  return rawContext;
+
+  // Abstract and structured levels: content already stripped by caller
+  // Wrap as-is in SanitizedPrompt with empty entity maps
+  return {
+    prompt: createSanitizedPrompt(rawContext),
+    entities: [],
+    entityMap: new Map(),
+    reverseMap: new Map(),
+  };
 }
 
 /**
@@ -74,5 +78,5 @@ export function sanitizeForCloud(
 export const SANITIZATION_LEVEL_DESCRIPTIONS: Record<SanitizationLevel, string> = {
   abstract: 'Abstract patterns only — cloud AI sees only counts, types, and scores. No titles or content.',
   structured: 'Structured summaries — cloud AI sees titles, types, and status. No body content.',
-  full: 'Full context — cloud AI sees all content including titles and body text. Maximum capability, minimum privacy.',
+  full: 'Full context with automatic PII pseudonymization — names, locations, and sensitive data are replaced with anonymous tags before cloud dispatch.',
 };

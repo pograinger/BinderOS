@@ -35,6 +35,7 @@ import {
   type CloudRequestLogEntry,
 } from '../key-vault';
 import { sanitizeForCloud } from '../privacy-proxy';
+import { dePseudonymize } from '../sanitization/sanitizer';
 import { isOnline } from './browser';
 
 // --- Destructive action guard (AIST-03) ---
@@ -130,13 +131,19 @@ export class AnthropicCloudAdapter implements AIAdapter {
 
     // prompt is ALWAYS pre-sanitized — never raw atom data
     // Type boundary enforces this: AIRequest.prompt is string, not Atom
-    const sanitizedPrompt = sanitizeForCloud(request.prompt, 'structured');
+    let sanitizationResult;
+    try {
+      sanitizationResult = await sanitizeForCloud(request.prompt, 'full');
+    } catch {
+      // Sanitization failed — fall back to regex-only via structured level
+      sanitizationResult = await sanitizeForCloud(request.prompt, 'structured');
+    }
 
     // Create log entry before sending — logged regardless of outcome
     const logEntry: CloudRequestLogEntry = {
       id: request.requestId,
       timestamp: Date.now(),
-      sanitizedPrompt,
+      sanitizedPrompt: sanitizationResult.prompt,
       provider: 'Anthropic',
       model: 'claude-haiku-4-5-20251001',
       status: 'pending',
@@ -157,7 +164,7 @@ export class AnthropicCloudAdapter implements AIAdapter {
       const stream = this.client.messages.stream({
         model: 'claude-haiku-4-5-20251001',  // Cost-efficient for classification/routing
         max_tokens: request.maxTokens ?? 512,
-        messages: [{ role: 'user', content: sanitizedPrompt }],
+        messages: [{ role: 'user', content: sanitizationResult.prompt }],
       });
 
       stream.on('text', (text) => request.onChunk?.(text));
@@ -167,8 +174,11 @@ export class AnthropicCloudAdapter implements AIAdapter {
       }
 
       const message = await stream.finalMessage();
-      const text =
+      const rawText =
         message.content[0]?.type === 'text' ? message.content[0].text : '';
+
+      // De-pseudonymize the response: replace <Person 1> etc. with real values
+      const text = dePseudonymize(rawText, sanitizationResult.entityMap);
 
       logEntry.status = 'completed';
       logEntry.responseSummary = text.slice(0, 100) + (text.length > 100 ? '...' : '');

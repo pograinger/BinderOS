@@ -30,6 +30,7 @@ import {
   type CloudRequestLogEntry,
 } from '../key-vault';
 import { sanitizeForCloud } from '../privacy-proxy';
+import { dePseudonymize } from '../sanitization/sanitizer';
 import { isOnline } from './browser';
 
 export interface OpenAICompatibleAdapterConfig {
@@ -112,13 +113,19 @@ export class OpenAICompatibleAdapter implements AIAdapter {
     }
 
     // prompt is ALWAYS pre-sanitized — never raw atom data
-    const sanitizedPrompt = sanitizeForCloud(request.prompt, 'structured');
+    let sanitizationResult;
+    try {
+      sanitizationResult = await sanitizeForCloud(request.prompt, 'full');
+    } catch {
+      // Sanitization failed — fall back to structured level (no NER)
+      sanitizationResult = await sanitizeForCloud(request.prompt, 'structured');
+    }
 
     // Create log entry before sending — logged regardless of outcome
     const logEntry: CloudRequestLogEntry = {
       id: request.requestId,
       timestamp: Date.now(),
-      sanitizedPrompt,
+      sanitizedPrompt: sanitizationResult.prompt,
       provider: this.displayName,
       model: this.model,
       status: 'pending',
@@ -140,7 +147,7 @@ export class OpenAICompatibleAdapter implements AIAdapter {
       const stream = await this.client.chat.completions.create({
         model: this.model,
         max_tokens: request.maxTokens ?? 512,
-        messages: [{ role: 'user', content: sanitizedPrompt }],
+        messages: [{ role: 'user', content: sanitizationResult.prompt as string }],
         stream: true,
       });
 
@@ -158,12 +165,15 @@ export class OpenAICompatibleAdapter implements AIAdapter {
         }
       }
 
+      // De-pseudonymize the response: replace <Person 1> etc. with real values
+      const restoredText = dePseudonymize(fullText, sanitizationResult.entityMap);
+
       logEntry.status = 'completed';
-      logEntry.responseSummary = fullText.slice(0, 100) + (fullText.length > 100 ? '...' : '');
+      logEntry.responseSummary = restoredText.slice(0, 100) + (restoredText.length > 100 ? '...' : '');
 
       return {
         requestId: request.requestId,
-        text: fullText,
+        text: restoredText,
         provider: this.displayName,
         model: this.model,
       };

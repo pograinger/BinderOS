@@ -22,6 +22,7 @@
  */
 
 import type { ProviderId } from './provider-registry';
+import type { SanitizedPrompt } from './sanitization/types';
 
 const STORAGE_KEY = 'binderos-ai-key';
 
@@ -340,7 +341,7 @@ export function revokeSessionConsent(): void {
 export interface CloudRequestLogEntry {
   id: string;
   timestamp: number;
-  sanitizedPrompt: string;  // The exact data sent to cloud (post-sanitization)
+  sanitizedPrompt: SanitizedPrompt;  // The exact data sent to cloud (post-sanitization, branded type)
   provider: string;
   model: string;
   status: 'pending' | 'approved' | 'cancelled' | 'completed' | 'error';
