@@ -25,6 +25,7 @@
     "dexie": "^4.3.0",
     "dexie-export-import": "^4.1.4",
     "minisearch": "^7.2.0",
+    "openai": "^6.27.0",
     "solid-dexie": "^0.0.5",
     "solid-js": "^1.9.11",
     "zod": "^4.3.6"
@@ -37,6 +38,7 @@
     "eslint-plugin-solid": "^0.14.5",
     "jiti": "^2.6.1",
     "jsdom": "^28.1.0",
+    "onnxruntime-node": "^1.24.3",
     "onnxruntime-web": "^1.24.2",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",

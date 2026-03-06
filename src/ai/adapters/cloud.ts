@@ -1,10 +1,10 @@
 /**
- * CloudAdapter — Anthropic cloud AI adapter with streaming.
+ * AnthropicCloudAdapter — Anthropic cloud AI adapter with streaming.
  *
  * Requires: pnpm add @anthropic-ai/sdk
  *
  * Architecture:
- *   Main thread (CloudAdapter) -> Anthropic API (HTTPS)
+ *   Main thread (AnthropicCloudAdapter) -> Anthropic API (HTTPS)
  *
  * Privacy:
  *   ALL prompts must be pre-sanitized strings from the privacy proxy.
@@ -29,7 +29,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { AIAdapter, AIRequest, AIResponse, AIProviderStatus } from './adapter';
 import {
-  getMemoryKey,
+  getMemoryKeyForProvider,
   hasSessionConsent,
   addCloudRequestLog,
   type CloudRequestLogEntry,
@@ -54,10 +54,11 @@ export function isDestructiveAction(action: string): boolean {
   return (DESTRUCTIVE_ACTIONS as readonly string[]).includes(action);
 }
 
-// --- CloudAdapter ---
+// --- AnthropicCloudAdapter ---
 
-export class CloudAdapter implements AIAdapter {
-  readonly id = 'cloud' as const;
+export class AnthropicCloudAdapter implements AIAdapter {
+  readonly id = 'anthropic' as const;
+  readonly displayName = 'Anthropic';
   private _status: AIProviderStatus = 'disabled';
   private client: Anthropic | null = null;
 
@@ -89,11 +90,11 @@ export class CloudAdapter implements AIAdapter {
   }
 
   /**
-   * Initialize the adapter using the current memory key.
+   * Initialize the adapter using the current memory key for 'anthropic'.
    * Sets status to 'available' if a key exists, 'unavailable' otherwise.
    */
   initialize(): void {
-    const apiKey = getMemoryKey();
+    const apiKey = getMemoryKeyForProvider('anthropic');
     if (!apiKey) {
       this._status = 'unavailable';
       return;
@@ -136,7 +137,7 @@ export class CloudAdapter implements AIAdapter {
       id: request.requestId,
       timestamp: Date.now(),
       sanitizedPrompt,
-      provider: 'anthropic',
+      provider: 'Anthropic',
       model: 'claude-haiku-4-5-20251001',
       status: 'pending',
     };
@@ -175,7 +176,7 @@ export class CloudAdapter implements AIAdapter {
       return {
         requestId: request.requestId,
         text,
-        provider: 'cloud',
+        provider: 'Anthropic',
         model: 'claude-haiku-4-5-20251001',
       };
     } catch (err) {
@@ -199,3 +200,6 @@ export class CloudAdapter implements AIAdapter {
     this._status = 'disabled';
   }
 }
+
+// Backward-compat alias: existing code importing CloudAdapter continues to work
+export { AnthropicCloudAdapter as CloudAdapter };

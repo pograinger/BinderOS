@@ -13,27 +13,57 @@
  *
  * Cloud request log: session-scoped log of all cloud requests (not persisted).
  * Accessible in AI Settings for user review (CONTEXT.md: "Communication log").
+ *
+ * Phase 13: Multi-provider key storage.
+ *   - Per-provider memory keys (memoryKeys map)
+ *   - Multi-provider encrypted persistence with v1-to-v2 migration
+ *   - Backward-compat shims: setMemoryKey/getMemoryKey/clearMemoryKey still work
+ *     (they delegate to the 'anthropic' provider slot)
  */
+
+import type { ProviderId } from './provider-registry';
 
 const STORAGE_KEY = 'binderos-ai-key';
 
-// --- Memory-only key storage ---
+// --- Multi-provider memory key storage ---
 
-let memoryKey: string | null = null;
+const memoryKeys: Partial<Record<ProviderId, string>> = {};
+
+export function setMemoryKeyForProvider(providerId: ProviderId, apiKey: string): void {
+  memoryKeys[providerId] = apiKey;
+}
+
+export function getMemoryKeyForProvider(providerId: ProviderId): string | null {
+  return memoryKeys[providerId] ?? null;
+}
+
+export function hasMemoryKeyForProvider(providerId: ProviderId): boolean {
+  return memoryKeys[providerId] !== undefined && memoryKeys[providerId] !== '';
+}
+
+export function clearMemoryKeyForProvider(providerId: ProviderId): void {
+  delete memoryKeys[providerId];
+}
+
+export function clearAllMemoryKeys(): void {
+  (Object.keys(memoryKeys) as ProviderId[]).forEach((k) => delete memoryKeys[k]);
+}
+
+// --- Backward-compat shims (delegate to 'anthropic' slot) ---
 
 export function setMemoryKey(apiKey: string): void {
-  memoryKey = apiKey;
+  setMemoryKeyForProvider('anthropic', apiKey);
 }
 
 export function getMemoryKey(): string | null {
-  return memoryKey;
+  return getMemoryKeyForProvider('anthropic');
 }
 
 export function clearMemoryKey(): void {
-  memoryKey = null;
+  clearMemoryKeyForProvider('anthropic');
 }
 
-// --- Encrypted persistence (opt-in) ---
+// --- Cryptographic helpers ---
 
 /**
  * Derive an AES-GCM key from a passphrase using PBKDF2.
@@ -81,13 +111,34 @@ function fromBase64(b64: string): Uint8Array<ArrayBuffer> {
   return new Uint8Array(bytes) as Uint8Array<ArrayBuffer>;
 }
 
+// --- Encrypted single-entry structures (v1 format, one provider) ---
+
+interface EncryptedEntry {
+  salt: string;
+  iv: string;
+  data: string;
+}
+
+/** v1 storage format: flat { salt, iv, data } (single Anthropic key) */
+interface StoredV1 {
+  salt: string;
+  iv: string;
+  data: string;
+}
+
+/** v2 storage format: { version: 2, keys: { [providerId]: EncryptedEntry } } */
+interface StoredV2 {
+  version: 2;
+  keys: Partial<Record<ProviderId, EncryptedEntry>>;
+}
+
 /**
- * Encrypt the API key with a user-provided passphrase and store in localStorage.
- * Also sets memoryKey for immediate use.
- *
- * Uses AES-GCM-256 with PBKDF2 key derivation (100,000 iterations, SHA-256).
+ * Encrypt a single API key with a passphrase.
  */
-export async function encryptAndStore(apiKey: string, passphrase: string): Promise<void> {
+async function encryptEntry(
+  apiKey: string,
+  passphrase: string,
+): Promise<EncryptedEntry> {
   const salt = crypto.getRandomValues(new Uint8Array(16)) as Uint8Array<ArrayBuffer>;
   const iv = crypto.getRandomValues(new Uint8Array(12)) as Uint8Array<ArrayBuffer>;
   const key = await deriveKey(passphrase, salt);
@@ -97,49 +148,154 @@ export async function encryptAndStore(apiKey: string, passphrase: string): Promi
     key,
     enc.encode(apiKey),
   );
-  const stored = JSON.stringify({
+  return {
     salt: toBase64(salt),
     iv: toBase64(iv),
     data: toBase64(new Uint8Array(ciphertext)),
-  });
-  localStorage.setItem(STORAGE_KEY, stored);
+  };
+}
+
+/**
+ * Decrypt a single EncryptedEntry with a passphrase.
+ */
+async function decryptEntry(
+  entry: EncryptedEntry,
+  passphrase: string,
+): Promise<string> {
+  const key = await deriveKey(passphrase, fromBase64(entry.salt));
+  const dec = new TextDecoder();
+  const plaintext = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: fromBase64(entry.iv) },
+    key,
+    fromBase64(entry.data),
+  );
+  return dec.decode(plaintext);
+}
+
+// --- Multi-provider encrypted persistence ---
+
+/**
+ * Encrypt and store an API key for the specified provider.
+ *
+ * Reads the existing stored blob, adds/updates the provider entry,
+ * and writes it back in v2 format.
+ * Also sets the memory key for immediate use.
+ *
+ * Storage format v2: { version: 2, keys: { [providerId]: { salt, iv, data } } }
+ */
+export async function encryptAndStoreForProvider(
+  providerId: ProviderId,
+  apiKey: string,
+  passphrase: string,
+): Promise<void> {
+  // Load existing v2 blob, or start fresh
+  let stored: StoredV2 = { version: 2, keys: {} };
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as StoredV1 | StoredV2;
+      if ((parsed as StoredV2).version === 2) {
+        stored = parsed as StoredV2;
+      }
+      // v1 blob: leave stored as empty v2 — old key will need to be re-entered
+      // (migration happens on decryptAllFromStore, not here)
+    } catch {
+      // Corrupted — start fresh
+    }
+  }
+
+  const entry = await encryptEntry(apiKey, passphrase);
+  stored.keys[providerId] = entry;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+
   // Also set in memory for immediate use
-  memoryKey = apiKey;
+  setMemoryKeyForProvider(providerId, apiKey);
+}
+
+/**
+ * Decrypt all stored provider keys using the provided passphrase.
+ *
+ * Loads all decrypted keys into the memoryKeys map.
+ * Returns a partial map of provider -> decrypted key.
+ *
+ * Migration: if the stored JSON is in v1 format (no `version`/`keys` fields),
+ * treats it as a single 'anthropic' entry and decrypts accordingly.
+ */
+export async function decryptAllFromStore(
+  passphrase: string,
+): Promise<Partial<Record<ProviderId, string>>> {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return {};
+
+  const parsed = JSON.parse(raw) as StoredV1 | StoredV2;
+  const result: Partial<Record<ProviderId, string>> = {};
+
+  if ((parsed as StoredV2).version === 2) {
+    // v2 format: iterate all providers
+    const v2 = parsed as StoredV2;
+    const providers = Object.keys(v2.keys) as ProviderId[];
+    await Promise.all(
+      providers.map(async (pid) => {
+        const entry = v2.keys[pid];
+        if (entry) {
+          try {
+            const apiKey = await decryptEntry(entry, passphrase);
+            result[pid] = apiKey;
+            setMemoryKeyForProvider(pid, apiKey);
+          } catch {
+            // Wrong passphrase for this entry — skip
+          }
+        }
+      }),
+    );
+  } else {
+    // v1 format: single anthropic key { salt, iv, data }
+    const v1 = parsed as StoredV1;
+    try {
+      const apiKey = await decryptEntry(v1, passphrase);
+      result['anthropic'] = apiKey;
+      setMemoryKeyForProvider('anthropic', apiKey);
+    } catch {
+      // Wrong passphrase — propagate so caller knows
+      throw new Error('Invalid passphrase');
+    }
+  }
+
+  return result;
+}
+
+// --- Backward-compat single-provider encrypted persistence ---
+
+/**
+ * Encrypt the API key with a user-provided passphrase and store in localStorage.
+ * Also sets memoryKey for immediate use.
+ *
+ * Backward-compat shim — delegates to encryptAndStoreForProvider('anthropic', ...).
+ */
+export async function encryptAndStore(apiKey: string, passphrase: string): Promise<void> {
+  return encryptAndStoreForProvider('anthropic', apiKey, passphrase);
 }
 
 /**
  * Decrypt the stored API key using the provided passphrase.
- * Returns the key on success, null if no stored key exists.
+ * Returns the Anthropic key on success, null if no stored key exists.
  * Throws if the passphrase is wrong or the data is corrupted.
+ *
+ * Backward-compat shim — delegates to decryptAllFromStore and returns 'anthropic' key.
  */
 export async function decryptFromStore(passphrase: string): Promise<string | null> {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) return null;
-
-  const { salt, iv, data } = JSON.parse(stored) as {
-    salt: string;
-    iv: string;
-    data: string;
-  };
-
-  const key = await deriveKey(passphrase, fromBase64(salt));
-  const dec = new TextDecoder();
-  const plaintext = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: fromBase64(iv) },
-    key,
-    fromBase64(data),
-  );
-  const apiKey = dec.decode(plaintext);
-  memoryKey = apiKey;
-  return apiKey;
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+  const results = await decryptAllFromStore(passphrase);
+  return results['anthropic'] ?? null;
 }
 
 /**
- * Clear the stored encrypted key from localStorage and wipe the memory key.
+ * Clear the stored encrypted key from localStorage and wipe all memory keys.
  */
 export function clearStoredKey(): void {
   localStorage.removeItem(STORAGE_KEY);
-  memoryKey = null;
+  clearAllMemoryKeys();
 }
 
 /**
@@ -189,6 +345,8 @@ export interface CloudRequestLogEntry {
   model: string;
   status: 'pending' | 'approved' | 'cancelled' | 'completed' | 'error';
   responseSummary?: string;  // Brief summary of response (not full text)
+  /** For custom endpoints — the base URL used, shown in the pre-send approval modal. */
+  baseURL?: string;
 }
 
 // Session-scoped log (cleared on page unload — not persisted)
