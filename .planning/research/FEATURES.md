@@ -1,24 +1,35 @@
 # Feature Research
 
-**Domain:** Fine-tuned in-browser ML classification models for GTD intelligence (BinderOS v3.0)
-**Researched:** 2026-03-03
-**Confidence:** MEDIUM-HIGH — ONNX/Transformers.js pipeline HIGH (official docs verified); synthetic data pipeline MEDIUM (general LLM-labeling well-documented, GTD-specific is novel); model drift / incremental learning MEDIUM (research-backed, but browser-specific adaptation is LOW)
+**Domain:** Device-adaptive AI tiers, ONNX sanitization, template generation, multi-provider cloud LLMs (BinderOS v4.0)
+**Researched:** 2026-03-05
+**Confidence:** MEDIUM-HIGH — Device detection and WebLLM/Transformers.js fallback patterns HIGH (official docs verified); sanitization ONNX classifier MEDIUM (general NER-via-ONNX confirmed, GTD-specific sanitization is novel); template engine for offline AI generation HIGH (established patterns, low technical risk); multi-provider cloud adapter MEDIUM-HIGH (OpenAI/xAI APIs are OpenAI-compatible, CORS and browser key concerns documented)
 
 ---
 
 ## Context
 
-This research targets BinderOS **v3.0** specifically. The v2.0 AI layer (shipped 2026-03-03) built:
+This research targets BinderOS **v4.0: Device-Adaptive AI**. The v3.0 baseline (shipped 2026-03-05) delivered:
 
-- Tiered pipeline: Tier 1 (keyword heuristics + Jaccard history) → Tier 2 (MiniLM embedding cosine similarity to centroids) → Tier 3 (cloud LLM escalation)
-- Classification log in Dexie: stores `ClassificationEvent` with content, suggestedType, chosenType, sectionItemId, tier, confidence, and cached MiniLM embedding
-- Centroid builder: computes per-type average embedding vectors from classification history
-- Tasks handled: `classify-type`, `route-section`, `extract-entities`, `assess-staleness`
-- All AI features require explicit user approval before any atom mutations
+- Fine-tuned ONNX type classifier in the embedding worker (replaces centroid matching)
+- Platt-calibrated confidence → correct Tier 2→3 escalation at 0.78 threshold
+- Python training pipeline: synthetic data generation → MiniLM fine-tune → ONNX INT8 export
+- Classification correction export (JSONL) for retraining
+- Model lifecycle UX: download progress, Cache API persistence, model info in settings
+- Existing adapters: NoOp, BrowserAdapter (WebLLM/WebGPU, desktop-only), CloudAdapter (Anthropic only)
+- Privacy proxy: `sanitizeForCloud()` passthrough — full ML sanitization was deferred
 
-**What v3.0 changes about the Tier 2 layer:** Replace centroid-similarity matching with real fine-tuned ONNX classification models — one model per task domain. Models trained on synthetic GTD data (LLM-generated, then human-curated), then converted to quantized ONNX via HuggingFace Optimum. Loaded in the existing embedding worker via `onnxruntime-web`. Tier 3 cloud LLM becomes optional quality enhancement, not a dependency.
+**What v4.0 changes:**
 
-**Scope boundary for this research:** Features new to v3.0 only. The floating orb, conversational flows, approval modal, changelog tagging, and all v2.0 UX patterns are existing baseline. Research here covers what must be built, evaluated, and managed for the ML layer itself.
+| Area | v3.0 State | v4.0 Target |
+|------|-----------|-------------|
+| Tier 1 local LLM | WebLLM WebGPU only (desktop) | Device-adaptive: WebGPU on desktop, WASM/Transformers.js on mobile |
+| Tier 2 ONNX | Type classifier only | + Section routing (ONNX), sanitization classifier, compression detection, priority prediction |
+| Tier 2 generation | LLM prose for reviews/coaching | Template engine: entropy-signal-driven text, no LLM required for structured outputs |
+| Tier 3 cloud | Anthropic only | + OpenAI, xAI/Grok, corporate LLM (OpenAI-compatible endpoint) |
+| Privacy gate | String-level passthrough | Tier 2 sanitization ONNX classifier scrubs PII before cloud dispatch |
+| Offline mobile | Tier 1 unavailable | Tier 1 (WASM LLM) + Tier 2 + templates → fully functional without cloud |
+
+**Scope boundary:** Features new to v4.0 only. Existing type classification, approval modal, floating orb, conversational flows, and all v3.0 patterns are baseline — not described here unless they change.
 
 ---
 
@@ -26,36 +37,35 @@ This research targets BinderOS **v3.0** specifically. The v2.0 AI layer (shipped
 
 ### Table Stakes (Users Expect These)
 
-Features the system must have for "offline GTD intelligence" to feel complete and trustworthy. Missing these = the offline mode feels half-baked or untrustworthy compared to the cloud-backed path.
+Features that make v4.0's device-adaptive and multi-provider promises feel real. Missing these = the milestone delivers a half-step upgrade, not a full one.
 
 | Feature | Why Expected | Complexity | Dependency on Existing System |
 |---------|--------------|------------|-------------------------------|
-| **Offline triage type classification** | If v3.0 promises "works without cloud," the atom type suggestion (task/fact/event/decision/insight) must work offline. Users who have disabled cloud API expect this to just work. | MEDIUM | Requires: existing embedding worker (`src/search/embedding-worker.ts`), Tier 2 handler (`src/ai/tier2/tier2-handler.ts`), classification log with embeddings. Replace centroid lookup with ONNX model inference in the same worker. |
-| **Offline section routing** | Same expectation — if type classification works offline, PARA section routing should too. Users do not want one feature to work offline and the other to require cloud. | MEDIUM | Requires: existing `route-section` task in pipeline, section centroid logic. Replace centroids with a dedicated section-routing ONNX model or extend the type classifier with a routing head. |
-| **Model quality parity or better vs. Tier 2 centroids** | Users experience Tier 2 today via centroid similarity. v3.0 must not regress. If fine-tuned model produces worse suggestions than centroids, the whole v3.0 rationale collapses. | MEDIUM | Requires: evaluation harness comparing centroid accuracy vs. model accuracy on the same held-out classification log data. |
-| **Model loads without blocking UI** | Transformers.js v3 caches models to IndexedDB/Cache API after first download. Subsequent loads must not block the UI or delay triage. Cold start (first-ever load) needs a visible progress indicator. | MEDIUM | Requires: model loading in the existing embedding worker (off main thread already). Add first-load progress message back to main thread. |
-| **Model stored in browser cache across sessions** | Users must not re-download the model on every session. Transformers.js caches automatically to Cache API; confirm this works for custom fine-tuned models loaded from a local path or bundled URL. | LOW-MEDIUM | Requires: model hosting strategy (bundle with app vs. serve from CDN vs. OPFS). First-load size budget must be declared to user. |
-| **Graceful fallback if model fails to load** | Browser storage quotas, network errors, or corrupt caches can cause model load failures. The pipeline must fall through to Tier 1 (keyword heuristics) if Tier 2 ONNX fails. | LOW | Requires: existing tiered pipeline escalation logic — already handles Tier 2 absence. Verify failure path when model file is missing or corrupt. |
-| **Training data visible and auditable** | Privacy-first users will ask: "What did you train this on?" Synthetic data must be generated without including any user's personal atom content. Training data must be inspectable (stored in repo). | LOW | No code dependency. Policy and generation discipline. Training corpus lives in `scripts/training-data/` — user can inspect. |
-| **User corrections feed back into model quality** | Every time a user overrides an AI suggestion, that is a labeled correction. The classification log already captures `chosenType` vs `suggestedType`. This signal must be surfaced for retraining, not silently discarded. | MEDIUM | Requires: classification log query to extract correction events (chosenType != suggestedType at suggestedTier === 2). These become priority retraining examples. |
-| **Confidence score calibration** | Current centroid confidence is a heuristic (cosine similarity × separation). Fine-tuned model outputs softmax probabilities — these must be calibrated to the same 0–1 confidence scale the pipeline uses for escalation thresholds. | MEDIUM | Requires: calibration step post-training (Platt scaling or temperature scaling). Must not break the CONFIDENCE_THRESHOLDS logic in `src/ai/tier2/types.ts`. |
+| **Device detection: WebGPU vs WASM LLM tier** | If the app claims "fully functional offline on any device," users on mobile expect local AI to work — not a "WebGPU required" error. Device capability detection is the precondition for everything else in v4.0. | LOW | `navigator.gpu` check already exists conceptually (BrowserAdapter currently relies on WebLLM/WebGPU). Add: `navigator.deviceMemory`, `navigator.gpu.requestAdapter()` for VRAM estimation, user-agent heuristics for mobile. Map result to model tier selection. |
+| **Transformers.js WASM LLM for mobile** | Mobile users on Android Chrome (WebGPU available since Chrome 121) and iOS Safari (WebGPU not yet stable) need a WASM-backed LLM path. Transformers.js with `device: 'wasm'` runs SmolLM2 (360M, ~200MB q8) at usable speed on modern phones. | MEDIUM | New adapter or BrowserAdapter variant. Transformers.js already in project for MiniLM embeddings. Add text-generation pipeline from same library. Worker pattern already established in `llm-worker.ts`. |
+| **Automatic model size selection by capability** | Giving users a manual "Low VRAM / Medium / High" dropdown hides complexity but still requires them to know their device. The system must pick a sane default: SmolLM2-360M on low-memory or WASM path, Llama-3.2-1B on mid-range WebGPU, Llama-3.2-3B on capable desktop. | LOW | Build on existing `WEBLLM_MODELS` list in `browser.ts`. Extend with capability probe at init time. Existing settings UI can still show override. |
+| **Offline mobile experience (Tier 1 + Tier 2)** | A user on a plane with an iPhone expects triage, compression coaching, and review briefings to work. The current BrowserAdapter fails without WebGPU. WASM LLM + ONNX classifiers + template engine must together provide a complete offline experience. | HIGH (integrated) | Requires: WASM LLM adapter (Tier 1) + all expanded Tier 2 ONNX classifiers + template engine. These features compose to deliver the offline promise. |
+| **OpenAI API provider in CloudAdapter** | Anthropic-only cloud limits users who already pay for OpenAI. OpenAI's Chat Completions API is the de facto standard; its SDK supports `dangerouslyAllowBrowser: true` with user-provided keys (same pattern as Anthropic). | MEDIUM | Extend `cloud.ts` or add `cloud-openai.ts`. Register in AI Settings alongside Anthropic. Model selection: gpt-4o-mini for cost efficiency (same role as claude-haiku). |
+| **xAI Grok API provider** | xAI Grok API is OpenAI-compatible (same endpoint structure, `x.ai/api`). Adds a third major provider for users who prefer xAI. | LOW-MEDIUM | If OpenAI SDK is added, Grok reuses it with a custom `baseURL`. Near-zero new code once OpenAI adapter is built. |
+| **Pre-send approval modal works for all providers** | The existing `onPreSendApproval` callback gate must trigger for OpenAI, Grok, and any future provider — not just Anthropic. | LOW | Abstract the pre-send gate into the base cloud dispatch layer. All cloud providers use the same modal; log entry records which provider. |
+| **Communication log shows provider identity** | `CloudRequestLogEntry.provider` is currently typed as `'anthropic'`. Must expand to `'anthropic' | 'openai' | 'grok' | 'corporate'`. Settings > Communication Log must display which provider was called per request. | LOW | Type extension + UI label update. Already stored in `key-vault.ts` log. |
+| **Section routing ONNX classifier** | Section routing was deferred from v3.0 (listed in PROJECT.md deferred). The centroid-based routing in `tier2-handler.ts` has low confidence on new users (few atoms, sparse centroids). A shared ONNX section classifier trained on PARA semantics provides better cold-start routing. | HIGH | New training pipeline (PARA section semantics: Projects, Areas, Resources, Archives). New ONNX model file. Extend embedding worker with new message type. New Tier 2 handler path for `route-section` task using ONNX instead of centroid. |
 
 ---
 
 ### Differentiators (Competitive Advantage)
 
-Features that go beyond "ONNX model in browser" to make the v3.0 ML layer genuinely novel for a GTD tool.
+Features that distinguish BinderOS v4.0 from any other browser-based GTD tool and from generic AI assistants.
 
 | Feature | Value Proposition | Complexity | Dependency on Existing System |
 |---------|-------------------|------------|-------------------------------|
-| **GTD-domain fine-tuned classifier (not generic)** | Generic text classifiers (DistilBERT on SST-2, BERT on news categories) do not understand GTD semantics. "Buy milk" is a task; "Milk is a dairy product" is a fact. A model fine-tuned on GTD-domain examples outperforms a generic classifier on these distinctions. No competitor ships a GTD-domain ONNX model. | HIGH | Requires: synthetic training data generation pipeline (LLM-generated GTD examples per atom type), Python fine-tuning environment (separate from app). Output: ONNX file committed to repo or served as asset. |
-| **Synthetic training data pipeline for personal productivity** | Using a cloud LLM to generate labeled GTD training examples (100–500 examples per class) is a novel data source for this domain. The training corpus itself becomes a reusable asset. Users can contribute curated corrections back to the public dataset (opt-in). | HIGH | Requires: Python script (`scripts/generate-training-data.py`) calling Anthropic/OpenAI API. Output: JSONL files (`scripts/training-data/*.jsonl`). No app-side dependency. |
-| **Correction-driven retraining loop** | Most in-browser ML classifiers are static — the model ships, never improves. BinderOS captures every user correction (chosen type differs from suggested type). These corrections become the highest-quality training data for the next model version. The retraining loop: export corrections from Dexie → add to training corpus → retrain → re-export ONNX → ship. | HIGH | Requires: Dexie export utility for classification log, Python retraining script, CI/CD or manual retrain process. The app-side hook is already in `logClassification()`. |
-| **Staleness score model (ML-based)** | Current staleness assessment is WASM-computed decay + Tier 1 score interpretation (threshold-based string output). A fine-tuned regression or classification model that predicts "compress now / review soon / still fresh" from content features + entropy signals would outperform threshold-based rules — especially for edge cases (long-lived tasks that are still active vs. truly stale). | HIGH | Requires: staleness regression model, training data from historical classification log (atoms with known decay trajectories). Needs >100 labeled staleness examples per class — bootstrapped via synthetic data + WASM score labels. |
-| **Priority prediction model** | Current priority is a deterministic WASM function (entropy × recency × link density). ML model trained on user behavior (which atoms did they work on? which did they ignore?) could predict behavioral priority better than the formula alone. | VERY HIGH | Requires: behavioral signal capture (not currently stored). High privacy sensitivity. Defer to future milestone unless the WASM formula proves insufficient. Flag as research item. |
-| **Compression candidate model (beyond centroid similarity)** | Current compression coach uses WASM staleness + semantic similarity to surface candidates. A classification model fine-tuned to predict "compress-worthy / keep / review" from combined signals (staleness, link count, type, age, similarity cluster) would give higher-precision candidates with less noise. | HIGH | Requires: compression candidate training data (labeled atoms from user's own history — privacy-sensitive). Synthetic examples can bootstrap, but real user corrections matter most here. |
-| **Model quality dashboard in settings panel** | Show users: model version, accuracy on their correction history, number of corrections incorporated, last retrain date. Gives power users confidence in the system. No competitor shows this. | MEDIUM | Requires: metadata stored with model (version, training date, accuracy on hold-out set). Settings panel UX already identified as tech debt target in v3.0. |
-| **Offline-first with cloud-quality results** | With fine-tuned ONNX models, Tier 2 achieves quality close to cloud LLM for the fixed-label classification tasks (type and section). Cloud LLM becomes an escalation path for ambiguous or novel cases only. The system works fully offline — no API key, no network — and produces good results rather than degraded ones. This is the core v3.0 value proposition. | HIGH (system-level) | Requires: all of the above. The differentiator is the sum of parts. |
+| **Tier 2 sanitization ONNX classifier (privacy gate)** | Before any atom content reaches a cloud LLM, an on-device ONNX NER/classification model detects sensitive entities: names, locations, financial amounts, health information, credentials. Flagged tokens are masked before cloud transmission. This is the first browser-native GTD tool with an ML privacy gate — most tools either send everything or nothing. | HIGH | New Python training pipeline (NER-based, or binary sensitive/non-sensitive classifier). ONNX model loaded in embedding worker (or separate sanitization worker). `sanitizeForCloud()` in `privacy-proxy.ts` currently a passthrough — replace with ONNX inference. Needs to run before `addCloudRequestLog()` to ensure the log stores only sanitized text. |
+| **Template engine for offline review generation** | Weekly review briefings, compression explanations, and GTD flow prompts currently require a Tier 3 LLM call to produce prose. A template engine (Eta.js, ~3KB) + entropy signal inputs generates structured, high-quality review text entirely offline. "You have 12 stale tasks in Projects, 3 items waiting review. Entropy: 68% — above threshold." No LLM, no download. | MEDIUM | New `src/ai/tier2/template-engine.ts`. Templates parameterized by WASM entropy signals already computed (`src/wasm/`). Replaces Tier 3 calls for `assess-staleness`, weekly briefing, and compression explanation when no LLM is available. Tier 3 LLM escalates only for freeform narrative or creative synthesis tasks (`analyze-gtd`). |
+| **Corporate/self-hosted LLM endpoint (OpenAI-compatible)** | Enterprise users running Ollama locally, LM Studio, or corporate OpenAI proxies can point BinderOS at a custom base URL. Any OpenAI-compatible endpoint works with the same adapter. No additional code after OpenAI adapter is built. | LOW (given OpenAI adapter) | Settings UI: add "Custom endpoint" field. OpenAI SDK `baseURL` parameter. Same pre-send approval gate and communication log. Users provide endpoint URL + API key. |
+| **Compression candidate ONNX detector** | Current compression coach uses WASM staleness score + heuristics to surface candidates. A binary ONNX classifier trained on "compress-worthy vs keep" signals (age, link count, type, staleness score, query frequency) predicts candidates with higher precision and fewer false positives. Users see fewer irrelevant compression suggestions. | HIGH | Requires v3.0 correction data for training (compress-accepted vs compress-rejected). New Python pipeline for compression training data. New message type in embedding worker. Extends `compression.ts` replace-or-augment heuristic candidate selection. |
+| **Priority prediction signal (research feature)** | WASM priority formula (entropy × recency × link density) is deterministic. An ONNX regression model trained on behavioral signals (which atoms does the user actually act on?) would predict behavioral priority closer to actual user intent. Exposed as optional "behavioral priority" signal in store alongside existing computed priority. | VERY HIGH | High privacy surface: requires tracking user interactions (opens, edits per atom). Must be explicit opt-in. Training data is fully personal. Flag as research/experimental feature. Only expose if behavioral signal capture is implemented with full user consent UX. |
+| **Adaptive confidence thresholds per device** | On a high-end desktop with WebGPU LLM, the pipeline can afford lower Tier 2 confidence thresholds (escalate more → better answers from Tier 3). On mobile with WASM LLM, escalation should be more conservative (Tier 3 is fast on desktop, slow on mobile WASM). Device-adaptive thresholds tune the escalation balance for the device class. | MEDIUM | Extend `CONFIDENCE_THRESHOLDS` to support per-device-class overrides. Mobile class: raise thresholds (escalate less). Desktop class: keep current thresholds. Settings: expose "AI assertiveness" slider that maps to threshold profile. |
+| **Model capability probing with user-visible feedback** | When the app first loads on a new device, it runs a 2-second capability probe (WebGPU adapter info, device memory, GPU limits). It reports to the user: "Your device supports local AI (GPU, ~2.2GB model)" or "Lightweight AI mode (CPU, ~200MB model)." Transparency builds trust; no other browser AI app does this. | LOW | Extend `BrowserAdapter.initialize()` capability probe logic. Display result in AI Settings. One-time UX flow on first AI enable. |
 
 ---
 
@@ -63,112 +73,135 @@ Features that go beyond "ONNX model in browser" to make the v3.0 ML layer genuin
 
 | Feature | Why Requested | Why Problematic | Alternative |
 |---------|---------------|-----------------|-------------|
-| **Bundle large model with app** | "Ship the model so there's no download" | Fine-tuned DistilBERT-base-uncased INT8 is ~60–80MB. Bundling this doubles the app size and breaks Vite's chunk optimization. Browser cache is the right mechanism. | Host model as a separate static asset (same CDN as app or GitHub Releases). Transformers.js caches to browser Cache API automatically after first download. Show first-load progress indicator. |
-| **Re-train the model in-browser** | "Let the model learn from my corrections locally, continuously" | In-browser retraining of transformer models is not feasible — ONNX Runtime Web is an inference runtime only, not a training runtime. The model graph is frozen at export. In-browser "retraining" would require PyTorch.js or TensorFlow.js with a full training graph, adding 10–50MB+ and significant memory pressure. | Use the correction log as input to an offline retraining script (Python, run periodically). Ship updated ONNX file as a new model version. Incremental improvement via version releases, not live in-browser adaptation. |
-| **Auto-tune confidence thresholds per user** | "Learn my tolerance for AI suggestions" | Dynamic thresholds that vary per-user create a moving target for the pipeline escalation logic. A user whose threshold drifts means Tier 3 fires more or less often unpredictably. Hard to debug, hard to trust. | Fixed thresholds per task type (already in `CONFIDENCE_THRESHOLDS`). Allow user to set a global "AI assertiveness" slider (conservative / balanced / assertive) that maps to pre-defined threshold profiles. Simple, transparent, user-controlled. |
-| **Separate models per user** | "Fine-tune a personal model on my data" | GTD atom content is personal. Using it as training data requires explicit consent, secure handling, and a training infrastructure with privacy guarantees. The privacy surface is too large for an open-source tool without a backend. | Shared base model (trained on synthetic GTD data) + user-specific correction signals stored locally in the classification log. Corrections influence retraining of the shared model (anonymized, opt-in), but not per-user personalization. |
-| **Online learning / incremental model updates** | "Update the model weights immediately when I correct a suggestion" | Catastrophic forgetting: neural networks updated on a single example destroy prior learned patterns. A single correction from "task" to "insight" would corrupt the model for future "task" items unless proper continual learning techniques are applied — techniques that are not supported in ONNX Runtime Web (inference only). | Log corrections in Dexie. Run offline retraining script against accumulated corrections + original training data (prevents forgetting). Corrections only affect the model after deliberate retrain + ship cycle. |
-| **Model accuracy guarantees ("95% accurate")** | "Tell me this model is X% accurate" | Accuracy on a generic benchmark is meaningless for a personal productivity tool. The user's atom content distribution differs from any training set. Synthetic training data further decouples synthetic-world accuracy from real-world performance. | Report: "Model trained on N examples. You've made M corrections. Corrections are queued for next retrain." Show trend (is accuracy improving or stable?) not a single number. |
-| **Multi-task single model (type + section + staleness in one forward pass)** | "Efficient — one model does everything" | Multi-task learning requires a shared backbone architecture. Section routing depends on user-specific sections (dynamic labels), making it impossible to pre-train a single shared model for all tasks. Type classification labels are fixed (5 classes); section routing labels vary per user. These must be separate models or separate heads with different output layers. | Type classifier: shared fine-tuned model (fixed 5-class output). Section routing: embed + nearest-neighbor to existing atom section embeddings (reuse MiniLM already loaded). Staleness: separate lightweight model or continue WASM rule-based with ML refinement. |
-| **WebGPU acceleration for model inference** | "Make it faster with WebGPU" | WebGPU is not universally available (Firefox: flag only; iOS: not supported). The MiniLM model already runs <50ms on CPU ONNX. For a 5-class classification task, CPU inference is adequate. Adding a WebGPU path creates a maintenance bifurcation for negligible real-world gain on short inputs. | CPU ONNX is the default path. If WebGPU becomes universally available in future, add `{device: 'webgpu'}` as an optional accelerator behind a settings flag. Don't build it now. |
+| **Auto-send to cloud without approval** | "Cloud AI is faster — just use it automatically" | Every cloud request must go through the pre-send approval modal (locked architectural decision). Removing this gate exposes user data without explicit consent per the project's privacy contract. | Keep the modal. Make it lower-friction: checkbox "Don't ask again this session" (session consent already implemented). Don't remove the gate. |
+| **Store API keys in IndexedDB** | "So I don't have to re-enter my key every session" | Keys in IndexedDB are readable by any script running on the origin (including injected scripts). Memory-only storage (current pattern in `key-vault.ts`) is the correct tradeoff for a local-first privacy tool. | Offer optional session-length persistence using `sessionStorage` (cleared on tab close). Never use IndexedDB or localStorage for API keys. Explicit user opt-in. |
+| **WebGPU LLM on mobile** | "Android Chrome supports WebGPU — use it for WebLLM" | Chrome Android WebGPU support exists since version 121, but memory limits are severe (1–2GB shared VRAM). WebLLM's smallest model (Llama-3.2-1B at ~900MB VRAM) routinely OOMs on mid-range Android phones. Safari iOS WebGPU is not stable. | Use Transformers.js WASM path on mobile as the default. Optionally probe WebGPU adapter on Android; if `maxBufferSize` is above threshold, offer the 1B WebGPU model as an experimental opt-in. Never default to WebGPU LLM on mobile. |
+| **LLM-based sanitization** | "Use a local LLM to summarize/redact before sending to cloud" | Using a LLM for sanitization adds 500ms–2000ms latency before every cloud request. On mobile (WASM LLM), this would make cloud AI unusable. LLM-based sanitization also requires the LLM to be loaded and ready before any cloud call can proceed. | ONNX NER classifier for sanitization: runs in <50ms on CPU, does not require the LLM worker to be initialized, operates independently in the embedding worker. Fast, always available, predictable. |
+| **Three separate workers for three LLM providers** | "Isolate each provider for safety" | Memory pressure from three simultaneously running AI workers would OOM most browser tabs. Worker startup overhead is significant for WASM modules. | One cloud adapter manager on the main thread dispatches to the active provider via fetch. One embedding worker handles ONNX. One LLM worker handles the active local model. Provider switching is configuration, not separate workers. |
+| **Real-time sanitization overlay UI** | "Show users what gets redacted in real time as they type" | Adds O(n) ONNX inference on every keystroke. At 50ms per inference, typing lags visibly after 20 characters. Significantly raises implementation complexity with minimal added privacy benefit (sanitization already happens before cloud dispatch). | Sanitization runs once, immediately before cloud dispatch, in the existing approval modal flow. The approval modal can display the sanitized text diff so users see what was redacted before approving. |
+| **All-in-one multi-task LLM (local + cloud)** | "One model that handles type classification, summarization, and routing" | Local LLMs (1B–3B parameters) have poor few-shot classification accuracy compared to the fine-tuned ONNX classifiers for fixed-label tasks. Routing all classification through the LLM would: (a) slow inbox triage from <50ms (ONNX) to 500ms+ (LLM), (b) introduce stochastic variance into a deterministic task, (c) break the tiered escalation logic. | Keep the tiered architecture: ONNX for fixed-label classification, LLM for open-ended generation and ambiguous cases. The tiers are complementary, not redundant. |
+| **Streaming responses from all providers** | "Show text generation in real-time for every provider" | Streaming is already implemented for Anthropic (using `client.messages.stream()`). OpenAI streaming uses `stream: true` with SSE. Grok uses OpenAI-compatible streaming. Streaming UX requires the ConversationTurnCard to handle partial updates — currently it shows completed responses. Implementation risk: each provider has subtle streaming differences. | Implement streaming for OpenAI adapter (reuses existing chunk callback pattern). Grok inherits it. Mark corporate endpoint streaming as opt-in (custom endpoints may not support it). Defer streaming UI polish (partial typing animation) to a later milestone. |
+| **Corporate LLM with custom auth schemes (OAuth, SAML)** | "Our company uses Azure AD to authenticate to our LLM endpoint" | OAuth/SAML flows from a browser PWA require redirect flows or PKCE, adding significant auth infrastructure. This is backend work, not frontend work. | Support OpenAI-compatible endpoints with static Bearer token (API key). This covers 95% of self-hosted and corporate proxy setups. OAuth/SAML is out of scope — use a proxy that accepts Bearer tokens. |
 
 ---
 
 ## Feature Dependencies
 
 ```
-[Fine-tuned Type Classifier ONNX]
-    └──requires──> [Training data: synthetic GTD examples (task/fact/event/decision/insight)]
-    └──requires──> [Python fine-tuning script (PyTorch + HuggingFace Transformers)]
-    └──requires──> [ONNX export via HuggingFace Optimum (INT8 quantization)]
-    └──replaces──> [Centroid similarity in Tier 2 handler for classify-type task]
-    └──uses──> [Existing embedding worker for model loading + inference]
+[Device-Adaptive BrowserAdapter]
+    └──requires──> [navigator.gpu capability probe (WebGPU available?)]
+    └──requires──> [navigator.deviceMemory + user-agent for device class]
+    └──branches──> [WebGPU path: existing WebLLM/BrowserAdapter (desktop)]
+    └──branches──> [WASM path: Transformers.js text-generation pipeline (mobile/low-memory)]
+    └──enables──> [Offline mobile experience]
 
-[Synthetic Training Data Pipeline]
-    └──requires──> [Cloud LLM access (Anthropic/OpenAI) for generation script]
-    └──requires──> [Labeled JSONL output format matching classifier input schema]
-    └──provides──> [Training corpus for all fine-tuned models]
-    └──note──> [No app-side code dependency — pure Python + LLM API]
+[Transformers.js WASM LLM (mobile Tier 1)]
+    └──uses──> [Transformers.js (already in project for MiniLM embeddings)]
+    └──requires──> [SmolLM2-360M-Instruct or similar WASM-compatible model]
+    └──requires──> [LLM worker extended or new WASM LLM worker]
+    └──requires──> [Cache API model persistence (pattern from ONNX classifier)]
+    └──note──> [Shared library with embedding, separate model file — no Dexie conflict]
 
-[Section Routing (Offline)]
-    └──option-A──> [Fine-tuned section classifier: requires dynamic-label handling — user sections vary]
-    └──option-B──> [MiniLM embed + nearest-neighbor to existing section atom embeddings]
-    └──note──> [Option B reuses existing MiniLM worker with no new model download]
-    └──depends-on──> [Section atoms existing in Dexie with embeddings]
+[Template Engine (offline generation)]
+    └──uses──> [Eta.js or similar micro-template library (~3KB)]
+    └──requires──> [WASM entropy signals: staleness scores, atom counts, section health]
+    └──requires──> [Template files for: weekly briefing, compression explanation, GTD prompts]
+    └──replaces──> [Tier 3 LLM calls for assess-staleness, weekly-briefing, compression-explanation tasks]
+    └──note──> [LLM still used for analyze-gtd (open-ended) and ambiguous classify-type escalations]
 
-[Correction-Driven Retraining Loop]
-    └──requires──> [Classification log query: chosenType != suggestedType AND suggestedTier === 2]
-    └──requires──> [Dexie export utility (offline script, not in-app)]
-    └──requires──> [Python retraining script that merges corrections + original training data]
-    └──outputs──> [New ONNX model version to replace previous]
-    └──note──> [The app-side hook already exists in logClassification()]
+[Sanitization ONNX Classifier (privacy gate)]
+    └──requires──> [New Python NER/binary-classification training pipeline]
+    └──requires──> [ONNX model: sensitive entity detection (names, locations, financial, health, credentials)]
+    └──replaces──> [sanitizeForCloud() passthrough in privacy-proxy.ts]
+    └──runs-in──> [Embedding worker (alongside type classifier) OR dedicated sanitization worker]
+    └──gates──> [CloudAdapter.execute() — must pass before pre-send approval modal]
+    └──note──> [Must be independent of LLM worker state — runs even when local LLM not loaded]
 
-[Staleness Score Model]
-    └──requires──> [Training data: atoms labeled with WASM staleness score + manual compress/keep/review label]
-    └──requires──> [WASM score signals passed as features alongside text content]
-    └──enhances──> [assess-staleness task in Tier 1 handler (replaces threshold logic)]
+[OpenAI Cloud Adapter]
+    └──requires──> [openai npm package (similar to @anthropic-ai/sdk pattern)]
+    └──requires──> [Key vault extension: openai key slot]
+    └──requires──> [Pre-send approval modal: already provider-agnostic in design]
+    └──extends──> [CloudRequestLogEntry.provider type: add 'openai']
+    └──enables──> [Grok adapter (reuses OpenAI SDK with baseURL override)]
+    └──enables──> [Corporate LLM adapter (same, custom baseURL + Bearer token)]
 
-[Compression Candidate Model]
-    └──requires──> [Staleness Score Model] (shares signal space)
-    └──requires──> [Training data: labeled compress-worthy / keep / review examples]
-    └──enhances──> [Compression coach: replaces heuristic candidate selection]
+[Grok/xAI Cloud Adapter]
+    └──requires──> [OpenAI Cloud Adapter] (built first — Grok is OpenAI-compatible)
+    └──requires──> [baseURL: 'https://api.x.ai/v1' in OpenAI SDK]
+    └──note──> [Near-zero additional code beyond OpenAI adapter]
 
-[Model Quality Dashboard (Settings)]
-    └──requires──> [Model metadata: version, training date, training corpus size, accuracy on hold-out]
-    └──requires──> [Settings panel tech debt cleanup (already in v3.0 scope)]
-    └──reads──> [Classification log: count of corrections, correction rate trend]
+[Corporate/Self-Hosted Endpoint]
+    └──requires──> [OpenAI Cloud Adapter]
+    └──requires──> [Settings UI: custom base URL field + API key field]
+    └──note──> [Covers Ollama, LM Studio, Azure OpenAI, any OpenAI-compatible proxy]
 
-[Confidence Calibration]
-    └──requires──> [Fine-tuned model outputs softmax probabilities]
-    └──requires──> [Calibration step: Platt scaling or temperature scaling on hold-out set]
-    └──ensures──> [Pipeline escalation thresholds in CONFIDENCE_THRESHOLDS remain valid]
+[Compression Candidate ONNX Detector]
+    └──requires──> [v3.0 correction data: compress-accepted vs compress-rejected events in classification log]
+    └──requires──> [New Python training pipeline for compression candidate classification]
+    └──requires──> [New ONNX model and embedding worker message type]
+    └──enhances──> [compression.ts: replaces heuristic candidate selection]
 
-[Model Storage / Caching]
-    └──uses──> [Transformers.js automatic Cache API caching (built-in)]
-    └──requires──> [Model hosting: static asset URL (same CDN, GitHub Releases, or bundled as separate chunk)]
-    └──requires──> [First-load progress indicator in existing embedding worker → main thread message]
-    └──note──> [IndexedDB is NOT the storage mechanism — Cache API is. No Dexie conflict.]
+[Section Routing ONNX Classifier]
+    └──requires──> [Training data: PARA semantics (Projects/Areas/Resources/Archives)]
+    └──requires──> [New Python training pipeline for section routing]
+    └──requires──> [New ONNX model loaded in embedding worker]
+    └──replaces──> [Centroid-based route-section in tier2-handler.ts]
+    └──note──> [User-specific section names still handled via embedding nearest-neighbor fallback]
+
+[Adaptive Confidence Thresholds]
+    └──requires──> [Device detection (device class: mobile vs desktop)]
+    └──modifies──> [CONFIDENCE_THRESHOLDS in src/ai/tier2/types.ts]
+    └──note──> [Mobile: raise thresholds (less escalation). Desktop: current thresholds.]
+
+[Offline Mobile Experience]
+    └──requires──> [Transformers.js WASM LLM] (Tier 1 on mobile)
+    └──requires──> [Section routing ONNX classifier] (Tier 2 upgrade)
+    └──requires──> [Template engine] (Tier 2 generation offline)
+    └──requires──> [Sanitization ONNX classifier] (privacy gate works offline)
+    └──note──> [Cloud features still unavailable offline — Tier 3 degrades gracefully]
 ```
 
 ### Dependency Notes
 
-- **Synthetic data pipeline is the critical path.** Without training data, there is no fine-tuned model to deploy. This is the first thing to build — before any app-side code changes.
-- **Type classifier is the highest-ROI first model.** It handles the highest-frequency task (inbox triage). Five fixed output classes (task/fact/event/decision/insight) means a shared model works for all users.
-- **Section routing is user-specific.** Section labels differ per user setup. Do not attempt a fine-tuned section routing model shared across users — use embedding-based nearest-neighbor to the user's own section atoms instead (Option B). This avoids the dynamic-label problem entirely and reuses the MiniLM model already loaded.
-- **Staleness and compression models are optional v3.0 scope.** The type classifier alone is a meaningful v3.0 upgrade. Staleness and compression models add value but require additional training data and are higher-risk on quality.
-- **Confidence calibration must happen before the model goes into the pipeline.** Uncalibrated softmax probabilities will misfire escalation thresholds. Platt scaling on a small hold-out set (20% of training data) is sufficient.
-- **Correction loop does not require in-app tooling for v3.0.** Export classification log from Dexie via DevTools or a one-time export script, retrain offline, ship new ONNX. The infrastructure need not be polished for v3.0.
+- **Device detection is the foundation.** Without knowing the device class (WebGPU capable desktop vs WASM mobile), the adapter selection logic cannot route correctly. Build detection before any new adapter code.
+- **OpenAI adapter unlocks Grok and corporate LLMs for free.** xAI Grok uses the OpenAI SDK with `baseURL: 'https://api.x.ai/v1'`. Corporate/Ollama endpoints use the same pattern. Build OpenAI adapter first; others are configuration variants.
+- **Sanitization ONNX must be independent of the LLM worker.** If it runs in the embedding worker (already always loaded), it's always available. If it requires the LLM worker, it fails on mobile when the WASM LLM is loading. Run sanitization in the embedding worker.
+- **Template engine blocks offline mobile UX.** Without templates, offline review briefings require a Tier 3 LLM call. Template engine is the critical path for the "fully functional offline" promise.
+- **Section routing ONNX has a cold-start problem.** New users have no atom history, so centroid fallback produces nothing. An ONNX section classifier trained on PARA semantics solves cold-start. User-specific section naming is handled by embedding nearest-neighbor for section titles after onboarding.
+- **Compression ONNX detector requires correction data from v3.0.** The model must be trained on real compress-accepted vs compress-rejected examples. Training data does not exist until v3.0 has run in production. Build training pipeline and model after v3.0 correction data accumulates. Initially ship v4.0 with enhanced heuristics; swap in ONNX when data is ready.
 
 ---
 
 ## MVP Definition
 
-### Launch With (v3.0 — Local AI + Polish milestone)
+### Ship in v4.0 (Core Milestone Deliverables)
 
-The minimum set that delivers "full offline GTD intelligence" as a meaningful upgrade over centroid similarity.
+The minimum set that delivers the "device-adaptive AI, fully functional offline" promise.
 
-- [ ] **Synthetic training data corpus (type classification)** — 300–500 labeled GTD examples per atom type (task, fact, event, decision, insight) generated via cloud LLM. Stored in `scripts/training-data/type-classification.jsonl`. This is the prerequisite to everything else.
-- [ ] **Python fine-tuning script** — Fine-tune DistilBERT (or MiniLM classification head) on GTD corpus. Export to ONNX INT8 via HuggingFace Optimum. Reproducible, committed to `scripts/train-type-classifier.py`. Produces `public/models/type-classifier/` output.
-- [ ] **ONNX type classifier integrated into Tier 2** — Load the fine-tuned model in the existing embedding worker. Replace centroid cosine similarity with a proper classification forward pass for the `classify-type` task. Confidence score from softmax probabilities (calibrated).
-- [ ] **First-load model download UX** — Progress indicator when model downloads for the first time. Clear message ("Downloading offline classifier, ~60MB, one-time only"). Subsequent loads from Cache API: silent.
-- [ ] **Graceful fallback if model fails** — If ONNX model fails to load or errors during inference, fall through to Tier 1 keyword heuristics. Log the failure. No user-visible crash.
-- [ ] **Correction-driven retraining utility** — Offline script (`scripts/export-corrections.ts` or similar) that exports classification corrections from Dexie as JSONL for the next retraining run. App-side: no changes needed (classification log already captures corrections).
-- [ ] **Settings panel: model status display** — In the existing settings panel (v3.0 tech debt target), show: model version, download status, number of corrections logged. Simple, not a full dashboard.
-- [ ] **Tech debt cleanup** — Settings panel UX, status bar AI indicator, dead code in llm-worker.ts, isReadOnly enforcement, stale AIOrb comments (already in v3.0 scope).
+- [ ] **Device capability probe** — Detect WebGPU availability, device memory class, and mobile/desktop heuristic. Output: `DeviceCapabilityProfile { hasWebGPU, deviceClass, recommendedModel }`. Drives all subsequent adapter decisions.
+- [ ] **WASM LLM adapter (mobile Tier 1)** — Transformers.js text-generation pipeline with SmolLM2-360M (WASM, ~200MB). Same worker interface as BrowserAdapter. Cache API persistence for model file. Download progress UX (reuse existing pattern from ONNX classifier).
+- [ ] **Adaptive BrowserAdapter init** — On `initialize()`, run capability probe → select WebLLM (WebGPU) or WASM LLM (Transformers.js) path automatically. Existing `WEBLLM_MODELS` list expands to include SmolLM2 entry for WASM path.
+- [ ] **Template engine (offline generation)** — Eta.js-based template system for: weekly review briefing, compression explanation sentences, GTD flow prompts. Parameterized by WASM entropy signals. Removes Tier 3 dependency for structured output tasks.
+- [ ] **Sanitization ONNX classifier** — Binary or NER-based ONNX model detecting sensitive entities. Integrated into `sanitizeForCloud()` — replaces the current passthrough. Runs in embedding worker. Python training pipeline for sanitization model (new `scripts/train/` subdirectory). Pre-send approval modal shows sanitized diff.
+- [ ] **OpenAI cloud adapter** — Full `CloudAdapter` equivalent using `openai` SDK with user-provided key. Pre-send approval gate and communication log extended. Model: `gpt-4o-mini` (cost-efficient). Settings UI: add OpenAI key slot alongside Anthropic.
+- [ ] **Grok/xAI cloud adapter** — OpenAI adapter with `baseURL: 'https://api.x.ai/v1'`. Settings UI: add Grok key slot. Model: `grok-3-mini` or equivalent cost-efficient Grok model.
+- [ ] **Corporate/custom endpoint adapter** — OpenAI adapter with configurable `baseURL` and key. Settings UI: custom endpoint URL field. Covers Ollama, LM Studio, Azure OpenAI.
+- [ ] **Section routing ONNX classifier** — ONNX model trained on PARA-domain text. Replaces centroid-based `route-section` in `tier2-handler.ts`. Python training pipeline added to `scripts/train/`. New embedding worker message type.
+- [ ] **Adaptive confidence thresholds** — `CONFIDENCE_THRESHOLDS` extended with mobile-class overrides. Device class from capability probe feeds threshold selection at pipeline init.
 
-### Add After Validation (v3.x)
+### Add After Validation (v4.x)
 
-- [ ] **Staleness score classifier** — Fine-tuned model for compress/review/keep prediction. Add once the type classifier is validated and the correction loop is producing quality data. Needs 100+ labeled staleness examples per class.
-- [ ] **Compression candidate model** — Replaces heuristic candidate selection in compression coach. Higher complexity; add after staleness model is stable.
-- [ ] **Section routing via nearest-neighbor** — Upgrade offline section routing from centroid average to per-atom embedding nearest-neighbor. Uses existing embeddings stored in classification log. Higher accuracy, same model.
-- [ ] **Model quality dashboard** — Full settings panel view: correction count, model accuracy trend, training date, corpus size. Add when enough users are running the correction loop.
-- [ ] **Priority prediction (research spike)** — Investigate whether behavioral signal capture is feasible without privacy violation. High risk, high reward. Treat as a spike before committing.
+- [ ] **Compression candidate ONNX detector** — Requires v3.0 correction data (compress-accepted vs compress-rejected) to accumulate before training. Build training pipeline and model after 4–6 weeks of v3.0 production use. Ship as v4.1 patch.
+- [ ] **Priority prediction (research spike)** — Requires behavioral signal capture (explicit user opt-in). High privacy surface. Treat as a research feature behind a settings flag. Only productize if correction data shows WASM formula is consistently wrong.
+- [ ] **Streaming UI for OpenAI/Grok** — Streaming tokens are available from both providers. ConversationTurnCard currently shows completed responses. Animated streaming display adds perceived performance. Add after core adapters are stable.
+- [ ] **WebGPU LLM opt-in for Android** — Probe `maxBufferSize` on Android Chrome WebGPU adapter. If above threshold, offer 1B WebGPU model as experimental opt-in. Default stays WASM. Add once WASM path is stable.
 
-### Future Consideration (v4+)
+### Future Consideration (v5+)
 
-- [ ] **Community training data contributions** — Opt-in mechanism for users to contribute anonymized corrections to a shared public corpus. Requires consent UX, anonymization pipeline, and a governance model. Significant complexity.
-- [ ] **Domain-specific model variants** — Users with very specific GTD domains (legal, medical, academic) might benefit from domain-adapted models. Feasible with fine-tuning tooling but requires more training data per domain.
-- [ ] **WebGPU acceleration** — Add `{device: 'webgpu'}` inference path for users on Chrome/Edge with discrete GPUs. Only after WebGPU achieves broader browser support.
+- [ ] **Community sanitization model improvements** — Public corpus of sensitive entity patterns to improve sanitization recall. Requires opt-in anonymization pipeline.
+- [ ] **OAuth/SAML corporate auth** — Out of scope until a backend exists. Corporate users should use API key-based proxies.
+- [ ] **Voice capture + local STT** — picoLLM/Cheetah for local speech-to-text. High-value for mobile but significant new dependency surface.
+- [ ] **Model federation across devices** — Share correction log for model improvement across user's own devices. Requires CRDT sync (already deferred to future milestone).
 
 ---
 
@@ -176,102 +209,160 @@ The minimum set that delivers "full offline GTD intelligence" as a meaningful up
 
 | Feature | User Value | Implementation Cost | Priority | Notes |
 |---------|------------|---------------------|----------|-------|
-| Synthetic training data corpus | HIGH | MEDIUM | P1 | Prerequisite — nothing else builds without it |
-| Python fine-tuning + ONNX export script | HIGH | MEDIUM | P1 | Reproducible pipeline; output feeds all model features |
-| ONNX type classifier in Tier 2 | HIGH | MEDIUM | P1 | Core v3.0 upgrade — replaces centroid similarity |
-| Confidence calibration | HIGH | LOW | P1 | Required for pipeline escalation correctness |
-| First-load download UX | HIGH | LOW | P1 | User trust — must know why app is pausing |
-| Graceful fallback on model failure | HIGH | LOW | P1 | Resilience — degrades to Tier 1, never crashes |
-| Correction export utility | MEDIUM | LOW | P1 | Enables future retraining cycles |
-| Settings: model status display | MEDIUM | LOW | P1 | Tech debt target anyway; add model info here |
-| Section routing via nearest-neighbor | HIGH | MEDIUM | P2 | Better offline routing, no new model download |
-| Staleness score classifier | MEDIUM | HIGH | P2 | Add after type classifier is validated |
-| Compression candidate model | MEDIUM | HIGH | P2 | Higher complexity; needs staleness model first |
-| Model quality dashboard | LOW | MEDIUM | P3 | Nice for power users; not blocking for v3.0 |
-| Priority prediction (spike) | MEDIUM | VERY HIGH | P3 | Research only — don't commit to shipping |
-| Community corpus contributions | LOW | VERY HIGH | P3 | Requires governance — defer |
+| Device capability probe | HIGH | LOW | P1 | Gates everything else; prerequisite |
+| WASM LLM adapter (mobile) | HIGH | MEDIUM | P1 | Core v4.0 promise: offline on any device |
+| Adaptive BrowserAdapter init | HIGH | LOW | P1 | Wires device probe to adapter selection |
+| Template engine | HIGH | MEDIUM | P1 | Removes Tier 3 dependency for structured output |
+| Sanitization ONNX classifier | HIGH | HIGH | P1 | Privacy gate — the "privacy-first" differentiator |
+| OpenAI cloud adapter | HIGH | MEDIUM | P1 | Largest user request; unlocks Grok/corporate |
+| Grok/xAI cloud adapter | MEDIUM | LOW | P1 | Free given OpenAI adapter |
+| Corporate endpoint adapter | MEDIUM | LOW | P1 | Free given OpenAI adapter |
+| Section routing ONNX | HIGH | HIGH | P1 | Deferred from v3.0; needed for offline completeness |
+| Adaptive confidence thresholds | MEDIUM | LOW | P1 | Correctness: prevent mobile over-escalation |
+| Compression ONNX detector | MEDIUM | HIGH | P2 | Needs v3.0 training data to accumulate first |
+| Streaming UI for OpenAI/Grok | LOW | MEDIUM | P2 | Polish; core adapters ship without it |
+| WebGPU LLM opt-in on Android | LOW | MEDIUM | P2 | Experimental; WASM is the safe default |
+| Priority prediction | LOW | VERY HIGH | P3 | Research spike only |
+| Corporate OAuth/SAML | LOW | VERY HIGH | P3 | Out of scope without backend |
 
 **Priority key:**
-- P1: Must ship in v3.0 to deliver the milestone promise
-- P2: Add after v3.0 core is validated
+- P1: Must ship in v4.0 to deliver the milestone promise
+- P2: Add after v4.0 core is validated
 - P3: Future consideration or research spike
 
 ---
 
 ## Technical Constraints Specific to This Feature Set
 
-### Model Size Budget
+### Device Detection Reliability
 
-| Model | Architecture | INT8 Size | Cold Start (4G) | Inference Time (CPU) |
-|-------|-------------|-----------|-----------------|----------------------|
-| DistilBERT-base INT8 (type classifier) | 6-layer BERT, 66M params → ~66MB FP32, ~17–20MB INT8 | ~20MB | 5–8 sec download | 30–80ms per item |
-| MiniLM-L6-v2 (already loaded for embeddings) | 6-layer, 22M params → ~23MB INT8 | Already cached | 0 sec (shared) | 20–40ms per item |
-| Combined (MiniLM + type classifier) | Two separate models | ~43MB total new download | 8–15 sec first-time | — |
+`navigator.gpu` presence confirms WebGPU API availability but not GPU memory capacity. `navigator.deviceMemory` (available in Chrome/Edge, not Firefox or Safari) gives approximate RAM in GB. Pattern:
 
-**Decision rationale:** MiniLM (already in the embedding worker) can be repurposed as the backbone for the type classifier by adding a classification head and fine-tuning. This avoids downloading a second model entirely. The classification head is a single linear layer (~5 × 384 = ~2K parameters). **Recommended approach: fine-tune a classification head on top of the existing MiniLM backbone** rather than introducing DistilBERT as a second model.
+```typescript
+// Capability probe
+const hasWebGPU = 'gpu' in navigator;
+const adapter = hasWebGPU ? await navigator.gpu.requestAdapter() : null;
+const maxBuffer = adapter?.limits.maxBufferSize ?? 0;
+const deviceMemoryGB = (navigator as { deviceMemory?: number }).deviceMemory ?? 2;
 
-### Browser Storage Constraints
+// Decision: 2GB GPU buffer + 4GB device RAM = capable desktop
+const deviceClass = (maxBuffer > 2_000_000_000 && deviceMemoryGB >= 4) ? 'desktop' : 'mobile-wasm';
+```
 
-Transformers.js caches models to the **Cache API** (not IndexedDB). This avoids Dexie collision. Quota: Chrome allocates a fraction of available disk (typically 10–20% of disk space). Safari: ~1GB per origin. For a ~20MB INT8 MiniLM classifier, storage pressure is minimal on modern devices. Wrap cache writes in `QuotaExceededError` handler — fall back to in-memory-only mode (re-download on next session).
+**Confidence: MEDIUM** — `navigator.deviceMemory` is not available in Firefox or Safari. User-agent string heuristics fill the gap (iOS/Android → WASM) but are brittle. The fallback must always be WASM (safe default), never WebGPU LLM.
 
-### Training Data Quality Requirements
+### WASM LLM Model Size Budget
 
-Based on research (arXiv 2310.07849 — LLM synthetic data for text classification), models trained on synthetic data:
-- Perform best when examples are topic-guided (diverse GTD scenarios, not repetitive patterns)
-- Degrade on subjective tasks (a "decision" vs. "insight" is genuinely ambiguous — expect higher error rates on these two classes)
-- Improve significantly when a small number of real user corrections are mixed in (few-shot curated data)
+| Model | WASM Size (q8) | Cold Start Download | Inference Time (WASM CPU) | Notes |
+|-------|----------------|--------------------|-----------------------------|-------|
+| SmolLM2-360M-Instruct | ~200MB | 30–60s (4G) | 2–8s per response | Suitable for mobile; Transformers.js compatible |
+| SmolLM2-1.7B-Instruct | ~900MB | 2–4min (4G) | 10–30s per response | Too slow for interactive use on mobile |
+| Phi-3.5-mini (WASM) | ~2.4GB | Very slow | Unusable on mobile | Desktop-only; use WebLLM for this |
 
-**Implication:** Generate 400–500 synthetic examples per class for the initial model. Prioritize real correction data for the decision/insight boundary — these are the hardest cases.
+**Decision: SmolLM2-360M-Instruct for WASM mobile path.** First-load UX must communicate download size. Cache API persists across sessions.
 
-### Confidence Calibration
+### Sanitization Model Approach
 
-Softmax probabilities from fine-tuned classifiers are often overconfident. The current pipeline uses fixed thresholds (`classify-type: 0.65`, `route-section: 0.60`). After fine-tuning:
+Two viable patterns for the sanitization ONNX classifier:
 
-1. Hold out 20% of training data before training.
-2. Run model on hold-out set; collect softmax probabilities and true labels.
-3. Apply Platt scaling (logistic regression over raw probabilities) to calibrate.
-4. Verify calibrated confidence tracks actual accuracy within 5% across the 0.5–0.9 range.
-5. Only then integrate into the pipeline with existing thresholds.
+**Option A: Binary classifier** — "Does this sentence contain sensitive information? Yes/No." Fast (~20ms CPU ONNX), simple to train, but cannot identify which tokens to mask. Requires a second regex pass to locate and redact detected sensitive text.
 
-If calibration fails (overconfidence persists), raise the threshold for `classify-type` from 0.65 to 0.75 for the ONNX model specifically.
+**Option B: NER token classifier** — Labels each token as `O` (non-sensitive) or one of `PER`, `LOC`, `ORG`, `FINANCIAL`, `HEALTH`, `CRED`. Directly identifies what to mask. Heavier model (~50–100MB INT8 XLM-RoBERTa), but produces a masking map. Existing art: local-first ONNX PII scrubbers use this pattern.
+
+**Recommendation: Option B (NER), starting with a lightweight DistilBERT-NER (~60MB INT8).** Hybrid regex handles structured PII (emails, phone numbers, SSNs) at near-zero cost; NER handles unstructured PII (names, places). Accuracy: 90%+ recall on common PII types with quantized models. Run in the embedding worker alongside the type classifier — both use ONNX Runtime Web.
+
+**Confidence: MEDIUM** — ONNX NER in browser confirmed by multiple projects (PII 360, local-first PII scrubber with XLM-RoBERTa). GTD-specific sensitive entity patterns require domain-specific training data. Start with a pre-trained multilingual NER and fine-tune on GTD-context sensitive examples.
+
+### Multi-Provider Cloud API Browser Compatibility
+
+| Provider | SDK | Browser Support | CORS | Key Exposure Risk |
+|----------|-----|-----------------|------|-------------------|
+| Anthropic | `@anthropic-ai/sdk` | Yes (`dangerouslyAllowBrowser: true`) | CORS headers present | User-provided key, memory-only — acceptable |
+| OpenAI | `openai` npm SDK | Yes (`dangerouslyAllowBrowser: true`) | CORS headers present for Chat Completions | Same as Anthropic — user key, memory-only |
+| xAI Grok | OpenAI SDK, `baseURL: 'https://api.x.ai/v1'` | Inherits OpenAI SDK browser support | xAI API CORS headers confirmed | Same as OpenAI |
+| Corporate/Ollama | OpenAI SDK, custom `baseURL` | Depends on endpoint CORS config | Endpoint must allow browser origin | User's own endpoint — user's responsibility |
+
+**CORS note for corporate endpoints:** If the user's self-hosted endpoint (Ollama, LM Studio) doesn't include CORS headers, browser fetch will fail. Must surface a clear error: "Custom endpoint CORS not configured. Add `--cors` flag to Ollama or configure your proxy to allow this origin." This is a documentation and error messaging problem, not a code problem.
+
+**Confidence: MEDIUM-HIGH** — Anthropic SDK browser support confirmed in existing code. OpenAI SDK `dangerouslyAllowBrowser` pattern confirmed in community sources. xAI OpenAI-compatible API confirmed in official docs. Corporate CORS is inherently user-environment-dependent.
+
+### Template Engine Selection
+
+Criteria: browser-native (no Node.js dependencies), TypeScript-friendly, tiny bundle (<5KB), supports simple interpolation and conditionals.
+
+| Engine | Size | TypeScript | Browser | Notes |
+|--------|------|------------|---------|-------|
+| Eta.js | ~3KB | Yes | Yes | ESM-native, Deno/browser first. Recommended. |
+| Mustache.js | ~10KB | Types available | Yes | Logic-less; insufficient for conditional entropy display |
+| Handlebars | ~55KB | Types available | Yes | Too heavy for this use case |
+| Template literals (plain TS) | 0KB | Native | Yes | Viable for simple cases; no template files |
+
+**Recommendation: Eta.js for rich templates; plain TypeScript template literals for trivial cases.** Weekly review briefing requires conditionals (if entropy > threshold, show warning) and loops (for each stale section). Eta.js handles these at minimal bundle cost.
+
+**Confidence: HIGH** — Eta.js is well-documented, maintained, browser-native. No surprises expected.
 
 ---
 
 ## Interaction with Existing Pipeline
 
-The existing pipeline in `src/ai/tier2/` does not need to be restructured — only the Tier 2 handler's `handle()` function for `classify-type` changes. The interface contract is unchanged:
+### What Changes
 
 ```
-TieredRequest → TieredResult { tier: 2, confidence: number, type: AtomType, reasoning: string }
+Tier 1 handler:
+  Before: always routes to BrowserAdapter (WebLLM WebGPU required)
+  After:  capability probe → BrowserAdapter (WebGPU) OR WasmLlmAdapter (Transformers.js)
+
+Tier 2 handler:
+  Before: classify-type (ONNX), route-section (centroid fallback), extract-entities (Tier 1 regex)
+  After:  classify-type (ONNX, unchanged), route-section (ONNX primary, centroid fallback),
+          + sanitize (new ONNX sanitization classifier, runs pre-cloud not in escalation path),
+          + compress-detect (ONNX, v4.x after data accumulates)
+
+Privacy proxy (sanitizeForCloud):
+  Before: string passthrough
+  After:  ONNX NER inference → token masking → masked string returned
+
+Cloud adapter:
+  Before: CloudAdapter wraps Anthropic only; provider: 'anthropic' hardcoded
+  After:  Multi-provider: CloudAdapter base + AnthropicAdapter + OpenAIAdapter + GrokAdapter
+          + CorporateAdapter. Pre-send gate and communication log are provider-agnostic.
+
+Template engine (new):
+  New Tier 2 path for: assess-staleness, weekly-briefing, compression-explanation tasks.
+  Returns structured text without LLM. Tier 3 LLM still handles: analyze-gtd, summarize.
+  Task routing in pipeline.ts gains 'generate-template' task type (or existing tasks
+  re-routed to templates when LLM unavailable).
 ```
 
-The ONNX model inference replaces the centroid lookup:
+### What Does NOT Change
 
-```
-Old: embed(text) → cosine_similarity(embedding, centroid) → top class + score
-New: tokenize(text) → model.run(tokens) → softmax(logits) → top class + calibrated confidence
-```
-
-The centroid builder (`centroid-builder.ts`) and its persistence to Dexie can remain — the centroid still serves as a useful fallback if the ONNX model fails to load. The `canHandle()` method in the Tier 2 handler will check for ONNX model availability first, falling back to centroid mode if the model is not loaded.
+- Tiered escalation logic in `pipeline.ts` — `dispatchTiered()` is unchanged
+- `CONFIDENCE_THRESHOLDS` structure — extended, not replaced
+- Classification log schema in Dexie — no migration needed for new features
+- Approval modal flow — provider-agnostic redesign is additive
+- Atom type classifier ONNX — v3.0 model continues operating unchanged
+- Correction export JSONL format — unchanged
 
 ---
 
 ## Sources
 
-- [From PyTorch to Browser: full client-side ONNX + Transformers.js](https://bandarra.me/posts/from-pytorch-to-browser-a-full-client-side-solution-with-onnx-and-transformers-js) — confirmed MiniLM + custom ONNX classifier pattern; HIGH confidence
-- [Transformers.js official docs — model loading](https://huggingface.co/docs/transformers.js/en/index) — `env.localModelPath`, `env.allowRemoteModels`, custom ONNX pipeline; HIGH confidence
-- [HuggingFace Optimum — ONNX quantization docs](https://huggingface.co/docs/optimum-onnx/onnxruntime/usage_guides/quantization) — `ORTQuantizer`, `ORTModelForSequenceClassification`, INT8 dynamic quantization; HIGH confidence
-- [Optimum CLI export](https://github.com/huggingface/optimum-onnx) — `optimum-cli export onnx` command; HIGH confidence
-- [Synthetic Data Generation Using LLMs — arXiv 2503.14023](https://arxiv.org/abs/2503.14023) — topic-guided generation, diversity strategies, text classification results; MEDIUM confidence
-- [Synthetic Data for Text Classification: Potential and Limitations — ACL/EMNLP 2023](https://aclanthology.org/2023.emnlp-main.647/) — subjectivity degrades synthetic data quality; MEDIUM confidence (2023, but findings still applicable)
-- [Active Learning in ML — Encord 2025](https://encord.com/blog/active-learning-machine-learning-guide/) — uncertainty sampling reduces annotation needs 50–80%; MEDIUM confidence
-- [Cleanlab for label quality](https://encord.com/blog/active-learning-machine-learning-guide/) — label noise detection; MEDIUM confidence
-- [ONNX Runtime Web — large model storage](https://onnxruntime.ai/docs/tutorials/web/large-models.html) — Cache API vs IndexedDB for ONNX models; HIGH confidence
-- [Optimizing Transformers.js for production — SitePoint](https://www.sitepoint.com/optimizing-transformers-js-production/) — cold-start latency breakdown, q8 recommendations; MEDIUM confidence
-- [Model Drift Best Practices — Encord 2025](https://encord.com/blog/model-drift-best-practices/) — concept drift, retraining strategies, catastrophic forgetting; MEDIUM confidence
-- [F1 Score for imbalanced classification — Analytics Vidhya 2025](https://www.analyticsvidhya.com/blog/2025/12/what-is-f1-score-in-machine-learning/) — evaluation metric selection; HIGH confidence
-- [Transformers.js GitHub — custom ONNX model issue #1018](https://github.com/huggingface/transformers.js/issues/1018) — known limitations with custom ONNX models outside standard pipeline; MEDIUM confidence (community-reported)
-- [Running AI models in browser — Worldline Tech Blog 2026](https://blog.worldline.tech/2026/01/13/transformersjs-intro.html) — general Transformers.js v3 patterns, Jan 2026; MEDIUM confidence
+- [WebLLM GitHub — mlc-ai/web-llm](https://github.com/mlc-ai/web-llm) — model list, WebGPU device detection patterns, VRAM guidance; HIGH confidence
+- [WebLLM home/docs](https://webllm.mlc.ai/docs/) — official adapter API, `CreateWebWorkerMLCEngine` patterns; HIGH confidence
+- [Transformers.js v3 — HuggingFace blog](https://huggingface.co/blog/transformersjs-v3) — WASM fallback, `device: 'wasm'` for mobile, SmolLM/Phi support; HIGH confidence
+- [Transformers.js official docs](https://huggingface.co/docs/transformers.js/en/index) — text-generation pipeline API; HIGH confidence
+- [Cross-browser local LLM via WASM — Picovoice blog](https://picovoice.ai/blog/cross-browser-local-llm-inference-using-webassembly/) — WASM LLM feasibility analysis, model size guidance; MEDIUM confidence
+- [AI in Browser with WebGPU: 2025 Developer Guide](https://aicompetence.org/ai-in-browser-with-webgpu/) — WebGPU support matrix, mobile detection; MEDIUM confidence
+- [Local-first ONNX PII scrubber — Medium/DEV](https://dev.to/tjruesch/a-local-first-reversible-pii-scrubber-for-ai-workflows-using-onnx-and-regex-53fb) — hybrid regex + ONNX NER pattern, XLM-RoBERTa quantized ~280MB; MEDIUM confidence
+- [Building privacy-first anonymizer for LLMs — Medium](https://medium.com/@rom_55053/under-the-hood-building-a-privacy-first-anonymizer-for-llms-e74ca10fb76e) — architecture for pre-LLM sanitization; MEDIUM confidence
+- [ONNX Runtime Web — onnxruntime.ai/docs/tutorials/web](https://onnxruntime.ai/docs/tutorials/web/) — browser inference setup; HIGH confidence
+- [xAI Grok API — Vercel AI SDK providers](https://ai-sdk.dev/providers/ai-sdk-providers/xai) — OpenAI-compatible API, `baseURL: 'https://api.x.ai/v1'`; HIGH confidence
+- [xAI API release notes — docs.x.ai](https://docs.x.ai/developers/release-notes) — Grok model availability; HIGH confidence
+- [OpenAI `dangerouslyAllowBrowser` community discussion](https://community.openai.com/t/cross-origin-resource-sharing-cors/28905) — CORS and browser key handling; MEDIUM confidence
+- [LLM abstraction layer: why your codebase needs one — ProxAI](https://www.proxai.co/blog/archive/llm-abstraction-layer) — multi-provider patterns; MEDIUM confidence
+- [Eta.js template engine](https://eta.js.org/) — 3KB, ESM-native, browser-compatible; HIGH confidence
+- [Bring your own API key: browser extension pattern — xiegerts.com](https://www.xiegerts.com/post/browser-extension-genai-key-prompts/) — user-provided key security in browser; MEDIUM confidence
+- [WebGPU crash on Android Chrome — Transformers.js issue #1205](https://github.com/huggingface/transformers.js/issues/1205) — SmolVLM WebGPU OOM on Android; confirms WASM default for mobile; MEDIUM confidence (community-reported)
 
 ---
 
@@ -279,16 +370,18 @@ The centroid builder (`centroid-builder.ts`) and its persistence to Dexie can re
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| ONNX fine-tune → Transformers.js deployment pipeline | HIGH | Official docs + multiple verified community examples confirm the pattern end-to-end |
-| MiniLM as classification backbone (add head, fine-tune) | HIGH | Standard HuggingFace pattern; MiniLM for sequence classification is well-documented |
-| Synthetic GTD training data quality | MEDIUM | General LLM-labeling research is solid; GTD-specific synthetic data is novel and untested |
-| Section routing via nearest-neighbor (Option B) | MEDIUM | Embedding-based classification is well understood; relies on sufficient section atom coverage |
-| Staleness / compression models | LOW-MEDIUM | Domain is novel (personal productivity signals); training data construction is research-level |
-| Confidence calibration (Platt scaling) | MEDIUM | Standard ML technique; browser-side pipeline integration requires care |
-| Model drift / correction loop | MEDIUM | Browser storage patterns confirmed; retraining cadence is project-specific |
-| Priority prediction | LOW | Behavioral signal capture raises privacy concerns; no clear training data source defined |
+| Device detection and adapter branching | HIGH | `navigator.gpu`, `navigator.deviceMemory`, WebGPU adapter limits — all documented API |
+| WASM LLM via Transformers.js (SmolLM2-360M) | MEDIUM-HIGH | Library confirmed compatible; SmolLM2 WASM inference speed on mobile is community-reported, not officially benchmarked for BinderOS's GTD workload |
+| Sanitization ONNX NER classifier | MEDIUM | Pattern confirmed in multiple open-source projects; GTD-domain fine-tuning is novel; 90%+ recall is typical for quantized NER but not guaranteed for all PII categories |
+| Template engine (Eta.js) | HIGH | Mature library, well-documented, browser-native, no surprises expected |
+| OpenAI cloud adapter | HIGH | SDK is well-documented, `dangerouslyAllowBrowser: true` pattern confirmed in community |
+| Grok/xAI adapter | HIGH | OpenAI-compatible API confirmed in official xAI docs; near-zero additional risk beyond OpenAI adapter |
+| Corporate endpoint adapter | MEDIUM | CORS configuration is user-environment-dependent; error messaging must be clear |
+| Section routing ONNX | MEDIUM | ONNX text classification pipeline is proven; PARA-domain training data must be generated (same pipeline as type classifier, but PARA semantics are less well-defined than atom types) |
+| Compression ONNX detector | LOW-MEDIUM | Requires training data that doesn't yet exist (v3.0 correction data must accumulate) |
+| Adaptive confidence thresholds | MEDIUM | Threshold adjustment logic is simple; calibration values for mobile are estimated, not empirically tested |
 
 ---
 
-*Feature research for: fine-tuned in-browser ONNX classification models — BinderOS v3.0*
-*Researched: 2026-03-03*
+*Feature research for: device-adaptive AI tiers, ONNX sanitization, template generation, multi-provider cloud — BinderOS v4.0*
+*Researched: 2026-03-05*

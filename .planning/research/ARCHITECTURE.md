@@ -1,519 +1,802 @@
 # Architecture Research
 
-**Domain:** Fine-tuned ONNX classification integration into BinderOS tiered AI pipeline
-**Researched:** 2026-03-03
-**Confidence:** HIGH (existing codebase read directly; ONNX/Transformers.js patterns verified via official docs and working examples)
+**Domain:** Device-adaptive AI tiers, ONNX sanitization classifiers, multi-provider cloud — BinderOS v4.0
+**Researched:** 2026-03-05
+**Confidence:** HIGH (existing codebase read directly; new integrations verified via official docs, npm packages, and GitHub repositories)
 
 ---
 
-## The Core Integration Model
+## What This Document Covers
 
-The existing Tier 2 handler uses MiniLM embeddings compared against centroid vectors. Fine-tuned ONNX classifiers replace the centroid comparison step — the embedding step stays the same. This is a surgical replacement inside one component, not an architectural overhaul.
+This is a v4.0-specific architecture document. It assumes the v3.0 architecture (tiered pipeline, MiniLM embedding worker, ONNX type classifier, WebLLM BrowserAdapter, Anthropic CloudAdapter) is already in place and operational. It answers exactly four questions:
 
-**What stays:**
-- Embedding worker (`src/search/embedding-worker.ts`) — MiniLM continues generating 384-dim vectors
-- `TierHandler` interface — new Tier 2 still implements `canHandle()` / `handle()`
-- `dispatchTiered()` pipeline — escalation logic unchanged
-- Confidence thresholds in `types.ts` — may need tuning but structure unchanged
-- `ClassificationEvent` schema — already has `embedding`, `tier`, `confidence` fields
-- Model delivery pattern — `public/models/` served by Vite, `env.allowRemoteModels = false`
-
-**What changes:**
-- Tier 2 handler internals — centroid cosine similarity replaced by ONNX inference session
-- New ONNX model files in `public/models/` (the classifier heads, ~2-5 MB each)
-- New message types on the embedding worker — `CLASSIFY_ONNX` alongside existing `CLASSIFY_TYPE`
-- New Python training pipeline (external to the app build, ships artifacts)
+1. How does a WASM-based mobile LLM integrate alongside WebLLM?
+2. Where does the sanitization classifier sit in the pipeline?
+3. How does multi-provider cloud fit into the adapter pattern?
+4. Where does the template engine live — worker or main thread?
 
 ---
 
-## Standard Architecture
-
-### System Overview
+## System Overview (v4.0 Target State)
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        Main Thread (SolidJS)                        │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐   │
-│  │ InboxView│  │  AIOrb   │  │ Reviews  │  │ Compression Coach│   │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────────┬─────────┘   │
-│       └─────────────┴─────────────┴──────────────────┘             │
-│                              │                                     │
-│                    dispatchTiered(request)                          │
-│                     src/ai/tier2/pipeline.ts                       │
-│                              │                                     │
-│              ┌───────────────┼───────────────┐                     │
-│              ▼               ▼               ▼                     │
-│          Tier 1          Tier 2          Tier 3                    │
-│       deterministic    ONNX ML       LLM/Cloud                    │
-│       heuristics     classifiers      Anthropic                   │
-│              │               │                                     │
-└──────────────│───────────────│─────────────────────────────────────┘
-               │               │ postMessage (EMBED + CLASSIFY_ONNX)
-               │               ▼
-               │  ┌────────────────────────────────────────────────┐
-               │  │          Embedding Worker                      │
-               │  │  src/search/embedding-worker.ts                │
-               │  │                                                │
-               │  │  1. embed(text) → 384-dim vector (MiniLM)      │
-               │  │  2. run(onnxSession, vector) → logits          │
-               │  │     ↑                                          │
-               │  │     ONNX InferenceSession (per task type)      │
-               │  │     loaded from /models/classifiers/           │
-               │  └────────────────────────────────────────────────┘
-               │
-               │          ┌─────────────────────────────────────────┐
-               └─────────►│        Vite public/models/              │
-                           │  Xenova/all-MiniLM-L6-v2/ (existing)   │
-                           │  classifiers/              (NEW)        │
-                           │    triage-type.onnx   (~2-3 MB)         │
-                           │    route-section.onnx (~2-3 MB)         │
-                           └─────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            Main Thread (SolidJS)                              │
+│                                                                              │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────────────────────────┐  │
+│  │ InboxView│  │  AIOrb   │  │ Reviews  │  │     Compression Coach       │  │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────────────┬────────────────┘  │
+│       └─────────────┴─────────────┴──────────────────────┘                  │
+│                              │                                               │
+│                    dispatchTiered(request)                                    │
+│                     src/ai/tier2/pipeline.ts                                 │
+│                              │                                               │
+│              ┌───────────────┼─────────────────┐                             │
+│              ▼               ▼                 ▼                             │
+│          Tier 1          Tier 2            Tier 3                            │
+│       deterministic    ONNX ML         LLM (local or cloud)                  │
+│       heuristics     classifiers                                             │
+│                                             │                                │
+│                                  ┌──────────┴───────────┐                    │
+│                                  ▼                       ▼                   │
+│                          DeviceAdapter             CloudAdapter              │
+│                    (new v4.0: wraps either)    (multi-provider v4.0)        │
+│                          │         │                     │                   │
+│              ┌───────────┘         └──────────┐          └───────────┐       │
+│              ▼                                ▼                       ▼       │
+│        WebLLM Worker              WllamaAdapter            Provider Router   │
+│       (GPU/WebGPU)               (WASM/CPU)              (Anthropic/OpenAI   │
+│                                                            /Grok/Corporate)  │
+│                                                                              │
+│  ┌───────────────────────────────────────────────────────────────────────┐   │
+│  │                    Embedding Worker (unchanged)                        │   │
+│  │  MiniLM Embeddings │ ONNX type classifier │ NEW: sanitization model   │   │
+│  └───────────────────────────────────────────────────────────────────────┘   │
+│                                                                              │
+│  ┌────────────────────────────────────────────────────────┐                  │
+│  │        Template Engine (main thread, pure functions)   │                  │
+│  │  Slot-fill templates for reviews, coaching, GTD flows  │                  │
+│  └────────────────────────────────────────────────────────┘                  │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
-
-### Component Responsibilities
-
-| Component | Status | Responsibility |
-|-----------|--------|---------------|
-| `embedding-worker.ts` | MODIFIED | Adds ONNX InferenceSession loading + `CLASSIFY_ONNX` message type; MiniLM embed path unchanged |
-| `tier2/tier2-handler.ts` | MODIFIED | Replaces centroid cosine similarity with ONNX inference call to worker |
-| `tier2/types.ts` | MODIFIED | Add new task types if needed; tune confidence thresholds based on measured model accuracy |
-| `tier2/centroid-builder.ts` | UNCHANGED | Centroid build still runs for fallback; can be deprecated after ONNX proves stable |
-| `tier2/pipeline.ts` | UNCHANGED | Escalation logic unchanged |
-| `tier2/tier1-handler.ts` | UNCHANGED | Deterministic heuristics unchanged |
-| `tier2/tier3-handler.ts` | UNCHANGED | LLM escalation unchanged |
-| `public/models/classifiers/` | NEW | Trained `.onnx` classifier files shipped with app |
-| `scripts/train/` | NEW | Python training pipeline (outside app source, runs on developer machine) |
 
 ---
 
-## Recommended Project Structure
+## Integration Point 1: Device-Adaptive Local LLM
+
+### The Core Problem
+
+WebLLM (`@mlc-ai/web-llm`) is WebGPU-only. It has no WASM fallback when WebGPU is unavailable. Mobile browsers — particularly iOS Safari before version 26 and Firefox on Android — either lack WebGPU or have incomplete implementations. The app currently fails silently to `NoOpAdapter` on these devices.
+
+### Solution: DeviceAdapter Wrapping Two Implementations
+
+Introduce a `DeviceAdapter` that wraps either `BrowserAdapter` (WebLLM/WebGPU) or a new `WasmAdapter` (wllama/WASM), selected at initialization by GPU detection.
+
+**File:** `src/ai/adapters/device.ts` (NEW)
+
+The `DeviceAdapter`:
+1. Calls `detectDevice()` at init — checks `navigator.gpu` availability
+2. Instantiates `BrowserAdapter` (WebLLM) if WebGPU is present
+3. Instantiates `WasmAdapter` (wllama) if WebGPU is absent
+4. Exposes the same `AIAdapter` interface — callers never need to know which is active
+5. Reports `device: 'webgpu' | 'wasm-cpu'` to the store for UI display
+
+```typescript
+// src/ai/adapters/device.ts (NEW)
+
+export class DeviceAdapter implements AIAdapter {
+  readonly id = 'browser' as const; // keeps existing store field name
+
+  private inner: BrowserAdapter | WasmAdapter | null = null;
+
+  async initialize(): Promise<void> {
+    const hasWebGPU = 'gpu' in navigator && !!(await navigator.gpu?.requestAdapter());
+    if (hasWebGPU) {
+      this.inner = new BrowserAdapter(this.modelId);
+    } else {
+      this.inner = new WasmAdapter(this.wasmModelUrl);
+    }
+    await this.inner.initialize();
+  }
+
+  execute(request: AIRequest): Promise<AIResponse> {
+    return this.inner!.execute(request);
+  }
+}
+```
+
+**File:** `src/ai/adapters/wasm.ts` (NEW)
+
+The `WasmAdapter` wraps `@wllama/wllama`:
+- Runs inference inside a worker thread (wllama's default — does not block UI)
+- Loads a small GGUF model: SmolLM2-360M-Instruct-Q4 (~200MB) or Qwen2.5-0.5B-Q4 (~300MB)
+- Single-threaded mode only (avoids COEP/COOP header requirement)
+- Model stored in Cache API (same pattern as existing ONNX classifier)
+
+```typescript
+// src/ai/adapters/wasm.ts (NEW)
+
+import { Wllama } from '@wllama/wllama';
+
+export class WasmAdapter implements AIAdapter {
+  readonly id = 'browser' as const;
+  private wllama: Wllama | null = null;
+
+  async initialize(): Promise<void> {
+    this.wllama = new Wllama({
+      'single-thread/wllama.wasm': '/wllama/single-thread/wllama.wasm',
+    });
+    // Use single-thread to avoid COEP/COOP requirement
+    await this.wllama.loadModelFromUrl(this.modelUrl, { n_ctx: 512 });
+    this._status = 'available';
+  }
+
+  async execute(request: AIRequest): Promise<AIResponse> {
+    const text = await this.wllama!.createCompletion(request.prompt, {
+      nPredict: request.maxTokens ?? 256,
+      temperature: 0.3,
+    });
+    return { requestId: request.requestId, text, provider: 'browser' };
+  }
+}
+```
+
+**Critical constraint:** wllama requires WASM binary files served from the same origin. Add to `public/wllama/single-thread/wllama.wasm` (copy from `node_modules/@wllama/wllama/esm/single-thread/`).
+
+**COEP/COOP decision:** Use single-threaded wllama only. Multi-threaded wllama requires `Cross-Origin-Embedder-Policy: require-corp` and `Cross-Origin-Opener-Policy: same-origin`. These headers break third-party iframes and some CDN resources. For a BYOK privacy-focused app, the tradeoff is not worth it. Single-thread wllama is slower but has zero header requirements.
+
+### What Changes vs. What Stays
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `src/ai/adapters/browser.ts` | UNCHANGED | WebLLM/WebGPU path, stays as is |
+| `src/ai/adapters/device.ts` | NEW | Wraps browser or wasm, decides at init |
+| `src/ai/adapters/wasm.ts` | NEW | Wllama WASM path for mobile/no-WebGPU |
+| `src/ai/router.ts` | UNCHANGED | `setActiveAdapter()` / `dispatchAI()` unchanged |
+| Store initialization | MODIFIED | Instantiates `DeviceAdapter` instead of `BrowserAdapter` directly |
+| `adapter.ts` types | MODIFIED | Add `'wasm-cpu'` to device string; keep `provider: 'browser'` |
+
+### Model Selection for WasmAdapter
+
+Use the smallest capable GGUF model — this is for mobile devices with 3-4GB RAM:
+
+| Model | GGUF Size | RAM Usage | Context | Recommendation |
+|-------|-----------|-----------|---------|----------------|
+| SmolLM2-360M-Q4 | ~200MB | ~300MB | 512 tok | Best for mobile: fast, tiny |
+| Qwen2.5-0.5B-Q4 | ~300MB | ~450MB | 512 tok | Better quality, still mobile-safe |
+| Phi-3.5-mini-Q4 | ~2.4GB | ~3GB | 2k tok | Desktop-class only, not wllama target |
+
+**Recommendation:** Ship SmolLM2-360M-Q4 for WasmAdapter. The WASM path is a capability floor (offline mobile), not a capability ceiling. Limit context to 512 tokens to keep latency acceptable.
+
+---
+
+## Integration Point 2: ONNX Sanitization Classifier
+
+### The Core Problem
+
+The current `sanitizeForCloud()` in `privacy-proxy.ts` is a type-boundary-only enforcement — it validates that a prompt is a string but does not actually detect whether it contains PII or sensitive content. When `level = 'full'` is selected, raw content flows to cloud providers unchecked. The v4.0 goal is an ONNX classifier that flags content as "safe to send" or "contains sensitive data" before it leaves the device.
+
+### Pipeline Position: Embedding Worker
+
+The sanitization classifier belongs inside the existing embedding worker (`src/search/embedding-worker.ts`), not in the main thread or a separate worker. Rationale:
+
+- The embedding worker already runs ONNX Runtime Web (`ort`) and manages the MiniLM model
+- Sanitization classification uses the same 384-dim MiniLM embedding as input — share the embedding step, run two ONNX inference sessions
+- Adding a second worker would double the startup overhead for model loading
+- All classification remains off main thread — no blocking
+- Graceful degradation pattern already exists: if classifier fails, emit error and continue
+
+**New message types added to embedding-worker.ts:**
+
+```typescript
+// Incoming
+{ type: 'SANITIZE_CHECK'; id: string; text: string }
+
+// Outgoing
+{ type: 'SANITIZE_RESULT'; id: string; isSafe: boolean; confidence: number; flags: string[] }
+{ type: 'SANITIZE_ERROR'; id: string; error: string }
+```
+
+**Sanitization classifier model:** Binary MLP classifier trained on:
+- Positive class: PII-containing text (names, emails, phone numbers, addresses, account numbers, medical info)
+- Negative class: abstract GTD content (tasks, facts, decisions without personal identifiers)
+- Architecture: same MiniLM embedding → sigmoid binary head (same training pipeline as triage-type classifier)
+- Output: `isSafe: boolean`, `confidence: 0-1`, `flags: string[]` (detected categories)
+- Model path: `public/models/classifiers/sanitize-check.onnx`
+- Cache key: `onnx-sanitizer-v1` (separate from `onnx-classifier-v1`)
+
+### Where It Gates Cloud Requests
+
+The sanitization check integrates into `CloudAdapter.execute()` between the `sanitizeForCloud()` call and the pre-send approval modal:
 
 ```
-BinderOS/
-├── src/
-│   ├── ai/
-│   │   └── tier2/
-│   │       ├── types.ts              # MODIFIED: threshold tuning, optional new task types
-│   │       ├── handler.ts            # UNCHANGED: TierHandler interface
-│   │       ├── pipeline.ts           # UNCHANGED: dispatchTiered()
-│   │       ├── tier1-handler.ts      # UNCHANGED: keyword heuristics
-│   │       ├── tier2-handler.ts      # MODIFIED: ONNX inference replaces centroid path
-│   │       ├── tier3-handler.ts      # UNCHANGED: LLM fallback
-│   │       ├── centroid-builder.ts   # UNCHANGED (kept as fallback)
-│   │       └── index.ts              # MINOR: expose ONNX readiness signal
-│   └── search/
-│       └── embedding-worker.ts       # MODIFIED: add ONNX session + CLASSIFY_ONNX handler
-│
-├── public/
-│   └── models/
-│       ├── Xenova/all-MiniLM-L6-v2/ # EXISTING: embedding model files
-│       └── classifiers/              # NEW: trained classifier heads
-│           ├── triage-type.onnx      # classify-type task
-│           └── route-section.onnx    # route-section task
-│
-└── scripts/
-    ├── download-model.cjs            # EXISTING: downloads MiniLM
-    └── train/                        # NEW: Python training pipeline
-        ├── generate_data.py          # LLM synthetic data generation
-        ├── train_classifier.py       # sklearn/PyTorch training + ONNX export
-        ├── validate_model.py         # accuracy validation before shipping
-        └── requirements.txt          # Python deps: sentence-transformers, onnx, skl2onnx
+CloudAdapter.execute()
+  1. Check API key, online status, session consent (existing)
+  2. sanitizeForCloud(prompt, level) — string cleanup (existing)
+  3. NEW: await sanitizationWorker.check(sanitizedPrompt)
+     → if ONNX flags sensitive data AND level != 'full': throw with explanation
+     → if confidence < 0.6: pass through with warning in log entry
+     → if isSafe or level == 'full' (user acknowledged): continue
+  4. Pre-send approval modal (existing)
+  5. API call (existing)
 ```
 
-### Structure Rationale
+The sanitization check should NOT block when the ONNX model is not yet loaded — degrade to `{ isSafe: true, confidence: 0 }` with a log entry flagging that the check was skipped.
 
-- **`public/models/classifiers/`:** Follows the exact same pattern as `public/models/Xenova/all-MiniLM-L6-v2/`. Vite serves all `public/` files as static assets without transformation. The worker loads models via absolute URL `/models/classifiers/triage-type.onnx`. No Vite config changes needed.
-- **`scripts/train/`:** Python-only, runs offline on developer machines. Not part of the app build or `pnpm install`. Outputs `.onnx` files that are committed to git alongside the app source (small files, ~2-5 MB each — unlike the 22 MB MiniLM model which is gitignored).
-- **Classifier files committed to git:** Because they are small (~2-5 MB each) and deterministically produced, committing them eliminates any download step for app users. New users get working ONNX classifiers immediately after `git clone`.
+### Privacy Proxy Update
+
+`privacy-proxy.ts` evolves from a passthrough to an active gate:
+
+```typescript
+// src/ai/privacy-proxy.ts (MODIFIED)
+
+export interface SanitizationResult {
+  isSafe: boolean;
+  confidence: number;
+  flags: string[];  // e.g., ['email', 'phone', 'name']
+  checkedAt: number;
+}
+
+// NEW: async check via embedding worker
+export async function checkSanitization(
+  text: string,
+  worker: Worker,
+): Promise<SanitizationResult>
+```
+
+### Python Training Pipeline
+
+New script: `scripts/train/train-sanitizer.py`
+
+Same pattern as `train-classifier.py` but binary labels:
+- `scripts/training-data/sanitize-check.jsonl` — labeled examples
+- `scripts/training-data/generate-sanitizer-data.py` — synthetic PII generation for training
+- Exports to `public/models/classifiers/sanitize-check.onnx`
+
+This is a separate training pipeline from the type classifier. The class file becomes `sanitize-check-classes.json` with `{"0": "safe", "1": "sensitive"}`.
+
+### What Changes vs. What Stays
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `src/search/embedding-worker.ts` | MODIFIED | Add SANITIZE_CHECK handler, second ONNX session |
+| `src/ai/privacy-proxy.ts` | MODIFIED | Add `checkSanitization()` async function |
+| `src/ai/adapters/cloud.ts` | MODIFIED | Call sanitization check before approval modal |
+| `scripts/train/` | NEW FILES | `train-sanitizer.py`, sanitizer data generation |
+| `public/models/classifiers/` | NEW FILES | `sanitize-check.onnx`, `sanitize-check-classes.json` |
+| Existing type classifier | UNCHANGED | Different ONNX session, no interference |
+
+---
+
+## Integration Point 3: Multi-Provider Cloud Adapter
+
+### The Core Problem
+
+`CloudAdapter` is hardcoded to Anthropic's SDK (`@anthropic-ai/sdk`). The `AIResponse.provider` type is `'noop' | 'browser' | 'cloud'` — "cloud" is singular. Adding OpenAI, Grok, and corporate LLMs requires either: (a) a new adapter per provider (duplicates all safety gates), or (b) a single `CloudAdapter` that delegates to a provider-specific implementation.
+
+Option (b) is correct. The safety gates (key vault, session consent, pre-send approval, cloud request log) belong in ONE place — the `CloudAdapter`. Provider-specific implementations are thin request formatters.
+
+### Provider Plugin Architecture
+
+**File:** `src/ai/adapters/cloud-provider.ts` (NEW)
+
+```typescript
+// src/ai/adapters/cloud-provider.ts (NEW)
+
+export interface CloudProvider {
+  readonly id: 'anthropic' | 'openai' | 'grok' | 'corporate';
+  readonly displayName: string;
+  readonly defaultModel: string;
+
+  /** Initialize with user-supplied API key */
+  initialize(apiKey: string): void;
+
+  /** Execute a pre-sanitized, pre-approved request */
+  execute(
+    sanitizedPrompt: string,
+    maxTokens: number,
+    onChunk?: (chunk: string) => void,
+    signal?: AbortSignal,
+  ): Promise<{ text: string; model: string }>;
+
+  dispose(): void;
+}
+```
+
+**File:** `src/ai/adapters/providers/anthropic-provider.ts` (extracted from `cloud.ts`)
+**File:** `src/ai/adapters/providers/openai-provider.ts` (NEW)
+**File:** `src/ai/adapters/providers/grok-provider.ts` (NEW)
+**File:** `src/ai/adapters/providers/corporate-provider.ts` (NEW — custom base URL)
+
+`CloudAdapter` becomes provider-agnostic:
+
+```typescript
+// src/ai/adapters/cloud.ts (REFACTORED — all safety gates stay here)
+
+export class CloudAdapter implements AIAdapter {
+  private provider: CloudProvider | null = null;
+
+  setProvider(provider: CloudProvider): void {
+    this.provider = provider;
+    this.provider.initialize(getMemoryKey() ?? '');
+    this._status = 'available';
+  }
+
+  async execute(request: AIRequest): Promise<AIResponse> {
+    // ALL safety gates execute here, provider-agnostic:
+    if (!isOnline()) throw ...;
+    if (!hasSessionConsent()) throw ...;
+    const sanitized = sanitizeForCloud(request.prompt, level);
+    await checkSanitization(sanitized, embeddingWorker); // NEW
+    // Pre-send approval modal
+    const approved = await this.onPreSendApproval?.(logEntry);
+    if (!approved) throw ...;
+    // Delegate to provider (no safety logic in provider)
+    const { text, model } = await this.provider!.execute(...);
+    return { requestId: request.requestId, text, provider: 'cloud', model };
+  }
+}
+```
+
+### Provider Implementations
+
+**OpenAI Provider:**
+- Uses `openai` npm package with `dangerouslyAllowBrowser: true`
+- Default model: `gpt-4o-mini` (cost-efficient, same use case as Haiku)
+- Streaming via `client.chat.completions.create({ stream: true })`
+- Same BYOK pattern as Anthropic
+
+**Grok Provider:**
+- Grok API is OpenAI-compatible — use the `openai` package with custom `baseURL: 'https://api.x.ai/v1'`
+- No separate SDK needed: `new OpenAI({ apiKey, baseURL: 'https://api.x.ai/v1', dangerouslyAllowBrowser: true })`
+- Default model: `grok-4` (current as of 2026-03)
+- HIGH confidence (verified: xAI docs confirm OpenAI SDK compatibility with baseURL swap)
+
+**Corporate LLM Provider:**
+- Same pattern as Grok: OpenAI-compatible base URL, user-supplied endpoint
+- Supports Ollama, LM Studio, vLLM, Azure OpenAI, any OpenAI-compatible endpoint
+- User enters base URL + optional API key in settings
+- No auth required for local Ollama deployments (key = empty string)
+
+### CloudRequestLogEntry Update
+
+Add `provider` field granularity to the log:
+
+```typescript
+export interface CloudRequestLogEntry {
+  // ... existing fields ...
+  provider: 'anthropic' | 'openai' | 'grok' | 'corporate'; // was just string
+  providerDisplayName: string; // e.g., "OpenAI", "Grok (xAI)", "My Ollama"
+}
+```
+
+### What Changes vs. What Stays
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `src/ai/adapters/cloud.ts` | REFACTORED | Becomes provider-agnostic shell; all safety gates stay |
+| `src/ai/adapters/cloud-provider.ts` | NEW | Interface definition |
+| `src/ai/adapters/providers/anthropic-provider.ts` | NEW (extracted) | Extracted from cloud.ts |
+| `src/ai/adapters/providers/openai-provider.ts` | NEW | Uses `openai` npm package |
+| `src/ai/adapters/providers/grok-provider.ts` | NEW | OpenAI SDK + `baseURL: 'https://api.x.ai/v1'` |
+| `src/ai/adapters/providers/corporate-provider.ts` | NEW | OpenAI SDK + user-supplied baseURL |
+| `src/ai/adapters/adapter.ts` | MODIFIED | `provider` field in AIResponse stays `'cloud'` — sub-provider tracked in model field |
+| `src/ai/key-vault.ts` | MODIFIED | Multi-key storage: one slot per provider |
+| AI Settings UI | MODIFIED | Provider selector + per-provider key entry |
+
+### Key Vault Multi-Provider Extension
+
+Currently `key-vault.ts` stores a single `binderos-ai-key`. Extend to per-provider slots:
+
+```typescript
+// key-vault.ts (MODIFIED)
+const PROVIDER_KEY_PREFIX = 'binderos-ai-key-'; // e.g., binderos-ai-key-anthropic
+
+export function setProviderKey(provider: CloudProviderId, key: string): void
+export function getProviderKey(provider: CloudProviderId): string | null
+export function clearProviderKey(provider: CloudProviderId): void
+```
+
+This is additive — existing `setMemoryKey()` / `getMemoryKey()` remain for backward compatibility during transition.
+
+---
+
+## Integration Point 4: Template Engine
+
+### The Core Problem
+
+Review briefings, compression explanations, and GTD flow prompts currently require LLM generation — even when the content is mostly boilerplate with a few slot-filled values (entropy score, atom count, section name). A template engine handles 80% of these cases deterministically, skipping Tier 3 entirely for structured content.
+
+### Placement: Main Thread, Pure Functions
+
+The template engine belongs in the main thread as pure functions, not in a worker. Rationale:
+
+- Templates are string interpolation — trivially fast, no compute pressure
+- Moving to a worker adds message-passing overhead for no benefit
+- Template functions need access to current store state (entropy signals, atom counts) — easier from main thread
+- Pure functions are testable, zero dependencies on workers
+
+**Pattern:** No external template library is needed. The existing GTD prompt building in `triage.ts`, `compression.ts`, and `analysis.ts` already demonstrates the pattern. Formalize it.
+
+**File:** `src/ai/templates/index.ts` (NEW directory)
+
+```typescript
+// src/ai/templates/types.ts (NEW)
+export interface TemplateContext {
+  atomCount?: number;
+  staleCount?: number;
+  inboxCount?: number;
+  entropyLevel?: 'green' | 'yellow' | 'red';
+  sectionName?: string;
+  weekNumber?: number;
+  topStaleAtom?: { title: string; staleness: number };
+  // ... etc
+}
+
+export interface TemplateResult {
+  text: string;
+  source: 'template';
+  templateId: string;
+}
+```
+
+```typescript
+// src/ai/templates/review-templates.ts (NEW)
+export function weeklyReviewBriefing(ctx: TemplateContext): TemplateResult
+export function getCleanBriefing(ctx: TemplateContext): TemplateResult
+export function getCurrentBriefing(ctx: TemplateContext): TemplateResult
+export function getCreativeBriefing(ctx: TemplateContext): TemplateResult
+```
+
+```typescript
+// src/ai/templates/compression-templates.ts (NEW)
+export function compressionExplanation(atom: AtomSummary, ctx: TemplateContext): TemplateResult
+export function compressionCoachIntro(count: number, ctx: TemplateContext): TemplateResult
+```
+
+```typescript
+// src/ai/templates/gtd-templates.ts (NEW)
+export function inboxTriageBriefing(ctx: TemplateContext): TemplateResult
+export function waitingFollowUpNudge(ctx: TemplateContext): TemplateResult
+```
+
+### Template Integration in the Tiered Pipeline
+
+Templates add a Tier 0 concept — deterministic, no ML, no LLM:
+
+```
+Tier 0: Template engine (new for structured content)
+  ↓ (if template not applicable for this task)
+Tier 1: Deterministic heuristics (existing)
+  ↓ (confidence < threshold)
+Tier 2: ONNX classifiers (existing)
+  ↓ (confidence < threshold)
+Tier 3: LLM (existing)
+```
+
+Templates are not registered as `TierHandler` instances — they are called directly by the feature modules that know their content is template-eligible. The `AITaskType` system grows:
+
+```typescript
+// types.ts (MODIFIED)
+export type AITaskType =
+  | 'classify-type'
+  | 'route-section'
+  | 'extract-entities'
+  | 'assess-staleness'
+  | 'summarize'
+  | 'analyze-gtd'
+  | 'generate-review-briefing'  // NEW — template-eligible
+  | 'generate-compression-explanation';  // NEW — template-eligible
+```
+
+For `generate-review-briefing` and `generate-compression-explanation`, `dispatchTiered()` checks for a template first before escalating. If a template covers the request, `TieredResult.tier` = 0 (or `1` with a `source: 'template'` annotation — implementation detail to decide during build).
+
+### What Changes vs. What Stays
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| `src/ai/templates/` | NEW directory | Pure function slot-fill templates |
+| `src/ai/tier2/types.ts` | MODIFIED | Add template-eligible task types |
+| `src/ai/triage.ts` | MODIFIED | Call templates before dispatchTiered when appropriate |
+| `src/ai/compression.ts` | MODIFIED | Call templates for coaching intros |
+| `src/ai/review-flow.ts` | MODIFIED | Call templates for briefing sections |
+| `src/ai/analysis.ts` | MODIFIED | Minor wiring changes |
+| `dispatchTiered()` | UNCHANGED | Template callers bypass it directly |
+
+---
+
+## Recommended File Structure (v4.0 Changes Only)
+
+```
+src/ai/
+├── adapters/
+│   ├── adapter.ts           # MODIFIED: WasmAdapter device field
+│   ├── browser.ts           # UNCHANGED (WebLLM)
+│   ├── cloud.ts             # REFACTORED (provider-agnostic shell)
+│   ├── cloud-provider.ts    # NEW: CloudProvider interface
+│   ├── device.ts            # NEW: DeviceAdapter (WebGPU vs WASM router)
+│   ├── wasm.ts              # NEW: WlamaAdapter (wllama binding)
+│   ├── noop.ts              # UNCHANGED
+│   └── providers/
+│       ├── anthropic-provider.ts   # NEW (extracted from cloud.ts)
+│       ├── openai-provider.ts      # NEW
+│       ├── grok-provider.ts        # NEW
+│       └── corporate-provider.ts   # NEW
+├── templates/
+│   ├── index.ts             # NEW: re-exports all templates
+│   ├── types.ts             # NEW: TemplateContext, TemplateResult
+│   ├── review-templates.ts  # NEW: weekly review, get clear/current/creative
+│   ├── compression-templates.ts  # NEW: compression coach text
+│   └── gtd-templates.ts     # NEW: inbox triage, waiting nudges
+├── tier2/
+│   ├── types.ts             # MODIFIED: add template task types, Tier 0
+│   ├── pipeline.ts          # UNCHANGED
+│   ├── handler.ts           # UNCHANGED
+│   ├── tier1-handler.ts     # UNCHANGED
+│   ├── tier2-handler.ts     # MINOR: add new ONNX classifiers
+│   ├── tier3-handler.ts     # UNCHANGED
+│   ├── centroid-builder.ts  # UNCHANGED
+│   └── index.ts             # UNCHANGED
+├── router.ts                # UNCHANGED
+├── privacy-proxy.ts         # MODIFIED: add checkSanitization()
+├── key-vault.ts             # MODIFIED: multi-provider key slots
+├── triage.ts                # MODIFIED: template integration
+├── compression.ts           # MODIFIED: template integration
+├── review-flow.ts           # MODIFIED: template integration
+└── llm-worker.ts            # UNCHANGED (WebLLM worker entry point)
+
+src/search/
+└── embedding-worker.ts      # MODIFIED: add SANITIZE_CHECK, second ONNX session
+
+public/
+├── models/
+│   └── classifiers/
+│       ├── triage-type.onnx         # UNCHANGED
+│       ├── triage-type-classes.json # UNCHANGED
+│       ├── sanitize-check.onnx      # NEW
+│       └── sanitize-check-classes.json  # NEW
+└── wllama/
+    └── single-thread/
+        └── wllama.wasm             # NEW (copied from npm package)
+
+scripts/train/
+├── train-classifier.py     # UNCHANGED
+├── train-sanitizer.py      # NEW
+└── generate-sanitizer-data.py  # NEW
+```
 
 ---
 
 ## Architectural Patterns
 
-### Pattern 1: Two-Model Pipeline (Embed then Classify)
+### Pattern 1: Adapter-Within-Adapter (DeviceAdapter)
 
-**What:** Keep MiniLM for embedding (existing, proven), add a lightweight ONNX classification head that takes the 384-dim vector as input and outputs class logits. The classifier head is tiny (~2-5 MB) because it only does linear/MLP classification over pre-computed embeddings — not full transformer inference.
+**What:** The `DeviceAdapter` implements `AIAdapter` and delegates to either `BrowserAdapter` or `WasmAdapter`. The store and router never know which is active.
 
-**When to use:** Always — this is the confirmed production pattern for this domain. Validated by the bandarra.me reference architecture and confirmed by the existing MiniLM usage in BinderOS.
+**When to use:** When two implementations of the same interface diverge only in capability detection, not in interface contract.
 
-**Trade-offs:**
-- Pro: Classifier head is tiny; training is fast (~minutes); MiniLM reuse eliminates re-download
-- Pro: Same embedding model used in both Python training and browser inference — no distribution shift
-- Con: Two inference steps per classification (embed + classify); both run in the worker so no UI impact
-- Con: Must pin Python training to the exact same MiniLM model and quantization level
+**Trade-offs:** Adds one layer of indirection. Worth it because it keeps all device-detection logic in one file and the rest of the codebase device-oblivious.
 
-**Example — embedding-worker.ts extension:**
 ```typescript
-import * as ort from 'onnxruntime-web';
-
-const classifierSessions = new Map<string, ort.InferenceSession>();
-
-async function getClassifierSession(task: string): Promise<ort.InferenceSession> {
-  if (classifierSessions.has(task)) return classifierSessions.get(task)!;
-  const session = await ort.InferenceSession.create(
-    `/models/classifiers/${task}.onnx`,
-    { executionProviders: ['wasm'] }
-  );
-  classifierSessions.set(task, session);
-  return session;
-}
-
-async function classifyWithONNX(
-  text: string,
-  task: string,
-): Promise<{ label: string; confidence: number; probabilities: Record<string, number> }> {
-  const [vector] = await embedTexts([text]);
-  const session = await getClassifierSession(task);
-  const inputTensor = new ort.Tensor('float32', Float32Array.from(vector!), [1, 384]);
-  const results = await session.run({ input: inputTensor });
-  const logits = Array.from(results['output']!.data as Float32Array);
-  return selectTopLabel(logits, task); // softmax + argmax
-}
+// Store init (MODIFIED):
+// Before v4.0: new BrowserAdapter(modelId)
+// After v4.0:  new DeviceAdapter(modelId, wasmModelUrl)
 ```
 
-### Pattern 2: Worker-Owned ONNX Sessions
+### Pattern 2: Safety Gates in One Place (CloudAdapter)
 
-**What:** The embedding worker owns and manages all ONNX InferenceSession instances. Sessions are lazy-loaded on first use, then cached for the worker's lifetime. The main thread sends `CLASSIFY_ONNX` messages; the worker runs inference and returns results.
+**What:** All cloud safety gates (key check, online check, session consent, sanitization check, pre-send approval, request logging) live in `CloudAdapter.execute()`. Provider implementations (`AnthropicProvider`, `OpenAIProvider`, etc.) contain only request formatting and response parsing — zero safety logic.
 
-**When to use:** Required — ONNX Runtime Web runs in a worker context. Running it on the main thread blocks UI updates. The existing embedding worker already follows this pattern for MiniLM inference.
+**When to use:** Whenever security checks must apply uniformly across multiple implementations.
 
-**Trade-offs:**
-- Pro: Zero main thread blocking; model load amortized across first use (~200ms, one time)
-- Pro: Cached sessions mean subsequent requests are fast (~20-50ms)
-- Con: Worker message protocol must be extended with two new types
-- Con: Worker memory grows by ~5-15 MB per loaded session (acceptable for 2-3 task types)
+**Trade-offs:** `CloudAdapter` becomes longer. Acceptable because the length reflects actual safety requirements, not accidental complexity.
 
-**Example — new message types:**
-```typescript
-// New incoming
-| { type: 'CLASSIFY_ONNX'; id: string; text: string; task: 'triage-type' | 'route-section' }
+### Pattern 3: Template-First, LLM-Fallback
 
-// New outgoing
-| { type: 'ONNX_CLASSIFY_RESULT'; id: string; label: string; confidence: number; probabilities: Record<string, number> }
-| { type: 'ONNX_CLASSIFY_ERROR'; id: string; error: string }
-```
+**What:** For tasks with predictable structure (review briefings, compression explanations), call a pure template function first. If it produces output, return immediately without touching the pipeline. Escalate to `dispatchTiered()` only for truly open-ended content.
 
-### Pattern 3: Centroid Fallback During Bootstrap
+**When to use:** When output structure is known in advance and only data values vary (counts, titles, scores).
 
-**What:** Keep the existing centroid system active. The updated `createTier2Handler()` checks a `getOnnxReady()` flag. If the ONNX session is not yet loaded, it falls back to centroid comparison (which uses the same MiniLM pipeline and already works). Once the session loads, ONNX inference takes over.
+**Trade-offs:** Templates produce less creative output than LLMs. The trade is acceptable: briefings and explanations are functional, not creative.
 
-**When to use:** During app startup (session loading), if `public/models/classifiers/` files are missing (pre-training state), or for any task type not yet covered by a trained classifier.
+### Pattern 4: Single ONNX Session per Model (Embedding Worker)
 
-**Trade-offs:**
-- Pro: Zero regression — existing behavior is preserved as fallback
-- Pro: Allows Phase B (browser integration) to proceed before Phase A (training) completes
-- Con: Slightly more logic in the Tier 2 handler; `centroid-builder.ts` stays in codebase
+**What:** The embedding worker maintains separate `ort.InferenceSession` instances for the type classifier and the sanitization classifier. Both run in the same worker thread, sequentially. The shared MiniLM embedding step feeds both.
 
-**Implementation:** One-line flag check in `canHandle()`:
-```typescript
-canHandle(task: AITaskType): boolean {
-  if (task !== 'classify-type' && task !== 'route-section') return false;
-  const worker = getWorker();
-  if (!worker) return false;
-  // Use ONNX if session is ready, centroid if not
-  return getOnnxReady(task) || getCentroidReady(task);
-}
-```
+**When to use:** When multiple ONNX models share the same input representation.
 
----
-
-## Python Training Pipeline Architecture
-
-The training pipeline is entirely external to the app build. It runs on developer machines and produces `.onnx` files placed in `public/models/classifiers/`.
-
-```
-Python Training Pipeline (scripts/train/)
-─────────────────────────────────────────
-Step 1: Synthetic Data Generation
-  generate_data.py
-  - Prompt Anthropic Claude with structured GTD classification examples
-  - Target: ~500-2000 labeled examples per class
-  - Output: labeled_data.jsonl  { "text": "...", "label": "task|fact|event|decision|insight" }
-  - Quality gate: human review of 50-100 examples per class before training
-
-Step 2: Embedding Generation (Python side)
-  - Use sentence-transformers/all-MiniLM-L6-v2 (same model as browser)
-  - Embed all labeled_data.jsonl texts → 384-dim float32 vectors
-  - CRITICAL: Must use identical model as browser to prevent distribution shift
-
-Step 3: Classifier Training
-  train_classifier.py
-  - Input: (embedding_vectors, labels)
-  - Model: sklearn MLPClassifier or LogisticRegression (fast, small, ONNX-exportable)
-  - Train/val split: 80/20; target accuracy >= 85% on held-out real examples
-  - Export to ONNX via skl2onnx (sklearn) or torch.onnx.export (PyTorch MLP)
-  - Output: triage-type.onnx, route-section.onnx
-
-Step 4: Validation
-  validate_model.py
-  - Load exported ONNX via Python onnxruntime
-  - Compare predictions against sklearn model predictions
-  - Verify numerical parity within tolerance (must match to >99%)
-  - Output: accuracy metrics + confusion matrix per class
-
-Step 5: Deployment
-  - Copy .onnx files to public/models/classifiers/
-  - Commit to git (small files, committed unlike the large MiniLM model)
-  - App picks them up automatically via Vite's public/ serving
-```
+**Trade-offs:** Sequential execution means sanitization adds latency to cloud dispatch. This is acceptable because cloud dispatch already has user-visible approval wait time — a 100-200ms ONNX check is imperceptible.
 
 ---
 
 ## Data Flow
 
-### Classification Request Flow (New Tier 2)
+### New: Cloud Request with Sanitization Check
 
 ```
-InboxItem arrives in inbox
-        │
-        ▼
-dispatchTiered({ task: 'classify-type', features: { content, title } })
-        │
-        ▼
-Tier 1 (keyword heuristics) → confidence 0.1–0.6
-        │
-        ├── confidence >= 0.65? → return result (Tier 2 skipped)
-        │
-        ▼ (escalate to Tier 2)
-Tier 2 Handler: canHandle('classify-type')
-        │
-        ├── ONNX ready? NO → fall back to centroid comparison (existing path)
-        │
-        └── ONNX ready? YES ───────────────────────────────────────┐
-                                                                   ▼
-                                          postMessage({ type: 'CLASSIFY_ONNX', text, task: 'triage-type' })
-                                                                   │
-                                                  Embedding Worker:
-                                                  1. embedTexts([text]) → vector[384]
-                                                  2. session.run({ input: tensor })
-                                                  3. softmax(logits) → probabilities
-                                                  4. postMessage({ type: 'ONNX_CLASSIFY_RESULT', label, confidence })
-                                                                   │
-        ◄──────────────────────────────────────────────────────────┘
-        │
-        ├── confidence >= 0.65? → return result (Tier 3 skipped)
-        │
-        └── confidence < 0.65? → escalate to Tier 3 (LLM)
+User approves cloud AI use in settings
+    ↓
+Feature module (e.g., review-flow.ts) builds prompt
+    ↓
+dispatchAI({ requestId, prompt })  [or dispatchTiered → Tier 3]
+    ↓
+CloudAdapter.execute(request)
+    ├── Check API key, online, session consent (existing)
+    ├── sanitizeForCloud(prompt, level)     (existing string cleanup)
+    ├── checkSanitization(text, worker) [NEW] ← postMessage to embedding worker
+    │       ↓ CLASSIFY_ONNX (reuse embedding) → sanitize-check.onnx → isSafe + flags
+    │   if not safe AND level != 'full' → throw SanitizationBlockedError
+    │   if confidence < 0.6 → log warning, continue
+    ├── Pre-send approval modal (existing, shows sanitization flags if any)
+    └── Provider.execute(sanitizedPrompt, ...) [NEW: delegates to active provider]
+            ↓
+        AnthropicProvider / OpenAIProvider / GrokProvider / CorporateProvider
 ```
 
-### Training Data Flow
+### New: Device LLM Selection
 
 ```
-User classifies inbox item in browser
-        │
-        ▼
-logClassification({ content, chosenType, embedding, tier, confidence })
-        │                          ↑
-        │               embedding cached by tier2-handler.lastVector()
-        ▼
-Dexie config table: 'classification-events'
-        │
-        │ (offline, developer machine — separate process)
-        ▼
-scripts/train/generate_data.py → LLM API → synthetic labeled examples
-        │
-        ▼
-scripts/train/train_classifier.py → embed (Python MiniLM) + train + ONNX export
-        │
-        ▼
-public/models/classifiers/triage-type.onnx
-        │
-        ▼
-git commit → app deployment → users get updated classifiers
+Store initializes AI adapter
+    ↓
+DeviceAdapter.initialize()
+    ├── await navigator.gpu?.requestAdapter()
+    │   ├── WebGPU available → new BrowserAdapter(modelId) → initialize()
+    │   └── WebGPU unavailable → new WasmAdapter(wasmModelUrl) → initialize()
+    └── onStatusChange({ device: 'webgpu' | 'wasm-cpu', status: 'available' })
+            ↓
+        Store updates: aiDeviceType, llmStatus
+        UI shows: "Local AI: WebGPU" or "Local AI: WASM (mobile mode)"
 ```
 
-### Model Readiness State Flow
+### New: Template-First Review Briefing
 
 ```
-App Init
-  │
-  ├── initTieredPipeline() → Tier 1 + Tier 3 registered immediately
-  │
-  └── Embedding Worker loads MiniLM: MODEL_LOADING → MODEL_READY
-                                                          │
-                                              Check /models/classifiers/ files
-                                                          │
-                                 Files present ──────────►│◄──── Files absent
-                                       │                  │            │
-                                       ▼                  │            ▼
-                              ONNX sessions lazy-load     │   Centroid mode only
-                              on first CLASSIFY_ONNX      │   (pre-training state)
-                              request                     │
-                                       │                  │
-                                       └─────────────────►│
-                                                          │
-                               registerTier2Handler(ONNX + centroid fallback)
+User starts Weekly Review
+    ↓
+review-flow.ts: buildWeeklyReviewBriefing(ctx)
+    ├── ctx = { atomCount, staleCount, entropyLevel, weekNumber, ... }
+    ├── result = weeklyReviewBriefing(ctx)  ← pure template function
+    │       → returns structured briefing text immediately
+    │   if result.text.length > 50:
+    │       return result  (no LLM needed)
+    │   else:
+    │       dispatchTiered({ task: 'generate-review-briefing', features })
+    └── render briefing in ConversationTurnCard
 ```
 
 ---
 
-## New vs Modified Components
+## Integration Boundaries
 
-### New Components
+### What Tier 2 ONNX Expansion Adds
 
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| `scripts/train/generate_data.py` | `scripts/train/` | LLM-powered synthetic GTD data generation |
-| `scripts/train/train_classifier.py` | `scripts/train/` | sklearn/PyTorch training + ONNX export |
-| `scripts/train/validate_model.py` | `scripts/train/` | Prediction parity validation before shipping |
-| `scripts/train/requirements.txt` | `scripts/train/` | Python deps: sentence-transformers, skl2onnx, onnx, onnxruntime |
-| `public/models/classifiers/triage-type.onnx` | `public/models/classifiers/` | Trained type classifier (5-class: task/fact/event/decision/insight) |
-| `public/models/classifiers/route-section.onnx` | `public/models/classifiers/` | Trained section router |
+The question asked about sanitization classifier specifically, but v4.0 also adds:
+- Section routing classifier (ONNX, not centroid)
+- Compression candidate detector (ONNX binary: "compress now" vs "keep")
+- Priority prediction (ONNX regression: importance score 0-1)
 
-### Modified Components
+All three follow the same integration pattern as the sanitization classifier: new ONNX session in the embedding worker, new message type, new `TieredResult` field. They slot into the existing Tier 2 handler's `canHandle()` routing.
 
-| Component | What Changes | What Stays the Same |
-|-----------|-------------|---------------------|
-| `src/search/embedding-worker.ts` | Add `CLASSIFY_ONNX` message handler; add ONNX InferenceSession management; import `onnxruntime-web` | MiniLM pipeline unchanged; all existing message types unchanged |
-| `src/ai/tier2/tier2-handler.ts` | Replace centroid cosine comparison with ONNX inference call; add `getOnnxReady()` flag for fallback | `TierHandler` interface unchanged; `lastVector()` still exported; handle() structure unchanged |
-| `src/ai/tier2/types.ts` | Tune confidence thresholds after measuring ONNX model accuracy | All existing task types unchanged; `TieredRequest` / `TieredResponse` shapes unchanged |
-| `src/ai/tier2/index.ts` | Expose ONNX readiness signal; expose `registerTier2OnnxHandler()` for when worker reports sessions loaded | `initTieredPipeline()` signature unchanged |
+### External Service Boundaries
 
-### Unchanged Components
+| Service | Integration | Auth | Notes |
+|---------|-------------|------|-------|
+| Anthropic API | `@anthropic-ai/sdk` via `AnthropicProvider` | BYOK, memory-only | Existing, extracted into provider |
+| OpenAI API | `openai` npm, `dangerouslyAllowBrowser: true` | BYOK, memory-only | New provider |
+| xAI Grok API | `openai` npm + `baseURL: 'https://api.x.ai/v1'` | BYOK, memory-only | OpenAI-compatible, verified |
+| Corporate LLM | `openai` npm + user baseURL | Optional BYOK | Covers Ollama, LM Studio, Azure OpenAI |
+| HuggingFace CDN | BLOCKED (`allowRemoteModels = false`) | None | No change — models bundled locally |
 
-All of the following are completely unmodified:
-
-- `src/ai/tier2/pipeline.ts` — escalation logic
-- `src/ai/tier2/handler.ts` — TierHandler interface
-- `src/ai/tier2/tier1-handler.ts` — keyword heuristics
-- `src/ai/tier2/tier3-handler.ts` — LLM escalation
-- `src/ai/tier2/centroid-builder.ts` — kept as fallback
-- `src/storage/classification-log.ts` — ClassificationEvent schema already has all needed fields
-- `src/ai/router.ts` — dispatchAI unchanged
-- `src/ai/triage.ts` — calls dispatchTiered unchanged
-- `src/ai/compression.ts` — compression pipeline unchanged
-- All SolidJS store signals — no store changes needed for inference path
-
----
-
-## Suggested Build Order
-
-Dependencies flow: Python training must complete before ONNX models exist; ONNX models must exist before ONNX mode activates; but the app runs correctly without ONNX models by falling back to centroids / Tier 3.
-
-```
-Phase A: Python Training Infrastructure
-  1. scripts/train/requirements.txt + Python environment setup
-  2. scripts/train/generate_data.py — synthetic data from LLM
-  3. Human review of generated data quality (gate before training)
-  4. scripts/train/train_classifier.py — embed + train + ONNX export
-  5. scripts/train/validate_model.py — accuracy gate (>= 85% on real examples)
-  → Output: triage-type.onnx, route-section.onnx
-
-Phase B: Browser Inference Integration (can start before Phase A completes)
-  6. Extend embedding-worker.ts: ONNX InferenceSession management + CLASSIFY_ONNX handler
-     (can be tested with a placeholder ONNX from any sklearn export before real model)
-  7. Update tier2-handler.ts: ONNX inference path + centroid fallback flag
-  8. Update tier2/index.ts: expose ONNX readiness
-
-Phase C: Ship Trained Models
-  9. Place trained .onnx files in public/models/classifiers/
-  10. Test end-to-end: inbox item → Tier 2 ONNX → result without escalation to Tier 3
-  11. Tune CONFIDENCE_THRESHOLDS in types.ts based on measured model accuracy
-
-Phase D: Expand Coverage (subsequent iterations)
-  12. Train additional classifiers: assess-priority, assess-staleness-ml
-  13. Add task types to AITaskType; update canHandle() in tier2-handler
-  14. Retrain with curated real-user examples from classification log exports
-```
-
-**Rationale for this order:** Phase A can proceed entirely offline in Python without touching TypeScript. Phase B can use a toy ONNX file (a single sklearn LogisticRegression with random weights) to prove the worker integration is wired correctly. This prevents Phase A completion from blocking Phase B development. Phase C is the integration step where both converge.
-
----
-
-## Integration Points
-
-### Existing Boundaries (Unchanged)
+### Internal Module Boundaries
 
 | Boundary | Communication | Notes |
 |----------|---------------|-------|
-| Main thread ↔ Embedding Worker | `postMessage` / `onmessage` | New `CLASSIFY_ONNX` message type added; all existing types preserved |
-| `dispatchTiered()` ↔ Tier 2 handler | `TierHandler.handle()` interface | Unchanged — Tier 2 handler internals change but interface is the same |
-| Tier 2 handler ↔ `classifyViaWorker()` | Internal promise-based wrapper | Analogous wrapper added for ONNX path |
-| `triage.ts` ↔ `dispatchTiered()` | Direct import | Zero changes in triage.ts |
-| `store.ts` ↔ AI pipeline | All state passed as arguments | Pure module constraint maintained; no store imports added |
-
-### New External Integration
-
-| Integration | Pattern | Notes |
-|-------------|---------|-------|
-| Python training ↔ App build | Filesystem artifact | `.onnx` files written to `public/models/classifiers/`; Vite serves them transparently |
-| ONNX Runtime Web ↔ Worker | `onnxruntime-web` npm package | Already a transitive dependency via Transformers.js; may need explicit import in worker |
-| `skl2onnx` / `torch.onnx.export` ↔ ONNX RT Web | ONNX opset | Must export with opset <= 17-18 for ONNX Runtime Web WASM backend; verify with browser smoke test |
+| Main thread ↔ Embedding Worker | `postMessage` / `onmessage` typed protocol | Add SANITIZE_CHECK/RESULT messages |
+| Main thread ↔ LLM Worker (WebLLM) | `CreateWebWorkerMLCEngine` RPC | Unchanged |
+| Main thread ↔ WasmAdapter | Wllama internal worker (transparent) | Wllama manages its own worker |
+| CloudAdapter ↔ CloudProvider | Direct method call (same thread) | Provider is injected, not async |
+| DeviceAdapter ↔ BrowserAdapter/WasmAdapter | Direct method delegation | Thin wrapper |
+| Template functions ↔ Store | Store state passed as `TemplateContext` arg | No direct store import in templates |
 
 ---
 
 ## Anti-Patterns
 
-### Anti-Pattern 1: Training with Different Embedding Model Version
+### Anti-Pattern 1: Safety Gates in Provider Implementations
 
-**What people do:** Train the Python classifier using `sentence-transformers` version N, but the browser uses a pinned ONNX file of a different version or quantization level.
+**What people do:** Put API key checks, consent verification, and request logging inside each cloud provider.
 
-**Why it's wrong:** Embedding distribution shift — the classifier learns on one vector space, but inference receives vectors from a slightly different space. Confidence will be artificially low and accuracy degrades silently.
+**Why it's wrong:** Safety gates must apply uniformly. Duplicate code drifts. One provider forgets a check. Cloud data leaks.
 
-**Do this instead:** Pin the Python training script to `Xenova/all-MiniLM-L6-v2` with `dtype: q8` — the exact same model and quantization as the browser embedding worker. Verify parity by computing a known test vector in both environments and comparing the output.
+**Do this instead:** All gates live in `CloudAdapter.execute()`. Providers only format requests and parse responses.
 
-### Anti-Pattern 2: Loading ONNX Sessions on Main Thread
+### Anti-Pattern 2: Multi-Threaded Wllama
 
-**What people do:** Import `onnxruntime-web` directly in a SolidJS component or store signal to keep it simple.
+**What people do:** Enable wllama multi-thread for better performance on mobile, requiring COEP/COOP headers.
 
-**Why it's wrong:** ONNX Runtime Web WASM initialization blocks the main thread for 100-500ms. In a SolidJS app with fine-grained reactivity, this freezes all reactive updates during that window.
+**Why it's wrong:** COEP breaks cross-origin resources (fonts, analytics, CDN scripts). On GitHub Pages and most static hosts, COOP/COEP headers are not configurable without a service worker hack. Single-thread is slower but universally compatible.
 
-**Do this instead:** All ONNX inference stays in the embedding worker. The existing `classifyViaWorker()` pattern is the correct template — extend it with a `CLASSIFY_ONNX` message type.
+**Do this instead:** Use `single-thread/wllama.wasm` only. Set `n_threads: 1`. Accept the performance tradeoff — WASM path is a mobile fallback, not a primary path.
 
-### Anti-Pattern 3: Creating a New ONNX Session Per Classification Request
+### Anti-Pattern 3: Template Engine in a Worker
 
-**What people do:** Call `ort.InferenceSession.create()` inside the `CLASSIFY_ONNX` message handler each time.
+**What people do:** Move template rendering to a web worker to avoid main thread work.
 
-**Why it's wrong:** Session creation involves WASM module initialization (~200ms) and model parsing. Creating it per-request makes Tier 2 slower than Tier 3 in many cases.
+**Why it's wrong:** Templates are string interpolation — microseconds on main thread. Worker overhead (message serialization, deserialization, worker startup) costs more than the template execution itself.
 
-**Do this instead:** Maintain a `Map<task, InferenceSession>` singleton inside the worker. Sessions are created once on first use and cached for the worker's lifetime. This matches the existing `featurePipeline` singleton pattern already in `embedding-worker.ts`.
+**Do this instead:** Pure functions on main thread. If a "template" becomes complex enough to need a worker, it's no longer a template — escalate to the LLM tier.
 
-### Anti-Pattern 4: Skipping ONNX Export Validation
+### Anti-Pattern 4: Sanitization as a Complete Blocker
 
-**What people do:** Export from sklearn/PyTorch, copy to `public/models/`, and assume it works in the browser.
+**What people do:** Refuse to send ANY content that the sanitization classifier flags, treating it as a hard block.
 
-**Why it's wrong:** ONNX Runtime Web's WASM backend supports a subset of ONNX operators. Operators used by sklearn's `MLPClassifier` may include unsupported ops. Silent wrong outputs or runtime errors are possible.
+**Why it's wrong:** Binary ONNX classifiers have false positives. Blocking legitimate content (e.g., a task about "calling my doctor" is not PII) destroys trust in the system. The user is the privacy arbiter, not the classifier.
 
-**Do this instead:** Run `validate_model.py` which loads the ONNX file via Python `onnxruntime` and compares outputs against the original sklearn model predictions. Also do a browser-side smoke test: load the session in the worker, run a known test vector, and compare output to Python.
+**Do this instead:** Classifier flags surface as a warning in the pre-send approval modal ("This content may contain personal information. Review before sending."). User can proceed or cancel. Only when `level = 'abstract'` and sensitivity is detected should the system auto-block.
 
-### Anti-Pattern 5: Treating Synthetic Accuracy as Real-World Accuracy
+---
 
-**What people do:** Generate 2000 synthetic examples from Claude, train, report 92% validation accuracy against the same synthetic distribution, ship.
+## Build Order Implications
 
-**Why it's wrong:** Synthetic data accuracy does not reflect real-world performance. The model may overfit to LLM-generated phrasing and fail on actual user inbox items, which are messier and more ambiguous.
+Based on dependencies between the four integration points:
 
-**Do this instead:** After synthetic data generation, export 100-200 real classification events from the app's `ClassificationEvent` history and use them as a held-out test set. The model must achieve acceptable accuracy on real examples, not just synthetic ones.
+**Phase 1 — Template Engine** (no dependencies on other new components)
+- New file, no modified interfaces
+- Immediately reduces LLM calls for review briefings
+- Can be built and tested independently
+
+**Phase 2 — Multi-Provider Cloud** (depends only on existing CloudAdapter interface)
+- Refactor CloudAdapter before adding sanitization (avoids doing the refactor twice)
+- Provider extraction (Anthropic) → add OpenAI → add Grok → add Corporate
+- Key vault multi-slot extension is a parallel sub-task
+
+**Phase 3 — Sanitization Classifier** (depends on multi-provider CloudAdapter refactor being done first)
+- Add SANITIZE_CHECK messages to embedding worker
+- Update privacy-proxy.ts with async check
+- Wire into CloudAdapter.execute() (after Phase 2 refactor)
+- Python training pipeline (can run in parallel with code work)
+
+**Phase 4 — Device-Adaptive Local LLM** (depends only on existing BrowserAdapter interface)
+- WasmAdapter and DeviceAdapter can be built independently
+- WASM binary serving via Vite public dir is the main setup task
+- Model download and caching follows same Cache API pattern as ONNX classifier
+
+**Tier 2 ONNX Expansion** (section routing, compression detection, priority prediction) fits after Phase 3 because:
+- Embedding worker already modified for sanitization
+- Training pipeline already extended
+- Adding more ONNX sessions follows the same pattern
 
 ---
 
 ## Scaling Considerations
 
-This is a local-first PWA. "Scaling" means performance as the user's data grows, not server load.
+This is a local-first PWA — traditional scaling (users, servers) does not apply. The relevant scale dimension is device capability diversity.
 
-| Concern | At Launch | At 6 Months | At 2 Years |
-|---------|-----------|-------------|------------|
-| ONNX session load time | ~200ms first load, cached | Same — cached in worker | Same |
-| Classification latency | ~20-50ms (embed + ONNX) | Same | Same |
-| Model file size | ~2-5 MB per classifier | Same (static files) | Grows only if model retrained |
-| Classification log size | Small (<100 events) | Medium (~1k events) | Large (10k+); consider pruning |
-| Centroid rebuild cost | Negligible | Negligible | Consider sliding window |
+| Device Profile | Expected Behavior | Risk |
+|----------------|-------------------|------|
+| Modern desktop (WebGPU) | WebLLM + all ONNX classifiers + cloud | None — optimal path |
+| Modern mobile (no WebGPU) | WasmAdapter (SmolLM2 Q4) + ONNX + no cloud | SmolLM2 quality lower than Llama 3B |
+| Low-RAM mobile (<3GB) | ONNX + templates only (WasmAdapter OOM risk) | Need RAM detection before loading WASM model |
+| Offline any device | Templates + ONNX + local LLM (if loaded) | Cloud features gracefully disabled |
+| Corporate (custom endpoint) | Corporate provider + ONNX + templates | Endpoint auth varies; user-configured |
 
-**First bottleneck:** Classification log grows unbounded. After 10k events, `getClassificationHistory()` loaded into memory becomes noticeable. Add a sliding window (keep last 500-1000 events) in `classification-log.ts` before this becomes a problem.
-
-**Second bottleneck:** Multiple ONNX sessions simultaneously. With 5+ task types each with their own session, total worker memory could reach 50+ MB. Lazy-load sessions and consider evicting least-recently-used sessions if additional task types are added.
+**RAM detection for WasmAdapter:** Before loading the WASM model, check `navigator.deviceMemory` (available in Chrome/Edge on Android). If `< 4`, skip WasmAdapter initialization and use templates + Tier 2 only. Degrade gracefully rather than OOM-crash.
 
 ---
 
 ## Sources
 
-- [From PyTorch to Browser: full client-side ONNX + Transformers.js](https://bandarra.me/posts/from-pytorch-to-browser-a-full-client-side-solution-with-onnx-and-transformers-js) — PRIMARY: exact two-model architecture used here (MiniLM embed then custom ONNX classification head)
-- [ONNX Runtime Web official docs](https://onnxruntime.ai/docs/tutorials/web/) — MEDIUM confidence: InferenceSession API, execution providers, WASM backend
-- [Hugging Face Optimum ONNX export docs](https://huggingface.co/docs/optimum/en/exporters/onnx/usage_guides/export_a_model) — HIGH confidence: exporting fine-tuned transformers to ONNX
-- [skl2onnx documentation](https://onnx.ai/sklearn-onnx/) — HIGH confidence: sklearn model ONNX export, opset compatibility
-- [Vite Static Asset Handling](https://vite.dev/guide/assets) — HIGH confidence: `public/` folder pattern, worker bundling with `?worker` suffix
-- [Transformers.js GitHub](https://github.com/huggingface/transformers.js) — HIGH confidence: existing usage validated in BinderOS embedding-worker.ts
+- WebLLM / MLC-AI: [GitHub](https://github.com/mlc-ai/web-llm), [Docs](https://webllm.mlc.ai/docs/)
+- Wllama (llama.cpp WASM binding): [GitHub](https://github.com/ngxson/wllama), [npm @wllama/wllama](https://app.unpkg.com/@wllama/wllama@1.16.2/files/README.md)
+- OpenAI Node SDK browser support: [github.com/openai/openai-node](https://github.com/openai/openai-node)
+- xAI Grok API / OpenAI compatibility: [docs.x.ai/developers/quickstart](https://docs.x.ai/developers/quickstart)
+- COEP/COOP for SharedArrayBuffer: [web.dev/articles/coop-coep](https://web.dev/articles/coop-coep)
+- Vite COEP/COOP plugin: [github.com/chaosprint/vite-plugin-cross-origin-isolation](https://github.com/chaosprint/vite-plugin-cross-origin-isolation)
+- WebGPU browser support 2025: [caniuse.com/webgpu](https://caniuse.com/webgpu)
+- sklearn-onnx for classifier export: [onnx.ai/sklearn-onnx](https://onnx.ai/sklearn-onnx/)
+- ONNX local PII detection patterns: [Medium: local-first reversible PII scrubber](https://medium.com/@tj.ruesch/a-local-first-reversible-pii-scrubber-for-ai-workflows-using-onnx-and-regex-e9850a7531fc)
 
 ---
 
-*Architecture research for: Fine-tuned ONNX classifier integration into BinderOS 3-Ring Binder tiered pipeline*
-*Researched: 2026-03-03*
+*Architecture research for: BinderOS v4.0 Device-Adaptive AI*
+*Researched: 2026-03-05*

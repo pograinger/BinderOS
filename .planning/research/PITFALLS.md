@@ -1,187 +1,250 @@
 # Pitfalls Research
 
-**Domain:** Adding fine-tuned ONNX classification models to existing browser-based tiered AI system (BinderOS v3.0)
-**Researched:** 2026-03-03
-**Confidence:** HIGH for ONNX Runtime Web/Transformers.js operator and memory pitfalls (verified against official docs and GitHub issues); HIGH for synthetic data model-collapse patterns (multiple peer-reviewed 2025 papers agree); MEDIUM for GTD-specific classification ambiguity (first-principles derivation + general NLP subjectivity research, no GTD-specific studies found); MEDIUM for quantization accuracy degradation specifics (official docs + practitioner reports but project-specific numbers vary)
+**Domain:** Adding device-adaptive local LLMs, ONNX sanitization classifiers, multi-provider cloud, and template-based generation to existing browser-based tiered AI system (BinderOS v4.0)
+**Researched:** 2026-03-05
+**Confidence:** HIGH for ONNX Runtime Web/Transformers.js operator and memory pitfalls (verified against official docs and GitHub issues); HIGH for synthetic data model-collapse patterns (multiple peer-reviewed 2025 papers agree); HIGH for WebGPU capability detection limitations (W3C spec + browser vendor docs confirmed); MEDIUM for WASM-LLM mobile constraints (wllama docs + GitHub issues + community reports, iOS-specific numbers vary by device generation); MEDIUM for multi-provider API schema mismatches (verified against official Anthropic/OpenAI docs + production routing reports); LOW for sanitization model precision/recall degradation under quantization (single GitHub issue + general NLP quantization literature, project-specific numbers will vary)
 
 ---
 
 ## Critical Pitfalls
 
-### Pitfall 1: Fine-Tuned Model Conversion Breaks Silently — Numerical Mismatch Between PyTorch and ONNX Output
+### Pitfall 1: WebGPU Capability Detection Cannot Reliably Determine VRAM — Device Tier Logic Silently Routes Wrong
 
 **What goes wrong:**
-After fine-tuning a small classifier (e.g., DistilBERT or a MobileBERT variant) and exporting to ONNX, the model appears to load and run in the browser but produces systematically wrong class probabilities. The softmax output values from ONNX Runtime Web differ from the original PyTorch model by amounts like 0.004–0.36, which is small enough to miss in casual testing but large enough to flip classification decisions on borderline inputs. This is not a random error — it is a systematic shift caused by fused operator decomposition during ONNX graph optimization. The `LayerNorm` fusion, attention pattern rewriting, and `Gather` embedding lookups all have known numerical accuracy differences between the PyTorch reference and the ONNX graph as processed by `onnxruntime-web`.
+The v4.0 device-adaptive tier selects between WebLLM (WebGPU-accelerated, desktop) and a WASM-based small LLM (mobile/CPU fallback) based on device capability. Developers write capability detection that checks `navigator.gpu` for WebGPU presence, then assume WebGPU = desktop = adequate VRAM for a 3B parameter model. On mid-range laptops with integrated GPUs (e.g., Intel Iris Xe with 4GB shared VRAM), WebGPU is available but VRAM is insufficient for Llama-3.2-3B-Instruct-q4f16 (~2.2GB). The model load appears to start, then OOM-crashes mid-download with a vague "Device lost" error that surfaces in the console as a WebGPU context loss — not an out-of-memory error. The app enters a broken state: browser adapter is "loading," never transitions to "error," and subsequent requests hang.
 
 **Why it happens:**
-Developers validate the ONNX export on CPU using `onnxruntime` (Python), confirm accuracy is within tolerance, then ship to the browser. The browser's WASM and WebGPU backends implement operator math slightly differently from the Python CPU backend — especially for `MatMul` with INT8 quantized weights where zero-point representation can cause accumulated rounding errors. The gap between "ONNX Runtime on Python/CPU" and "ONNX Runtime Web/WASM" is not zero.
+The WebGPU spec deliberately does not expose total VRAM through `requestAdapterInfo()` or `device.limits`. The only usable proxy is `device.limits.maxBufferSize` — the per-allocation limit — which indicates the largest single tensor that can be allocated, not whether the full model fits. Developers mistake "WebGPU is available" for "GPU is adequate," which is true on gaming-class discrete GPUs but false on integrated graphics sharing system RAM. The WebLLM error path also has a known issue where context loss during model loading does not reliably invoke the `onStatusChange` error callback (confirmed in mlc-ai/web-llm GitHub issues).
 
 **How to avoid:**
-- After ONNX export and quantization, run a browser-side validation suite: load the model in a test harness using `onnxruntime-web` (the exact package used in production), run 50–100 representative GTD text inputs through both the original PyTorch model and the ONNX Web runtime, and assert that top-1 predictions match on at least 95% of inputs.
-- Use `onnxruntime-web`'s `InferenceSession` directly in a Node.js test (with `--experimental-vm-modules` or a jsdom harness) rather than solely trusting Python `onnxruntime`.
-- Keep the ONNX opset at 17 or lower (Transformers.js default for WASM path). Do not use opsets 18+ unless you have confirmed WebGPU backend support for every op in the graph.
-- For quantization: prefer dynamic quantization (no calibration dataset needed) over static for the first iteration. Static quantization's calibration can introduce additional deviation if calibration data is not representative.
-- Always print the `max_diff` between PyTorch and ONNX output activations during validation. A `max_diff > 0.01` on softmax logits should be treated as a blocker.
+- Never use WebGPU presence alone as the tier-selection signal. Use a compound check: (1) `navigator.gpu !== undefined`, (2) `device.limits.maxBufferSize >= model_largest_tensor_size`, and (3) a heuristic from `navigator.deviceMemory` (where available, Chrome only). Gate WebLLM on maxBufferSize >= 2GB for 3B models; gate on >= 800MB for 1B models.
+- Implement a hard timeout (30 seconds) on `BrowserAdapter.initialize()`. If the Promise does not resolve within the timeout, force-transition status to 'error' and trigger the WASM-LLM fallback. Do not rely solely on WebLLM's internal error propagation.
+- After `CreateWebWorkerMLCEngine()` completes, immediately run a tiny inference test (single token) to confirm the engine is functional. If this sentinel inference throws, mark the adapter as error and escalate to WASM fallback.
+- Expose a manual override in settings: "Use CPU-only mode (slower, more compatible)" so users can force WASM-LLM without waiting for a failed WebGPU attempt.
 
 **Warning signs:**
-- No browser-runtime validation step in the training/export pipeline
-- Validation only done against Python `onnxruntime`, not `onnxruntime-web`
-- Opset version not pinned in export script
-- Accuracy drops more than 2% vs. PyTorch baseline on a held-out test set after ONNX export
+- Capability detection code reads only `navigator.gpu !== undefined` without checking `device.limits`
+- No timeout on `BrowserAdapter.initialize()` — it can hang forever on OOM
+- No sentinel inference after initialization
+- User-facing status remains "loading" indefinitely on integrated GPU machines
+- No fallback path from BrowserAdapter error to WASM-LLM adapter
 
-**Phase to address:** Training pipeline phase (synthetic data + fine-tuning). The export validation must be part of the model build artifact before integration into the browser app begins.
+**Phase to address:** Device-adaptive Tier 1 phase. Capability detection logic must be designed and tested before any model download UI is built.
 
 ---
 
-### Pitfall 2: Synthetic Training Data Produces Confident Models That Are Confidently Wrong on Real User Input
+### Pitfall 2: WASM-LLM on iOS Safari Silently Degrades to Broken Single-Thread Mode
 
 **What goes wrong:**
-A classifier fine-tuned entirely on LLM-generated GTD examples achieves 85–95% accuracy on a held-out synthetic test set but drops to 60–70% on real user input. The model has learned the LLM's distribution of how GTD items "should" sound, not how users actually write them. Real inbox items are fragmentary ("call dentist"), use abbreviations, mix languages, contain typos, and often omit context that the LLM consistently includes in synthetic examples. The model produces high softmax confidence (>0.85) on wrong predictions because it has never seen input that looks ambiguous to it — all its training inputs were fluent, well-formed, and unambiguous.
+Adding a WASM-based LLM (e.g., wllama/llama.cpp-wasm) as the mobile fallback for Tier 1 works on Android Chrome and desktop Firefox but produces unusable inference latency on iOS Safari. The root cause is that iOS Safari disables multi-threaded WebAssembly even when COOP/COEP headers are correctly set — every browser on iOS must use Apple's WebKit, and as of 2026-03, SharedArrayBuffer (required for WASM threads) is conditionally available on iOS only if the page is cross-origin isolated AND the browser is Safari 15.2+. But wllama and llama.cpp-wasm automatically fall back to single-threaded WASM when SharedArrayBuffer is unavailable, which is 30–100x slower than multi-threaded. A Llama 3.2-1B model that runs at 10–15 tokens/second on Android Chrome runs at 0.3–1 token/second in single-threaded iOS Safari — unusable for any interactive feature. Developers testing on Android assume mobile support is working.
 
 **Why it happens:**
-LLM-generated synthetic data has systematic over-completeness. When prompted to generate "example GTD tasks," Claude or GPT writes "Schedule a dentist appointment for next Tuesday and follow up with insurance" rather than "dentist tue?". The fine-tuned model learns a token distribution that does not exist in real user input. Developers test on synthetic validation data (same distribution as training) and conclude the model is ready.
+iOS Safari's threading model is categorically different from other browsers. Every iOS browser (Chrome iOS, Firefox iOS, Edge iOS) is a WebKit wrapper — Safari restrictions apply to all of them. WASM SIMD is available on Safari 16.4+ (required for any reasonable LLM inference speed), but multi-threading requires COOP/COEP plus Apple's own internal toggle. The 2GB ArrayBuffer limit on iOS Safari (documented in Godot Engine GitHub issues and ONNX Runtime issues) means models over 2GB cannot be loaded regardless of threading. The combination of single-thread fallback + SIMD dependency + 2GB limit makes 1B+ parameter models practically unusable on iOS.
 
 **How to avoid:**
-- Never evaluate a model trained on synthetic data using only synthetic validation data. The test set must contain real user-style input, even if small (50–100 hand-written examples per GTD category).
-- Generate diverse synthetic examples: short fragments (1–5 words), typo-variants, mixed case, partial sentences, items in non-English, and ambiguous cross-category examples. Use a prompt that explicitly requests these degenerate forms, not just fluent examples.
-- Mix synthetic and real data from the start. For BinderOS: export the user's own existing classified atoms from IndexedDB as seed real data (with user consent UI). Even 20 real examples per category anchors the distribution.
-- Apply confidence calibration (temperature scaling) after training so that the model's softmax confidence reflects actual accuracy. An uncalibrated model that says 0.90 confidence but is right only 70% of the time at that threshold will cause false escalation decisions in the tier system.
-- In the tiered pipeline: set the confidence threshold for Tier 2 ONNX classifiers deliberately high (0.80+) for the first release, rather than the current centroid threshold of 0.65. Lower it only after measuring real-world escalation rates.
+- iOS must be treated as a "Tier 2 + cloud only" target for v4.0, not a WASM-LLM target. Detect iOS explicitly: `navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')` combined with checking SharedArrayBuffer availability. On iOS, skip WASM-LLM initialization entirely and route directly to Tier 2 ONNX classifiers + Tier 3 cloud.
+- Do not advertise "local LLM on mobile" for iOS. The UX should state "Offline AI (ONNX classifiers)" for iOS and "Full local AI" for Android/desktop.
+- For Android Chrome, validate WASM-LLM performance against a sentinel benchmark (time a fixed 50-token prompt completion) on first initialization. If tokens/second < 2, offer the user a warning: "Local AI is very slow on this device. Consider using cloud AI for better results."
+- Model size hard cap: never attempt to load a model > 1.5GB on mobile WASM path (wllama's 2GB ArrayBuffer limit minus OS overhead).
 
 **Warning signs:**
-- Test set entirely generated by the same LLM as training data
-- No short/fragmentary examples in synthetic data
-- Confidence on wrong predictions consistently above 0.75
-- Escalation rate to Tier 3 below 10% in testing (suggests overconfident model, not good model)
+- Testing of "mobile WASM-LLM" done only on Android devices, not iOS
+- No iOS-specific code path in device capability detection
+- Inference latency not measured post-initialization (no sentinel benchmark)
+- No model size cap in WASM-LLM adapter configuration
+- User reports of "infinite loading" on iPhone that appear after launch
 
-**Phase to address:** Synthetic data generation phase. The validation strategy must be defined before generating any training data, not after.
+**Phase to address:** Device-adaptive Tier 1 phase. iOS exclusion must be decided before implementation, not discovered in testing.
 
 ---
 
-### Pitfall 3: COOP/COEP Headers Break the Existing App's External Resources When Multi-Threaded ONNX Is Added
+### Pitfall 3: Multi-Provider Cloud Adapter Breaks on Structural API Differences Between Anthropic, OpenAI, and Grok
 
 **What goes wrong:**
-ONNX Runtime Web's multi-threaded WASM backend requires `SharedArrayBuffer`, which browsers block unless the page is cross-origin isolated (COOP + COEP headers). Adding these headers to BinderOS's Vite dev server and production build breaks every external resource that does not opt in: Google Fonts, any CDN-hosted scripts, embedded `<iframe>` content, and any resource loaded without explicit CORS headers. The existing Vite config does not set COOP/COEP. When developers add them to enable multi-threaded ONNX, they see a cascade of `CORP check failed` errors in the console as previously-working resources silently fail to load.
+Extending the existing CloudAdapter (Anthropic-only) to support OpenAI and Grok by sharing the same adapter interface and prompt format produces systematically wrong behavior. Three specific failure modes appear: (1) JSON schema passed as `jsonSchema` to the existing AIRequest interface is forwarded to OpenAI using Anthropic's `tool_use` format (which OpenAI rejects with a 400 error), (2) streaming response chunks from OpenAI's SSE format (`data: {"choices":[...]}`) are not parsed the same way as Anthropic's streaming events (`event: content_block_delta`), causing the `onChunk` callback to receive raw JSON strings instead of text fragments, and (3) Grok's API uses OpenAI-compatible endpoints but not OpenAI's structured output schema — `strict: true` on function calling is silently ignored, returning unvalidated JSON that breaks the existing response parsers.
 
 **Why it happens:**
-`Cross-Origin-Embedder-Policy: require-corp` means every resource the page loads must either be same-origin or send a `Cross-Origin-Resource-Policy: cross-origin` response header. Most CDN resources do not send this header. Developers add COOP/COEP because the ONNX Runtime Web docs say to, then are surprised that unrelated parts of the app stop working.
+The existing `AIRequest` interface was designed around Anthropic's API semantics. Structured output, streaming protocol, error formats, rate limit headers, and even the `system` message placement differ between providers. Developers add a `provider: 'openai' | 'anthropic' | 'grok'` flag to the adapter and use `if (provider === 'openai')` branches, but the branches miss edge cases in JSON schema translation (nested `$ref`, `oneOf`, `anyOf` — all of which are valid in the current GTD task schemas and all of which translate differently between providers). The Anthropic SDK's `dangerouslyAllowBrowser: true` pattern is safe for all three providers since users supply their own keys, but each SDK initializes differently and error handling needs provider-specific mapping.
 
 **How to avoid:**
-- Audit every external resource currently loaded by BinderOS before enabling COOP/COEP. The existing app uses: Transformers.js WASM files (already served from `/models/` — safe), potentially Vite's HMR websocket (needs configuration).
-- Use `Cross-Origin-Embedder-Policy: credentialless` as an alternative to `require-corp`. This is supported in Chrome 96+ and Firefox 119+ and is less restrictive: anonymous resources load without CORP headers, only credentialed resources are blocked. For a local-first app with no third-party embeds, this is sufficient.
-- Configure the Vite dev server plugin to set COOP/COEP headers and verify with the ONNX Runtime Web `isOrtEnvInitialized()` check that multi-threading is actually available before relying on it.
-- For the production PWA: COOP/COEP must be set at the HTTP server level (nginx/Caddy config), not just in Vite. Test in production hosting environment before releasing.
-- Fallback path: if `SharedArrayBuffer` is unavailable (COOP/COEP not set, old browser), ONNX Runtime Web falls back to single-threaded WASM automatically. The fallback is slower (2–4x) but functionally correct. Design the system to accept single-threaded ONNX as a valid operating mode.
+- Do not extend `CloudAdapter` with provider branching. Create a separate adapter class per provider: `AnthropicAdapter` (existing, renamed), `OpenAIAdapter`, `GrokAdapter`. Each implements the `AIAdapter` interface independently. Share only the pre-send approval gate and key-vault logic via a `CloudAdapterBase` mixin or utility functions.
+- Define a canonical `StructuredOutputRequest` type that each adapter translates to its own provider format. This translation must be tested with the full GTD JSON schema (including nested schemas) before any provider goes to production.
+- For streaming: define a `StreamChunk` interface with `text: string` and implement provider-specific parsers that map raw SSE events to `StreamChunk`. The `onChunk` callback always receives `StreamChunk`, never raw SSE data.
+- Test all providers with the same 10 canonical GTD prompts that exercise: (a) plain text response, (b) JSON schema output, (c) streaming with onChunk, (d) rate limit error (mock), (e) timeout/abort. Any provider that cannot pass all 5 categories should not ship.
+- Maintain a provider compatibility matrix in code comments: which features each provider supports (structured JSON, streaming, tool calling, system messages) and the known behavioral differences.
 
 **Warning signs:**
-- `CORP check failed` errors in browser console after adding COOP/COEP
-- ONNX inference works in `localhost` but breaks on production hosting
-- `typeof SharedArrayBuffer === 'undefined'` in the browser console on production
-- No COOP/COEP check in the app's capability detection code
+- Single `CloudAdapter` class growing with `if (this.provider === ...)` branches
+- JSON schema passed directly to OpenAI without translation from Anthropic format
+- `onChunk` callback receiving raw SSE data strings rather than parsed text
+- No test suite exercising each provider independently with the full GTD schema set
+- CORS errors appearing only for OpenAI/Grok but not Anthropic (indicates missing or wrong request headers per provider)
 
-**Phase to address:** First phase that introduces the fine-tuned ONNX model into the browser. Header configuration is a deployment blocker and must be resolved before integration testing.
+**Phase to address:** Multi-provider cloud phase. Provider-specific adapter classes must be designed before any provider integration starts, not refactored after.
 
 ---
 
-### Pitfall 4: env.allowLocalModels Cache Poisoning Causes Persistent JSON Parse Errors
+### Pitfall 4: Sanitization Model Training Data Creates False Precision — Regex-Caught PII Becomes a Proxy for All PII
 
 **What goes wrong:**
-The existing `embedding-worker.ts` correctly sets `env.allowRemoteModels = false` and `env.localModelPath = '/models/'`. When adding a second ONNX model (the fine-tuned classifier), developers may initialize a new Transformers.js pipeline instance with `allowLocalModels` in an inconsistent state — for example, a test run where the flag was not set fetches a corrupted or partial response from `localhost/models/` and saves it to the browser cache. Subsequent runs with the correct flag set still read the corrupt cached entry and throw `JSON.parse: unexpected character` or `Unexpected token` errors that do not reveal the root cause. The fix requires manually clearing the browser cache or using a new cache namespace, but without knowing the root cause developers chase inference bugs for hours.
+Training an ONNX sanitization classifier to detect sensitive data before cloud transmission requires labeled training data. The fastest path is generating training examples by taking real GTD prompts and running them through a regex-based PII detector (emails, phone numbers, SSNs, URLs) to create "sensitive" labels. The trained model learns to detect the same patterns the regex catches — structured, predictable PII. It misses soft PII: person names embedded in task descriptions ("Follow up with Dr. Martinez about test results"), organizational affiliations ("Prepare for Q3 board presentation"), financial context ("Budget review: $340K shortfall"), and health context ("Take insulin at 8am"). Users who enable the sanitization gate believe their data is protected when it is not — the model provides false assurance for the majority of sensitive content while reliably catching only the minority of structured PII.
 
 **Why it happens:**
-Transformers.js uses the browser's Cache API to store downloaded model files. If a request is made before `allowLocalModels` and `localModelPath` are set, or if the local model server returns a non-JSON error page that gets cached, that error response is stored as if it were the model file. The cache key is based on the URL, so every subsequent load hits the cached error.
+Regex-generated labels are cheap and accurate for structured PII. Soft PII (names, orgs, financial figures, medical context) requires human annotation or a larger language model to label, which is slower and introduces subjectivity. Developers use the fast path and validate on the regex-generated test set, achieving 95%+ accuracy — on the same easy inputs the model was trained on. The model is a sophisticated implementation of the regex it was trained against.
 
 **How to avoid:**
-- Set `env.allowRemoteModels = false` and `env.localModelPath = '/models/'` as the absolute first operations in any new worker file that imports from `@huggingface/transformers`. Never do this lazily or conditionally.
-- For the fine-tuned classifier model: create a separate worker file rather than extending the existing `embedding-worker.ts`. This prevents the two models' cache namespaces from interfering.
-- Add a development-mode cache-busting script: `node scripts/clear-model-cache.cjs` that programmatically clears the browser's Cache API storage for model files. Include in `package.json` scripts as `"clear-models": "..."`.
-- During development, use browser DevTools → Application → Cache Storage to verify that only valid JSON responses are cached under the model's URL namespace.
-- Use a unique `localModelPath` subdirectory for each model to prevent key collisions: `/models/all-MiniLM-L6-v2/` for embeddings, `/models/gtd-classifier/` for the classifier.
+- Explicitly exclude regex-detectable PII from the sanitization model's training data for the first iteration. The regex layer already handles structured PII; the ONNX model should be trained exclusively on soft PII examples where regex fails. This separates concerns clearly.
+- Architecture: sanitization pipeline = (1) regex layer for structured PII, then (2) ONNX NER model for soft PII, then (3) user-controlled allowlist. The ONNX model's job is to catch what regex misses.
+- Training data for the ONNX soft-PII layer must include: person names in task contexts, organization names, financial amounts with context, health/medical references, location-specific references. Generate via LLM prompt: "Generate 20 GTD task descriptions that would be embarrassing or harmful if shared publicly but contain no email addresses, phone numbers, or URLs."
+- Test the sanitization model against a manually curated "embarrassing sentences" test set (not programmatically generated) — 50 examples that a reasonable person would not want sent to a cloud API.
+- Explicitly communicate to users what the sanitization model does and does not catch. The existing `SANITIZATION_LEVEL_DESCRIPTIONS` in `privacy-proxy.ts` can be extended: "Structured data (emails, phone numbers): always redacted. Personal names: detected with ~80% accuracy. Other sensitive context: not detected — use 'abstract' level for maximum privacy."
 
 **Warning signs:**
-- `JSON.parse` or `SyntaxError: Unexpected token` in the console when loading the ONNX model
-- Error persists even after fixing the model file path
-- Error clears after opening an Incognito/Private window (confirms cache corruption)
-- `env.allowLocalModels` set after `pipeline()` is called rather than before
+- Sanitization training data generated entirely by regex labeling
+- Test set accuracy > 95% on first iteration (model learned regex, not semantics)
+- No "embarrassing sentences without structured PII" examples in the test set
+- The architecture docs show sanitization as a single ONNX model, not a pipeline (regex + ONNX + allowlist)
+- Privacy gate documentation does not list what it does NOT catch
 
-**Phase to address:** First phase that adds the fine-tuned ONNX model to the browser. Environment configuration must be tested in a fresh browser profile, not just a developer's profile with models already cached.
+**Phase to address:** Sanitization model training phase, before the model is integrated into the cloud transmission path. The false-precision failure is invisible until a user's sensitive data reaches a cloud provider.
 
 ---
 
-### Pitfall 5: Model-Collapse Feedback Loop When Classifier Output Feeds Back Into Training Data
+### Pitfall 5: ONNX Quantization Destroys Recall on Sanitization NER Model — Precision Stays High, Recall Collapses
 
 **What goes wrong:**
-BinderOS's classification log records user triage decisions. The v3.0 plan is to use these logged decisions as training data for the next model version. If the Tier 2 ONNX classifier pre-fills the triage UI with a suggestion and the user accepts it without reviewing (approval fatigue), the classification log accumulates entries where "user decision" is actually "model decision ratified by distracted user." Training the next model on this data fine-tunes toward the current model's existing biases. Over 2–3 retraining cycles, minority categories (rare atom types) get progressively fewer training examples as the model confidently routes them to the majority class, which users rubber-stamp. This is the model-collapse pattern documented by Shumailov et al. (Nature, 2024) applied to a personal data classifier.
+A token-classification ONNX model trained for PII/sensitivity detection (NER-style: token-level labels for SENSITIVE/NON-SENSITIVE spans) shows acceptable F1 on the Python-side full-precision model. After INT8 quantization for browser deployment, precision remains high (few false positives) but recall collapses: the quantized model misses 30–40% of sensitive spans it caught before quantization. This is the opposite of the naive expectation (quantization causes uniform degradation). The result is a sanitization gate that looks precise (rarely flags non-sensitive text) but has Swiss-cheese recall — it lets substantial sensitive content through. Users trust the gate because it does not over-flag; it under-flags.
 
 **Why it happens:**
-The feedback loop is structurally invisible: each individual user confirmation looks like a genuine label. The bias accumulates slowly across hundreds of decisions. Developers testing the retrained model see overall accuracy hold steady (majority classes are fine) while minority-class recall quietly degrades.
+INT8 quantization affects token-classification models asymmetrically. The model's CLS-like span boundaries (the zero-point decisions that determine where a sensitive span begins and ends) are computed using matrix multiplication with quantized weights, where rounding errors accumulate in the low-activation path (non-sensitive tokens). The high-activation path (clearly sensitive tokens) is more robust to rounding. So the model reliably labels "definitely sensitive" spans while missing "borderline sensitive" spans — exactly the ambiguous cases that require catching. This quantization recall-collapse pattern was documented in the `huggingface/optimum` GitHub issues (Issue #151) for LaBSE-based models and is reproducible for any token-classification model with INT8 dynamic quantization.
 
 **How to avoid:**
-- Log the original model suggestion separately from the user's final choice in the classification log. The training pipeline must use only examples where `userChoice !== modelSuggestion` OR where `userChoice === modelSuggestion` AND the user actively typed or interacted with the UI (not just pressed Enter within 2 seconds).
-- Track minority-class sample counts per retraining cycle. If any class has fewer samples in cycle N+1 than cycle N, flag it before retraining. Do not retrain with a class that has fewer than `MIN_SAMPLES_PER_TYPE` examples (currently 3 — this may need to be raised to 10+ for the fine-tuned model).
-- Always keep the original synthetic training data as a floor. Retraining adds real user data on top of the synthetic base — it never replaces it. This prevents collapse from pure-model-generated data, consistent with 2025 research showing mixed real+synthetic outperforms pure synthetic.
-- Add a UI affordance that makes reviewing the suggestion effortful enough to prevent rubber-stamping: show the confidence score and the second-best prediction alongside the top suggestion. "Task (82% confident) or Fact (14%)?" is harder to dismiss than a pre-filled field.
+- Do not use INT8 quantization for the sanitization model. Use INT8 dynamic quantization only for the type-classification ONNX model (already validated in v3.0). For the sanitization NER model, use FP16 or Q8 (8-bit float, not integer) as the quantization target.
+- Alternatively, use a sequence-classification approach (full sentence → SENSITIVE/NON-SENSITIVE binary output) rather than token classification. Sequence classification degrades more gracefully under quantization because the final pooled representation is more robust than per-token boundaries.
+- Measure precision AND recall separately after quantization. A model that achieves 0.95 precision and 0.60 recall is not good enough for a privacy gate, even if F1 appears acceptable (~0.74). For privacy enforcement, recall matters more than precision.
+- Set the acceptance threshold: require recall >= 0.85 on the sensitive-spans test set before shipping the quantized model. If recall < 0.85 with INT8, use FP16.
 
 **Warning signs:**
-- Classification log has >80% entries where user accepted model's first suggestion
-- Minority atom type sample counts declining across log entries over time
-- Retrained model shows improved accuracy on majority classes but degraded recall on `insight` or `decision` types
-- No separation in the log between model-suggested and user-initiated labels
+- Sanitization model evaluated only on F1 score, not precision and recall separately
+- INT8 quantization applied to the sanitization model without recall-specific testing
+- Token classification (NER-style) chosen over sequence classification without quantization-specific rationale
+- No minimum recall threshold defined in the training pipeline acceptance criteria
+- Test set contains mostly structured PII (which is robust to quantization) rather than soft PII
 
-**Phase to address:** Training pipeline phase (data collection design) and integration phase (classification log schema update). The log schema must capture `modelSuggestion` before the classifier ships — retrofitting is painful.
+**Phase to address:** Sanitization model training phase and ONNX export/quantization step. Quantization strategy for the sanitization model must be different from the type-classification model (v3.0) — do not reuse the same quantization approach by default.
 
 ---
 
-### Pitfall 6: GTD Classification Is Inherently Ambiguous — Model Overconfidence on Subjective Labels Will Cause User Frustration
+### Pitfall 6: Template Engine Produces Output That Is Semantically Correct But Incoherent at Scale — Context Signals Are Not Grounded
 
 **What goes wrong:**
-The five GTD atom types (task, fact, event, decision, insight) are not mutually exclusive categories. "Buy birthday gift for Sarah by Friday" is simultaneously a task and an event-trigger. "Decided to use Tailwind for the project" is both a decision and a fact. A fine-tuned classifier will assign one label with high confidence, but a significant fraction (estimated 15–25% of real inbox items) are genuinely ambiguous. When the classifier confidently pre-fills the wrong type and the user corrects it, the user records the model as "broken" — even though the model's chosen label was defensible. This is the label-ambiguity problem documented in ACL 2025 for subjective classification tasks.
+Template-based generation (using entropy signals, section names, and atom counts to fill Handlebars/string-template slots) works well for deterministic briefing phrases like "You have 7 stale tasks in Projects, your oldest is 14 days old." It fails for higher-level synthesis: "Here's what stood out this week..." filled from entropy deltas produces technically accurate but contextually meaningless output — the template cannot reason about *which* 7 tasks matter or why. Users receive review briefings that feel like a database export in paragraph form, not insight. This gap was acceptable when the template was supplementary to Tier 3 LLM output. When the template replaces Tier 3 LLM output entirely (the v4.0 mobile offline scenario), the quality gap becomes the primary product experience.
 
 **Why it happens:**
-Training data, whether synthetic or real, forces single-label annotation. The LLM generating synthetic data picks one label per example, eliminating the ambiguity that exists in real input. The fine-tuned model learns a decision boundary that is crisper than the underlying concept, resulting in overconfident predictions on ambiguous inputs.
+Templates are signals-driven; insight requires context-sensitive synthesis. Entropy score, atom age, section name, and priority value are all quantitative signals that templates can inject cleanly. The *relationship* between signals — why the combination of high-entropy Projects + zero completed Tasks + 3 overdue Events constitutes a specific insight — requires reasoning, not substitution. Developers underestimate this gap because template output looks plausible in isolation (each sentence is accurate) but fails to cohere across the full briefing.
 
 **How to avoid:**
-- For ambiguous GTD inputs (where the top-2 class probabilities are within 0.15 of each other), do not pre-fill the type selector. Instead, show both options as equal-weight suggestions: "This looks like a Task or Decision — which fits better?" This is honest about the uncertainty and trains better data.
-- Define explicit GTD disambiguation rules in the training prompt and enforce them in synthetic data generation: task = has an action verb + clear completion state; fact = no action required; event = time-anchored; decision = records a choice already made; insight = generalizable principle. Apply these rules consistently so the model learns crisp boundaries.
-- Include intentionally ambiguous examples in training data with both labels annotated, and train with label smoothing (epsilon=0.1) to reduce overconfidence on the boundaries.
-- Set the Tier 2 confidence threshold for `classify-type` conservatively — the current 0.65 is too low for a task that has inherent labeling disagreement. Start at 0.78 and measure escalation rate. The goal is that Tier 2 handles clear-cut cases and escalates genuinely ambiguous ones to Tier 3 (LLM) for richer reasoning.
+- Design templates as augmentation for Tier 2, not replacement for Tier 3. On mobile (no LLM), templates produce a structural briefing; users who want narrative synthesis are told "Enable cloud AI for enhanced briefings." Do not attempt to replicate Tier 3 output quality with templates — acknowledge the capability tier explicitly.
+- Identify which features genuinely require no synthesis (entropy score alerts, stale counts, section health summary) and which require synthesis (weekly review narrative, compression explanations, project status). Only the first category should use pure templates in offline mode.
+- For compression explanations and review flow in offline mode: use a hybrid — template provides structure, entropy signals provide numbers, and a fixed set of curated "insight phrases" selected by signal thresholds provide qualitative framing. This is not synthesis, but it produces qualitatively better output than pure slot-filling.
+- Test template output with real user sessions: print 20 template-generated briefings from a seeded dataset and have a reviewer rate them 1–5 for coherence. Set a minimum coherence threshold (>= 3.0 average) before shipping. If templates score below threshold, reduce their scope rather than accepting bad output.
 
 **Warning signs:**
-- Synthetic training data has no examples where two categories would both be defensible
-- Training accuracy above 92% on a GTD classification task (suggests overfitting to synthetic distribution, not learning real boundaries)
-- User correction rate above 30% on Tier 2 predictions in the first 30 days of production use
-- Confidence score distribution is bimodal: most predictions cluster near 0.9 or 0.5, with few in 0.65–0.8 range
+- Template strings contain more than 3 variable slots — each additional slot reduces output coherence
+- Template output tested only by checking that variables are substituted, not by reviewing the resulting prose
+- Review briefing templates attempt to produce "insight" by combining 4+ signals without explicit reasoning logic
+- No user-facing acknowledgment that offline mode produces simplified output versus cloud mode
+- Template quality evaluated against "does it compile" rather than "does a human find it useful"
 
-**Phase to address:** Synthetic data generation phase (training data design) and integration phase (UI behavior for uncertain predictions).
+**Phase to address:** Template engine phase. Template scope must be bounded before implementation. The "what templates cannot do" constraints must be defined before any template is written.
 
 ---
 
-### Pitfall 7: ONNX Model Files Shipped in the Vite Bundle Break Build and Bloat the JS Chunk
+### Pitfall 7: Privacy Gate Race Condition — ONNX Sanitization Completes After Pre-Send Approval Modal Shows
 
 **What goes wrong:**
-When a fine-tuned ONNX classifier is added to the project, developers sometimes import the `.onnx` file directly in TypeScript: `import modelUrl from '../models/gtd-classifier.onnx?url'` or worse, import it as a byte array. Vite either refuses to process the binary file, includes it as a base64-encoded string in the JS bundle (adding 2–10 MB to the initial chunk), or incorrectly inlines it. The result is either a broken build or a 10MB+ JS bundle that kills Time-to-Interactive.
+The v4.0 architecture adds ONNX sanitization as a Tier 2 pre-flight check before cloud transmission. The intended flow is: (1) user triggers cloud AI request, (2) ONNX sanitization runs (~50–200ms), (3) sanitized prompt is shown in pre-send approval modal, (4) user approves. In practice, the pre-send approval modal (existing `CloudRequestPreview` in `cloud.ts`) is triggered immediately after the request enters `execute()`, before sanitization completes. The modal shows the pre-sanitization prompt. The user sees and approves prompt content that does not match what is actually sent. If sanitization redacts content from the prompt, the modal showed a more detailed prompt than what was dispatched — less alarming than the reverse, but still a consent violation.
 
 **Why it happens:**
-ONNX files are binary assets, not JavaScript modules. Vite's default asset handling has a 4KB inline threshold; files above it are moved to the output directory as content-hashed assets. But `.onnx` is not a recognized extension in Vite's default config, so treatment is inconsistent across Vite versions. The existing project loads models from `/public/models/` served as static files, but the new classifier model may be added differently if the developer is not aware of this pattern.
+The existing `CloudAdapter.execute()` creates the `logEntry` from the input `request.prompt` and then immediately calls `onPreSendApproval(logEntry)`. Sanitization happens before `logEntry` creation (via `sanitizeForCloud()`), but only with the text-level sanitization from `privacy-proxy.ts` — not ONNX model-based sanitization. When ONNX sanitization is added as an async step, it naturally comes before the modal, but only if the execution order is explicitly designed for it. If the ONNX sanitization call is added after the modal call (a common mistake when adding a new step to existing code), the modal shows unsanitized content.
 
 **How to avoid:**
-- Place all ONNX model files in `/public/models/gtd-classifier/` alongside the existing MiniLM model. Never import `.onnx` files into TypeScript — reference them by URL string: `const MODEL_URL = '/models/gtd-classifier/model_quantized.onnx'`.
-- Add an explicit Vite asset rule in `vite.config.ts` to ensure `.onnx` files are treated as static assets if they must be in `src/`:
-  ```typescript
-  assetsInclude: ['**/*.onnx']
-  ```
-- Add the classifier model files to `.gitattributes` with Git LFS: `*.onnx filter=lfs diff=lfs merge=lfs -text`. Without LFS, a 20–80 MB model file in git history will make the repository unusable for new contributors.
-- Add a download script (analogous to the existing `scripts/download-model.cjs`) for the fine-tuned classifier, so the model is fetched from a versioned URL rather than committed to the repository.
-- Verify bundle size after integration: `pnpm build && du -sh dist/assets/*.js` must not show any JS chunk above 2MB. If it does, the model is being bundled.
+- Enforce the execution order in code with explicit typing: create a `SanitizedPrompt` branded type (e.g., `type SanitizedPrompt = string & { readonly __brand: 'sanitized' }`) that the modal's input type requires. The ONNX sanitizer is the only function that returns `SanitizedPrompt`. `logEntry.sanitizedPrompt` must be `SanitizedPrompt` type — if the ONNX step has not run, the code will not compile.
+- Add a test: modal content must equal what is actually sent to the API. Capture both `logEntry.sanitizedPrompt` (shown to user) and the actual request body (sent to provider) in tests and assert equality.
+- The `logEntry` must be constructed *after* ONNX sanitization completes. Never construct a log entry from the raw input `request.prompt`.
 
 **Warning signs:**
-- `.onnx` file in `src/` directory rather than `public/`
-- JS bundle size increases by the size of the ONNX file after adding the model
-- `import` statement referencing an `.onnx` file anywhere in TypeScript source
-- Build time increases by 30+ seconds after adding the model (Vite processing binary)
-- Repository size jumps by model file size in git diff
+- `logEntry` constructed before the ONNX sanitization step runs
+- Modal shows `request.prompt` directly rather than `sanitizedPrompt`
+- No type distinction between `rawPrompt` and `sanitizedPrompt` in the adapter code
+- Integration test does not verify modal content matches sent payload
 
-**Phase to address:** First integration phase (wiring the fine-tuned model into the browser). Bundle discipline must be established before the model file is added to the project.
+**Phase to address:** Sanitization integration phase (wiring ONNX sanitizer into cloud adapter). This pitfall is invisible in functional testing if testers do not explicitly verify modal content against actual sent payload.
+
+---
+
+### Pitfall 8: Expanding the Embedding Worker to 4+ ONNX Models Causes Cumulative Memory Exhaustion
+
+**What goes wrong:**
+v4.0 adds new ONNX classifiers (section routing, compression detection, priority prediction, sanitization) to the embedding worker alongside the existing MiniLM pipeline and type-classification model. Each ONNX `InferenceSession` holds the model weights in the worker's WASM heap. Adding 4 more models (even if each is 10–30MB quantized) accumulates 50–100MB+ in a single worker's heap. On desktop this is manageable; on mobile (4GB RAM device, 1GB available to browser, worker memory limits enforced by the browser) the worker crashes with `RangeError: WebAssembly.Memory: Requested initial size is too large`. This crash terminates all Tier 2 classification silently — the embedding worker closes and the main thread's message promises never resolve.
+
+**Why it happens:**
+Workers have independent memory spaces but share the browser's overall memory quota. Mobile browsers enforce stricter per-worker limits than desktop. Adding models to the same worker is convenient (shared embedding pipeline, single message protocol) but each additional `InferenceSession.create()` adds to the peak memory. The peak occurs when all sessions are loaded simultaneously at worker init — which happens because v3.0's `void loadClassifier()` pattern at worker startup will be replicated for each new classifier.
+
+**How to avoid:**
+- Split workers by function: keep the embedding worker (MiniLM + type classifier) as-is. Create a separate `classifier-worker.ts` for new ONNX classifiers (section routing, compression, priority). Create a third `sanitization-worker.ts` for the sanitization model (it needs to run before cloud requests, not in the same hot path as triage classification).
+- Load ONNX sessions lazily per task, not eagerly at worker startup. Only load a classifier when a request for that task type arrives. Use a `Map<task, InferenceSession>` in each worker.
+- Implement a memory budget check before loading any new session: if `performance.memory?.usedJSHeapSize > 200MB` (Chrome-only API, treat as advisory), skip eager loading and wait for explicit request.
+- The existing v3.0 pattern of loading the classifier immediately at worker startup (`void loadClassifier()`) should be changed to a lazy-on-first-use pattern for all new classifiers.
+
+**Warning signs:**
+- All ONNX models loaded in the same `embedding-worker.ts`
+- `void loadClassifier()` pattern called at startup for each new model added
+- No test of peak worker memory with all models loaded simultaneously
+- Worker crashes reproduce on low-memory devices but not developer machines
+- Main thread's pending message promises accumulate (leak) when worker crashes
+
+**Phase to address:** ONNX expansion phase (adding new classifiers). Worker architecture must be revisited before adding any new models — the single-worker pattern does not scale to 5+ models.
+
+---
+
+## Retained Pitfalls from v3.0 (Remain Fully Applicable)
+
+The following pitfalls from the v3.0 research remain valid and unresolved for v4.0. They are summarized here with their v4.0 implications.
+
+### Pitfall 9 (was 1): ONNX Export Numerical Mismatch Between Python and Browser WASM
+
+The new sanitization and expanded classifier models must each go through browser-runtime validation (using `onnxruntime-web` in Node.js, not Python `onnxruntime`). v4.0 adds 3–4 new models, each requiring independent validation. The v3.0 validation script (`04_validate_model.mjs`) must be extended or replicated for each new model.
+
+**v4.0 implication:** The sanitization model's NER-style output (token-level probabilities) is more sensitive to numerical mismatch than the type-classification softmax output. Use opset 17 or lower; apply `onnxsim` before quantization.
+
+**Phase to address:** Each new ONNX model training pipeline phase.
+
+---
+
+### Pitfall 10 (was 2): Synthetic Training Data Distribution Gap on Real User Input
+
+For the sanitization model specifically, this pitfall is more severe: synthetic sensitive data is often over-explicit ("My SSN is 555-12-3456") while real sensitive data is embedded in context ("The accountant confirmed the number from my file"). The sanitization model's synthetic data must be generated with this distribution gap in mind.
+
+**Phase to address:** Sanitization model synthetic data generation phase.
+
+---
+
+### Pitfall 11 (was 3): COOP/COEP Headers Break External Resources for WASM Multi-Threading
+
+Adding WASM-LLM (wllama) multiplies this risk: wllama explicitly requires COOP + COEP headers for multi-threaded inference. If BinderOS adds these headers for WASM-LLM, all resources without `Cross-Origin-Resource-Policy` headers break. The ONNX Runtime Web single-thread fallback already avoids this (v3.0 solved it). The new WASM-LLM worker adds the requirement back.
+
+**v4.0 implication:** Use `Cross-Origin-Embedder-Policy: credentialless` (Chrome 96+, Firefox 119+) instead of `require-corp`. Verify wllama multi-threading works with `credentialless` before shipping.
+
+**Phase to address:** WASM-LLM integration phase.
+
+---
+
+### Pitfall 12 (was 5): Model-Collapse Feedback Loop in Classification Log
+
+The expanded ONNX classifiers (section routing, compression) will each write to the classification log. Each new task type adds a new collapse risk if correction data is not tracked per-task. The `modelSuggestion` field in the log must cover all task types, not just type-classification.
+
+**Phase to address:** ONNX expansion integration phase.
 
 ---
 
@@ -191,28 +254,33 @@ Shortcuts that seem reasonable but create long-term problems.
 
 | Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
 |----------|-------------------|----------------|-----------------|
-| Extend `embedding-worker.ts` to run the classifier instead of creating a new worker | Avoids creating a second worker, reuses pipeline singleton | Memory contention between embedding and classification tasks; pipeline singleton holds both models in memory simultaneously even when only one is needed; worker message protocol becomes bloated | Never for production — separate workers |
-| Use centroid fallback confidence thresholds (0.65) unchanged for fine-tuned model | No threshold tuning work required | Fine-tuned models have a different confidence distribution than cosine similarity centroid scores; 0.65 on softmax output ≠ 0.65 on cosine similarity; will either over-escalate or under-escalate | Never — must be independently measured |
-| Skip browser-runtime validation and trust Python ONNX validation | Saves 1–2 days of test harness work | Numerical mismatch between Python and WASM backends causes subtle wrong predictions in production | Never for a model used in production decisions |
-| Generate all synthetic data in one batch upfront | Simplicity, no iterative prompting needed | Single-batch generation produces homogeneous examples; LLM outputs cluster around the same phrasings; diversity requires varied prompts across multiple sessions | Acceptable for a proof-of-concept first iteration, not for the training dataset used in production |
-| Store the ONNX model in IndexedDB as a Blob | Avoids static file hosting complexity | Blobs in IndexedDB are subject to storage eviction; browser storage quotas apply; model can silently disappear; OPFS is the correct API for large files | Never for production; use OPFS or `/public/models/` |
-| Hard-code confidence thresholds as constants | Quick to implement | Different tasks (classify-type vs. assess-staleness vs. route-section) have different natural confidence distributions; a single constant makes tuning one task degrade another | Acceptable as a starting point if thresholds are named constants per task type (already done in `CONFIDENCE_THRESHOLDS`) |
+| Extending `CloudAdapter` with provider branching (`if provider === 'openai'`) | One file to maintain | Schema mismatches compound with each provider; edge cases multiply; the file becomes untestable | Never for production — separate adapter classes per provider |
+| Reusing v3.0 INT8 quantization for the sanitization NER model | No new quantization tooling needed | Recall collapses on soft PII (borderline sensitive spans); users trust a leaky privacy gate | Never — sanitization model must use FP16 or Q8, not INT8 |
+| Adding all new ONNX models to the existing embedding worker | No new worker infrastructure | Cumulative memory exhaustion on mobile; OOM crash silences all Tier 2 | Never for mobile-targeted deployment — use dedicated workers |
+| Using `navigator.gpu !== undefined` as the sole WebGPU capability check | Simple one-liner | OOM crashes on integrated GPUs; "loading" state that never resolves; silent fallback failure | Never — must include `maxBufferSize` check and sentinel inference |
+| Treating iOS as a supported WASM-LLM target | "Cross-platform" claim | Single-threaded iOS WASM-LLM is unusable (<1 token/second for 1B models); ruins mobile experience | Never — iOS must be explicitly excluded from WASM-LLM, routed to Tier 2 + cloud |
+| Pre-filling template slots from all available entropy signals (>3 signals per sentence) | Rich-seeming output | Incoherent briefing prose; template output becomes a data dump rather than a useful summary | Never for user-facing narrative — limit to 2 signals per template clause |
+| Constructing cloud request log entry from `request.prompt` before ONNX sanitization runs | Quick implementation | Pre-send approval modal shows unsanitized content; consent violation; privacy audit failure | Never — log entry must use post-sanitization prompt |
+| Adding `dangerouslyAllowBrowser: true` to OpenAI SDK without a key-in-memory-only constraint | Enables browser API calls | User API key exposed to any script injected on the page if XSS occurs; key logging | Only acceptable with the same key-vault pattern used for the existing Anthropic adapter (key in JS memory, never persisted to localStorage/IndexedDB) |
 
 ---
 
 ## Integration Gotchas
 
-Common mistakes when connecting the fine-tuned ONNX model to the existing tier system.
+Common mistakes when wiring new v4.0 capabilities into the existing system.
 
 | Integration Point | Common Mistake | Correct Approach |
 |-------------------|----------------|------------------|
-| Tier 2 handler replacement | Replace centroid-based `tier2-handler.ts` entirely with ONNX classifier, removing centroid fallback | Keep centroid classification as a fallback within Tier 2; use fine-tuned ONNX as primary, centroid as secondary when ONNX model fails to load |
-| Classification log schema | Add `modelSuggestion` field without a Dexie schema migration | Create a new Dexie schema version with the field added; existing entries get `undefined` for `modelSuggestion`, which is safe |
-| Worker message protocol | Add ONNX classifier messages to the existing `CLASSIFY_TYPE`/`CLASSIFY_RESULT` protocol | Use new message types (e.g., `CLASSIFY_ONNX` / `ONNX_RESULT`) to distinguish embedding-centroid classification from fine-tuned model classification; prevents routing bugs |
-| Model loading timing | Load the ONNX classifier eagerly at worker startup | Load lazily on first `CLASSIFY_ONNX` request; warm up in background after first user interaction, not at worker init (avoids cold start blocking early UI) |
-| Confidence score semantics | Use fine-tuned model's raw softmax max as `confidence` value directly | Softmax max is not calibrated confidence; apply temperature scaling or at minimum verify that the model's softmax distribution matches actual accuracy at each decile before using raw values as tier escalation thresholds |
-| Task coverage | Build fine-tuned model for `classify-type` only, then wire it into tasks it wasn't trained for | The `CONFIDENCE_THRESHOLDS` object gates tasks independently; only enable fine-tuned ONNX for tasks it was explicitly trained on; `assess-staleness` requires separate training data |
-| Model update deployment | Update the model file without updating the version hash in the download script | Content-hash the model filename (e.g., `gtd-classifier-v1.2.3.onnx`) so browser cache invalidation is automatic; never overwrite the same filename |
+| Device capability detection | Checking `navigator.gpu` alone for tier selection | Compound check: `navigator.gpu` + `device.limits.maxBufferSize` + `navigator.deviceMemory` heuristic |
+| WASM-LLM on mobile | Testing only on Android, not iOS | Explicit iOS detection; route iOS to Tier 2 + cloud only; test on actual iOS device |
+| Multi-provider cloud | Single adapter with provider flag | Separate adapter class per provider; shared pre-send approval and key-vault utilities only |
+| Sanitization model in cloud flow | Adding ONNX sanitization after `logEntry` creation | `logEntry` must be constructed after sanitization; use branded type to enforce order |
+| New ONNX models in existing worker | `void loadClassifier()` at startup for each model | Lazy loading on first request; separate workers for classification vs. sanitization |
+| Template engine scope | Writing templates for all features including narrative insight | Templates for deterministic facts only; acknowledge capability tier in UX for offline mobile |
+| Provider-specific streaming | Using the `onChunk` callback for raw SSE data | Each adapter implements its own SSE parser; `onChunk` always receives parsed text string |
+| Grok/OpenAI JSON schema | Passing Anthropic-format schemas directly | Translate canonical `StructuredOutputRequest` to each provider's format in the adapter |
+| WASM-LLM + COOP/COEP | Adding `require-corp` COEP for wllama threading | Use `credentialless` COEP; verify wllama threading works with credentialless before shipping |
+| Worker memory budget | Assuming desktop memory budget applies to mobile | Check `performance.memory?.usedJSHeapSize` as advisory; cap per-worker model load |
 
 ---
 
@@ -222,55 +290,59 @@ Patterns that work at small scale but fail under real usage.
 
 | Trap | Symptoms | Prevention | When It Breaks |
 |------|----------|------------|----------------|
-| Running embedding + classification sequentially for every triage request | Each inbox item takes 2x embedding time (one for search index, one for classification) | Share embeddings: when an item is embedded for search, cache the vector and reuse it for Tier 2 classification without re-embedding | Noticeable at >10 items/session as cumulative latency; user sees delayed triage UI |
-| Rebuilding centroids AND running fine-tuned inference on every classification | Centroid rebuild is O(n) over classification history; at 500+ entries this takes 50–100ms per classification | Gate centroid rebuild to the `CENTROID_REBUILD_INTERVAL` (every 10 classifications, already implemented); never rebuild synchronously during triage | At ~200+ classification history entries (heavy users after 2–3 weeks) |
-| Loading the ONNX classifier model file on every service worker activation | Service worker activates on every page load; model file is 10–80MB; triggers a new fetch even if cached | Implement cache-first loading: check Cache API or OPFS before fetching; use content-hash URL so cache hit is guaranteed on repeat visits | First visit after every deploy if model URL is not content-hashed |
-| Blocking the main thread during ONNX session creation | `ort.InferenceSession.create()` is async but the WASM compilation step can take 500ms–2s synchronously on slow hardware | Call `InferenceSession.create()` in the Worker thread, not the main thread; the embedding worker already does this correctly for MiniLM — apply the same pattern | On low-end hardware (4GB RAM laptop) with a 50MB+ model file |
-| Accumulating unresolved pending classification Promises | Each classification request creates a Promise that is stored in a Map; if the worker crashes, all pending Promises leak | Implement a timeout (5 seconds) for each pending classification Promise; on timeout, reject with a fallback "tier-2-unavailable" result; clean the pending map on worker restart | Under memory pressure when the WASM runtime crashes and respawns |
+| Loading all ONNX classifiers eagerly at worker startup | Worker startup takes 3–5 seconds; mobile OOM crash on devices with <2GB available | Lazy load classifiers on first use; defer non-critical classifiers until after first user interaction | At 3+ classifiers in the same worker on 4GB RAM mobile devices |
+| Running sanitization ONNX synchronously in the cloud request hot path | Cloud requests feel slow (200–500ms added); user perceives cloud as broken | Pre-warm sanitization session in idle background; run sanitization in dedicated worker; cache result for identical prompts | On every cloud request when sanitization adds visible latency |
+| Sentinel inference for WebGPU validation running the full model | First-time initialization takes 2x longer; download progress appears complete but model seems unresponsive | Sentinel inference must be a single token, not a representative prompt | On large models (3B+) where even a 1-sentence prompt requires significant compute |
+| Re-creating `InferenceSession` per request for ONNX classifiers | Each classification takes 500ms+ (session creation dominates) | Create `InferenceSession` once per classifier type; keep alive for the worker's lifetime | On any device if session is not cached between requests |
+| Template rendering with real-time entropy recalculation on every briefing open | Briefing renders slowly because entropy signals are recomputed | Template rendering must use pre-computed entropy snapshot from store; never call entropy computation during render | On stores with >100 atoms when entropy calculation is synchronous |
+| WASM-LLM inference blocking the Tier 2 classification queue | Triage requests queue behind an LLM inference and time out | WASM-LLM worker is dedicated and separate from the Tier 2 classification worker; queues do not share | Immediately when both WASM-LLM and ONNX classification are active simultaneously |
 
 ---
 
 ## Security Mistakes
 
-Domain-specific security issues for a local-first, privacy-first ML system.
+Domain-specific security issues for v4.0's expanded cloud and privacy gate capabilities.
 
 | Mistake | Risk | Prevention |
 |---------|------|------------|
-| Sending raw atom content to the LLM for synthetic data generation without user consent UI | User's private life data (tasks, decisions, health facts) sent to cloud AI during "training data bootstrapping" without understanding | Require explicit opt-in with disclosure: "Generate training examples from your existing atoms using [cloud AI]. Your data is used only to create anonymous examples and is not stored by [provider]." Allow opt-out with purely synthetic LLM-generated data that contains no personal details |
-| Storing synthetic training data (which may contain paraphrases of user content) in plain text in OPFS | User's private thoughts appear in app storage in a form different from the original atoms, making them harder to audit or export | Apply the same data ownership guarantee to training data as to atoms: store in a namespaced location, include in the export-all data flow, and provide a "delete training data" option in settings |
-| Fine-tuned model weights encoding user data patterns | A sophisticated attacker who extracts the ONNX model weights could theoretically reverse-engineer user data patterns through membership inference | Use differential privacy during fine-tuning if training on real user content; for v3.0 scope, the simpler mitigation is to train primarily on synthetic data (no real user content in model weights) and use real user data only as validation |
-| Model file served from a CDN without integrity check | Man-in-the-middle attack substitutes a malicious model file that outputs adversarial classifications | Use Subresource Integrity (`integrity` attribute) on model `fetch()` calls, or verify a SHA-256 hash of the downloaded model file before loading it into ONNX Runtime Web |
+| Sanitization model providing false confidence — UI says "sanitized" but soft PII passes through | User sends medical, financial, or personal relationship context to cloud provider under false assurance | Display explicit limitations: "Emails and phone numbers: always removed. Names and context: best-effort. Use 'abstract' level for maximum privacy." Never label partial sanitization as complete |
+| Storing OpenAI/Grok API keys in localStorage "for convenience" | Any XSS attack on the page extracts all provider keys permanently | All provider keys use the same memory-only key-vault pattern as the existing Anthropic key; session consent per provider |
+| Pre-send approval modal showing raw prompt before ONNX sanitization completes | User approves transmission of more data than they see in the modal | Enforce typed `SanitizedPrompt` — modal input type requires the branded type returned by the sanitizer |
+| WASM-LLM model download from untrusted URL without integrity check | Man-in-the-middle attack substitutes a model that produces adversarial outputs | SHA-256 hash verification of all model files before loading into WASM runtime; reject if hash mismatch |
+| Corporate LLM integration storing endpoint URL + bearer token together in an insecure config | Internal corporate API credentials exposed in browser storage | Corporate LLM credentials use the same key-vault with a separate namespace; endpoint URL is non-secret and can be stored in user config; only the bearer token needs memory-only storage |
+| Cloud log recording full prompts (including post-sanitization content) | Communication log itself becomes a privacy leak in the Dexie config table | Log only the first 100 characters of sanitized prompt (already implemented in `cloud.ts`); confirm this limit applies across all new provider adapters |
 
 ---
 
 ## UX Pitfalls
 
-Common user experience mistakes when exposing ML classification to users.
+Common user experience mistakes when exposing device-adaptive AI to users.
 
 | Pitfall | User Impact | Better Approach |
 |---------|-------------|-----------------|
-| Pre-filling the atom type selector with the model's top prediction without showing confidence | User accepts wrong classification without knowing a correction was possible; confidence not communicated | Show top prediction with confidence band: "Task (high confidence)" or "Task or Fact?" when confidence is borderline; make the field obviously editable |
-| Escalating to Tier 3 cloud LLM without informing the user why their item is taking longer | User sees spinner with no explanation; may think the app is broken | When Tier 2 escalates, show: "Thinking harder about this one..." with a brief delay indicator; if Tier 3 uses cloud, show the cloud API indicator from the existing AI status bar |
-| Showing raw model version information to users | Users do not understand "gtd-classifier v1.2.3 loaded" and it creates anxiety | Translate model state to user language: "Offline AI ready" or "Smart triage active"; model version is developer metadata, not user-facing |
-| Offering to "improve AI" through feedback without explaining what is collected | Users distrust data collection without transparency | Be explicit: "When you correct a suggestion, BinderOS records the item text and your correction locally. This data never leaves your device." Show the classification log entry that was created. |
-| Silent degradation when fine-tuned model fails to load | User gets Tier 1 deterministic results without knowing why suggestions are less smart | Show a non-alarming notice: "Offline AI unavailable — using basic classification." Provide a "retry" action and a link to the settings panel with diagnostic info |
+| No visible indication that the app is in "mobile offline" mode (Tier 2 + templates only) | User expects LLM-quality output; receives template output; perceives app as broken | Status indicator: "AI mode: Smart offline (no narrative AI)" vs "AI mode: Full local AI" vs "AI mode: Cloud AI active" |
+| Showing WebGPU model download progress on a device that will OOM mid-download | User waits through a multi-GB download for an experience that fails at the end | Validate device capability with a 30-second sentinel before initiating any model download; show capability check status before download |
+| Treating WASM-LLM and WebLLM as equivalent "local AI" in the settings UI | User enables "local AI" on iOS, gets invisible degradation to unusable single-threaded WASM | Settings must distinguish: "GPU-accelerated local AI (desktop/Android)" vs "Basic offline AI (ONNX only, recommended for mobile)" |
+| Pre-send approval modal not identifying which provider is receiving the request | User approved "cloud AI" in general but not aware their data goes to OpenAI specifically (or vs. Anthropic) | Pre-send modal must show provider name, endpoint, model name explicitly: "Sending to OpenAI gpt-4o-mini" |
+| ONNX sanitization failure (model not loaded) silently allowing unsanitized prompts through | User believes sanitization gate is active; cloud receives full prompt | If sanitization ONNX fails to load, the cloud adapter must fall back to the text-level abstract sanitization and show a warning: "Privacy gate unavailable — using basic sanitization only" |
+| Template briefing shown on mobile without explaining it is simplified | User compares mobile and desktop experiences; perceives mobile as broken | Explicit inline note on mobile: "This is a simplified briefing (offline mode). Enable cloud AI for narrative insights." |
 
 ---
 
 ## "Looks Done But Isn't" Checklist
 
-Things that appear complete but are missing critical pieces.
+Things that appear complete in demos but are missing critical production pieces.
 
-- [ ] **Fine-tuned model trained and exported:** Often missing browser-runtime validation — verify that `onnxruntime-web` (not Python `onnxruntime`) produces matching top-1 predictions on a 50-item test set
-- [ ] **ONNX model loading in worker:** Often missing warm-up call — verify that the first real classification request does not include model-loading latency by pre-loading on worker init (after first user interaction)
-- [ ] **Synthetic data pipeline:** Often missing diversity verification — verify that training examples span short fragments, typos, mixed-language, and cross-category ambiguous inputs, not just fluent well-formed sentences
-- [ ] **Classification log extended with `modelSuggestion`:** Often missing Dexie migration — verify that existing entries are not broken by the schema change and that the new field is being populated on every classification event
-- [ ] **Confidence threshold tuning:** Often missing per-task calibration — verify that the escalation rate to Tier 3 is in the 10–25% range (not 0% = overconfident model, not 50%+ = underperforming model)
-- [ ] **COOP/COEP headers:** Often missing in production environment — verify that `typeof SharedArrayBuffer !== 'undefined'` returns true in the production deployment, not just localhost
-- [ ] **Model file cache strategy:** Often missing invalidation — verify that updating the model file triggers a cache miss in the browser (content-hashed filename or version manifest)
-- [ ] **Tier 2 fallback when ONNX unavailable:** Often missing after replacing centroid approach — verify that Tier 1 deterministic classification still fires when the ONNX model file fails to load (network error, corrupt file, WASM unavailable)
-- [ ] **Training data provenance logging:** Often missing — verify that synthetic examples generated by the LLM are tagged with generation prompt version and LLM model version so future retraining can identify which data came from which generation run
-- [ ] **Model collapse guard:** Often missing — verify that the retraining pipeline reports per-class sample counts and blocks training if any class falls below the minimum threshold
+- [ ] **Device capability detection:** Often missing `maxBufferSize` check — verify that `navigator.gpu` is paired with a buffer size gate and a 30-second initialization timeout before a model download starts
+- [ ] **iOS WASM-LLM exclusion:** Often missing explicit iOS detection — verify that `navigator.userAgent` check for iOS routes to Tier 2 + cloud, not WASM-LLM, and that this is tested on an actual iOS device
+- [ ] **Multi-provider adapter separation:** Often missing — verify that OpenAI, Anthropic, and Grok each have their own adapter class, not branches in a single class, and that each is independently tested with the GTD JSON schema suite
+- [ ] **Sanitization model recall:** Often evaluated only on F1 — verify that recall >= 0.85 on the soft-PII test set (names, financial context, health context) before shipping the quantized model
+- [ ] **Sanitization execution order:** Often wrong — verify that `logEntry.sanitizedPrompt` is constructed after ONNX sanitization completes, and that the pre-send modal displays the post-sanitization prompt
+- [ ] **Worker memory budget:** Often untested on mobile — verify peak worker heap with all classifiers loaded on a 4GB RAM device (use Chrome DevTools memory profiler with mobile device emulation)
+- [ ] **Template scope bounded:** Often over-extended — verify that templates handle only deterministic signal substitution and that features requiring synthesis acknowledge the capability gap explicitly in the UX
+- [ ] **COOP/COEP with `credentialless`:** Often set to `require-corp` — verify that wllama threading works with `credentialless` COEP and that no existing resources break when the header is added
+- [ ] **Grok/OpenAI streaming parser:** Often missing — verify that `onChunk` receives parsed text (not raw SSE frames) for each non-Anthropic provider
+- [ ] **Sanitization model quantization type:** Often INT8 by default — verify that the sanitization model uses FP16 or Q8 (not INT8) and that recall is measured post-quantization before integration
 
 ---
 
@@ -280,13 +352,14 @@ When pitfalls occur despite prevention, how to recover.
 
 | Pitfall | Recovery Cost | Recovery Steps |
 |---------|---------------|----------------|
-| Numerical mismatch in ONNX export discovered post-integration | MEDIUM | Re-export with lower opset version; apply `onnxsim` (ONNX Simplifier) to the graph before quantization; if mismatch persists, switch from INT8 static to INT8 dynamic quantization |
-| Synthetic data model-collapse discovered in production (minority class degrading) | HIGH | Immediately disable Tier 2 for affected tasks; revert to Tier 1 deterministic; regenerate synthetic data for minority classes with explicit diversity prompts; retrain with original synthetic data as floor |
-| COOP/COEP header breakage in production | MEDIUM | Switch to `COEP: credentialless` header; audit all external resources; temporarily disable ONNX multi-threading (fall back to single-threaded WASM) while headers are corrected |
-| env.allowLocalModels cache corruption | LOW | Add a one-time cache-clearing routine: detect corrupted cache (JSON parse error on model load) and call `caches.delete()` for the model namespace; show user "Clearing model cache, please wait..." |
-| Model file accidentally bundled in JS chunk | MEDIUM | Remove from `src/`, move to `public/models/`, delete from git history using `git filter-repo`; add Git LFS for `.onnx` files; rebuild and redeploy |
-| Classification log schema migration failure | HIGH | Implement Dexie migration defensively: wrap in try/catch, fall back to old schema if migration fails; do not gate new features on schema version without a version gate check |
-| Overconfident model accepted wrong predictions at scale | HIGH | Add a model confidence calibration step (temperature scaling) as a post-training step; roll back to centroid-based Tier 2 while recalibrating; increase confidence threshold for Tier 2 from 0.65 to 0.85 as a temporary measure |
+| WebGPU OOM crash during model download on integrated GPU | MEDIUM | Implement 30-second timeout + sentinel inference; force fallback to WASM-LLM or Tier 2 only; add `maxBufferSize` gate to prevent future attempts on the same device |
+| iOS WASM-LLM unusable performance discovered post-launch | MEDIUM | Ship emergency update: detect iOS and redirect to Tier 2 + cloud; add settings note explaining the limitation; no data loss involved |
+| Multi-provider adapter schema mismatch causing 400 errors in production | MEDIUM | Roll back the affected provider adapter; keep other providers active; fix translation function for nested schemas in the adapter before re-shipping |
+| Sanitization model precision/recall failure discovered post-integration | HIGH | Immediately add disclaimer to pre-send modal: "Privacy gate operating in degraded mode"; re-train with FP16 quantization; do not remove sanitization step (it still catches structured PII) |
+| Pre-send modal consent violation (shows unsanitized prompt) | HIGH | Emergency patch: construct `logEntry` after sanitization; add branded type enforcement; audit all provider adapters for same bug; notify users that a consent issue was fixed |
+| Worker OOM crash silencing Tier 2 on mobile | MEDIUM | Add worker crash recovery: detect Promise timeout (>10s), restart worker, reload models lazily; split monolithic worker into separate workers |
+| Template briefings receiving user complaints for incoherence | LOW | Reduce template scope to pure signal substitution; add explicit "offline mode — simplified" framing; do not attempt to add synthesis logic to templates without LLM backbone |
+| Grok/OpenAI streaming parser delivering raw SSE to onChunk | LOW | Fix the provider adapter's SSE parser; SSE data is visible in network tab, trivial to diagnose; no data loss |
 
 ---
 
@@ -296,39 +369,47 @@ How roadmap phases should address these pitfalls.
 
 | Pitfall | Prevention Phase | Verification |
 |---------|------------------|--------------|
-| ONNX numerical mismatch (Pitfall 1) | Synthetic data + training pipeline phase | Browser-runtime validation harness runs as part of model build artifact |
-| Synthetic data distribution gap (Pitfall 2) | Synthetic data generation phase | Test set includes 50+ real-style short/fragmentary examples; accuracy on real test set > 75% |
-| COOP/COEP header breakage (Pitfall 3) | First ONNX browser integration phase | `typeof SharedArrayBuffer !== 'undefined'` on production URL |
-| env.allowLocalModels cache poisoning (Pitfall 4) | First ONNX browser integration phase | Test in fresh browser profile with no cached model files |
-| Model-collapse feedback loop (Pitfall 5) | Synthetic data + classification log schema phase | `modelSuggestion` field populated; per-class sample counts reported in retraining pipeline |
-| GTD classification ambiguity overconfidence (Pitfall 6) | Synthetic data generation phase + UI integration phase | Confidence distribution does not cluster above 0.85 for >70% of predictions; UI shows two options for borderline predictions |
-| ONNX model file bundling (Pitfall 7) | First ONNX browser integration phase | `du -sh dist/assets/*.js` shows no JS chunk > 2MB |
-| Centroid fallback removal (integration gotcha) | Tier 2 replacement phase | Unit test: when ONNX model fails to load, Tier 2 still returns a centroid result |
-| Sequential embedding waste (performance trap) | Triage integration phase | Profiling shows single embedding call per inbox item, not two |
+| WebGPU VRAM detection failure (Pitfall 1) | Device-adaptive Tier 1 phase | Compound capability check passes on integrated GPU laptop; 30s timeout resolves gracefully; sentinel inference confirms engine |
+| iOS WASM-LLM unusable (Pitfall 2) | Device-adaptive Tier 1 phase | iOS device routes to Tier 2 + cloud only; no WASM-LLM initialization attempted |
+| Multi-provider API schema mismatch (Pitfall 3) | Multi-provider cloud phase | Each provider passes 5-category GTD prompt test suite independently |
+| Sanitization model false precision on soft PII (Pitfall 4) | Sanitization model training phase | Soft-PII test set (names, financial, health context) coverage >= 80% recall |
+| Sanitization quantization recall collapse (Pitfall 5) | Sanitization ONNX export phase | Post-quantization recall >= 0.85; FP16 or Q8 quantization confirmed |
+| Template incoherence at scale (Pitfall 6) | Template engine phase | Coherence review (>= 3.0 average human rating); template scope bounded to <= 2 signals per clause |
+| Privacy gate race condition (Pitfall 7) | Sanitization integration phase | `SanitizedPrompt` branded type enforced; modal content verified against sent payload in integration test |
+| Worker memory exhaustion (Pitfall 8) | ONNX expansion phase | Peak worker heap < 150MB with all models loaded; mobile OOM does not occur on 4GB RAM device |
+| ONNX numerical mismatch (Pitfall 9 / v3.0 #1) | Each new model training pipeline | Browser-runtime validation script passes for each new model before integration |
+| COOP/COEP breakage from wllama (Pitfall 11 / v3.0 #3) | WASM-LLM integration phase | `credentialless` COEP set; wllama threading confirmed; no resource CORP errors |
+| Model-collapse in expanded log (Pitfall 12 / v3.0 #5) | ONNX expansion integration phase | `modelSuggestion` field populated for all new task types; per-class sample count reported per-task |
 
 ---
 
 ## Sources
 
-- [ONNX Runtime Web documentation](https://onnxruntime.ai/docs/tutorials/web/) — operator support gaps, WASM backend behavior
-- [Transformers.js Production Optimization — SitePoint](https://www.sitepoint.com/optimizing-transformers-js-production/) — main thread blocking, memory spikes, ONNX binary asset handling
-- [Transformers.js v3 announcement — HuggingFace Blog](https://huggingface.co/blog/transformersjs-v3) — WebGPU support, model loading patterns, package rename
-- [ONNX Runtime Web COOP/COEP requirements — web.dev](https://web.dev/articles/coop-coep) — SharedArrayBuffer cross-origin isolation
-- [Excessive Memory consumption issue — Transformers.js GitHub #759](https://github.com/huggingface/transformers.js/issues/759) — real-world memory spike reports
-- [Quantize ONNX models — onnxruntime.ai](https://onnxruntime.ai/docs/performance/model-optimizations/quantization.html) — dynamic vs. static quantization, zero-point accuracy
-- [Selective Quantization Tuning for ONNX Models — arXiv 2025](https://arxiv.org/html/2507.12196v1) — layer-sensitivity analysis
-- [Faster and smaller quantized NLP — Microsoft Azure/Medium](https://medium.com/microsoftazure/faster-and-smaller-quantized-nlp-with-hugging-face-and-onnx-runtime-ec5525473bb7) — BERT quantization accuracy drop patterns
-- [Demystifying Synthetic Data in LLM Pre-training — ACL/EMNLP 2025](https://aclanthology.org/2025.emnlp-main.544/) — model collapse, real+synthetic mixtures
-- [Synthetic Data Generation Using LLMs — arXiv March 2025](https://arxiv.org/abs/2503.14023) — bias amplification, distribution shift, diversity challenges
-- [Explicitly Unbiased LLMs Still Form Biased Associations — PNAS 2025](https://www.pnas.org/doi/10.1073/pnas.2416228122) — implicit bias in synthetic data from aligned models
-- [Measuring Label Ambiguity in Subjective Tasks — ACL LAW-XIX 2025](https://aclanthology.org/2025.law-1.2/) — entropy-based ambiguity scoring for subjective classification
-- [AI models collapse when trained on recursively generated data — Nature 2024](https://www.nature.com/articles/s41586-024-07566-y) — foundational model collapse paper (Shumailov et al.)
-- [ONNX Versioning — onnx.ai](https://onnx.ai/onnx/repo-docs/Versioning.html) — opset versioning, IR versioning, model versioning
-- [Offline-first frontend apps in 2025 — LogRocket](https://blog.logrocket.com/offline-first-frontend-apps-2025-indexeddb-sqlite/) — OPFS vs IndexedDB for large model file storage
-- [Local-First AI definitive guide — SitePoint 2026](https://www.sitepoint.com/definitive-guide-local-first-ai-2026/) — OPFS-first model caching, cache invalidation with version manifests
-- [Cross-Origin-Isolation with SvelteKit, Vite — Captain Codeman](https://www.captaincodeman.com/cross-origin-isolation-with-sveltekit-vite-and-firebase) — Vite COOP/COEP configuration patterns
-- Existing BinderOS codebase: `src/search/embedding-worker.ts`, `src/ai/tier2/`, `src/ai/tier2/centroid-builder.ts` — integration-specific constraints derived from current implementation
+- [WebGPU spec — device.limits.maxBufferSize](https://www.w3.org/TR/webgpu/#dom-gpudevice-limits) — VRAM proxy measurement
+- [WebGPU for On-Device AI Inference — MakitSol 2025](https://makitsol.com/webgpu-for-on-device-ai-inference/) — device tier detection patterns
+- [WebGPU bugs are holding back the browser AI revolution — Medium 2025](https://medium.com/@marcelo.emmerich/webgpu-bugs-are-holding-back-the-browser-ai-revolution-27d5f8c1dfba) — OOM and context loss failure modes
+- [AI In Browser With WebGPU: 2025 Developer Guide — aicompetence.org](https://aicompetence.org/ai-in-browser-with-webgpu/) — mobile capability constraints
+- [wllama GitHub — WebAssembly binding for llama.cpp](https://github.com/ngxson/wllama) — 2GB ArrayBuffer limit, COOP/COEP requirement, iOS threading behavior
+- [FOSDEM 2025 — wllama: bringing llama.cpp to the web](https://archive.fosdem.org/2025/schedule/event/fosdem-2025-5154-wllama-bringing-llama-cpp-to-the-web/) — mobile constraints presentation
+- [WebAssembly maximum memory 2GB causes OOM on iOS Safari 16.2 — Godot Engine GitHub #70621](https://github.com/godotengine/godot/issues/70621) — iOS 2GB ArrayBuffer limit documentation
+- [WASM SIMD broken on iOS 16.4+ — ONNX Runtime GitHub #15644](https://github.com/microsoft/onnxruntime/issues/15644) — iOS SIMD and threading constraints
+- [3W for In-Browser AI: WebLLM + WASM + WebWorkers — Mozilla.ai blog](https://blog.mozilla.ai/3w-for-in-browser-ai-webllm-wasm-webworkers/) — worker architecture, memory pressure
+- [Provider-Agnostic Agents: Why Adapters Alone Aren't Enough — fdrechsler.de](https://fdrechsler.de/blog/provider-agnostic-agents) — schema mismatch, semantic divergence between providers
+- [Structured Output Comparison across LLM providers — Medium](https://medium.com/@rosgluk/structured-output-comparison-across-popular-llm-providers-openai-gemini-anthropic-mistral-and-1a5d42fa612a) — Anthropic vs OpenAI schema differences
+- [We Routed 10 Million API Calls — DEV Community](https://dev.to/xujfcn/we-routed-10-million-api-calls-last-month-heres-what-broke-4i71) — production multi-provider routing failures
+- [OpenAI SDK compatibility — Anthropic API docs](https://docs.anthropic.com/en/api/openai-sdk) — schema translation limitations
+- [A local-first, reversible PII scrubber for AI workflows using ONNX — Medium](https://medium.com/@tj.ruesch/a-local-first-reversible-pii-scrubber-for-ai-workflows-using-onnx-and-regex-e9850a7531fc) — regex + ONNX hybrid architecture
+- [Comparing Best NER Models For PII Identification — Protecto.ai](https://www.protecto.ai/blog/best-ner-models-for-pii-identification/) — NER model selection for PII tasks
+- [Quantizing ONNX text classification model causes much lower precision — huggingface/optimum GitHub #151](https://github.com/huggingface/optimum/issues/151) — recall collapse under INT8 quantization for NER models
+- [The 2025 Playbook For Securing Sensitive Data in LLM Applications — Protecto.ai](https://www.protecto.ai/blog/securing-sensitive-data-llm-applications/) — pre-transmission sanitization architecture
+- [LLM Security 2025 — mend.io](https://www.mend.io/blog/llm-security-risks-mitigations-whats-next/) — data leakage, inference-layer exposure
+- [3 common mistakes when integrating the OpenAI API — Backmesh](https://backmesh.com/blog/openai-api-mistakes/) — key exposure, CORS, browser API calls
+- [Cross-Origin Resource Sharing (CORS) — OpenAI Developer Community](https://community.openai.com/t/cross-origin-resource-sharing-cors/28905) — CORS limitations for direct browser OpenAI calls
+- [xAI API CORS and OpenAI compatibility — xAI docs](https://docs.x.ai/docs) — Grok browser compatibility
+- [PWA iOS Limitations and Safari Support — magicbell.com](https://www.magicbell.com/blog/pwa-ios-limitations-safari-support-complete-guide) — iOS storage limits, background processing
+- Existing BinderOS codebase: `src/ai/adapters/cloud.ts`, `src/ai/adapters/browser.ts`, `src/ai/privacy-proxy.ts`, `src/search/embedding-worker.ts`, `src/ai/tier2/pipeline.ts` — integration-specific constraints from current implementation
 
 ---
-*Pitfalls research for: adding fine-tuned ONNX classification models to BinderOS browser-based tiered AI system (v3.0 Local AI + Polish)*
-*Researched: 2026-03-03*
+
+*Pitfalls research for: adding device-adaptive local LLMs, ONNX sanitization classifiers, template-based generation, and multi-provider cloud to BinderOS (v4.0 Device-Adaptive AI)*
+*Researched: 2026-03-05*

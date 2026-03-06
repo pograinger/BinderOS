@@ -1,214 +1,242 @@
 # Project Research Summary
 
-**Project:** BinderOS v3.0 — Local AI + Polish Milestone
-**Domain:** Fine-tuned in-browser ONNX classification models for offline GTD intelligence
-**Researched:** 2026-03-03
-**Confidence:** MEDIUM-HIGH (core ONNX/Transformers.js patterns HIGH; GTD-specific synthetic data and model quality MEDIUM)
+**Project:** BinderOS v4.0 — Device-Adaptive AI
+**Domain:** Browser-native GTD application with tiered local + cloud AI pipeline
+**Researched:** 2026-03-05
+**Confidence:** HIGH (stack verified against official docs/npm/GitHub; architecture grounded in existing codebase; pitfalls from official GitHub issues and peer-reviewed sources)
+
+---
 
 ## Executive Summary
 
-BinderOS v3.0 upgrades the existing 3-tier AI pipeline by replacing centroid-similarity matching (Tier 2) with real fine-tuned ONNX classification models. The milestone promises "full offline GTD intelligence" — atom triage and section routing that works without any cloud API key, at quality parity with or better than the current centroid approach. The recommended implementation is a two-model pipeline: the existing MiniLM embedding model (already running in the embedding worker) produces 384-dim vectors that are fed into a lightweight PyTorch classifier head exported to ONNX (~200–400KB per task type). This eliminates a second large model download, reuses an already-loaded model, and keeps browser memory pressure minimal.
+BinderOS v4.0 extends the validated v3.0 tiered AI pipeline (Tier 1 deterministic, Tier 2 ONNX classification, Tier 3 LLM) to work on every device and with multiple cloud providers. The core architectural bet is that a well-structured adapter pattern can handle the full range from mobile WASM inference to corporate OpenAI-compatible proxies without duplicating the safety infrastructure that makes BinderOS privacy-first. Research confirms this bet is sound, with two firm constraints: iOS must be explicitly excluded from WASM LLM (route to Tier 2 + cloud only), and the cloud adapter refactor must complete before any new provider is wired in or the safety gates will scatter across implementations.
 
-The critical path is entirely in Python, not TypeScript. Before any browser integration can activate, a synthetic training data corpus must be generated (Anthropic API, ~$0.01–0.05, 300–500 labeled examples per GTD atom type), a classifier head must be trained and exported to ONNX (PyTorch + HuggingFace sentence-transformers + optimum[onnx]), and the exported model must be validated in a browser-runtime harness using `onnxruntime-web` directly — not just Python's `onnxruntime`. The browser integration itself is surgical: two modified files (`embedding-worker.ts` and `tier2-handler.ts`), two new ONNX files in `public/models/classifiers/`, and a centroid fallback preserved throughout. The existing tiered pipeline, escalation logic, classification log schema, and all store signals remain unchanged.
+The recommended build path adds two JS dependencies (`@wllama/wllama` for mobile WASM LLM, `openai` for OpenAI/Grok/corporate cloud) and one Python dependency (`optimum-onnx` for the sanitization NER training pipeline). The template engine requires no new package — TypeScript template literal functions are sufficient for BinderOS's bounded set of developer-controlled templates. All four additions integrate cleanly into the existing architecture without replacing any v3.0 component. The biggest integration decision is where the sanitization ONNX model lives: it must run in the embedding worker (always loaded, independent of LLM worker state) so it is available for every cloud request, including on mobile where the WASM LLM may not yet be loaded.
 
-Key risks cluster around data quality and model validation, not technical integration. Synthetic training data trained on LLM-generated examples can produce models that are confidently wrong on real user input (fragments, typos, mixed-case, ambiguous cross-category items). Confidence calibration is required before the model enters the pipeline — raw softmax probabilities are overconfident and will misfire escalation thresholds. A model-collapse feedback loop is possible if users rubber-stamp model suggestions, which then become training data for the next version. These risks are all mitigable with well-defined process controls at the data generation and retraining stages.
+The primary risks are not technical novelty but integration ordering and quantization strategy. Worker memory exhaustion from accumulating ONNX models is the most likely silent failure on mobile. The sanitization model's recall under INT8 quantization collapsing from ~0.90 to ~0.60 is a documented failure mode that must be blocked by requiring FP16/Q8 quantization and a minimum recall >= 0.85 acceptance gate. A privacy gate race condition (pre-send modal showing unsanitized content) is avoidable with a branded `SanitizedPrompt` type that forces the compiler to enforce execution order. Both risks are fully avoidable with the implementation order and acceptance criteria in the pitfalls research, but they will not surface in demo conditions — only in production on real mobile hardware.
+
+---
 
 ## Key Findings
 
 ### Recommended Stack
 
-The v3.0 stack adds a Python-only developer toolchain alongside minimal browser-side changes. The core SolidJS + Vite + Dexie + ONNX Runtime Web stack is unchanged. New Python tools run on developer machines only and produce `.onnx` artifacts committed to git.
+The v3.0 stack (SolidJS, Vite, Dexie, WebLLM, ONNX Runtime Web, Anthropic SDK, HuggingFace Transformers) is validated and unchanged. V4.0 adds exactly four new dependencies.
 
-**Core technologies (browser — unchanged):**
-- `@huggingface/transformers` v3.8.1: MiniLM embedding worker — already running, no changes
-- `onnxruntime-web` (transitive via Transformers.js): ONNX inference in Web Worker — extended with `CLASSIFY_ONNX` message type
-- Dexie.js 4.0: classification log already captures `ClassificationEvent` with embeddings, tier, confidence — no schema changes needed for v3.0 core
+**Core new technologies:**
+- `@wllama/wllama@^2.3.7` — Mobile WASM LLM; wraps llama.cpp as WASM, no WebGPU required, runs in its own internal worker thread. Use single-thread mode only (avoids COEP/COOP headers). Ship SmolLM2-360M-Q4 (~200MB) as the default mobile model; wllama's 2GB ArrayBuffer limit means nothing larger is safe to attempt.
+- `openai@^6.27.0` — Multi-provider cloud; covers OpenAI directly, Grok/xAI via `baseURL: 'https://api.x.ai/v1'`, and any corporate OpenAI-compatible endpoint via user-supplied `baseURL`. One package, three providers, zero structural differences between them.
+- `optimum-onnx[onnxruntime]>=0.1.0,<0.2.0` — Python training pipeline for the sanitization NER model; `ORTModelForTokenClassification` for token-level PII detection. Must use FP16 or Q8 quantization for the sanitization model (not INT8, which collapses recall by 30-40%).
+- TypeScript template literal functions — Zero-dependency template engine for structured briefing text; no Handlebars, no Eta.js. All slots are strongly typed; templates are developer-controlled and bounded (~25 total across review, compression, and GTD flow categories).
 
-**New Python toolchain (developer machine only):**
-- Python 3.11+ + PyTorch 2.4+: classifier head training (5-class GTD atom type)
-- `sentence-transformers` 3.x: embedding generation during training — must use identical model as browser (Xenova/all-MiniLM-L6-v2, mean pooling, normalized)
-- `optimum[onnx]` 2.1.0: ONNX export and INT8 quantization via `ORTQuantizer`
-- `onnxruntime` 1.24.x: Python-side validation before browser deployment
-- Anthropic Claude API (existing key): synthetic training data generation (~$0.01–0.05 per run)
+**Critical version and compatibility constraints:**
+- wllama WASM binary files must be served from the same origin (`public/wllama/single-thread/wllama.wasm` copied from npm package)
+- `optimum-onnx` pins `transformers>=4.56,<4.58` — compatible with existing `onnxruntime>=1.20,<1.22`
+- GGUF model files must be added to Vite PWA `globIgnores` (same pattern as existing ONNX WASM exclusion)
+- `openai` SDK `dangerouslyAllowBrowser: true` — same BYOK memory-only key pattern as existing Anthropic adapter
 
-**Architecture key decision:** The classifier head is a separate ONNX file that accepts the 384-dim MiniLM embedding vector as input and outputs class logits. It is NOT a full fine-tuned transformer — it is a 2-layer MLP (~200–400KB) that sits downstream of the existing embedding model. Multiple task classifiers remain well under 2MB total.
-
-See [STACK.md](.planning/research/STACK.md) for full decision rationale.
+See [STACK.md](.planning/research/STACK.md) for full decision rationale, version compatibility matrix, and rejected alternatives.
 
 ### Expected Features
 
-**Must have (table stakes — P1 for v3.0 launch):**
-- Synthetic training data corpus (300–500 labeled GTD examples per class) — prerequisite to all model features
-- Python fine-tuning + ONNX export script — reproducible, committed to `scripts/train/`
-- ONNX type classifier in Tier 2 — replaces centroid similarity for `classify-type` task
-- Confidence calibration (Platt/temperature scaling) — required for pipeline escalation correctness; uncalibrated softmax misfires existing `CONFIDENCE_THRESHOLDS`
-- First-load download UX — progress indicator for the one-time model download
-- Graceful fallback when ONNX model fails — fall through to Tier 1 keyword heuristics, no crash
-- Correction export utility — offline script to extract `chosenType != suggestedType` events from Dexie for future retraining
-- Settings panel model status — model version, download status, correction count (tech debt cleanup already in v3.0 scope)
+**Must have (P1 — table stakes for v4.0 milestone promise):**
+- Device capability probe — detects WebGPU availability, `device.limits.maxBufferSize`, and `navigator.deviceMemory`; drives all adapter selection downstream
+- WASM LLM adapter (`WasmAdapter` wrapping wllama) — mobile Tier 1 local AI, single-thread only
+- Adaptive `DeviceAdapter` — routes to `BrowserAdapter` (WebGPU) or `WasmAdapter` (WASM) at init; callers stay device-oblivious
+- Template engine — offline review briefings, compression explanations, GTD flow prompts with no LLM required; scoped to deterministic signal substitution only
+- Sanitization ONNX classifier — replaces `sanitizeForCloud()` passthrough; NER-style binary classifier in embedding worker; Python training pipeline for soft-PII data
+- OpenAI cloud adapter — gpt-4o-mini default; same BYOK pattern as Anthropic
+- Grok/xAI cloud adapter — reuses OpenAI SDK with `baseURL` override; near-zero additional code beyond OpenAI adapter
+- Corporate/self-hosted endpoint adapter — configurable `baseURL` + Bearer token; covers Ollama, LM Studio, Azure OpenAI
+- Section routing ONNX classifier — replaces centroid-based routing deferred from v3.0; solves cold-start for new users
+- Adaptive confidence thresholds — mobile device class raises thresholds to reduce escalation on slower WASM inference
 
-**Should have (P2 — add after core validated):**
-- Section routing via nearest-neighbor embedding (Option B) — reuses MiniLM, no new model download, avoids dynamic-label problem of a shared section model
-- Staleness score classifier — requires separate training data; add once type classifier is stable
-- Compression candidate model — depends on staleness model; higher complexity
+**Should have (competitive differentiators — add during v4.0 validation):**
+- Model capability probe with user-visible feedback — "Local AI: WebGPU (GPU)" vs "Local AI: WASM (mobile mode)" transparency builds trust
+- Pre-send approval modal showing sanitization diff — users see what was redacted before approving cloud dispatch
+- Communication log provider identity — `CloudRequestLogEntry.provider` expanded to `'anthropic' | 'openai' | 'grok' | 'corporate'`
+- Sanitization level UI that explicitly communicates what is and is not caught (partial vs structured PII)
+- Error messaging for corporate CORS failures — Ollama/LM Studio users need clear "add `--cors` flag" guidance
 
-**Defer (v3.x / P3):**
-- Model quality dashboard (full settings panel view with accuracy trend)
-- Priority prediction (behavioral signal capture raises privacy concerns; treat as research spike)
-- Community corpus contributions (requires consent UX, anonymization, governance)
-- WebGPU acceleration (CPU ONNX is <50ms for 5-class classification; WebGPU not universally available)
+**Defer to v4.x:**
+- Compression candidate ONNX detector — requires v3.0 correction data (compress-accepted vs compress-rejected) to accumulate; build training pipeline after 4-6 weeks of v3.0 production use
+- Streaming UI for OpenAI/Grok — both providers support streaming; ConversationTurnCard needs partial-update handling; defer until adapters are stable
+- WebGPU LLM opt-in for Android — experimental; WASM is the safe mobile default; add after WASM path is proven
+- Priority prediction ONNX — high privacy surface, requires behavioral signal capture with explicit opt-in; research spike only
 
 **Anti-features (do not build):**
-- In-browser retraining: ONNX Runtime Web is inference-only; retraining requires Python offline pipeline
-- Continuous online learning: catastrophic forgetting on single examples; use correction log + offline retrain cycle
-- Auto-tune confidence thresholds per user: creates unpredictable escalation behavior; use fixed thresholds with a simple "AI assertiveness" slider
-- Multi-task single model: section routing uses dynamic user-specific labels; must be separate models or use embedding nearest-neighbor
-- Bundle large model with app: DistilBERT-base INT8 is ~60–80MB; browser Cache API is the correct caching mechanism
+- Auto-send to cloud without approval — locked architectural decision; pre-send modal is the privacy contract
+- API keys in IndexedDB — memory-only key vault is the correct tradeoff for a BYOK privacy tool
+- WebGPU LLM as mobile default — OOMs on mid-range Android; hard failure on iOS Safari
+- LLM-based sanitization — 500ms-2000ms latency before every cloud request; ONNX NER is <50ms
+- All ONNX models in one worker — cumulative memory exhaustion on mobile
 
-See [FEATURES.md](.planning/research/FEATURES.md) for full prioritization matrix and dependency graph.
+See [FEATURES.md](.planning/research/FEATURES.md) for full feature dependency graph, prioritization matrix, and technical constraints.
 
 ### Architecture Approach
 
-The integration is a surgical replacement inside one component. The Tier 2 handler's centroid cosine similarity lookup is replaced by an ONNX inference call to the embedding worker. The `TierHandler` interface, `dispatchTiered()` pipeline, `ClassificationEvent` schema, and all store signals are unchanged. The embedding worker gains a `CLASSIFY_ONNX` message type and a `Map<task, InferenceSession>` singleton for cached ONNX sessions. The centroid builder is preserved as fallback during bootstrap (when ONNX model files are absent) and is gated by a `getOnnxReady(task)` flag.
+V4.0 adds four integration points to the existing architecture without replacing any v3.0 component. The `DeviceAdapter` wraps either `BrowserAdapter` or `WasmAdapter` using an adapter-within-adapter pattern — the rest of the system never knows which is active. The `CloudAdapter` is refactored into a provider-agnostic safety shell with a `CloudProvider` interface; `AnthropicProvider`, `OpenAIProvider`, `GrokProvider`, and `CorporateProvider` are thin request formatters with zero safety logic. The sanitization classifier runs as a second ONNX session inside the existing embedding worker (or a dedicated sanitization worker if memory budget demands it). The template engine is main-thread pure functions with no worker overhead.
 
 **Major components:**
-1. `scripts/train/` (NEW — Python only): 4-step pipeline — synthetic data generation, embedding via Python MiniLM, classifier head training, ONNX export + browser-runtime validation
-2. `public/models/classifiers/` (NEW — static assets): `triage-type.onnx`, `route-section.onnx` — committed to git (~200–400KB each), served by Vite as static assets, no Vite config changes needed
-3. `src/search/embedding-worker.ts` (MODIFIED): adds ONNX InferenceSession management + `CLASSIFY_ONNX` / `ONNX_CLASSIFY_RESULT` message types; MiniLM pipeline unchanged
-4. `src/ai/tier2/tier2-handler.ts` (MODIFIED): replaces centroid cosine comparison with ONNX inference call; centroid path preserved as fallback via `getOnnxReady()` flag
-5. `src/ai/tier2/types.ts` (MODIFIED): confidence threshold tuning based on measured ONNX model accuracy (start at 0.78 for `classify-type`, not the current 0.65)
+1. `DeviceAdapter` (`src/ai/adapters/device.ts` — NEW) — capability detection at init; delegates to `BrowserAdapter` (WebGPU) or `WasmAdapter` (WASM/CPU); exposes same `AIAdapter` interface; store never needs to know which is active
+2. `WasmAdapter` (`src/ai/adapters/wasm.ts` — NEW) — wllama single-thread binding; SmolLM2-360M-Q4 default; Cache API model persistence; 512-token context limit for mobile latency
+3. `CloudAdapter` refactored + provider classes (`src/ai/adapters/cloud.ts` REFACTORED, `providers/` NEW) — all safety gates remain in `CloudAdapter.execute()`; providers are pure request formatters; `cloud-provider.ts` defines the `CloudProvider` interface
+4. Sanitization ONNX in embedding worker (`src/search/embedding-worker.ts` MODIFIED) — second `InferenceSession` alongside type classifier; `SANITIZE_CHECK` / `SANITIZE_RESULT` message types; runs before `logEntry` construction using branded `SanitizedPrompt` type
+5. Template engine (`src/ai/templates/` — NEW directory) — pure TypeScript functions; `TemplateContext` typed interface; no library dependency; covers review briefings, compression explanations, GTD flow prompts
+6. Python sanitization pipeline (`scripts/train/train-sanitizer.py` — NEW) — NER training on synthetic soft-PII GTD data; FP16/Q8 export (not INT8); acceptance gate: recall >= 0.85 on soft-PII test set
 
-**Unchanged (confirmed from codebase):** `pipeline.ts`, `handler.ts`, `tier1-handler.ts`, `tier3-handler.ts`, `centroid-builder.ts`, `classification-log.ts`, `router.ts`, `triage.ts`, `compression.ts`, all SolidJS store signals.
+**Recommended build order (from ARCHITECTURE.md build order analysis):**
+1. Template engine — no dependencies on any other new component; immediately reduces Tier 3 calls
+2. Multi-provider cloud refactor — refactor CloudAdapter before adding sanitization to avoid doing it twice
+3. Sanitization classifier — wires into the already-refactored CloudAdapter; Python training can run in parallel with Phase 2
+4. Device-adaptive local LLM — independent of Phases 1-3; can overlap with Phase 3 in parallel
 
-**Build order:** Phase A (Python training) and Phase B (browser integration with placeholder ONNX) can proceed in parallel. Phase C integrates trained models. This prevents the Python training timeline from blocking TypeScript development.
+**Unchanged from v3.0:** `pipeline.ts`, `router.ts`, `tier1-handler.ts`, `tier3-handler.ts`, `centroid-builder.ts`, `classification-log.ts`, `triage.ts`, `compression.ts`, `CONFIDENCE_THRESHOLDS` structure (extended, not replaced), all SolidJS store signals, atom type classifier ONNX model.
 
-See [ARCHITECTURE.md](.planning/research/ARCHITECTURE.md) for full component diagram, data flow sequences, and new/modified/unchanged component tables.
+See [ARCHITECTURE.md](.planning/research/ARCHITECTURE.md) for full system diagram, data flow sequences, anti-patterns, and complete new/modified/unchanged component tables.
 
 ### Critical Pitfalls
 
-See [PITFALLS.md](.planning/research/PITFALLS.md) for all 7 critical pitfalls with prevention checklists, recovery strategies, and "looks done but isn't" verification checklist. Top 5:
+See [PITFALLS.md](.planning/research/PITFALLS.md) for all 12 pitfalls with prevention checklists, "looks done but isn't" verification, and recovery strategies. Top 8:
 
-1. **ONNX numerical mismatch (Python vs browser WASM backend)** — After ONNX export, validate using `onnxruntime-web` in a browser-side harness on 50+ representative inputs, NOT just Python `onnxruntime`. Assert top-1 predictions match on >95% of inputs. Keep opset at 17. A `max_diff > 0.01` on softmax logits is a release blocker. Prevention phase: training pipeline.
+1. **WebGPU capability detection insufficient for VRAM** — `navigator.gpu !== undefined` does not mean adequate VRAM. Use compound check: WebGPU presence + `device.limits.maxBufferSize >= 800MB/2GB` by model size + `navigator.deviceMemory` heuristic. Add a 30-second hard timeout on `BrowserAdapter.initialize()` and a sentinel single-token inference after init. Without this, integrated GPU machines (Intel Iris Xe) OOM mid-download and hang indefinitely in "loading" state.
 
-2. **Synthetic data distribution gap (model is confidently wrong on real input)** — LLM-generated examples are fluent; real user input is fragmentary, typo-ridden, and ambiguous. Generate diverse examples including short fragments, typo-variants, and cross-category cases. Test set must include 50–100 real-style examples. Set initial Tier 2 threshold at 0.78–0.80. Prevention phase: synthetic data generation.
+2. **iOS is not a viable WASM LLM target** — iOS Safari single-threaded WASM produces 0.3-1 token/second for 1B models (vs. 10-15 on Android Chrome). SharedArrayBuffer threading requires COOP/COEP + Apple's internal toggle, which does not reliably fire on iOS. iOS must be explicitly routed to Tier 2 ONNX + cloud only. Testing "mobile WASM LLM" on Android alone is insufficient.
 
-3. **Model-collapse feedback loop from approval fatigue** — Log `modelSuggestion` separately from `userChoice` in the classification log (requires Dexie schema migration). Always keep original synthetic data as a training floor — never replace it with only user-confirmed data. Show top-2 predictions to reduce rubber-stamping. Prevention phase: data collection design and schema update before classifier ships.
+3. **Multi-provider cloud adapter breaks on structural API differences** — Anthropic-format JSON schema passed to OpenAI causes 400 errors. OpenAI SSE streaming format differs structurally from Anthropic streaming events. Grok silently ignores `strict: true` function calling. Each provider requires its own adapter class with independent schema translation and SSE parser. Never use `if (provider === ...)` branching inside a shared class.
 
-4. **GTD classification ambiguity causes overconfident wrong predictions** — task/decision/insight boundaries are subjective; 15–25% of real items are genuinely ambiguous. For inputs where top-2 class probabilities are within 0.15 of each other, show both options rather than pre-filling. Use label smoothing (epsilon=0.1) during training. Prevention phase: synthetic data generation and UI integration.
+4. **Sanitization model training data creates false precision** — Regex-labeled training data teaches the model to re-detect regex-catchable PII (emails, phone numbers, SSNs). Achieves 95%+ accuracy on structured PII while missing all soft PII (names in task context, financial references, medical references). Train the ONNX soft-PII layer exclusively on examples where regex fails. Evaluate against a human-curated "embarrassing sentences without structured PII" test set.
 
-5. **ONNX model files accidentally bundled in JS chunk** — Place all `.onnx` files in `public/models/classifiers/`. Never import `.onnx` in TypeScript. Reference by URL string. Verify: no JS chunk in `dist/assets/` exceeds 2MB after integration. Prevention phase: first browser integration phase.
+5. **INT8 quantization collapses recall on sanitization NER model** — Token-classification models lose 30-40% recall after INT8 quantization (borderline sensitive spans collapse; clearly sensitive spans survive). For the sanitization model, use FP16 or Q8. Require recall >= 0.85 on the soft-PII test set before integration. Never evaluate a privacy gate on F1 alone.
+
+6. **Privacy gate race condition — modal shows unsanitized content** — If ONNX sanitization is added after `logEntry` creation, the pre-send approval modal shows pre-sanitization content while the API receives sanitized content. Use a branded `SanitizedPrompt` type so the TypeScript compiler enforces that `logEntry` can only be constructed after sanitization completes.
+
+7. **Worker memory exhaustion from accumulating ONNX models** — Each new `InferenceSession` adds 10-30MB to the worker heap. Four new classifiers = 50-100MB cumulative. On mobile (1GB browser budget) this causes silent worker crash and all Tier 2 classification hangs. Split workers: embedding worker keeps MiniLM + type classifier; `classifier-worker.ts` for section routing/compression/priority; `sanitization-worker.ts` for the privacy gate.
+
+8. **Template engine scope creep beyond deterministic signal substitution** — Templates produce coherent output for counts, scores, and section names. They fail for insight synthesis ("why these 7 tasks matter"). Templates must be scoped to Tier 2 structural output only. Acknowledge the capability gap in the UX on mobile: "Simplified briefing (offline mode) — enable cloud AI for narrative insights."
+
+---
 
 ## Implications for Roadmap
 
-The natural phase structure follows the dependency chain: training data and Python toolchain must exist before ONNX models can be produced; ONNX models can be integrated into the browser before training completes (using a placeholder); both converge at integration testing.
+Based on research, suggested phase structure:
 
-### Phase 1: Python Training Infrastructure and Synthetic Data
+### Phase 1: Template Engine
 
-**Rationale:** Everything else depends on trained ONNX artifacts. Synthetic data generation is the critical path — no training data means no model. This phase has no TypeScript changes and can be executed fully independently. The `modelSuggestion` field must also be added to the classification log schema here — retrofitting it after the classifier ships is painful.
-**Delivers:** `scripts/train/` with 4-step reproducible pipeline; `scripts/training-data/type-classification.jsonl` (300–500 labeled examples per class, including diverse/fragmentary/ambiguous examples); `requirements.txt` for Python environment; `modelSuggestion` field added to `ClassificationEvent` schema in Dexie with migration.
-**Addresses:** Synthetic training data corpus (P1), Python fine-tuning + ONNX export script (P1)
-**Avoids:** Synthetic data distribution gap (Pitfall 2) — diversity requirements and real-style test set defined here; model-collapse schema requirement (Pitfall 5) — `modelSuggestion` field added before classifier ships
+**Rationale:** No dependencies on any other new v4.0 component. Pure TypeScript, no new packages, no worker changes. Immediately reduces Tier 3 cloud LLM calls for review briefings and compression coaching. Establishes the `TemplateContext` type that the rest of the pipeline will reference. Lowest-risk phase — start here to build momentum.
+**Delivers:** `src/ai/templates/` directory; `TemplateContext` + `TemplateResult` types; templates for weekly review briefing, compression explanations, GTD flow prompts; `generate-review-briefing` and `generate-compression-explanation` task types added to `AITaskType`; offline-capable structured text generation.
+**Addresses features:** Template engine (offline generation), partial offline mobile experience
+**Avoids:** Pitfall 6 (template scope creep) — the `TemplateContext` design must define the "no synthesis" rule before any template is written; limit to 2 signals per template clause.
+**Research flag:** SKIP — TypeScript template literal pattern is well-understood; no research needed.
 
-**Research flag:** SKIP — stack decisions are confirmed (PyTorch + sentence-transformers + optimum[onnx]). Standard ML pipeline with well-documented tools. Proceed directly.
+### Phase 2: Multi-Provider Cloud Adapter Refactor
 
-### Phase 2: ONNX Model Training and Validation
+**Rationale:** Must happen before sanitization is wired in. Refactoring `CloudAdapter` after adding sanitization means doing the restructure twice under live code. Establishing the `CloudProvider` interface and extracting `AnthropicProvider` first makes OpenAI, Grok, and Corporate straightforward additions rather than structural rework under load. The `openai` package covers all three new providers.
+**Delivers:** `CloudProvider` interface; `AnthropicProvider` (extracted from existing `cloud.ts`), `OpenAIProvider`, `GrokProvider`, `CorporateProvider`; refactored provider-agnostic `CloudAdapter` shell with all safety gates; multi-slot `key-vault.ts`; expanded `CloudRequestLogEntry.provider` type; provider identity shown in pre-send modal and communication log; settings UI with per-provider key entry.
+**Uses stack:** `openai@^6.27.0` with `baseURL` override for Grok and corporate endpoints
+**Implements architecture:** `CloudProvider` interface and four provider classes; `cloud-provider.ts`; provider-agnostic `CloudAdapter.execute()`
+**Avoids:** Pitfall 3 (multi-provider schema mismatches) — each provider gets its own adapter class, independent schema translation, and independent SSE parser; no `if (provider === ...)` branching.
+**Research flag:** SKIP — OpenAI SDK pattern is well-documented; xAI OpenAI-compatibility confirmed in official xAI docs; Anthropic SDK behavior already validated in production.
 
-**Rationale:** With training data in hand, train the classifier head, export to ONNX, and validate. The browser-runtime validation harness is the acceptance gate — the model does not ship to the browser until it passes `onnxruntime-web` validation on 50+ inputs with top-1 match rate >95%. Confidence calibration must happen here before browser integration begins.
-**Delivers:** `public/models/classifiers/triage-type.onnx` validated by browser-runtime harness; confidence calibration applied (Platt scaling on 20% hold-out); accuracy on real-style test set >75%; per-class sample count report to guard against minority-class collapse.
-**Addresses:** ONNX type classifier in Tier 2 (P1), Confidence calibration (P1)
-**Avoids:** ONNX numerical mismatch (Pitfall 1) — browser-runtime validation is the phase gate; GTD ambiguity overconfidence (Pitfall 6) — label smoothing applied during training, starting threshold set at 0.78
+### Phase 3: Sanitization Classifier
 
-**Research flag:** SKIP — ONNX export + validation pattern confirmed by official Optimum docs and bandarra.me reference implementation. No additional research needed.
+**Rationale:** Depends on Phase 2 refactor being complete (wires into the refactored `CloudAdapter.execute()`). The Python training pipeline can run in parallel with Phase 2 code work, so the model may be ready when code integration begins. This phase delivers the privacy differentiator that distinguishes BinderOS from every other browser GTD tool. The branded `SanitizedPrompt` type prevents the race condition at the type system level.
+**Delivers:** ONNX NER binary classifier replacing `sanitizeForCloud()` passthrough; `SANITIZE_CHECK` / `SANITIZE_RESULT` message types in embedding worker (or dedicated `sanitization-worker.ts`); `checkSanitization()` in `privacy-proxy.ts`; `SanitizedPrompt` branded type enforcing execution order; pre-send modal showing sanitization diff; `sanitize-check.onnx` (FP16/Q8, not INT8); Python training pipeline for synthetic soft-PII GTD data; acceptance gate: recall >= 0.85 on soft-PII test set.
+**Uses stack:** `optimum-onnx[onnxruntime]>=0.1.0,<0.2.0` for Python training; existing `onnxruntime-web` for browser inference
+**Implements architecture:** Second `InferenceSession` in embedding worker; `checkSanitization()` integrated between sanitization and logEntry construction; `SanitizedPrompt` branded type in cloud adapter
+**Avoids:** Pitfall 4 (false precision from regex-labeled training) — train on soft-PII only; Pitfall 5 (INT8 recall collapse) — use FP16/Q8, minimum recall gate; Pitfall 7 (race condition) — `SanitizedPrompt` branded type enforces order at compile time.
+**Research flag:** MEDIUM — ONNX NER browser inference is confirmed; GTD-domain soft-PII synthetic data generation is novel. The boundary between regex-catchable PII (handled by existing regex layer) and ONNX soft-PII layer needs validation during data generation. FP16 vs Q8 quantization tradeoffs for the specific model architecture may need investigation before the training pipeline is finalized.
 
-### Phase 3: Browser Inference Integration
+### Phase 4: Device-Adaptive Local LLM
 
-**Rationale:** Can start before Phase 2 completes using a placeholder ONNX (random-weight sklearn LogisticRegression export) to validate worker wiring. When Phase 2 delivers validated model files, ONNX-backed inference activates. COOP/COEP headers must be addressed during this phase — they are a deployment blocker.
-**Delivers:** `embedding-worker.ts` extended with `CLASSIFY_ONNX` message handler + session cache; `tier2-handler.ts` with ONNX inference path + centroid fallback flag; first-load download UX with progress indicator; graceful fallback when model fails to load; COOP/COEP headers verified on production hosting; bundle size check confirms no `.onnx` in JS chunks.
-**Addresses:** First-load download UX (P1), Graceful fallback on model failure (P1)
-**Avoids:** ONNX model files bundled in JS chunk (Pitfall 7) — `public/models/` pattern enforced; env.allowLocalModels cache poisoning (Pitfall 4) — env flags set as first operations in worker; COOP/COEP header breakage (Pitfall 3) — `credentialless` policy + `SharedArrayBuffer` test on production
+**Rationale:** Independent of Phases 1-3 (depends only on the existing `BrowserAdapter` interface). Can be built in parallel with Phase 3. Delivers the other half of the "offline on any device" promise: WASM LLM for mobile devices where WebGPU is unavailable or insufficient. The `DeviceAdapter` wrapper keeps the change fully isolated — store initialization is the only modification outside the new adapter files.
+**Delivers:** `DeviceAdapter` (WebGPU vs WASM selection at init); `WasmAdapter` (wllama single-thread binding); SmolLM2-360M-Q4 model via Cache API persistence; device capability probe with user-visible feedback; adaptive confidence thresholds per device class (`CONFIDENCE_THRESHOLDS` extended with mobile-class overrides); `public/wllama/single-thread/wllama.wasm` served from same origin.
+**Uses stack:** `@wllama/wllama@^2.3.7` single-thread mode; SmolLM2-360M-Q4 GGUF (~200MB)
+**Implements architecture:** `DeviceAdapter` wrapper; `WasmAdapter`; modified store init (DeviceAdapter replaces direct BrowserAdapter instantiation)
+**Avoids:** Pitfall 1 (WebGPU VRAM detection) — compound capability check (WebGPU + maxBufferSize + deviceMemory) + 30-second timeout + sentinel single-token inference; Pitfall 2 (iOS WASM LLM) — explicit iOS detection via user-agent, route to Tier 2 + cloud only, never attempt wllama on iOS; Pitfall 11/COEP (COOP/COEP) — single-thread wllama avoids COEP/COOP header requirements entirely.
+**Research flag:** MEDIUM — wllama single-thread integration is straightforward; iOS-specific behavior and Android mid-range performance sentinel threshold calibration need validation on real hardware. The 2 tokens/second Android benchmark threshold is directional, not empirically measured for SmolLM2.
 
-**Research flag:** SKIP — the `classifyViaWorker()` pattern already exists in `tier2-handler.ts`; ONNX path follows the same structure. May need minor investigation on COOP/COEP header syntax for the specific production hosting environment, but this is environment-specific configuration, not research.
+### Phase 5: Section Routing ONNX Classifier (Deferred from v3.0)
 
-### Phase 4: Tech Debt + Settings Panel + Correction Utility
-
-**Rationale:** v3.0 scope includes existing tech debt cleanup (settings panel UX, status bar AI indicator, dead code in `llm-worker.ts`, `isReadOnly` enforcement, stale AIOrb comments). Model status display and correction export utility are low-complexity additions that naturally belong alongside this cleanup work.
-**Delivers:** Settings panel showing model version, download status, correction count; `scripts/export-corrections.ts` offline utility for extracting classification corrections from Dexie as JSONL for retraining; tech debt items resolved.
-**Addresses:** Settings: model status display (P1), Correction export utility (P1)
-**Avoids:** No specific pitfalls — consolidation and cleanup phase.
-
-**Research flag:** SKIP — no research needed. All work is within existing codebase patterns.
-
-### Phase 5: Section Routing via Nearest-Neighbor (P2 — Post-Core)
-
-**Rationale:** Section routing via embedding nearest-neighbor (Option B from FEATURES.md) is higher-value than a fine-tuned section classifier because user sections are dynamic — a shared trained model cannot handle variable output labels across users. Option B reuses the existing MiniLM worker with no new model download and achieves higher accuracy than centroid averaging.
-**Delivers:** Offline section routing replacing centroid averaging; per-atom embedding nearest-neighbor to existing section atoms stored in Dexie; no new model file or download.
-**Addresses:** Section routing via nearest-neighbor (P2)
-
-**Research flag:** SKIP — embedding nearest-neighbor is a well-understood retrieval technique. Implementation is within the `tier2-handler.ts` route-section task path.
+**Rationale:** Addresses the cold-start section routing problem deferred from v3.0. Centroid-based routing fails for new users who have no atom history. ONNX classifier trained on PARA semantics provides reliable routing without user history. Comes after Phase 4 because the worker memory architecture (worker split decisions from Phase 3) must be in place before adding another model — the section classifier goes in `classifier-worker.ts`, not the embedding worker.
+**Delivers:** ONNX section routing model replacing centroid fallback in `tier2-handler.ts`; Python training pipeline for PARA-domain text (`scripts/train/`); new embedding/classifier worker message type; user-specific section name fallback via nearest-neighbor for section titles.
+**Uses stack:** Existing ONNX Runtime Web + Python training pipeline patterns from v3.0 type classifier
+**Implements architecture:** New ONNX session in `classifier-worker.ts`; `route-section` task rerouted to ONNX primary with centroid fallback
+**Avoids:** Pitfall 8 (worker memory exhaustion) — section routing ONNX goes in `classifier-worker.ts`, not embedding worker; Pitfall 12 (model-collapse feedback loop) — section routing corrections must be tracked in classification log with per-task `modelSuggestion` field.
+**Research flag:** LOW — ONNX text classification pipeline follows the same pattern as the v3.0 type classifier. PARA semantics are well-defined. Training data generation follows the same synthetic approach already proven in v3.0.
 
 ### Phase Ordering Rationale
 
-- Python training (Phase 1–2) and browser integration (Phase 3) overlap by design — the browser integration uses a placeholder ONNX from day one, preventing the training timeline from blocking frontend development.
-- Synthetic data pipeline is first because it is the prerequisite dependency for all model work. No training data means no model.
-- `modelSuggestion` field must be added to the classification log schema in Phase 1, before the classifier ships in Phase 3. Retrofitting this schema change after production data is recorded is costly.
-- Tech debt cleanup deferred to Phase 4 to avoid mixing high-risk model validation work with low-risk code cleanup. Completing model integration first means the core feature is working before cleanup introduces unrelated churn.
-- Section routing last because it is P2 scope and adds value incrementally after the type classifier is validated in production.
+- **Templates before cloud refactor** — templates have zero dependencies and produce immediate value (reduced Tier 3 calls) while Phase 2 refactoring happens. Phases 1 and 2 can run in parallel.
+- **Cloud refactor before sanitization** — the safety gate architecture in `CloudAdapter` must be stable before the privacy gate is wired into it. Adding sanitization to the existing single-provider `CloudAdapter` would require a second refactor.
+- **Python sanitization training runs in parallel with Phase 2** — the training pipeline can start immediately; model validation completes before Phase 3 code integration begins.
+- **Device-adaptive LLM overlaps with sanitization** — Phase 4 depends only on `BrowserAdapter` (unchanged); Phases 3 and 4 can run in parallel on separate branches.
+- **Section routing last** — deferred from v3.0; depends on worker architecture decisions from Phase 3; lowest user impact if delayed; uses proven v3.0 training patterns.
 
 ### Research Flags
 
-Phases needing deeper research during planning:
-- **None.** All critical decisions are resolved in the research files. Stack, architecture, and pitfall mitigations are confirmed with HIGH-MEDIUM confidence from official documentation and working examples.
+**Phases likely needing `/gsd:research-phase` during planning:**
+- **Phase 3 (Sanitization Classifier):** Soft-PII synthetic data generation for GTD context is novel territory. The "regex-catchable PII vs. ONNX soft-PII" boundary needs formal definition before training data is generated. FP16 vs Q8 quantization tradeoffs for the sanitization model architecture should be investigated before the training pipeline is finalized. Recall >= 0.85 is the target, but calibration of what "soft-PII in GTD context" means for the test set requires domain-specific thought.
+- **Phase 4 (Device-Adaptive LLM):** iOS wllama exclusion logic is clear, but the Android sentinel benchmark threshold (2 tokens/second for SmolLM2) needs validation on real mid-range hardware. The 30-second initialization timeout for WebGPU may need calibration against actual wllama initialization behavior for the specific GGUF model files.
 
-Phases with standard patterns (skip research-phase):
-- **Phase 1 (Python toolchain):** Standard ML pipeline with well-documented tools (PyTorch + sentence-transformers + optimum[onnx]).
-- **Phase 2 (ONNX training):** Official ONNX export docs + Optimum docs + existing BinderOS embedding patterns.
-- **Phase 3 (browser integration):** Existing `classifyViaWorker()` pattern is the template; ONNX path extends it with `CLASSIFY_ONNX`.
-- **Phase 4 (tech debt):** Pure code cleanup within established patterns.
-- **Phase 5 (section routing):** Standard embedding nearest-neighbor retrieval.
+**Phases with standard patterns (skip research-phase):**
+- **Phase 1 (Template Engine):** Pure TypeScript template literal functions; no external dependencies; bounded scope.
+- **Phase 2 (Multi-Provider Cloud):** OpenAI SDK + `baseURL` override is thoroughly documented; xAI OpenAI-compatibility confirmed in official docs; Anthropic behavior already in production.
+- **Phase 5 (Section Routing ONNX):** Same training pipeline as v3.0 type classifier; PARA semantics are well-defined; standard ONNX classification pattern.
+
+---
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Core browser stack unchanged and validated through v2.0. Python toolchain (PyTorch + sentence-transformers + optimum[onnx]) verified against official docs. Classifier head architecture (MiniLM embed + lightweight ONNX classification head) confirmed by bandarra.me reference implementation and HuggingFace official patterns. |
-| Features | MEDIUM-HIGH | ONNX/Transformers.js integration pipeline HIGH confidence. Synthetic GTD data quality is novel — no prior GTD-specific studies exist — MEDIUM. Staleness/compression models are research-level — correctly deferred to P2/P3. Section routing Option B (nearest-neighbor) is MEDIUM confidence: well-understood technique, relies on sufficient section atom coverage in user's Dexie. |
-| Architecture | HIGH | Architecture research was derived directly from reading the existing BinderOS codebase. Component boundaries, unchanged files, and modification targets are confirmed against current implementation in `src/ai/tier2/` and `src/search/embedding-worker.ts`. Build order validated against dependency graph. |
-| Pitfalls | HIGH | ONNX Runtime Web operator gaps and WASM backend numerical behavior verified against official docs and GitHub issues. Synthetic data model-collapse and distribution shift backed by peer-reviewed papers (Shumailov et al. Nature 2024; ACL/EMNLP 2025; arXiv 2503.14023). COOP/COEP patterns verified against web.dev and working Vite configurations. GTD classification ambiguity from ACL LAW-XIX 2025. |
+| Stack | HIGH | All four new dependencies verified against official docs, GitHub releases, and npm. Version compatibility (wllama 2GB limit, optimum-onnx transformers constraint, openai SDK browser pattern) confirmed. Rejected alternatives documented with rationale. |
+| Features | MEDIUM-HIGH | Table stakes features clearly defined and well-scoped. Sanitization model recall under quantization is MEDIUM (documented failure mode in optimum GitHub issues; GTD-specific numbers will vary). WASM LLM mobile performance on low-end Android is MEDIUM (community-reported, not officially benchmarked for SmolLM2 on BinderOS's GTD workload). |
+| Architecture | HIGH | All integration points grounded in reading the existing codebase (`cloud.ts`, `embedding-worker.ts`, `adapters/`). Provider plugin pattern, worker split decisions, and sanitization execution order with branded types are all solid. Build order is unambiguous and dependency-driven. |
+| Pitfalls | HIGH for critical; MEDIUM for quantization specifics | iOS WASM LLM, WebGPU VRAM detection, race condition, multi-provider schema mismatches, worker memory — all HIGH from official docs and verified GitHub issues. INT8 recall collapse for sanitization model — MEDIUM (documented in optimum issues, but exact degradation on the new sanitization model will vary). |
 
-**Overall confidence:** MEDIUM-HIGH
+**Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **GTD-specific synthetic data quality on decision/insight boundary:** No prior studies on this specific classification pair. The "decision vs. insight" boundary is acknowledged as the hardest case. Plan to generate intentionally ambiguous cross-category examples and validate specifically on this boundary with real-style examples before shipping. If calibrated accuracy on decision/insight remains below 65% after training, consider collapsing them into a single class with secondary UI selection.
-- **Confidence threshold tuning requires empirical measurement:** The recommended starting threshold of 0.78 for `classify-type` is based on research analysis, not measured performance on a trained model. Plan one calibration iteration after the first model is trained — measure escalation rate on a held-out set and adjust before integration testing.
-- **Production hosting COOP/COEP configuration:** The specific hosting environment for the production PWA is not captured in the research. The COEP `credentialless` header approach is confirmed technically correct but must be tested against whatever CDN/server serves the production build. Flag for Phase 3 environment setup.
-- **Classification log `modelSuggestion` field for pre-v3.0 entries:** Existing classification log entries do not have the `modelSuggestion` field required by the model-collapse guard (Pitfall 5). The Dexie migration will handle new entries. Decide explicitly in Phase 1 whether to back-populate existing entries as `undefined` or mark pre-v3.0 entries as non-eligible for retraining via a version field.
+- **Sanitization recall threshold (0.85):** The minimum recall figure is derived from NLP quantization literature and the optimum GitHub issue on token-classification models. The actual threshold for BinderOS's sanitization model on GTD-domain soft-PII may differ. Validate against a human-curated test set during Phase 3 rather than treating 0.85 as a fixed universal target.
+- **iOS wllama performance measurement:** The <1 token/second figure for iOS single-thread WASM is documented but device-generation-specific. The decision to exclude iOS from WASM LLM is correct and firm. The Android sentinel benchmark threshold (2 tokens/second) should be validated on actual mid-range hardware before Phase 4 ships.
+- **Corporate CORS error messaging:** Corporate/self-hosted endpoints (Ollama, LM Studio default configs) may lack browser CORS headers. This is a documentation and error UX decision, not a code problem, but it needs a deliberate messaging plan in Phase 2 so users see actionable guidance rather than an opaque fetch failure.
+- **Worker split memory budget:** The recommendation to split workers is based on a 50-100MB estimate for 4+ ONNX models. Actual memory usage depends on model sizes chosen. Measure peak heap with all v4.0 models loaded on a mobile emulation profile before committing to the split vs. single-worker architecture for the sanitization model.
+- **Compression ONNX detector training data:** This v4.x feature requires v3.0 correction data (compress-accepted vs compress-rejected) that does not yet exist. Do not schedule in the v4.0 milestone.
+
+---
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [From PyTorch to Browser: full client-side ONNX + Transformers.js — bandarra.me](https://bandarra.me/posts/from-pytorch-to-browser-a-full-client-side-solution-with-onnx-and-transformers-js) — confirmed two-model pipeline (MiniLM embed + custom ONNX classification head)
-- [Transformers.js official docs](https://huggingface.co/docs/transformers.js/en/index) — `env.localModelPath`, `env.allowRemoteModels`, Cache API model caching
-- [HuggingFace Optimum ONNX docs](https://huggingface.co/docs/optimum-onnx/onnxruntime/usage_guides/quantization) — `ORTQuantizer`, INT8 dynamic quantization
-- [ONNX Runtime Web official docs](https://onnxruntime.ai/docs/tutorials/web/) — `InferenceSession` API, WASM execution provider, operator support
-- [skl2onnx documentation](https://onnx.ai/sklearn-onnx/) — sklearn model ONNX export, opset compatibility
-- [ONNX Runtime Web — large model storage](https://onnxruntime.ai/docs/tutorials/web/large-models.html) — Cache API vs IndexedDB for ONNX models
-- Existing BinderOS codebase (`src/search/embedding-worker.ts`, `src/ai/tier2/`) — integration constraints derived from current implementation
+
+- [ngxson/wllama GitHub](https://github.com/ngxson/wllama) — v2.3.7 release, API, 2GB model limit, single-thread vs multi-thread COEP requirements, Firefox 142 adoption
+- [openai/openai-node releases](https://github.com/openai/openai-node/releases) — v6.27.0 current (2026-03-05), `dangerouslyAllowBrowser` pattern
+- [xAI Developer Quickstart](https://docs.x.ai/developers/quickstart) — `baseURL: 'https://api.x.ai/v1'`, OpenAI SDK compatibility confirmed
+- [huggingface/optimum-onnx](https://github.com/huggingface/optimum-onnx) — v0.1.0 Dec 2025, `ORTModelForTokenClassification`, transformers 4.56/4.57 compatibility matrix
+- [SmolLM2-360M-Instruct-GGUF](https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct-GGUF) — Q8_0 at 386MB, Q4 at ~200MB, llama architecture
+- [MDN: Navigator.gpu](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/gpu) — WebGPU detection, `device.limits.maxBufferSize`
+- [web.dev/articles/coop-coep](https://web.dev/articles/coop-coep) — COEP `credentialless` vs `require-corp` tradeoffs
+- [Transformers.js v3 blog](https://huggingface.co/blog/transformersjs-v3) — WASM fallback, `device: 'wasm'`, SmolLM2 compatibility
+- [ONNX Runtime Web docs](https://onnxruntime.ai/docs/tutorials/web/) — browser inference, session lifetime, memory model
+- Existing BinderOS codebase (`src/ai/adapters/cloud.ts`, `src/search/embedding-worker.ts`, `src/ai/tier2/`) — integration constraints derived directly from current implementation
 
 ### Secondary (MEDIUM confidence)
-- [Synthetic Data Generation Using LLMs — arXiv 2503.14023](https://arxiv.org/abs/2503.14023) — topic-guided generation, diversity strategies
-- [Demystifying Synthetic Data in LLM Pre-training — ACL/EMNLP 2025](https://aclanthology.org/2025.emnlp-main.544/) — model collapse, real+synthetic mixtures
-- [AI models collapse when trained on recursively generated data — Nature 2024](https://www.nature.com/articles/s41586-024-07566-y) — foundational model collapse paper (Shumailov et al.)
-- [Measuring Label Ambiguity in Subjective Tasks — ACL LAW-XIX 2025](https://aclanthology.org/2025.law-1.2/) — entropy-based ambiguity scoring for subjective classification
-- [ONNX Runtime Web COOP/COEP requirements — web.dev](https://web.dev/articles/coop-coep) — SharedArrayBuffer cross-origin isolation
-- [Optimizing Transformers.js for production — SitePoint](https://www.sitepoint.com/optimizing-transformers-js-production/) — cold-start latency, main thread blocking patterns
-- [Faster and smaller quantized NLP — Microsoft/Medium](https://medium.com/microsoftazure/faster-and-smaller-quantized-nlp-with-hugging-face-and-onnx-runtime-ec5525473bb7) — BERT quantization accuracy drop patterns
 
-### Tertiary (LOW-MEDIUM confidence)
-- [Active Learning in ML — Encord 2025](https://encord.com/blog/active-learning-machine-learning-guide/) — uncertainty sampling reduces annotation needs 50–80%
-- [Model Drift Best Practices — Encord 2025](https://encord.com/blog/model-drift-best-practices/) — retraining strategies, catastrophic forgetting
-- [Local-First AI definitive guide — SitePoint 2026](https://www.sitepoint.com/definitive-guide-local-first-ai-2026/) — OPFS model caching, cache invalidation with version manifests
+- [Local-first ONNX PII scrubber](https://dev.to/tjruesch/a-local-first-reversible-pii-scrubber-for-ai-workflows-using-onnx-and-regex-53fb) — hybrid regex + NER pattern, XLM-RoBERTa INT8 quantization recall behavior
+- [huggingface/optimum GitHub issues](https://github.com/huggingface/optimum) — INT8 recall collapse on token-classification models (Issue #151 area, LaBSE-based models)
+- [WebGPU crash on Android Chrome — Transformers.js #1205](https://github.com/huggingface/transformers.js/issues/1205) — SmolVLM OOM on Android; confirms WASM as safe mobile default
+- Cross-browser local LLM via WASM (Picovoice blog) — model size guidance, WASM LLM feasibility on mobile
+- OpenAI `dangerouslyAllowBrowser` community discussion — CORS behavior and browser key handling
+- Building privacy-first anonymizer for LLMs (Medium) — architecture for pre-LLM sanitization pipeline
+
+### Tertiary (LOW confidence)
+
+- iOS WASM threading performance figures — community-reported; device-generation-specific; treat as directional, not definitive
+- Qwen2.5-0.5B-Q4 ~280MB size figure — community measurement; validate against official model card before shipping
 
 ---
-*Research completed: 2026-03-03*
+
+*Research completed: 2026-03-05*
 *Ready for roadmap: yes*
