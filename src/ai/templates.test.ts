@@ -348,10 +348,64 @@ describe('derivePatternSteps', () => {
   });
 
   it('returns empty array when no patterns detected (low inbox, all sections active)', () => {
-    const sections = [makeSection()];
-    const atoms = [makeAtom({ status: 'open' })];
+    const sections = [makeSection({ id: 'sec-1' })];
+    const atoms = [makeAtom({ status: 'open', sectionId: 'sec-1' })];
     const steps = derivePatternSteps(sections, atoms, 2);
-    // Low inbox, section has active atoms — no patterns triggered
+    // Low inbox, section has active atoms linked via sectionId — no patterns triggered
     expect(steps.length).toBe(0);
+  });
+});
+
+// --- derivePatternSteps: per-section empty detection ---
+
+describe('derivePatternSteps per-section empty detection', () => {
+  it('detects empty section when other sections have atoms', () => {
+    const sec1 = makeSection({ id: 'sec-1', name: 'Projects', type: 'projects' });
+    const sec2 = makeSection({ id: 'sec-2', name: 'Areas', type: 'areas' });
+    // Atoms linked to sec-1 only
+    const atoms = [
+      makeAtom({ id: 'atom-1', status: 'open', sectionId: 'sec-1' }),
+      makeAtom({ id: 'atom-2', status: 'in-progress', sectionId: 'sec-1' }),
+    ];
+    const steps = derivePatternSteps([sec1, sec2], atoms, 2);
+    // sec-2 (Areas) has no atoms — should trigger empty-section step
+    expect(steps.length).toBe(1);
+    expect(steps[0].question).toContain('Areas');
+  });
+
+  it('does not flag section that has open atoms', () => {
+    const sec1 = makeSection({ id: 'sec-1', name: 'Projects', type: 'projects' });
+    const atoms = [makeAtom({ id: 'atom-1', status: 'open', sectionId: 'sec-1' })];
+    const steps = derivePatternSteps([sec1], atoms, 2);
+    // sec-1 has an open atom via sectionId — no empty-section step
+    expect(steps.length).toBe(0);
+  });
+
+  it('excludes archive sections from empty detection', () => {
+    const archiveSection = makeSection({ id: 'sec-arch', name: 'Archive', type: 'archive' });
+    const steps = derivePatternSteps([archiveSection], [], 2);
+    // Archive sections should never produce an empty-section step
+    expect(steps.length).toBe(0);
+  });
+
+  it('at most one empty-section step (break after first)', () => {
+    const sec1 = makeSection({ id: 'sec-1', name: 'Projects', type: 'projects' });
+    const sec2 = makeSection({ id: 'sec-2', name: 'Areas', type: 'areas' });
+    const sec3 = makeSection({ id: 'sec-3', name: 'Resources', type: 'resources' });
+    // No atoms — all 3 sections are empty
+    const steps = derivePatternSteps([sec1, sec2, sec3], [], 2);
+    // Break after first — only one empty-section step produced
+    expect(steps.length).toBe(1);
+  });
+
+  it('high inbox + empty section both fire', () => {
+    const sec1 = makeSection({ id: 'sec-1', name: 'Projects', type: 'projects' });
+    // No atoms linked to sec-1
+    const steps = derivePatternSteps([sec1], [], 15);
+    // inboxCount=15 fires Pattern 1, sec-1 empty fires Pattern 2 — expect 2 steps
+    expect(steps.length).toBe(2);
+    const questions = steps.map((s) => s.question);
+    expect(questions.some((q) => q.includes('inbox'))).toBe(true);
+    expect(questions.some((q) => q.includes('Projects'))).toBe(true);
   });
 });
