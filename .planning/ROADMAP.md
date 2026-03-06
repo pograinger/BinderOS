@@ -80,7 +80,10 @@ Plans:
   3. User enters a custom base URL (Ollama, LM Studio, Azure) with a Bearer token and AI requests route to that endpoint without code changes
   4. Communication log shows which provider handled each request; switching providers does not require app restart
   5. Anthropic adapter continues working identically — refactor is non-breaking for existing users
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 13-01-PLAN.md — Provider registry, adapters, key vault, and store factory (CLOUD-01, CLOUD-02, CLOUD-03)
+- [ ] 13-02-PLAN.md — Multi-provider UI, settings panel, status bar, and communication log (CLOUD-01, CLOUD-02, CLOUD-03, CLOUD-04)
 
 ### Phase 14: Sanitization Classifier
 **Goal**: All atom content is checked for sensitive entities by an ONNX NER classifier before the pre-send approval modal appears, and users can see exactly what was redacted before approving cloud dispatch
@@ -133,7 +136,7 @@ Note: Phase 15 is independent of 13-14 and may execute in parallel with Phase 14
 | 10. Browser Inference Integration | v3.0 | 3/3 | Complete | 2026-03-04 |
 | 11. Tech Debt, Settings + Correction Utility | v3.0 | 3/3 | Complete | 2026-03-05 |
 | 12. Template Engine | 3/3 | Complete    | 2026-03-06 | 2026-03-06 |
-| 13. Multi-Provider Cloud | v4.0 | 0/TBD | Not started | - |
+| 13. Multi-Provider Cloud | v4.0 | 0/2 | Not started | - |
 | 14. Sanitization Classifier | v4.0 | 0/TBD | Not started | - |
 | 15. Device-Adaptive Local LLM | v4.0 | 0/TBD | Not started | - |
 | 16. ONNX Section Routing | v4.0 | 0/TBD | Not started | - |
