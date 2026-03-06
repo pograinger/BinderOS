@@ -6,12 +6,12 @@
  * Sections:
  *   - Master toggle: Enable AI Features
  *   - Local AI: Browser LLM toggle, status, model details, download progress
- *   - Cloud AI: Cloud API toggle, API key input (memory-only default + encrypted persistence),
- *     security disclosure, stored-key unlock, per-session consent
+ *   - Cloud AI: Provider dropdown, per-provider key entry with validation,
+ *     custom endpoint form, security disclosure, stored-key unlock, per-session consent
  *   - Feature Toggles: Triage, Review, Compression toggles
  *   - Privacy: Sanitization level selector with description
  *   - Communication Log: History of cloud requests this session
- *   - Provider Status: Table showing provider name, status, model
+ *   - Provider Status: Table showing all configured providers with status and model
  *
  * CRITICAL: Never destructure props or state — breaks SolidJS reactivity.
  */
@@ -31,13 +31,23 @@ import {
   classifierReady,
   classifierLoadProgress,
   classifierVersion,
+  setActiveCloudProvider,
+  setProviderModel,
+  setCustomEndpointConfig,
 } from '../signals/store';
 import { WEBLLM_MODELS, DEFAULT_MODEL_ID } from '../../ai/adapters/browser';
 import { getClassificationHistory } from '../../storage/classification-log';
 import {
-  setMemoryKey,
-  encryptAndStore,
-  decryptFromStore,
+  PROVIDER_REGISTRY,
+  validateProviderKey,
+  normalizeBaseURL,
+  type ProviderId,
+} from '../../ai/provider-registry';
+import {
+  setMemoryKeyForProvider,
+  hasMemoryKeyForProvider,
+  encryptAndStoreForProvider,
+  decryptAllFromStore,
   hasStoredKey,
   grantSessionConsent,
   hasSessionConsent,
@@ -73,6 +83,17 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
   // Classifier correction count — loaded once on panel open, reloaded after export
   const [correctionCountLocal, setCorrectionCountLocal] = createSignal(0);
 
+  // Phase 13: Provider UI signals
+  const [validatingKey, setValidatingKey] = createSignal(false);
+  const [keyValid, setKeyValid] = createSignal<boolean | null>(null); // null=not checked
+  const [customLabel, setCustomLabel] = createSignal(state.customEndpointConfig?.label ?? '');
+  const [customBaseURL, setCustomBaseURL] = createSignal(state.customEndpointConfig?.baseURL ?? '');
+  const [customModel, setCustomModel] = createSignal(state.customEndpointConfig?.model ?? '');
+  const [modelOverride, setModelOverride] = createSignal(
+    state.providerModels[state.activeCloudProvider] ??
+    PROVIDER_REGISTRY[state.activeCloudProvider as ProviderId]?.defaultModel ?? '',
+  );
+
   async function loadCorrectionCount() {
     const history = await getClassificationHistory();
     const count = history.filter(
@@ -88,7 +109,6 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
   async function handleExportCorrections() {
     const { exportCorrectionLog } = await import('../../storage/export');
     await exportCorrectionLog();
-    // Reload count to reflect current state after export
     await loadCorrectionCount();
   }
 
@@ -100,19 +120,37 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
     return prompt.length > max ? prompt.slice(0, max) + '...' : prompt;
   }
 
+  // Phase 13: Validate key after save
+  async function validateAndActivate(providerId: ProviderId, key: string) {
+    setValidatingKey(true);
+    setKeyValid(null);
+    setKeyFeedback('Validating key...');
+    const baseURL = providerId === 'custom'
+      ? normalizeBaseURL(customBaseURL())
+      : PROVIDER_REGISTRY[providerId]?.baseURL ?? undefined;
+    const valid = await validateProviderKey(providerId, key, baseURL ?? undefined);
+    setValidatingKey(false);
+    setKeyValid(valid);
+    if (valid) {
+      setKeyFeedback('Key valid. Cloud adapter activated.');
+      if (state.cloudAPIEnabled) {
+        await activateCloudAdapter();
+      }
+    } else {
+      setKeyFeedback('Invalid key — check the key and try again.');
+    }
+  }
+
   async function handleSaveMemoryOnly() {
     const key = apiKeyInput().trim();
     if (!key) {
       setKeyFeedback('Please enter an API key.');
       return;
     }
-    setMemoryKey(key);
+    const providerId = state.activeCloudProvider as ProviderId;
+    setMemoryKeyForProvider(providerId, key);
     setApiKeyInput('');
-    // If cloud is already enabled, activate the adapter with the new key
-    if (state.cloudAPIEnabled) {
-      await activateCloudAdapter();
-    }
-    setKeyFeedback('Key saved to memory. It will be cleared when you close the app.');
+    await validateAndActivate(providerId, key);
   }
 
   async function handleEncryptAndPersist() {
@@ -130,12 +168,14 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
       setKeyFeedback('Please enter a passphrase.');
       return;
     }
+    const providerId = state.activeCloudProvider as ProviderId;
     try {
-      await encryptAndStore(apiKeyInput().trim(), passphrase);
+      await encryptAndStoreForProvider(providerId, apiKeyInput().trim(), passphrase);
+      const key = apiKeyInput().trim();
       setApiKeyInput('');
       setPassphraseInput('');
       setShowPassphraseDialog(false);
-      setKeyFeedback('Key encrypted and stored. Enter passphrase to unlock on next session.');
+      await validateAndActivate(providerId, key);
     } catch {
       setKeyFeedback('Encryption failed. Please try again.');
     }
@@ -148,18 +188,34 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
       return;
     }
     try {
-      const key = await decryptFromStore(passphrase);
-      if (key) {
+      const keys = await decryptAllFromStore(passphrase);
+      const hasAny = Object.values(keys).some(Boolean);
+      if (hasAny) {
         setUnlockPassphraseInput('');
         if (state.cloudAPIEnabled) {
           await activateCloudAdapter();
         }
-        setKeyFeedback('Key unlocked and loaded into memory.');
+        setKeyFeedback('Keys unlocked and loaded into memory.');
       } else {
-        setKeyFeedback('No stored key found.');
+        setKeyFeedback('No stored keys found.');
       }
     } catch {
       setKeyFeedback('Wrong passphrase or corrupted key.');
+    }
+  }
+
+  function handleSaveCustomEndpoint() {
+    const label = customLabel().trim();
+    const url = customBaseURL().trim();
+    const model = customModel().trim();
+    if (!url || !model) {
+      setKeyFeedback('Base URL and model name are required for custom endpoints.');
+      return;
+    }
+    setCustomEndpointConfig({ label: label || 'Custom', baseURL: normalizeBaseURL(url), model });
+    setKeyFeedback('Custom endpoint saved.');
+    if (state.cloudAPIEnabled) {
+      void activateCloudAdapter();
     }
   }
 
@@ -170,6 +226,17 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
 
   function refreshLog() {
     setLogEntries([...getCloudRequestLog()]);
+  }
+
+  function handleProviderChange(providerId: string) {
+    setActiveCloudProvider(providerId);
+    setKeyValid(null);
+    setKeyFeedback(null);
+    // Update model override for the new provider
+    const newModel =
+      state.providerModels[providerId] ??
+      PROVIDER_REGISTRY[providerId as ProviderId]?.defaultModel ?? '';
+    setModelOverride(newModel);
   }
 
   return (
@@ -368,7 +435,7 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
                 <label class="ai-settings-toggle-label" for="cloud-api-toggle">
                   <span class="ai-settings-toggle-name">Cloud API</span>
                   <span class="ai-settings-toggle-desc">
-                    Anthropic API for deeper analysis. Data is filtered locally first.
+                    Cloud API for deeper analysis. Select your provider below. Data is filtered locally first.
                   </span>
                 </label>
                 <input
@@ -384,6 +451,83 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
                   }}
                 />
               </div>
+
+              {/* Provider dropdown */}
+              <div class="ai-settings-field">
+                <label class="ai-settings-field-label" for="provider-select">
+                  Provider
+                </label>
+                <select
+                  id="provider-select"
+                  class="ai-settings-select ai-settings-provider-select"
+                  value={state.activeCloudProvider}
+                  onChange={(e) => handleProviderChange((e.target as HTMLSelectElement).value)}
+                >
+                  <For each={Object.values(PROVIDER_REGISTRY)}>
+                    {(provider) => (
+                      <option value={provider.id}>{provider.displayName}</option>
+                    )}
+                  </For>
+                </select>
+              </div>
+
+              {/* Model override field (not shown for custom — model is set in endpoint form) */}
+              <Show when={state.activeCloudProvider !== 'custom'}>
+                <div class="ai-settings-field">
+                  <label class="ai-settings-field-label" for="model-override">
+                    Model
+                  </label>
+                  <input
+                    id="model-override"
+                    class="ai-settings-input"
+                    type="text"
+                    value={modelOverride()}
+                    onInput={(e) => {
+                      const val = (e.target as HTMLInputElement).value;
+                      setModelOverride(val);
+                      setProviderModel(state.activeCloudProvider, val);
+                    }}
+                    placeholder={PROVIDER_REGISTRY[state.activeCloudProvider as ProviderId]?.defaultModel ?? ''}
+                  />
+                  <span class="ai-settings-model-hint">
+                    Default: {PROVIDER_REGISTRY[state.activeCloudProvider as ProviderId]?.defaultModel ?? ''}. Change to any model the provider supports.
+                  </span>
+                </div>
+              </Show>
+
+              {/* Custom endpoint form — shown only when Custom provider is selected */}
+              <Show when={state.activeCloudProvider === 'custom'}>
+                <div class="ai-settings-endpoint-form">
+                  <label class="ai-settings-field-label">Custom Endpoint</label>
+                  <input
+                    class="ai-settings-input"
+                    type="text"
+                    placeholder="Label (e.g. My Ollama)"
+                    value={customLabel()}
+                    onInput={(e) => setCustomLabel((e.target as HTMLInputElement).value)}
+                  />
+                  <input
+                    class="ai-settings-input"
+                    type="text"
+                    placeholder="Base URL (e.g. http://localhost:11434/v1)"
+                    value={customBaseURL()}
+                    onInput={(e) => setCustomBaseURL((e.target as HTMLInputElement).value)}
+                  />
+                  <input
+                    class="ai-settings-input"
+                    type="text"
+                    placeholder="Model name (required)"
+                    value={customModel()}
+                    onInput={(e) => setCustomModel((e.target as HTMLInputElement).value)}
+                  />
+                  <button
+                    class="ai-settings-btn ai-settings-btn-secondary"
+                    onClick={handleSaveCustomEndpoint}
+                  >
+                    Save endpoint
+                  </button>
+                </div>
+              </Show>
 
               <div class="ai-settings-status-row">
                 <span class="ai-settings-status-label">Status:</span>
@@ -401,114 +545,136 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
               </div>
 
               {/* API Key Input */}
-              <div class="ai-settings-key-section">
-                <label class="ai-settings-field-label" for="api-key-input">
-                  API Key
-                </label>
-                <div class="ai-settings-key-input-row">
-                  <input
-                    id="api-key-input"
-                    class="ai-settings-input"
-                    type={showApiKey() ? 'text' : 'password'}
-                    placeholder="sk-ant-..."
-                    value={apiKeyInput()}
-                    onInput={(e) => setApiKeyInput((e.target as HTMLInputElement).value)}
-                    autocomplete="off"
-                  />
-                  <button
-                    class="ai-settings-toggle-visibility"
-                    onClick={() => setShowApiKey((v) => !v)}
-                    aria-label={showApiKey() ? 'Hide API key' : 'Show API key'}
-                  >
-                    {showApiKey() ? 'Hide' : 'Show'}
-                  </button>
-                </div>
-
-                <div class="ai-settings-key-actions">
-                  <button
-                    class="ai-settings-btn ai-settings-btn-secondary"
-                    onClick={() => void handleSaveMemoryOnly()}
-                  >
-                    Save to memory only
-                  </button>
-                  <button
-                    class="ai-settings-btn ai-settings-btn-secondary"
-                    onClick={() => void handleEncryptAndPersist()}
-                  >
-                    Encrypt &amp; persist
-                  </button>
-                </div>
-
-                <p class="ai-settings-disclosure">
-                  <strong>Memory-only:</strong> key is cleared when you close the app.{' '}
-                  <strong>Encrypted:</strong> key persists across sessions protected by your passphrase.
-                </p>
-
-                {/* Passphrase dialog */}
-                <Show when={showPassphraseDialog()}>
-                  <div class="ai-settings-passphrase-dialog">
-                    <label class="ai-settings-field-label" for="encrypt-passphrase">
-                      Encryption passphrase
-                    </label>
+              <Show when={state.activeCloudProvider !== 'custom'}>
+                <div class="ai-settings-key-section">
+                  <label class="ai-settings-field-label" for="api-key-input">
+                    API Key
+                  </label>
+                  <div class="ai-settings-key-input-row">
                     <input
-                      id="encrypt-passphrase"
+                      id="api-key-input"
                       class="ai-settings-input"
-                      type="password"
-                      placeholder="Choose a strong passphrase..."
-                      value={passphraseInput()}
-                      onInput={(e) => setPassphraseInput((e.target as HTMLInputElement).value)}
+                      type={showApiKey() ? 'text' : 'password'}
+                      placeholder={PROVIDER_REGISTRY[state.activeCloudProvider as ProviderId]?.apiKeyPrefix ?? 'API key...'}
+                      value={apiKeyInput()}
+                      onInput={(e) => setApiKeyInput((e.target as HTMLInputElement).value)}
+                      autocomplete="off"
                     />
-                    <div class="ai-settings-key-actions">
-                      <button
-                        class="ai-settings-btn ai-settings-btn-primary"
-                        onClick={() => void handleConfirmEncrypt()}
-                      >
-                        Encrypt &amp; save
-                      </button>
-                      <button
-                        class="ai-settings-btn ai-settings-btn-secondary"
-                        onClick={() => {
-                          setShowPassphraseDialog(false);
-                          setPassphraseInput('');
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
+                    <button
+                      class="ai-settings-toggle-visibility"
+                      onClick={() => setShowApiKey((v) => !v)}
+                      aria-label={showApiKey() ? 'Hide API key' : 'Show API key'}
+                    >
+                      {showApiKey() ? 'Hide' : 'Show'}
+                    </button>
                   </div>
-                </Show>
 
-                {/* Stored key unlock */}
-                <Show when={hasStoredKey()}>
-                  <div class="ai-settings-stored-key">
-                    <p class="ai-settings-stored-key-notice">
-                      Encrypted key found. Enter passphrase to unlock.
-                    </p>
-                    <div class="ai-settings-key-input-row">
+                  <div class="ai-settings-key-actions">
+                    <button
+                      class="ai-settings-btn ai-settings-btn-secondary"
+                      onClick={() => void handleSaveMemoryOnly()}
+                      disabled={validatingKey()}
+                    >
+                      Save to memory only
+                    </button>
+                    <button
+                      class="ai-settings-btn ai-settings-btn-secondary"
+                      onClick={() => void handleEncryptAndPersist()}
+                      disabled={validatingKey()}
+                    >
+                      Encrypt &amp; persist
+                    </button>
+                  </div>
+
+                  {/* Key validation feedback */}
+                  <Show when={validatingKey()}>
+                    <p class="ai-settings-key-validating">Validating key...</p>
+                  </Show>
+                  <Show when={!validatingKey() && keyValid() === true}>
+                    <p class="ai-settings-key-valid">Key valid</p>
+                  </Show>
+                  <Show when={!validatingKey() && keyValid() === false}>
+                    <p class="ai-settings-key-invalid">Invalid key</p>
+                  </Show>
+
+                  <p class="ai-settings-disclosure">
+                    <strong>Memory-only:</strong> key is cleared when you close the app.{' '}
+                    <strong>Encrypted:</strong> key persists across sessions protected by your passphrase.
+                  </p>
+
+                  {/* Passphrase dialog */}
+                  <Show when={showPassphraseDialog()}>
+                    <div class="ai-settings-passphrase-dialog">
+                      <label class="ai-settings-field-label" for="encrypt-passphrase">
+                        Encryption passphrase
+                      </label>
                       <input
+                        id="encrypt-passphrase"
                         class="ai-settings-input"
                         type="password"
-                        placeholder="Unlock passphrase..."
-                        value={unlockPassphraseInput()}
-                        onInput={(e) =>
-                          setUnlockPassphraseInput((e.target as HTMLInputElement).value)
-                        }
+                        placeholder="Choose a strong passphrase..."
+                        value={passphraseInput()}
+                        onInput={(e) => setPassphraseInput((e.target as HTMLInputElement).value)}
                       />
-                      <button
-                        class="ai-settings-btn ai-settings-btn-primary"
-                        onClick={() => void handleUnlockStoredKey()}
-                      >
-                        Unlock
-                      </button>
+                      <div class="ai-settings-key-actions">
+                        <button
+                          class="ai-settings-btn ai-settings-btn-primary"
+                          onClick={() => void handleConfirmEncrypt()}
+                        >
+                          Encrypt &amp; save
+                        </button>
+                        <button
+                          class="ai-settings-btn ai-settings-btn-secondary"
+                          onClick={() => {
+                            setShowPassphraseDialog(false);
+                            setPassphraseInput('');
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </Show>
+                  </Show>
 
-                {/* Feedback message */}
+                  {/* Stored key unlock */}
+                  <Show when={hasStoredKey()}>
+                    <div class="ai-settings-stored-key">
+                      <p class="ai-settings-stored-key-notice">
+                        Encrypted key found. Enter passphrase to unlock all stored provider keys.
+                      </p>
+                      <div class="ai-settings-key-input-row">
+                        <input
+                          class="ai-settings-input"
+                          type="password"
+                          placeholder="Unlock passphrase..."
+                          value={unlockPassphraseInput()}
+                          onInput={(e) =>
+                            setUnlockPassphraseInput((e.target as HTMLInputElement).value)
+                          }
+                        />
+                        <button
+                          class="ai-settings-btn ai-settings-btn-primary"
+                          onClick={() => void handleUnlockStoredKey()}
+                        >
+                          Unlock
+                        </button>
+                      </div>
+                    </div>
+                  </Show>
+
+                  {/* Feedback message */}
+                  <Show when={keyFeedback() !== null}>
+                    <p class="ai-settings-feedback">{keyFeedback()}</p>
+                  </Show>
+                </div>
+              </Show>
+
+              {/* Custom endpoint — feedback only (key input not needed) */}
+              <Show when={state.activeCloudProvider === 'custom'}>
                 <Show when={keyFeedback() !== null}>
                   <p class="ai-settings-feedback">{keyFeedback()}</p>
                 </Show>
-              </div>
+              </Show>
 
               {/* Per-session consent */}
               <div class="ai-settings-consent">
@@ -676,16 +842,54 @@ export function AISettingsPanel(props: AISettingsPanelProps) {
                 </tr>
               </thead>
               <tbody>
+                {/* Browser LLM row */}
                 <tr>
                   <td>Browser LLM</td>
                   <td class={`status-${state.llmStatus}`}>{state.llmStatus}</td>
                   <td>{state.llmModelId ?? '—'}</td>
                 </tr>
-                <tr>
-                  <td>Cloud API</td>
-                  <td class={`status-${state.cloudStatus}`}>{state.cloudStatus}</td>
-                  <td>claude-haiku-4-5-20251001</td>
-                </tr>
+                {/* Cloud provider rows — show rows for all providers with a key set */}
+                <For each={Object.values(PROVIDER_REGISTRY)}>
+                  {(provider) => (
+                    <Show when={
+                      provider.id !== 'custom'
+                        ? hasMemoryKeyForProvider(provider.id)
+                        : state.customEndpointConfig !== null
+                    }>
+                      <tr class={state.activeCloudProvider === provider.id ? 'active-provider' : ''}>
+                        <td>{provider.id === 'custom' ? (state.customEndpointConfig?.label ?? 'Custom') : provider.displayName}</td>
+                        <td class={state.activeCloudProvider === provider.id ? `status-${state.cloudStatus}` : ''}>
+                          {state.activeCloudProvider === provider.id
+                            ? state.cloudStatus
+                            : 'Key set'}
+                        </td>
+                        <td>
+                          {state.activeCloudProvider === provider.id
+                            ? (provider.id === 'custom'
+                                ? state.customEndpointConfig?.model ?? '—'
+                                : state.providerModels[provider.id] ?? provider.defaultModel)
+                            : (provider.id === 'custom'
+                                ? state.customEndpointConfig?.model ?? '—'
+                                : state.providerModels[provider.id] ?? provider.defaultModel)}
+                        </td>
+                      </tr>
+                    </Show>
+                  )}
+                </For>
+                {/* Fallback row if no cloud keys set */}
+                <Show when={
+                  Object.values(PROVIDER_REGISTRY).every(p =>
+                    p.id !== 'custom'
+                      ? !hasMemoryKeyForProvider(p.id)
+                      : state.customEndpointConfig === null
+                  )
+                }>
+                  <tr>
+                    <td>Cloud API</td>
+                    <td class={`status-${state.cloudStatus}`}>{state.cloudStatus}</td>
+                    <td>{PROVIDER_REGISTRY[state.activeCloudProvider as ProviderId]?.defaultModel ?? '—'}</td>
+                  </tr>
+                </Show>
               </tbody>
             </table>
           </div>

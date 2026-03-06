@@ -18,6 +18,7 @@
 
 import { createSignal, createMemo, onMount, Show } from 'solid-js';
 import { state, inboxCapStatus, taskCapStatus, classifierLoadProgress } from '../signals/store';
+import { PROVIDER_REGISTRY, type ProviderId } from '../../ai/provider-registry';
 // classifierLoadProgress is null when not downloading, 0-100 when downloading, -1 for indeterminate
 
 // Dev-only: seed function loaded on demand (tree-shaken in prod)
@@ -112,10 +113,17 @@ export function StatusBar() {
         </div>
       </Show>
 
-      {/* AI status — green dot when enabled and ready */}
-      <Show when={state.aiEnabled && (state.llmStatus === 'available' || state.cloudStatus === 'available')}>
+      {/* AI status — show cloud provider name when cloud is active, otherwise local AI dot */}
+      <Show when={state.aiEnabled && state.cloudStatus === 'available'}>
+        <div class="status-bar-item ai-cloud-status">
+          <span class="status-bar-dot granted" />
+          <span>Cloud: {PROVIDER_REGISTRY[state.activeCloudProvider as ProviderId]?.displayName ?? state.activeCloudProvider}</span>
+        </div>
+      </Show>
+      <Show when={state.aiEnabled && state.llmStatus === 'available' && state.cloudStatus !== 'available'}>
         <div class="status-bar-item ai-status">
           <span class="status-bar-dot granted" />
+          <span>Local AI</span>
         </div>
       </Show>
 

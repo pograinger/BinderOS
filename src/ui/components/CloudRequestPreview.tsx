@@ -15,6 +15,7 @@
  * CRITICAL: Never destructure props — breaks SolidJS reactivity.
  */
 
+import { Show } from 'solid-js';
 import type { CloudRequestLogEntry } from '../../ai/key-vault';
 
 interface CloudRequestPreviewProps {
@@ -71,6 +72,12 @@ export function CloudRequestPreview(props: CloudRequestPreviewProps) {
               {formatTimestamp(props.entry.timestamp)}
             </span>
           </div>
+          <Show when={props.entry.baseURL !== undefined}>
+            <div class="cloud-preview-meta-row">
+              <span class="cloud-preview-meta-label">Endpoint:</span>
+              <span class="cloud-preview-meta-value cloud-preview-url">{props.entry.baseURL}</span>
+            </div>
+          </Show>
         </div>
 
         {/* Data preview */}
