@@ -24,7 +24,7 @@ import type { Atom } from '../types/atoms';
 // --- Helpers ---
 
 function makeEntropy(level: 'green' | 'yellow' | 'red', score = 40): EntropyScore {
-  return { score, level, openTasks: 5, staleCount: 3, zeroLinkCount: 2 };
+  return { score, level, openTasks: 5, staleCount: 3, zeroLinkCount: 2, inboxCount: 0 };
 }
 
 function makeSection(overrides: Partial<Section> = {}): Section {

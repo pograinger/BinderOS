@@ -1,21 +1,22 @@
 /**
- * AI review pre-analysis pipeline — generates briefing from store state (AIRV-01, AIRV-02).
+ * Review pre-analysis pipeline — generates briefing from store state (AIRV-01, AIRV-02).
  *
  * Two-phase architecture:
  * 1. Pre-analysis (synchronous, no AI): compute stale items, projects without next actions,
  *    compression candidates from store data. Emit progress via onProgress callback.
- * 2. AI summary call: pass pre-computed stats to cloud adapter for a single summary sentence.
+ * 2. Template-driven summary sentence from entropy signals (no AI call).
  *
  * Pure module: no imports from store.ts. All state passed in by caller.
  * Mirrors src/ai/triage.ts pattern.
  *
  * Phase 6: AIRV-01, AIRV-02
+ * Phase 12: Template engine replaces AI summary call
  */
 
 import type { Atom } from '../types/atoms';
 import type { AtomScore, EntropyScore } from '../types/config';
 import type { SectionItem, Section } from '../types/sections';
-import { dispatchAI } from './router';
+import { generateBriefingSummary } from './templates';
 
 // --- BriefingItem interface ---
 
@@ -47,9 +48,9 @@ export interface BriefingResult {
  *   - Projects without next actions (active section items with no open tasks)
  *   - Compression candidates (orphaned atoms not updated in > 30 days)
  *
- * Phase 2: AI summary sentence (single cloud AI call)
- *   - Passes pre-computed statistics for a 30-word health summary
- *   - Falls back to template string if AI call fails or is aborted
+ * Phase 2: Template-driven summary sentence from entropy signals (no AI call)
+ *   - Deterministic text generation based on entropy level and pre-computed counts
+ *   - Works fully offline — no AI adapter required
  *
  * @param atoms - All atoms from store state
  * @param scores - Per-atom scoring results from compute engine
@@ -140,53 +141,20 @@ export async function generateBriefing(
     `${compressionCandidates.length} compression candidate${compressionCandidates.length === 1 ? '' : 's'} identified`,
   );
 
-  // --- Phase 2: AI summary sentence ---
+  // --- Phase 2: Template summary (no AI call) ---
 
-  // Count open tasks for context
-  const openTaskCount = atoms.filter(
-    (a) => a.type === 'task' && (a.status === 'open' || a.status === 'in-progress'),
-  ).length;
-
-  const fallbackSummary = `System has ${staleItems.length} stale items, ${projectsMissing.length} projects needing action, and ${compressionCandidates.length} compression candidates.`;
-
-  let summaryText = fallbackSummary;
-
-  // Check abort before AI call
+  // Check abort before template call — honor abort contract even though templates are sync
   if (signal?.aborted) {
     throw new DOMException('Aborted', 'AbortError');
   }
 
-  const prompt = `You are analyzing a personal knowledge management system. Based on these statistics, write ONE natural language sentence (max 30 words) summarizing the overall system health:
-
-- Total atoms: ${atoms.filter((a) => a.type !== 'analysis').length}
-- System entropy: ${entropyScore?.level ?? 'unknown'} (${entropyScore?.score ?? 'N/A'})
-- Stale items (>14 days): ${staleItems.length}
-- Projects without next actions: ${projectsMissing.length}
-- Compression candidates: ${compressionCandidates.length}
-- Open tasks: ${openTaskCount}
-
-Respond with ONLY the summary sentence. No JSON, no markdown, no explanation.`;
-
-  try {
-    const response = await dispatchAI({
-      requestId: crypto.randomUUID(),
-      prompt,
-      maxTokens: 100,
-      signal,
-    });
-    const trimmed = response.text.trim();
-    if (trimmed.length > 0) {
-      summaryText = trimmed;
-    }
-  } catch (err) {
-    // Re-throw if aborted — caller handles AbortError separately
-    if (err instanceof DOMException && err.name === 'AbortError') {
-      throw err;
-    }
-    // AI call failed — use fallback summary (non-critical, briefing still works)
-    console.warn('[analysis] AI summary call failed, using fallback:', err);
-    summaryText = fallbackSummary;
-  }
+  const summaryText = generateBriefingSummary(
+    entropyScore,
+    staleItems.length,
+    projectsMissing.length,
+    compressionCandidates.length,
+    atoms.filter(a => a.type !== 'analysis').length,
+  );
 
   return {
     summaryText,

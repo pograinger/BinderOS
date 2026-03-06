@@ -1079,35 +1079,26 @@ export function updateTier2Centroids(
 let reviewAbortController: AbortController | null = null;
 
 /**
- * Start AI review briefing pipeline.
+ * Start review briefing pipeline.
  *
  * Two-phase: sync pre-analysis (stale items, missing next actions, compression candidates)
- * followed by a single cloud AI summary sentence. Sets orb to 'thinking', emits incremental
+ * followed by a template-driven summary sentence from entropy signals. Emits incremental
  * progress via reviewProgress, creates an analysis atom on completion, and navigates to review page.
  *
- * Guards: requires AI adapter available. Cancels any in-progress briefing before starting.
+ * Runs fully from local data — no AI adapter required.
+ * Cancels any in-progress briefing before starting.
  *
  * Phase 6: AIRV-01, AIRV-02
+ * Phase 12: Removed AI guard — briefing works fully offline
  */
 export async function startReviewBriefing(): Promise<void> {
-  // 1. Guard: AI must be available
-  if (!anyAIAvailable()) {
-    setState('reviewError', 'No AI adapter available');
-    setState('reviewStatus', 'error');
-    return;
-  }
-
-  // 2. Cancel any in-progress briefing
+  // 1. Cancel any in-progress briefing
   if (reviewAbortController) {
     reviewAbortController.abort();
   }
   reviewAbortController = new AbortController();
 
-  // 3. Set orb state to 'thinking' (dynamic import to avoid circular dep)
-  const { setOrbState } = await import('../components/AIOrb');
-  setOrbState('thinking');
-
-  // 4. Set review state
+  // 2. Set review state
   setState('reviewStatus', 'analyzing');
   setState('reviewProgress', 'Analyzing system entropy...');
   setState('reviewError', null);
@@ -1165,7 +1156,6 @@ export async function startReviewBriefing(): Promise<void> {
 
     // 8. Navigate to review page
     setActivePage('review');
-    setOrbState('idle');
   } catch (err) {
     if (err instanceof DOMException && err.name === 'AbortError') {
       setState('reviewStatus', 'idle');
@@ -1174,8 +1164,6 @@ export async function startReviewBriefing(): Promise<void> {
       setState('reviewStatus', 'error');
       setState('reviewError', err instanceof Error ? err.message : 'Briefing failed');
     }
-    const { setOrbState: setOrb } = await import('../components/AIOrb');
-    setOrb(err instanceof DOMException ? 'idle' : 'error');
   } finally {
     reviewAbortController = null;
   }
@@ -1184,8 +1172,8 @@ export async function startReviewBriefing(): Promise<void> {
 /**
  * Cancel any in-flight review briefing.
  *
- * Aborts the AbortController, which halts the generateBriefing pipeline and
- * the in-flight AI call. reviewStatus returns to 'idle'.
+ * Aborts the AbortController, which halts the generateBriefing pipeline.
+ * reviewStatus returns to 'idle'.
  */
 export function cancelReviewBriefing(): void {
   if (reviewAbortController) {
@@ -1262,12 +1250,10 @@ let reviewFlowAbortController: AbortController | null = null;
  * and navigates to the review-flow page.
  *
  * Phase 7: AIRV-03
+ * Phase 12: Removed AI guard — guided review works without AI adapter
  */
 export async function startGuidedReview(): Promise<void> {
-  // 1. Guard: AI must be available
-  if (!anyAIAvailable()) return;
-
-  // 2. Cancel any in-flight review flow
+  // 1. Cancel any in-flight review flow
   reviewFlowAbortController?.abort();
   reviewFlowAbortController = new AbortController();
 
