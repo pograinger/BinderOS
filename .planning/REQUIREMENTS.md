@@ -23,7 +23,7 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 
 ### Sanitization
 
-- [ ] **SNTZ-01**: ONNX NER classifier detects sensitive entities (names, locations, financial, health, credentials) in atom content before cloud dispatch
+- [x] **SNTZ-01**: ONNX NER classifier detects sensitive entities (names, locations, financial, health, credentials) in atom content before cloud dispatch
 - [ ] **SNTZ-02**: Python training pipeline produces sanitization ONNX model via scripts/train/
 - [ ] **SNTZ-03**: Pre-send approval modal shows sanitized diff so user sees what was redacted before approving
 
@@ -86,7 +86,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TMPL-01 | Phase 12 | Complete |
 | TMPL-02 | Phase 12 | Complete |
 | TMPL-03 | Phase 12 | Complete |
-| SNTZ-01 | Phase 14 | Pending |
+| SNTZ-01 | Phase 14 | Complete |
 | SNTZ-02 | Phase 14 | Pending |
 | SNTZ-03 | Phase 14 | Pending |
 | CLOUD-01 | Phase 13 | Complete |

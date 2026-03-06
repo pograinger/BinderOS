@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Device-Adaptive AI
-status: planning
-stopped_at: Phase 14 context gathered
-last_updated: "2026-03-06T18:13:02.417Z"
-last_activity: 2026-03-06 — Phase 13 complete (human-verify approved)
+status: executing
+stopped_at: Completed 14-02-PLAN.md
+last_updated: "2026-03-06T18:52:20.890Z"
+last_activity: 2026-03-06 — Phase 14 Plan 02 complete (sanitization pipeline)
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
-  percent: 100
+  total_plans: 8
+  completed_plans: 7
+  percent: 94
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 14 — Prompt Sanitization (next after Phase 13 complete)
+**Current focus:** Phase 14 — Prompt Sanitization (Plan 02 complete, Plan 03 next)
 
 ## Current Position
 
 Phase: 14 of 16 (Prompt Sanitization)
-Plan: 0 of TBD
-Status: Ready to plan
-Last activity: 2026-03-06 — Phase 13 complete (human-verify approved)
+Plan: 2 of TBD
+Status: Executing
+Last activity: 2026-03-06 — Phase 14 Plan 02 complete (sanitization pipeline)
 
-Progress: [██████████] 100%
+Progress: [█████████░] 94%
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Progress: [██████████] 100%
 | Phase 12 P03 | 5 | 1 tasks | 2 files |
 | Phase 13-multi-provider-cloud P01 | 12 | 2 tasks | 9 files |
 | Phase 13-multi-provider-cloud P02 | 4 | 3 tasks (incl. human-verify) | 4 files |
+| Phase 14-sanitization-classifier P02 | 9 | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,11 @@ Recent decisions affecting v4.0:
 - [Phase 13-02]: Provider badge in communication log uses inline-block badge style with border for visual distinction
 - [Phase 13-02]: StatusBar shows two distinct mutually exclusive segments: 'Cloud: {ProviderName}' vs 'Local AI'
 - [Phase 13-02]: Model override field hidden for Custom provider — model set in endpoint form instead
+- [Phase 14-02]: Dedicated sanitization worker for NER (not reusing embedding worker) — isolates memory footprint
+- [Phase 14-02]: SanitizedPrompt branded type with unique symbol prevents raw string assignment to CloudRequestLogEntry
+- [Phase 14-02]: Entity registry compound Dexie index [normalizedText+category] for efficient dedup
+- [Phase 14-02]: NER model loaded lazily on first SANITIZE message — zero memory until cloud dispatch used
+- [Phase 14-02]: Regex CONTACT precedence over NER PERSON in overlap resolution
 
 ### Phase Ordering Note
 
@@ -82,7 +88,7 @@ Phase 15 (Device-Adaptive LLM) is independent of Phases 13-14 and can execute on
 
 ### Blockers/Concerns
 
-- Worker memory budget for sanitization model needs measurement before committing to split vs single-worker architecture (Pitfall 7)
+- Worker memory budget for sanitization model needs measurement (now using dedicated worker — architecture decided)
 - Android WASM LLM sentinel threshold (2 tokens/sec) needs validation on real mid-range hardware during Phase 15
 
 ### Pending Todos
@@ -91,6 +97,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06T18:13:02.415Z
-Stopped at: Phase 14 context gathered
-Resume file: .planning/phases/14-sanitization-classifier/14-CONTEXT.md
+Last session: 2026-03-06T18:51:00Z
+Stopped at: Completed 14-02-PLAN.md
+Resume file: .planning/phases/14-sanitization-classifier/14-02-SUMMARY.md
