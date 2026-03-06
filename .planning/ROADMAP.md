@@ -47,7 +47,7 @@ See [Archive](.planning/milestones/v3.0-ROADMAP.md) for full detail.
 
 **Milestone Goal:** Restructure AI tiers for device-adaptive inference — local LLMs on every device, expanded ONNX classifiers, multi-provider cloud, and a privacy gate — so the app is fully functional offline on any device.
 
-- [ ] **Phase 12: Template Engine** - Offline structured text generation for reviews, compression explanations, and GTD flow prompts without any LLM call
+- [x] **Phase 12: Template Engine** - Offline structured text generation for reviews, compression explanations, and GTD flow prompts without any LLM call (completed 2026-03-06)
 - [ ] **Phase 13: Multi-Provider Cloud** - Refactor CloudAdapter to provider-agnostic shell; add OpenAI, Grok, and corporate endpoints via openai SDK
 - [ ] **Phase 14: Sanitization Classifier** - ONNX NER privacy gate in embedding worker; Python training pipeline; branded SanitizedPrompt type enforcing execution order
 - [ ] **Phase 15: Device-Adaptive Local LLM** - DeviceAdapter selects WebLLM (desktop) or WASM LLM (mobile); wllama integration; iOS explicitly excluded; adaptive confidence thresholds
@@ -131,7 +131,7 @@ Note: Phase 15 is independent of 13-14 and may execute in parallel with Phase 14
 | 9. Python Training Infrastructure | v3.0 | 2/2 | Complete | 2026-03-04 |
 | 10. Browser Inference Integration | v3.0 | 3/3 | Complete | 2026-03-04 |
 | 11. Tech Debt, Settings + Correction Utility | v3.0 | 3/3 | Complete | 2026-03-05 |
-| 12. Template Engine | 1/2 | In Progress|  | - |
+| 12. Template Engine | 2/2 | Complete   | 2026-03-06 | - |
 | 13. Multi-Provider Cloud | v4.0 | 0/TBD | Not started | - |
 | 14. Sanitization Classifier | v4.0 | 0/TBD | Not started | - |
 | 15. Device-Adaptive Local LLM | v4.0 | 0/TBD | Not started | - |

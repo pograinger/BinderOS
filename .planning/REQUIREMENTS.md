@@ -18,8 +18,8 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 ### Template Engine
 
 - [x] **TMPL-01**: User receives weekly review briefings generated from entropy signals without any LLM call
-- [ ] **TMPL-02**: User receives compression explanations generated from staleness signals without any LLM call
-- [ ] **TMPL-03**: GTD flow prompts (Get Clear/Current/Creative) render from computed data without any LLM call
+- [x] **TMPL-02**: User receives compression explanations generated from staleness signals without any LLM call
+- [x] **TMPL-03**: GTD flow prompts (Get Clear/Current/Creative) render from computed data without any LLM call
 
 ### Sanitization
 
@@ -84,8 +84,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DLLM-04 | Phase 15 | Pending |
 | DLLM-05 | Phase 15 | Pending |
 | TMPL-01 | Phase 12 | Complete |
-| TMPL-02 | Phase 12 | Pending |
-| TMPL-03 | Phase 12 | Pending |
+| TMPL-02 | Phase 12 | Complete |
+| TMPL-03 | Phase 12 | Complete |
 | SNTZ-01 | Phase 14 | Pending |
 | SNTZ-02 | Phase 14 | Pending |
 | SNTZ-03 | Phase 14 | Pending |
