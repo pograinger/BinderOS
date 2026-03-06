@@ -116,7 +116,7 @@ export type Response =
       payload: {
         requestId: string;
         text: string;
-        provider: 'noop' | 'browser' | 'cloud';
+        provider: string;
         model?: string;
         llmStatus?: AIProviderStatus;
         cloudStatus?: AIProviderStatus;

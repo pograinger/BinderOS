@@ -31,7 +31,7 @@ import { GTDAnalysisFlow } from '../components/GTDAnalysisFlow';
 import { ReviewResumeToast } from '../components/ReviewResumeToast';
 import { state, setPendingCloudRequest, showAISettings, setShowAISettings, showCapture } from '../signals/store';
 import { getActiveAdapter } from '../../ai/router';
-import type { CloudAdapter } from '../../ai/adapters/cloud';
+import type { CloudRequestLogEntry } from '../../ai/key-vault';
 
 // showAISettings / setShowAISettings now live in store.ts to avoid circular deps.
 
@@ -47,26 +47,29 @@ export function Shell() {
     onCleanup(() => mql.removeEventListener('change', handler));
   });
 
-  // Wire the CloudAdapter pre-send approval handler when cloud API is enabled.
-  // This is the critical link: CloudAdapter.execute() -> pre-send approval -> CloudRequestPreview modal.
+  // Wire the cloud adapter pre-send approval handler when cloud API is enabled.
+  // This is the critical link: adapter.execute() -> pre-send approval -> CloudRequestPreview modal.
+  //
+  // Uses duck-typing (checks for setPreSendApprovalHandler property) so both
+  // AnthropicCloudAdapter and OpenAICompatibleAdapter are supported without type-casting.
   //
   // Flow:
-  //   1. CloudAdapter.execute() calls onPreSendApproval(entry)
+  //   1. adapter.execute() calls onPreSendApproval(entry)
   //   2. This handler sets state.pendingCloudRequest (triggers CloudRequestPreview to render)
   //   3. User clicks Approve/Cancel in CloudRequestPreview
-  //   4. resolve(true/false) unblocks CloudAdapter.execute()
+  //   4. resolve(true/false) unblocks adapter.execute()
   //   5. pendingCloudRequest is cleared (CloudRequestPreview unmounts)
   createEffect(() => {
     if (state.cloudAPIEnabled) {
       const adapter = getActiveAdapter();
-      // Type-check: only CloudAdapter has setPreSendApprovalHandler
-      if (adapter && adapter.id === 'cloud') {
-        const cloudAdapter = adapter as CloudAdapter;
-        cloudAdapter.setPreSendApprovalHandler((entry) => {
-          return new Promise<boolean>((resolve) => {
-            setPendingCloudRequest(entry, resolve);
+      // Duck-type check: any cloud adapter with setPreSendApprovalHandler
+      if (adapter && 'setPreSendApprovalHandler' in adapter) {
+        (adapter as { setPreSendApprovalHandler: (h: (entry: CloudRequestLogEntry) => Promise<boolean>) => void })
+          .setPreSendApprovalHandler((entry: CloudRequestLogEntry) => {
+            return new Promise<boolean>((resolve) => {
+              setPendingCloudRequest(entry, resolve);
+            });
           });
-        });
       }
     }
   });

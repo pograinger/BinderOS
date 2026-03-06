@@ -26,6 +26,14 @@ export interface AISettings {
   reviewEnabled: boolean;
   compressionEnabled: boolean;
   selectedModelId?: string;  // WebLLM model ID (default: Llama-3.2-3B-Instruct-q4f16_1-MLC)
+  // Phase 13: Multi-provider cloud settings
+  activeCloudProvider?: string;  // ProviderId — defaults to 'anthropic'
+  providerModels?: Record<string, string>;  // user-overridden model per provider
+  customEndpointConfig?: {
+    label: string;    // user-defined name for display
+    baseURL: string;
+    model: string;
+  } | null;
 }
 
 /**

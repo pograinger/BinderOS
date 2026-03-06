@@ -104,6 +104,10 @@ export interface BinderState {
   // Phase 4: Cloud request preview state (wired by Shell.tsx -> CloudAdapter pre-send approval handler)
   pendingCloudRequest: CloudRequestLogEntry | null;
   pendingCloudRequestResolve: ((approved: boolean) => void) | null;
+  // Phase 13: Multi-provider cloud settings
+  activeCloudProvider: string;  // ProviderId, default 'anthropic'
+  providerModels: Record<string, string>;  // user-overridden models per provider
+  customEndpointConfig: { label: string; baseURL: string; model: string } | null;
   // Phase 6: Review pre-analysis state
   reviewBriefing: BriefingResult | null;
   reviewStatus: 'idle' | 'analyzing' | 'ready' | 'error';
@@ -151,6 +155,10 @@ const initialState: BinderState = {
   // Phase 4: Cloud request preview state
   pendingCloudRequest: null,
   pendingCloudRequestResolve: null,
+  // Phase 13: Multi-provider cloud settings
+  activeCloudProvider: 'anthropic',
+  providerModels: {},
+  customEndpointConfig: null,
   // Phase 6: Review pre-analysis state
   reviewBriefing: null,
   reviewStatus: 'idle',
@@ -192,6 +200,10 @@ onMessage((response) => {
         if ((s as { selectedModelId?: string }).selectedModelId !== undefined) {
           setState('llmModelId', (s as { selectedModelId?: string }).selectedModelId ?? null);
         }
+        // Phase 13: hydrate multi-provider cloud settings
+        if (s.activeCloudProvider) setState('activeCloudProvider', s.activeCloudProvider);
+        if (s.providerModels) setState('providerModels', s.providerModels);
+        if (s.customEndpointConfig !== undefined) setState('customEndpointConfig', s.customEndpointConfig ?? null);
         // Activate adapters that were enabled in a previous session
         if (s.browserLLMEnabled) void activateBrowserLLM();
         if (s.cloudAPIEnabled) void activateCloudAdapter();
@@ -429,14 +441,80 @@ export function setCloudAPIEnabled(enabled: boolean): void {
 }
 
 /**
- * Create a CloudAdapter, initialize it with the current memory key, and set it as the
- * active adapter. Updates cloudStatus reactively. Call after saving a key or toggling cloud on.
+ * Switch the active cloud provider. Persists via SAVE_AI_SETTINGS.
+ * If cloud API is currently enabled, immediately re-creates the adapter.
+ */
+export function setActiveCloudProvider(providerId: string): void {
+  setState('activeCloudProvider', providerId);
+  sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { activeCloudProvider: providerId } });
+  if (state.cloudAPIEnabled) {
+    void activateCloudAdapter();
+  }
+}
+
+/**
+ * Override the model for a specific provider. Persists via SAVE_AI_SETTINGS.
+ */
+export function setProviderModel(providerId: string, model: string): void {
+  setState('providerModels', providerId, model);
+  sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { providerModels: { ...state.providerModels, [providerId]: model } } });
+}
+
+/**
+ * Set or clear the custom endpoint configuration. Persists via SAVE_AI_SETTINGS.
+ */
+export function setCustomEndpointConfig(
+  config: { label: string; baseURL: string; model: string } | null,
+): void {
+  setState('customEndpointConfig', config);
+  sendCommand({ type: 'SAVE_AI_SETTINGS', payload: { customEndpointConfig: config } });
+}
+
+/**
+ * Create the active cloud adapter (factory pattern), initialize it with the current
+ * memory key for the active provider, and set it as the active adapter.
+ * Updates cloudStatus reactively. Call after saving a key, toggling cloud on, or switching provider.
  */
 export async function activateCloudAdapter(): Promise<void> {
-  const { CloudAdapter } = await import('../../ai/adapters/cloud');
+  const { AnthropicCloudAdapter } = await import('../../ai/adapters/cloud');
+  const { OpenAICompatibleAdapter } = await import('../../ai/adapters/cloud-openai');
+  const { PROVIDER_REGISTRY } = await import('../../ai/provider-registry');
+  const { getMemoryKeyForProvider } = await import('../../ai/key-vault');
   const { setActiveAdapter } = await import('../../ai/router');
-  const adapter = new CloudAdapter();
-  adapter.initialize();
+
+  const providerId = state.activeCloudProvider ?? 'anthropic';
+  const config = PROVIDER_REGISTRY[providerId as keyof typeof PROVIDER_REGISTRY];
+  const apiKey = getMemoryKeyForProvider(providerId as import('../../ai/provider-registry').ProviderId);
+
+  if (!apiKey) {
+    setState('cloudStatus', 'unavailable');
+    return;
+  }
+
+  let adapter: import('../../ai/adapters/adapter').AIAdapter;
+  if (providerId === 'anthropic') {
+    const a = new AnthropicCloudAdapter();
+    a.initialize();
+    adapter = a;
+  } else {
+    const baseURL = providerId === 'custom'
+      ? state.customEndpointConfig?.baseURL ?? ''
+      : config?.baseURL ?? '';
+    const model = providerId === 'custom'
+      ? state.customEndpointConfig?.model ?? ''
+      : state.providerModels[providerId] ?? config?.defaultModel ?? '';
+    const displayName = providerId === 'custom'
+      ? state.customEndpointConfig?.label ?? 'Custom'
+      : config?.displayName ?? providerId;
+    adapter = new OpenAICompatibleAdapter({
+      id: providerId,
+      displayName,
+      apiKey,
+      baseURL,
+      model,
+    });
+  }
+
   setActiveAdapter(adapter);
   setState('cloudStatus', adapter.status);
 }
