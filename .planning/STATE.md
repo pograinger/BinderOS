@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Device-Adaptive AI
 status: planning
-stopped_at: Completed 13-multi-provider-cloud 13-01-PLAN.md
-last_updated: "2026-03-06T04:45:02.281Z"
+stopped_at: "Checkpoint 13-02-PLAN.md Task 3: human-verify multi-provider UI"
+last_updated: "2026-03-06T05:50:37.676Z"
 last_activity: 2026-03-05 — Roadmap created
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
   percent: 0
 ---
 
@@ -51,6 +51,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 12 P02 | 10 | 2 tasks | 3 files |
 | Phase 12 P03 | 5 | 1 tasks | 2 files |
 | Phase 13-multi-provider-cloud P01 | 12 | 2 tasks | 9 files |
+| Phase 13-multi-provider-cloud P02 | 4 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,9 @@ Recent decisions affecting v4.0:
 - [Phase 13-01]: OpenAI SDK used for OpenAI-compatible providers — streaming support via for-await loop
 - [Phase 13-01]: v2 key storage format: per-provider encrypted entries; v1 (single Anthropic key) auto-migrated on decryptAllFromStore
 - [Phase 13-01]: Duck-typing replaces CloudAdapter type-cast in Shell.tsx — both adapters supported via setPreSendApprovalHandler check
+- [Phase 13-02]: Provider badge in communication log uses inline-block badge style with border for visual distinction
+- [Phase 13-02]: StatusBar shows two distinct mutually exclusive segments: 'Cloud: {ProviderName}' vs 'Local AI'
+- [Phase 13-02]: Model override field hidden for Custom provider — model set in endpoint form instead
 
 ### Phase Ordering Note
 
@@ -87,6 +91,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06T04:45:02.278Z
-Stopped at: Completed 13-multi-provider-cloud 13-01-PLAN.md
+Last session: 2026-03-06T05:50:37.674Z
+Stopped at: Checkpoint 13-02-PLAN.md Task 3: human-verify multi-provider UI
 Resume file: None
