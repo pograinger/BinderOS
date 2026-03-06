@@ -5,6 +5,10 @@
  * The store dequeues steps one at a time, advancing through the queue.
  * Phase transitions trigger AI-generated context summaries.
  *
+ * Phase 12: Trigger prompts enriched with section context via templates.
+ * Pattern surfacing is now deterministic from atom/section data — no AI call.
+ * generatePhaseSummary still uses dispatchAI (stays LLM-eligible).
+ *
  * Pure module: no imports from store.ts — all state passed in by caller.
  */
 
@@ -13,6 +17,8 @@ import type { Section, SectionItem } from '../types/sections';
 import type { CompressionCandidate } from '../types/config';
 import type { ReviewFlowStep, ReviewPhase, ReviewAction } from '../types/review';
 import { dispatchAI } from './router';
+import { enrichTriggerQuestion, derivePatternSteps } from './templates';
+import type { SectionContext } from './templates';
 
 // --- GTD Trigger List ---
 
@@ -172,15 +178,37 @@ export function buildGetCurrentSteps(
 }
 
 /**
+ * Build SectionContext from a section and the full atom list.
+ * Atoms are associated with sections via the sectionId field.
+ */
+function buildSectionContext(section: Section, atoms: Atom[]): SectionContext {
+  const sectionAtoms = atoms.filter(a => a.sectionId === section.id);
+  const activeTasks = sectionAtoms.filter(a => a.type === 'task' && (a.status === 'open' || a.status === 'in-progress'));
+  const activeProjects = sectionAtoms.filter(a => a.type === 'task' && a.status === 'open');
+  const lastActivity = sectionAtoms.reduce((max, a) => Math.max(max, a.updated_at), 0);
+  const daysSinceLastActivity = lastActivity > 0 ? Math.floor((Date.now() - lastActivity) / 86400000) : 999;
+  return {
+    section,
+    activeTaskCount: activeTasks.length,
+    activeProjectCount: activeProjects.length,
+    daysSinceLastActivity,
+  };
+}
+
+/**
  * Build Get Creative phase steps — Someday/Maybe scan, area gap check, trigger list, pattern surfacing, final capture.
  *
- * Uses AI for pattern surfacing. Falls back gracefully if AI is unavailable.
+ * Phase 12: Trigger prompts enriched with section context (no AI call for trigger list).
+ * Pattern surfacing is deterministic from atom/section data via derivePatternSteps.
+ * generatePhaseSummary still uses dispatchAI for LLM-eligible summaries.
  */
 export async function buildGetCreativeSteps(
   sections: Section[],
   recentDecisions: Atom[],
   recentInsights: Atom[],
   phaseSummaries: string[],
+  atoms: Atom[],
+  inboxItems: InboxItem[],
   signal?: AbortSignal,
 ): Promise<ReviewFlowStep[]> {
   const steps: ReviewFlowStep[] = [];
@@ -232,12 +260,22 @@ export async function buildGetCreativeSteps(
     });
   }
 
-  // Trigger list steps
+  // Trigger list steps — enriched with section context (no AI call)
   for (const trigger of TRIGGER_PROMPTS) {
+    const matchingSection = sections.find(s =>
+      s.name.toLowerCase().includes(trigger.id) ||
+      trigger.id.includes(s.name.toLowerCase()),
+    );
+    const sectionCtx = matchingSection ? buildSectionContext(matchingSection, atoms) : null;
+    const enrichedQuestion = enrichTriggerQuestion(
+      trigger.label,
+      trigger.description,
+      sectionCtx,
+    );
     steps.push({
       stepId: `get-creative-trigger-${trigger.id}`,
       phase: 'get-creative',
-      question: `${trigger.label}: ${trigger.description}. Anything to capture?`,
+      question: enrichedQuestion,
       options: [
         {
           id: 'capture',
@@ -249,69 +287,13 @@ export async function buildGetCreativeSteps(
           label: 'Nothing here',
         },
       ],
-      allowFreeform: true, // user types the thing to capture
+      allowFreeform: true,
     });
   }
 
-  // Pattern surfacing step (AI-generated, cloud API)
-  try {
-    const decisionTitles = recentDecisions.slice(-10).map(a => `- ${a.title || a.content.slice(0, 60)}`).join('\n');
-    const insightTitles = recentInsights.slice(-10).map(a => `- ${a.title || a.content.slice(0, 60)}`).join('\n');
-    const summaryContext = phaseSummaries.length > 0
-      ? `Review context:\n${phaseSummaries.join('\n\n')}`
-      : '';
-
-    const prompt = `You are a GTD coach doing pattern recognition during a weekly review.
-
-${summaryContext}
-
-Recent decisions:
-${decisionTitles || '(none)'}
-
-Recent insights:
-${insightTitles || '(none)'}
-
-Identify 3-4 patterns, themes, or opportunities worth capturing. Return as JSON array:
-[{"observation": "...", "suggestion": "..."}]
-
-Each observation should be specific and actionable — reference actual content themes.`;
-
-    const response = await dispatchAI({
-      requestId: crypto.randomUUID(),
-      prompt,
-      maxTokens: 400,
-      signal,
-    });
-
-    // Parse JSON response
-    const jsonMatch = response.text.match(/\[[\s\S]*\]/);
-    if (jsonMatch) {
-      const patterns = JSON.parse(jsonMatch[0]) as Array<{ observation: string; suggestion: string }>;
-      for (const pattern of patterns.slice(0, 4)) {
-        steps.push({
-          stepId: `get-creative-pattern-${crypto.randomUUID().slice(0, 8)}`,
-          phase: 'get-creative',
-          question: `Pattern: ${pattern.observation}`,
-          options: [
-            {
-              id: 'capture',
-              label: 'Capture this insight',
-              description: pattern.suggestion,
-              stagingAction: { type: 'capture', content: pattern.suggestion },
-            },
-            {
-              id: 'skip',
-              label: 'Skip',
-              stagingAction: { type: 'skip' },
-            },
-          ],
-          allowFreeform: true,
-        });
-      }
-    }
-  } catch {
-    // Pattern surfacing is non-critical — continue without it
-  }
+  // Deterministic pattern steps (replaces AI pattern surfacing)
+  const patternSteps = derivePatternSteps(sections, atoms, inboxItems.length);
+  steps.push(...patternSteps);
 
   // Final step — "Anything else?"
   steps.push({

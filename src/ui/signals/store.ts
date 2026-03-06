@@ -1508,12 +1508,20 @@ async function transitionToNextPhase(context: ReviewPhaseContext): Promise<void>
       }
     }
   } else {
-    // get-creative — needs AI for pattern surfacing
+    // get-creative — trigger prompts enriched with section context, pattern surfacing is deterministic
     const { setOrbState } = await import('../components/AIOrb');
     setOrbState('thinking');
     const recentDecisions = state.atoms.filter(a => a.type === 'decision').slice(-10);
     const recentInsights = state.atoms.filter(a => a.type === 'insight').slice(-10);
-    steps = await buildGetCreativeSteps(state.sections, recentDecisions, recentInsights, updatedSummaries, signal);
+    steps = await buildGetCreativeSteps(
+      state.sections,
+      recentDecisions,
+      recentInsights,
+      updatedSummaries,
+      state.atoms,
+      state.inboxItems,
+      signal,
+    );
     setOrbState('idle');
   }
 
