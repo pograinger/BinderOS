@@ -1,240 +1,2409 @@
-{"text": "Pick up a new keyboard from Office Depot", "label": "actionable"}
-{"text": "Laura Kennedy mentioned the project timeline", "label": "non-actionable"}
-{"text": "The meeting was productive", "label": "non-actionable"}
-{"text": "Revenue was up 9%", "label": "non-actionable"}
-{"text": "The leaky faucet needs attention", "label": "actionable"}
+{"text": "The the weekly standup was a success", "label": "non-actionable"}
+{"text": "Register for the board meeting", "label": "actionable"}
+{"text": "Register for a dinner party", "label": "actionable"}
 {"text": "Back up pricing information", "label": "actionable"}
-{"text": "Current balance: $4,428", "label": "non-actionable"}
-{"text": "Running low on batteries", "label": "actionable"}
-{"text": "Confirm a birthday party with Derek Zuniga", "label": "actionable"}
-{"text": "Michelle Stanton is the new Editor, magazine features", "label": "non-actionable"}
-{"text": "Need more staff", "label": "non-actionable"}
-{"text": "Email Dylan Miller about compliance requirements", "label": "actionable"}
-{"text": "Fix slow query", "label": "actionable"}
-{"text": "Inventory is at 34% capacity", "label": "non-actionable"}
-{"text": "Review the memo", "label": "actionable"}
-{"text": "The office will be closed Tuesday", "label": "non-actionable"}
-{"text": "the quarterly report is interesting", "label": "non-actionable"}
-{"text": "Confirm a team lunch with Connie Lawrence", "label": "actionable"}
-{"text": "Register for a client meeting", "label": "actionable"}
-{"text": "The office will be closed next week", "label": "non-actionable"}
-{"text": "Nathan Maldonado works at Potter, Mack and Peterson", "label": "non-actionable"}
-{"text": "Buy coffee filters", "label": "actionable"}
-{"text": "Reply to Ryan Munoz's message", "label": "actionable"}
-{"text": "Back up customer feedback", "label": "actionable"}
-{"text": "Davis-Williams is based in the conference room", "label": "non-actionable"}
-{"text": "Pay $849 for office supplies", "label": "actionable"}
-{"text": "Submit the contract to Marketing", "label": "actionable"}
-{"text": "Schedule the annual picnic", "label": "actionable"}
-{"text": "The den could use some work", "label": "non-actionable"}
-{"text": "Kevin Hurst joined the the department team", "label": "non-actionable"}
-{"text": "Michael Brooks works at Hayes, Wright and Brown", "label": "non-actionable"}
-{"text": "Current balance: $3,903", "label": "non-actionable"}
-{"text": "Update the description in the server", "label": "actionable"}
-{"text": "Average response time: 4:30 PM", "label": "non-actionable"}
-{"text": "The stuck window needs attention", "label": "actionable"}
-{"text": "Tricia Valencia's birthday is Tuesday", "label": "non-actionable"}
-{"text": "Download the spreadsheet from the server", "label": "actionable"}
-{"text": "Average response time: 4:30 PM", "label": "non-actionable"}
-{"text": "Company founded in the 20th", "label": "non-actionable"}
-{"text": "Text Monica Herrera the confirmation number", "label": "actionable"}
-{"text": "Set up the portal", "label": "actionable"}
-{"text": "Tamara George's birthday is this weekend", "label": "non-actionable"}
-{"text": "Return light bulbs to Trader Joe's", "label": "actionable"}
-{"text": "HR budget was approved", "label": "non-actionable"}
-{"text": "the vendor agreement is interesting", "label": "non-actionable"}
-{"text": "Order extension cord from Office Depot", "label": "actionable"}
-{"text": "Schedule a team lunch", "label": "actionable"}
-{"text": "Fix display glitch", "label": "actionable"}
-{"text": "Pay $3,296 for the budget approval", "label": "actionable"}
-{"text": "the report is outdated", "label": "actionable"}
-{"text": "Javier Ramirez mentioned the vendor agreement", "label": "non-actionable"}
-{"text": "Time to think about the rollout plan", "label": "non-actionable"}
-{"text": "File the design doc", "label": "actionable"}
-{"text": "Return stamps to Amazon", "label": "actionable"}
-{"text": "Brian Cox DVM works at Allen-Allen", "label": "non-actionable"}
-{"text": "The meeting was productive", "label": "non-actionable"}
-{"text": "Call Lisa Hensley", "label": "actionable"}
-{"text": "Pay $1,917 for access credentials", "label": "actionable"}
-{"text": "Need more meeting rooms", "label": "non-actionable"}
-{"text": "The project is on track", "label": "non-actionable"}
-{"text": "Gaines, Harrell and Evans is based in the garage", "label": "non-actionable"}
-{"text": "Team size: 92% of target", "label": "non-actionable"}
-{"text": "Mrs. Jennifer Morgan mentioned the hiring plan", "label": "non-actionable"}
-{"text": "Last quarter's results were strong", "label": "non-actionable"}
-{"text": "Team size: 68% of target", "label": "non-actionable"}
-{"text": "Schedule a birthday party", "label": "actionable"}
-{"text": "Company founded in the 20th", "label": "non-actionable"}
-{"text": "Pick up coffee filters from Walgreens", "label": "actionable"}
-{"text": "The the billing system update is available", "label": "non-actionable"}
-{"text": "Customer Support budget was approved", "label": "non-actionable"}
-{"text": "extension cord is broken", "label": "non-actionable"}
-{"text": "Download the analysis from the billing system", "label": "actionable"}
-{"text": "The a dinner party was a success", "label": "non-actionable"}
-{"text": "Jeffrey Henderson mentioned the budget", "label": "non-actionable"}
-{"text": "Danielle Lee asked about the product launch", "label": "actionable"}
-{"text": "Update the status in the inventory tracker", "label": "actionable"}
-{"text": "Michael Brown is the new Broadcast journalist", "label": "non-actionable"}
-{"text": "Average response time: 1 PM", "label": "non-actionable"}
-{"text": "Write the spreadsheet", "label": "actionable"}
-{"text": "The bathroom could use some work", "label": "non-actionable"}
-{"text": "the vendor agreement is interesting", "label": "non-actionable"}
-{"text": "Print the report", "label": "actionable"}
-{"text": "Clean living room", "label": "actionable"}
-{"text": "Pay $2,767 for a parking pass", "label": "actionable"}
-{"text": "Reply to Brian Ramirez's message", "label": "actionable"}
-{"text": "Order light bulbs from Staples", "label": "actionable"}
-{"text": "Matthew Foster's birthday is the 20th", "label": "non-actionable"}
-{"text": "Clean kitchen", "label": "actionable"}
-{"text": "Reply to Patty Perez's message", "label": "actionable"}
-{"text": "Update the price in the portal", "label": "actionable"}
-{"text": "Back up the updated contacts", "label": "actionable"}
-{"text": "Buy light bulbs", "label": "actionable"}
-{"text": "Send the spec to Carla Gray", "label": "actionable"}
-{"text": "The meeting was productive", "label": "non-actionable"}
-{"text": "Pick up coffee filters from Office Depot", "label": "actionable"}
-{"text": "a gift card is broken", "label": "non-actionable"}
-{"text": "Time to think about the project timeline", "label": "non-actionable"}
-{"text": "Text Ethan Adams the agenda", "label": "actionable"}
-{"text": "Inventory is at 97% capacity", "label": "non-actionable"}
-{"text": "The the dashboard update is available", "label": "non-actionable"}
-{"text": "Revenue was up 88%", "label": "non-actionable"}
-{"text": "The a client meeting was a success", "label": "non-actionable"}
-{"text": "The cracked tile needs attention", "label": "actionable"}
-{"text": "Pick up coffee filters from Walmart", "label": "actionable"}
-{"text": "the billing system seems slow lately", "label": "non-actionable"}
-{"text": "Text Holly Wood the directions", "label": "actionable"}
-{"text": "The project is on track", "label": "non-actionable"}
-{"text": "Book the board meeting for March 15", "label": "actionable"}
-{"text": "Buy a new keyboard", "label": "actionable"}
-{"text": "Running low on extension cord", "label": "actionable"}
-{"text": "Email Margaret Hawkins DDS about the hiring plan", "label": "actionable"}
-{"text": "Server uptime: 48%", "label": "non-actionable"}
-{"text": "Fix alignment problem", "label": "actionable"}
-{"text": "Set up the dashboard", "label": "actionable"}
-{"text": "the API seems slow lately", "label": "non-actionable"}
-{"text": "Submit the design doc to Finance", "label": "actionable"}
-{"text": "Judy Baker works at Mcgee PLC", "label": "non-actionable"}
-{"text": "Clean garage", "label": "actionable"}
-{"text": "Inventory is at 40% capacity", "label": "non-actionable"}
-{"text": "Print the agenda", "label": "actionable"}
-{"text": "The office will be closed Monday", "label": "non-actionable"}
-{"text": "Clean bedroom", "label": "actionable"}
-{"text": "Server uptime: 17%", "label": "non-actionable"}
-{"text": "Email Angie Henderson about the redesign", "label": "actionable"}
-{"text": "Last quarter's results were strong", "label": "non-actionable"}
-{"text": "Submit the proposal to Customer Support", "label": "actionable"}
-{"text": "The bathroom could use some work", "label": "non-actionable"}
-{"text": "the proposal was published Tuesday", "label": "non-actionable"}
-{"text": "Time to think about the budget", "label": "non-actionable"}
-{"text": "The the password manager license expires Friday", "label": "non-actionable"}
-{"text": "IT budget was approved", "label": "non-actionable"}
-{"text": "the design doc is outdated", "label": "actionable"}
-{"text": "Christopher Smith joined the the board team", "label": "non-actionable"}
-{"text": "Send the report to Noah Rhodes", "label": "actionable"}
-{"text": "Back up the sales data", "label": "actionable"}
-{"text": "The a client meeting was a success", "label": "non-actionable"}
-{"text": "The the board meeting had 9% attendance", "label": "non-actionable"}
-{"text": "Buy a gift card", "label": "actionable"}
-{"text": "Email Gabrielle Davis about the project timeline", "label": "actionable"}
-{"text": "The meeting was productive", "label": "non-actionable"}
-{"text": "Last quarter's results were strong", "label": "non-actionable"}
-{"text": "Print the spec", "label": "actionable"}
-{"text": "The new policy takes effect Friday", "label": "non-actionable"}
-{"text": "Send the report to Michele Williams", "label": "actionable"}
-{"text": "Update the due date in the app", "label": "actionable"}
-{"text": "Keller PLC is based in the front desk", "label": "non-actionable"}
-{"text": "Current balance: $2,796", "label": "non-actionable"}
-{"text": "The Airtable license expires next week", "label": "non-actionable"}
-{"text": "The the product demo was a success", "label": "non-actionable"}
-{"text": "Angela Dennis joined the the committee team", "label": "non-actionable"}
-{"text": "Book a training session for Monday", "label": "actionable"}
-{"text": "Industry average is 94%", "label": "non-actionable"}
-{"text": "Need more staff", "label": "non-actionable"}
-{"text": "Team size: 65% of target", "label": "non-actionable"}
-{"text": "Write the presentation", "label": "actionable"}
-{"text": "Time to think about the quarterly report", "label": "non-actionable"}
-{"text": "Industry average is 57%", "label": "non-actionable"}
-{"text": "Customer Support budget was approved", "label": "non-actionable"}
-{"text": "Revenue was up 78%", "label": "non-actionable"}
-{"text": "Register for a workshop", "label": "actionable"}
+{"text": "The new policy takes effect Monday", "label": "non-actionable"}
+{"text": "The the inventory tracker update is available", "label": "non-actionable"}
+{"text": "Book the weekly standup for Tuesday", "label": "actionable"}
+{"text": "Revenue was up 49%", "label": "non-actionable"}
+{"text": "Average response time: 3 PM", "label": "non-actionable"}
+{"text": "Text Crystal Robinson the address", "label": "actionable"}
+{"text": "Download the design doc from the billing system", "label": "actionable"}
+{"text": "The the weekly standup had 57% attendance", "label": "non-actionable"}
 {"text": "Return a phone charger to Walgreens", "label": "actionable"}
-{"text": "Text Cristian Santos the meeting link", "label": "actionable"}
-{"text": "Server uptime: 35%", "label": "non-actionable"}
-{"text": "Team size: 31% of target", "label": "non-actionable"}
-{"text": "Review the report", "label": "actionable"}
-{"text": "The office will be closed tomorrow", "label": "non-actionable"}
-{"text": "The new policy takes effect this weekend", "label": "non-actionable"}
-{"text": "The project is on track", "label": "non-actionable"}
-{"text": "Industry average is 82%", "label": "non-actionable"}
-{"text": "Rhonda Lee asked about the project timeline", "label": "actionable"}
-{"text": "Melissa Marquez's birthday is next Thursday", "label": "non-actionable"}
-{"text": "Write the spreadsheet", "label": "actionable"}
-{"text": "hand soap is broken", "label": "non-actionable"}
-{"text": "The broken doorknob needs attention", "label": "actionable"}
-{"text": "the agenda was published tomorrow", "label": "non-actionable"}
-{"text": "Order paint from Walmart", "label": "actionable"}
-{"text": "Write the draft", "label": "actionable"}
-{"text": "Call Lisa Jackson", "label": "actionable"}
-{"text": "the dashboard seems slow lately", "label": "non-actionable"}
-{"text": "Order stamps from Amazon", "label": "actionable"}
-{"text": "Heath Inc is based in the conference room", "label": "non-actionable"}
-{"text": "The Slack license expires Monday", "label": "non-actionable"}
-{"text": "The the weekly standup had 93% attendance", "label": "non-actionable"}
-{"text": "The new policy takes effect this weekend", "label": "non-actionable"}
-{"text": "Nicholas Nunez asked about the product launch", "label": "actionable"}
-{"text": "File the invoice", "label": "actionable"}
-{"text": "Daniel Bright is the new Sales executive", "label": "non-actionable"}
-{"text": "Register for a birthday party", "label": "actionable"}
-{"text": "Confirm a training session with Tommy Walter", "label": "actionable"}
-{"text": "Call Allison Hill", "label": "actionable"}
-{"text": "Return stamps to the grocery store", "label": "actionable"}
-{"text": "the invoice was published March 15", "label": "non-actionable"}
-{"text": "the summary is outdated", "label": "actionable"}
-{"text": "Revenue was up 47%", "label": "non-actionable"}
-{"text": "Schedule the offsite retreat", "label": "actionable"}
-{"text": "the analysis was published Monday", "label": "non-actionable"}
-{"text": "Industry average is 88%", "label": "non-actionable"}
-{"text": "the quarterly report is interesting", "label": "non-actionable"}
-{"text": "Register for the quarterly review", "label": "actionable"}
-{"text": "Book a birthday party for next Thursday", "label": "actionable"}
-{"text": "The the offsite retreat had 70% attendance", "label": "non-actionable"}
-{"text": "File the agenda", "label": "actionable"}
-{"text": "Fix crash", "label": "actionable"}
-{"text": "The the website update is available", "label": "non-actionable"}
-{"text": "Vanessa Patel is the new Comptroller", "label": "non-actionable"}
-{"text": "Reply to Daniel Wagner's message", "label": "actionable"}
-{"text": "the inventory tracker seems slow lately", "label": "non-actionable"}
-{"text": "Company founded in Monday", "label": "non-actionable"}
-{"text": "The office could use some work", "label": "non-actionable"}
-{"text": "The the portal update is available", "label": "non-actionable"}
-{"text": "Submit the summary to Customer Support", "label": "actionable"}
-{"text": "Thomas Ramos asked about the product launch", "label": "actionable"}
-{"text": "Inventory is at 50% capacity", "label": "non-actionable"}
-{"text": "Download the summary from the app", "label": "actionable"}
-{"text": "Download the agenda from the portal", "label": "actionable"}
-{"text": "the spec is outdated", "label": "actionable"}
-{"text": "Book the quarterly review for March 15", "label": "actionable"}
-{"text": "Average response time: 8:30 AM", "label": "non-actionable"}
+{"text": "Back up survey results", "label": "actionable"}
+{"text": "Daniel Nguyen mentioned the vendor agreement", "label": "non-actionable"}
+{"text": "James Padilla is the new Restaurant manager, fast food", "label": "non-actionable"}
+{"text": "Buy a new monitor", "label": "actionable"}
+{"text": "Clean attic", "label": "actionable"}
+{"text": "IT budget was approved", "label": "non-actionable"}
+{"text": "Back up pricing information", "label": "actionable"}
+{"text": "Email Angie Henderson about the redesign", "label": "actionable"}
+{"text": "Sanders, Ochoa and Kennedy is based in the office", "label": "non-actionable"}
+{"text": "envelopes is broken", "label": "non-actionable"}
+{"text": "The the API update is available", "label": "non-actionable"}
+{"text": "Submit the agenda to Procurement", "label": "actionable"}
+{"text": "Melissa Bishop mentioned the product launch", "label": "non-actionable"}
 {"text": "Last quarter's results were strong", "label": "non-actionable"}
-{"text": "File the spreadsheet", "label": "actionable"}
-{"text": "Confirm the weekly standup with Jamie Arnold", "label": "actionable"}
-{"text": "Set up the dashboard", "label": "actionable"}
-{"text": "Send the summary to Gina Moore", "label": "actionable"}
-{"text": "coffee filters is broken", "label": "non-actionable"}
-{"text": "Running low on a gift card", "label": "actionable"}
-{"text": "Print the spreadsheet", "label": "actionable"}
-{"text": "Running low on a new monitor", "label": "actionable"}
-{"text": "The new policy takes effect Friday", "label": "non-actionable"}
-{"text": "Review the analysis", "label": "actionable"}
-{"text": "Call Abigail Shaffer", "label": "actionable"}
-{"text": "Company founded in Monday", "label": "non-actionable"}
-{"text": "The the quarterly review had 47% attendance", "label": "non-actionable"}
+{"text": "The a dinner party had 14% attendance", "label": "non-actionable"}
+{"text": "Email Jessica Stephens about the rollout plan", "label": "actionable"}
+{"text": "Inventory is at 83% capacity", "label": "non-actionable"}
+{"text": "Call Joel Williams", "label": "actionable"}
+{"text": "Inventory is at 61% capacity", "label": "non-actionable"}
+{"text": "Book the annual picnic for Tuesday", "label": "actionable"}
+{"text": "Anna Gay's birthday is Monday", "label": "non-actionable"}
+{"text": "Maria Fisher mentioned the project timeline", "label": "non-actionable"}
+{"text": "Call Brittney Phillips", "label": "actionable"}
+{"text": "Need more server capacity", "label": "non-actionable"}
+{"text": "Email James Brown about the contract renewal", "label": "actionable"}
+{"text": "Text Zachary Hicks the directions", "label": "actionable"}
+{"text": "Call Rebecca Henderson", "label": "actionable"}
+{"text": "Register for a birthday party", "label": "actionable"}
+{"text": "Mrs. Stephanie Newman's birthday is next week", "label": "non-actionable"}
+{"text": "The a dinner party had 36% attendance", "label": "non-actionable"}
+{"text": "Call Joshua Perry", "label": "actionable"}
+{"text": "Server uptime: 72%", "label": "non-actionable"}
+{"text": "Revenue was up 10%", "label": "non-actionable"}
+{"text": "Jason Maldonado is the new Education administrator", "label": "non-actionable"}
+{"text": "Schedule a workshop", "label": "actionable"}
+{"text": "Average response time: 4:30 PM", "label": "non-actionable"}
+{"text": "Industry average is 59%", "label": "non-actionable"}
+{"text": "Current balance: $4,079", "label": "non-actionable"}
+{"text": "The office could use some work", "label": "non-actionable"}
+{"text": "the design doc is outdated", "label": "actionable"}
+{"text": "Gregory Matthews joined the the board team", "label": "non-actionable"}
+{"text": "The cracked tile needs attention", "label": "actionable"}
+{"text": "Steve Paul works at Morgan-Lopez", "label": "non-actionable"}
+{"text": "Buy paint", "label": "actionable"}
 {"text": "The project is on track", "label": "non-actionable"}
+{"text": "the analysis was published next week", "label": "non-actionable"}
+{"text": "coffee filters is broken", "label": "non-actionable"}
+{"text": "The the billing system update is available", "label": "non-actionable"}
+{"text": "Book the offsite retreat for Tuesday", "label": "actionable"}
+{"text": "the API seems slow lately", "label": "non-actionable"}
+{"text": "Submit the report to Customer Support", "label": "actionable"}
+{"text": "the API seems slow lately", "label": "non-actionable"}
+{"text": "Download the proposal from the app", "label": "actionable"}
+{"text": "Register for a training session", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Pay $4,318 for access credentials", "label": "actionable"}
+{"text": "Return envelopes to Walmart", "label": "actionable"}
+{"text": "Pay $2,719 for training materials", "label": "actionable"}
+{"text": "Email Matthew Moore about the rollout plan", "label": "actionable"}
+{"text": "Revenue was up 36%", "label": "non-actionable"}
+{"text": "Time to think about the product launch", "label": "non-actionable"}
+{"text": "Print the spreadsheet", "label": "actionable"}
+{"text": "Need more storage space", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "inventory counts is interesting", "label": "non-actionable"}
+{"text": "Print the meeting notes", "label": "actionable"}
+{"text": "Clean garage", "label": "actionable"}
+{"text": "Email Dylan Miller about compliance requirements", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "envelopes is broken", "label": "non-actionable"}
+{"text": "envelopes is broken", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Team size: 10% of target", "label": "non-actionable"}
+{"text": "Print the analysis", "label": "actionable"}
+{"text": "Buy notebooks", "label": "actionable"}
+{"text": "Glen Wood's birthday is March 15", "label": "non-actionable"}
+{"text": "Download the invoice from the dashboard", "label": "actionable"}
+{"text": "Download the report from the server", "label": "actionable"}
+{"text": "Byrd-Le is based in West Kristinaton", "label": "non-actionable"}
+{"text": "Team size: 94% of target", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Travis Johnson's birthday is tomorrow", "label": "non-actionable"}
+{"text": "The squeaky hinge needs attention", "label": "actionable"}
+{"text": "Industry average is 21%", "label": "non-actionable"}
+{"text": "Book a team lunch for this weekend", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Running low on cleaning supplies", "label": "actionable"}
+{"text": "Set up the website", "label": "actionable"}
+{"text": "Pick up printer paper from the grocery store", "label": "actionable"}
+{"text": "the server seems slow lately", "label": "non-actionable"}
+{"text": "Clean living room", "label": "actionable"}
+{"text": "Update the priority in the billing system", "label": "actionable"}
+{"text": "Confirm the product demo with Jeremy Dalton", "label": "actionable"}
+{"text": "Holland Ltd is based in the front desk", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Buy notebooks", "label": "actionable"}
+{"text": "File the agenda", "label": "actionable"}
+{"text": "Industry average is 40%", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Submit the analysis to Legal", "label": "actionable"}
+{"text": "Mark Roberts's birthday is Tuesday", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Confirm a client meeting with Michael Warner", "label": "actionable"}
+{"text": "Cynthia Martinez is the new Field trials officer", "label": "non-actionable"}
+{"text": "Emily Edwards is the new Freight forwarder", "label": "non-actionable"}
+{"text": "Review the analysis", "label": "actionable"}
+{"text": "Buy stamps", "label": "actionable"}
+{"text": "Time to think about the rollout plan", "label": "non-actionable"}
+{"text": "Katherine Davis joined the the department team", "label": "non-actionable"}
+{"text": "Alexis Baker is the new Computer games developer", "label": "non-actionable"}
+{"text": "Send the analysis to Eric Carney", "label": "actionable"}
+{"text": "The cracked tile needs attention", "label": "actionable"}
+{"text": "The stuck window needs attention", "label": "actionable"}
+{"text": "the marketing strategy is interesting", "label": "non-actionable"}
+{"text": "Company founded in Friday", "label": "non-actionable"}
+{"text": "The new policy takes effect March 15", "label": "non-actionable"}
+{"text": "Jessica Wright is the new Immigration officer", "label": "non-actionable"}
+{"text": "Server uptime: 96%", "label": "non-actionable"}
+{"text": "Michael Lopez asked about the quarterly report", "label": "actionable"}
+{"text": "Review the draft", "label": "actionable"}
+{"text": "Time to think about the rollout plan", "label": "non-actionable"}
+{"text": "Time to think about the project timeline", "label": "non-actionable"}
+{"text": "Confirm a workshop with Anthony Rodriguez", "label": "actionable"}
+{"text": "Fix permission error", "label": "actionable"}
+{"text": "Call Matthew Mcmillan", "label": "actionable"}
+{"text": "the hiring plan is interesting", "label": "non-actionable"}
+{"text": "Revenue was up 15%", "label": "non-actionable"}
+{"text": "The Monday.com license expires this weekend", "label": "non-actionable"}
+{"text": "Industry average is 18%", "label": "non-actionable"}
+{"text": "Team size: 95% of target", "label": "non-actionable"}
+{"text": "Call Shannon Jones", "label": "actionable"}
+{"text": "Submit the brief to Engineering", "label": "actionable"}
+{"text": "Time to think about the budget", "label": "non-actionable"}
+{"text": "Review the report", "label": "actionable"}
+{"text": "Review the analysis", "label": "actionable"}
+{"text": "The basement could use some work", "label": "non-actionable"}
+{"text": "Team size: 15% of target", "label": "non-actionable"}
+{"text": "Register for the quarterly review", "label": "actionable"}
+{"text": "Email Jessica Smith about the project timeline", "label": "actionable"}
+{"text": "Industry average is 78%", "label": "non-actionable"}
+{"text": "The loose shelf needs attention", "label": "actionable"}
+{"text": "Need more meeting rooms", "label": "non-actionable"}
+{"text": "Set up the billing system", "label": "actionable"}
+{"text": "stamps is broken", "label": "non-actionable"}
+{"text": "Pay $2,006 for equipment upgrade", "label": "actionable"}
+{"text": "The the website update is available", "label": "non-actionable"}
+{"text": "Current balance: $711", "label": "non-actionable"}
+{"text": "Running low on stamps", "label": "actionable"}
+{"text": "The the quarterly review was a success", "label": "non-actionable"}
+{"text": "Submit the brief to Operations", "label": "actionable"}
+{"text": "The office will be closed Friday", "label": "non-actionable"}
+{"text": "the memo was published next week", "label": "non-actionable"}
+{"text": "the dashboard seems slow lately", "label": "non-actionable"}
+{"text": "Running low on a new keyboard", "label": "actionable"}
+{"text": "Running low on extension cord", "label": "actionable"}
+{"text": "the backend seems slow lately", "label": "non-actionable"}
+{"text": "Review the spec", "label": "actionable"}
+{"text": "Aaron Barber's birthday is next Thursday", "label": "non-actionable"}
+{"text": "Download the proposal from the database", "label": "actionable"}
+{"text": "Team size: 17% of target", "label": "non-actionable"}
+{"text": "Inventory is at 46% capacity", "label": "non-actionable"}
+{"text": "Review the design doc", "label": "actionable"}
+{"text": "Confirm the weekly standup with Paul Jones", "label": "actionable"}
+{"text": "The office will be closed this weekend", "label": "non-actionable"}
+{"text": "Order batteries from Staples", "label": "actionable"}
+{"text": "Company founded in tomorrow", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Return extension cord to the hardware store", "label": "actionable"}
+{"text": "Register for the weekly standup", "label": "actionable"}
+{"text": "The Basecamp license expires Monday", "label": "non-actionable"}
+{"text": "Company founded in next Thursday", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The Linear license expires next Thursday", "label": "non-actionable"}
+{"text": "The guest room could use some work", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The 1Password license expires next Thursday", "label": "non-actionable"}
+{"text": "Company founded in this weekend", "label": "non-actionable"}
+{"text": "Set up the portal", "label": "actionable"}
+{"text": "Call Jonathan Peterson", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Current balance: $1,982", "label": "non-actionable"}
+{"text": "Revenue was up 5%", "label": "non-actionable"}
+{"text": "David Grant asked about the quarterly report", "label": "actionable"}
+{"text": "Average response time: 4:30 PM", "label": "non-actionable"}
+{"text": "the inventory tracker seems slow lately", "label": "non-actionable"}
+{"text": "envelopes is broken", "label": "non-actionable"}
+{"text": "The the app update is available", "label": "non-actionable"}
+{"text": "The living room could use some work", "label": "non-actionable"}
+{"text": "Current balance: $2,427", "label": "non-actionable"}
+{"text": "Download the memo from the website", "label": "actionable"}
+{"text": "File the proposal", "label": "actionable"}
+{"text": "The bedroom could use some work", "label": "non-actionable"}
+{"text": "Set up the CRM", "label": "actionable"}
+{"text": "Emily Wilson mentioned the proposal", "label": "non-actionable"}
+{"text": "Operations budget was approved", "label": "non-actionable"}
+{"text": "William Becker's birthday is next week", "label": "non-actionable"}
+{"text": "the spec was published next week", "label": "non-actionable"}
+{"text": "Submit the brief to Engineering", "label": "actionable"}
+{"text": "Text Sara Johnston the meeting link", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Buy paint", "label": "actionable"}
+{"text": "Need more storage space", "label": "non-actionable"}
+{"text": "Back up pricing information", "label": "actionable"}
+{"text": "Average response time: 3 PM", "label": "non-actionable"}
+{"text": "Susan Thompson asked about the budget", "label": "actionable"}
+{"text": "Schedule a client meeting", "label": "actionable"}
+{"text": "Jenkins-Simpson is based in the storage closet", "label": "non-actionable"}
+{"text": "Holly Valentine works at Murray-Campbell", "label": "non-actionable"}
+{"text": "Download the invoice from the dashboard", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Download the agenda from the portal", "label": "actionable"}
+{"text": "Matthew Williams works at Kim, Gonzales and Mills", "label": "non-actionable"}
+{"text": "The the weekly standup was a success", "label": "non-actionable"}
+{"text": "Text Elizabeth Kelley the meeting link", "label": "actionable"}
+{"text": "the website seems slow lately", "label": "non-actionable"}
+{"text": "Need more meeting rooms", "label": "non-actionable"}
+{"text": "Inventory is at 5% capacity", "label": "non-actionable"}
+{"text": "Inventory is at 57% capacity", "label": "non-actionable"}
+{"text": "Diaz-Morales is based in the warehouse", "label": "non-actionable"}
+{"text": "Download the proposal from the portal", "label": "actionable"}
+{"text": "Kimberly Sharp mentioned the product launch", "label": "non-actionable"}
+{"text": "Review the brief", "label": "actionable"}
+{"text": "Email Elizabeth Fowler about the product launch", "label": "actionable"}
+{"text": "the dashboard seems slow lately", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Reply to Susan Serrano's message", "label": "actionable"}
+{"text": "Industry average is 50%", "label": "non-actionable"}
+{"text": "Shelia Wallace works at Evans, Johnson and Nguyen", "label": "non-actionable"}
+{"text": "Industry average is 18%", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The a workshop had 86% attendance", "label": "non-actionable"}
+{"text": "The a client meeting had 9% attendance", "label": "non-actionable"}
+{"text": "Write the meeting notes", "label": "actionable"}
+{"text": "Joseph Burch joined the the committee team", "label": "non-actionable"}
+{"text": "Average response time: 9 AM", "label": "non-actionable"}
+{"text": "the invoice was published Tuesday", "label": "non-actionable"}
+{"text": "Current balance: $4,868", "label": "non-actionable"}
+{"text": "Inventory is at 45% capacity", "label": "non-actionable"}
+{"text": "Pick up batteries from Costco", "label": "actionable"}
+{"text": "The office will be closed next week", "label": "non-actionable"}
+{"text": "Company founded in the 20th", "label": "non-actionable"}
+{"text": "Write the analysis", "label": "actionable"}
+{"text": "Fix alignment problem", "label": "actionable"}
+{"text": "Schedule a workshop", "label": "actionable"}
+{"text": "Reply to David Douglas Jr.'s message", "label": "actionable"}
+{"text": "The Obsidian license expires March 15", "label": "non-actionable"}
+{"text": "The the portal update is available", "label": "non-actionable"}
+{"text": "Running low on notebooks", "label": "actionable"}
 {"text": "Set up the database", "label": "actionable"}
-{"text": "Julian Chapman joined the the family team", "label": "non-actionable"}
+{"text": "The Monday.com license expires next Thursday", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Inventory is at 35% capacity", "label": "non-actionable"}
+{"text": "Download the presentation from the inventory tracker", "label": "actionable"}
+{"text": "the migration is interesting", "label": "non-actionable"}
+{"text": "Revenue was up 73%", "label": "non-actionable"}
+{"text": "Print the analysis", "label": "actionable"}
+{"text": "Send the spec to Samantha Garcia", "label": "actionable"}
+{"text": "Email Rebecca Jackson about inventory counts", "label": "actionable"}
+{"text": "The 1Password license expires Tuesday", "label": "non-actionable"}
+{"text": "Review the proposal", "label": "actionable"}
+{"text": "Email Michael Powell about the proposal", "label": "actionable"}
+{"text": "Email Connor West about the product launch", "label": "actionable"}
+{"text": "Jamie Baird mentioned the vendor agreement", "label": "non-actionable"}
+{"text": "Book the offsite retreat for next Thursday", "label": "actionable"}
+{"text": "Pick up hand soap from Office Depot", "label": "actionable"}
+{"text": "Average response time: 4:30 PM", "label": "non-actionable"}
+{"text": "Update the price in the API", "label": "actionable"}
+{"text": "Pay $421 for office supplies", "label": "actionable"}
+{"text": "The the board meeting had 98% attendance", "label": "non-actionable"}
+{"text": "Pick up coffee filters from Walmart", "label": "actionable"}
+{"text": "Joseph Shaw is the new Dispensing optician", "label": "non-actionable"}
+{"text": "Confirm a team lunch with Brian Lee", "label": "actionable"}
+{"text": "Set up the API", "label": "actionable"}
+{"text": "Order printer paper from Office Depot", "label": "actionable"}
+{"text": "Pay $844 for a parking pass", "label": "actionable"}
+{"text": "the meeting notes was published Monday", "label": "non-actionable"}
+{"text": "Return extension cord to Costco", "label": "actionable"}
+{"text": "Back up the Q3 numbers", "label": "actionable"}
+{"text": "Clean guest room", "label": "actionable"}
+{"text": "Submit the invoice to HR", "label": "actionable"}
+{"text": "extension cord is broken", "label": "non-actionable"}
+{"text": "Send the summary to Jason Stein", "label": "actionable"}
+{"text": "Need more paper", "label": "non-actionable"}
+{"text": "the inventory tracker seems slow lately", "label": "non-actionable"}
+{"text": "The a dinner party had 15% attendance", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Pay $1,278 for equipment upgrade", "label": "actionable"}
+{"text": "Text Angela Lopez the confirmation number", "label": "actionable"}
+{"text": "Pay $93 for training materials", "label": "actionable"}
+{"text": "the agenda was published March 15", "label": "non-actionable"}
+{"text": "the proposal is outdated", "label": "actionable"}
+{"text": "Server uptime: 19%", "label": "non-actionable"}
+{"text": "Inventory is at 28% capacity", "label": "non-actionable"}
+{"text": "The the backend update is available", "label": "non-actionable"}
+{"text": "Revenue was up 1%", "label": "non-actionable"}
+{"text": "The a team lunch was a success", "label": "non-actionable"}
+{"text": "Back up survey results", "label": "actionable"}
+{"text": "Clean bathroom", "label": "actionable"}
+{"text": "Pick up envelopes from Costco", "label": "actionable"}
+{"text": "Pay $849 for office supplies", "label": "actionable"}
+{"text": "Need more budget", "label": "non-actionable"}
+{"text": "the vendor agreement is interesting", "label": "non-actionable"}
+{"text": "Back up performance metrics", "label": "actionable"}
+{"text": "Print the brief", "label": "actionable"}
+{"text": "Reply to Mike Allen's message", "label": "actionable"}
+{"text": "Download the proposal from the billing system", "label": "actionable"}
+{"text": "The den could use some work", "label": "non-actionable"}
+{"text": "Confirm the board meeting with Spencer Haynes", "label": "actionable"}
+{"text": "Erica Hernandez is the new Computer games developer", "label": "non-actionable"}
+{"text": "Submit the draft to Customer Support", "label": "actionable"}
+{"text": "File the draft", "label": "actionable"}
+{"text": "Return a new keyboard to Walmart", "label": "actionable"}
+{"text": "Review the contract", "label": "actionable"}
+{"text": "Charles Gonzalez works at Hernandez, Malone and Jones", "label": "non-actionable"}
+{"text": "Inventory is at 21% capacity", "label": "non-actionable"}
+{"text": "the rollout plan is interesting", "label": "non-actionable"}
+{"text": "The bedroom could use some work", "label": "non-actionable"}
+{"text": "The squeaky hinge needs attention", "label": "actionable"}
+{"text": "Print the spreadsheet", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Inventory is at 15% capacity", "label": "non-actionable"}
+{"text": "Inventory is at 3% capacity", "label": "non-actionable"}
+{"text": "IT budget was approved", "label": "non-actionable"}
+{"text": "Back up pricing information", "label": "actionable"}
+{"text": "Text Lisa Archer the directions", "label": "actionable"}
+{"text": "Back up performance metrics", "label": "actionable"}
+{"text": "the redesign is interesting", "label": "non-actionable"}
+{"text": "the server seems slow lately", "label": "non-actionable"}
+{"text": "Write the agenda", "label": "actionable"}
+{"text": "Need more meeting rooms", "label": "non-actionable"}
+{"text": "Update the description in the server", "label": "actionable"}
+{"text": "Set up the portal", "label": "actionable"}
+{"text": "Server uptime: 7%", "label": "non-actionable"}
+{"text": "File the invoice", "label": "actionable"}
+{"text": "Pick up a new keyboard from Target", "label": "actionable"}
+{"text": "Confirm the weekly standup with Erin Edwards", "label": "actionable"}
 {"text": "Need more staff", "label": "non-actionable"}
+{"text": "Engineering budget was approved", "label": "non-actionable"}
+{"text": "The broken doorknob needs attention", "label": "actionable"}
+{"text": "Time to think about compliance requirements", "label": "non-actionable"}
+{"text": "Send the spec to Carla Gray", "label": "actionable"}
+{"text": "Back up the sales data", "label": "actionable"}
+{"text": "Update the priority in the app", "label": "actionable"}
+{"text": "Confirm a client meeting with Sierra Johnson", "label": "actionable"}
+{"text": "Download the presentation from the app", "label": "actionable"}
+{"text": "Average response time: 9 AM", "label": "non-actionable"}
+{"text": "Order extension cord from Walmart", "label": "actionable"}
+{"text": "Print the spec", "label": "actionable"}
+{"text": "Clean den", "label": "actionable"}
+{"text": "Call Lindsey Walker", "label": "actionable"}
+{"text": "Write the proposal", "label": "actionable"}
+{"text": "Print the agenda", "label": "actionable"}
+{"text": "Register for a dinner party", "label": "actionable"}
+{"text": "Return a new keyboard to Costco", "label": "actionable"}
+{"text": "Denise Martinez asked about the project timeline", "label": "actionable"}
+{"text": "Schedule the product demo", "label": "actionable"}
+{"text": "The broken doorknob needs attention", "label": "actionable"}
+{"text": "Sabrina Briggs's birthday is the 20th", "label": "non-actionable"}
+{"text": "Email Melissa Martinez about the project timeline", "label": "actionable"}
+{"text": "The the API update is available", "label": "non-actionable"}
+{"text": "The kitchen could use some work", "label": "non-actionable"}
+{"text": "Average response time: 3 PM", "label": "non-actionable"}
+{"text": "The a dinner party was a success", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "compliance requirements is interesting", "label": "non-actionable"}
+{"text": "Review the invoice", "label": "actionable"}
+{"text": "Return hand soap to Walgreens", "label": "actionable"}
+{"text": "the project timeline is interesting", "label": "non-actionable"}
+{"text": "The new policy takes effect Monday", "label": "non-actionable"}
+{"text": "Clean den", "label": "actionable"}
+{"text": "Doris Smith's birthday is Friday", "label": "non-actionable"}
+{"text": "The office will be closed March 15", "label": "non-actionable"}
+{"text": "Write the summary", "label": "actionable"}
+{"text": "Review the report", "label": "actionable"}
+{"text": "Pick up cleaning supplies from Walgreens", "label": "actionable"}
+{"text": "Text Alyssa Long the address", "label": "actionable"}
+{"text": "the meeting notes is outdated", "label": "actionable"}
+{"text": "Inventory is at 75% capacity", "label": "non-actionable"}
+{"text": "Team size: 33% of target", "label": "non-actionable"}
+{"text": "Send the meeting notes to Christine Wright", "label": "actionable"}
+{"text": "Review the brief", "label": "actionable"}
+{"text": "Review the memo", "label": "actionable"}
+{"text": "Book a training session for tomorrow", "label": "actionable"}
+{"text": "Company founded in Friday", "label": "non-actionable"}
+{"text": "Confirm the annual picnic with Michelle Brown", "label": "actionable"}
+{"text": "Call Michelle Evans", "label": "actionable"}
+{"text": "The the CRM update is available", "label": "non-actionable"}
+{"text": "The the weekly standup was a success", "label": "non-actionable"}
+{"text": "The stuck window needs attention", "label": "actionable"}
+{"text": "Update the price in the billing system", "label": "actionable"}
+{"text": "Current balance: $1,926", "label": "non-actionable"}
+{"text": "Martin Ray's birthday is March 15", "label": "non-actionable"}
+{"text": "Server uptime: 54%", "label": "non-actionable"}
+{"text": "Deborah Hanson is the new Occupational therapist", "label": "non-actionable"}
+{"text": "Buy stamps", "label": "actionable"}
+{"text": "Michael Stanley mentioned the redesign", "label": "non-actionable"}
+{"text": "Running low on batteries", "label": "actionable"}
+{"text": "Buy groceries", "label": "actionable"}
+{"text": "Procurement budget was approved", "label": "non-actionable"}
+{"text": "The the backend update is available", "label": "non-actionable"}
+{"text": "Download the summary from the website", "label": "actionable"}
+{"text": "Fowler-Dean is based in the patio", "label": "non-actionable"}
+{"text": "Return stamps to the grocery store", "label": "actionable"}
+{"text": "Register for the board meeting", "label": "actionable"}
+{"text": "Pay $1,044 for a parking pass", "label": "actionable"}
+{"text": "Reply to Christopher Bass's message", "label": "actionable"}
+{"text": "Set up the portal", "label": "actionable"}
+{"text": "Back up the sales data", "label": "actionable"}
+{"text": "Update the description in the dashboard", "label": "actionable"}
+{"text": "the database seems slow lately", "label": "non-actionable"}
+{"text": "Pay $2,000 for equipment upgrade", "label": "actionable"}
+{"text": "Confirm a dinner party with Karen Graham", "label": "actionable"}
+{"text": "Derek Anderson is the new Holiday representative", "label": "non-actionable"}
+{"text": "Revenue was up 31%", "label": "non-actionable"}
+{"text": "the contract was published next Thursday", "label": "non-actionable"}
+{"text": "Robert Cummings mentioned the hiring plan", "label": "non-actionable"}
+{"text": "Inventory is at 31% capacity", "label": "non-actionable"}
+{"text": "the design doc is outdated", "label": "actionable"}
+{"text": "Download the summary from the app", "label": "actionable"}
+{"text": "Company founded in Monday", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "The running toilet needs attention", "label": "actionable"}
+{"text": "Reply to Devon Flores's message", "label": "actionable"}
+{"text": "Current balance: $3,537", "label": "non-actionable"}
+{"text": "Allison Ltd is based in the garage", "label": "non-actionable"}
+{"text": "Stephen Jones works at Key-Higgins", "label": "non-actionable"}
+{"text": "The broken doorknob needs attention", "label": "actionable"}
+{"text": "Email Cameron Fisher about the quarterly report", "label": "actionable"}
+{"text": "Running low on a phone charger", "label": "actionable"}
+{"text": "The a workshop was a success", "label": "non-actionable"}
+{"text": "Casey Chase asked about the budget", "label": "actionable"}
+{"text": "Buy envelopes", "label": "actionable"}
+{"text": "Pay $1,232 for office supplies", "label": "actionable"}
+{"text": "Download the analysis from the billing system", "label": "actionable"}
+{"text": "Order hand soap from Trader Joe's", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "the marketing strategy is interesting", "label": "non-actionable"}
+{"text": "Current balance: $3,265", "label": "non-actionable"}
+{"text": "The the inventory tracker update is available", "label": "non-actionable"}
+{"text": "Jennifer Banks joined the the interns team", "label": "non-actionable"}
+{"text": "Text Helen Jones the meeting link", "label": "actionable"}
+{"text": "Chad Jones's birthday is March 15", "label": "non-actionable"}
+{"text": "The the portal update is available", "label": "non-actionable"}
+{"text": "Team size: 49% of target", "label": "non-actionable"}
+{"text": "Time to think about the hiring plan", "label": "non-actionable"}
+{"text": "Company founded in March 15", "label": "non-actionable"}
+{"text": "Reply to Jessica Gross's message", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Timothy Perez works at Jacobson, Singleton and King", "label": "non-actionable"}
+{"text": "Register for a workshop", "label": "actionable"}
+{"text": "Buy packing tape", "label": "actionable"}
+{"text": "Email Andrew Reynolds about the product launch", "label": "actionable"}
+{"text": "Server uptime: 33%", "label": "non-actionable"}
+{"text": "The attic could use some work", "label": "non-actionable"}
+{"text": "Reply to John Anderson's message", "label": "actionable"}
+{"text": "Submit the draft to Finance", "label": "actionable"}
+{"text": "Clean living room", "label": "actionable"}
+{"text": "Review the draft", "label": "actionable"}
+{"text": "The office could use some work", "label": "non-actionable"}
+{"text": "The squeaky hinge needs attention", "label": "actionable"}
+{"text": "Send the report to Michele Williams", "label": "actionable"}
+{"text": "Running low on groceries", "label": "actionable"}
+{"text": "Back up the updated contacts", "label": "actionable"}
+{"text": "The running toilet needs attention", "label": "actionable"}
+{"text": "Return batteries to the grocery store", "label": "actionable"}
+{"text": "Update the description in the server", "label": "actionable"}
+{"text": "Time to think about the redesign", "label": "non-actionable"}
+{"text": "Jessica Khan is the new Medical secretary", "label": "non-actionable"}
+{"text": "The office will be closed Tuesday", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "File the presentation", "label": "actionable"}
+{"text": "Combs Ltd is based in the living room", "label": "non-actionable"}
+{"text": "Fix crash", "label": "actionable"}
+{"text": "Server uptime: 86%", "label": "non-actionable"}
+{"text": "Revenue was up 78%", "label": "non-actionable"}
+{"text": "Email Richard Rodriguez about the vendor agreement", "label": "actionable"}
+{"text": "Average response time: 4:30 PM", "label": "non-actionable"}
+{"text": "File the design doc", "label": "actionable"}
+{"text": "Running low on coffee filters", "label": "actionable"}
+{"text": "Team size: 4% of target", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Order paint from the hardware store", "label": "actionable"}
+{"text": "Clean garage", "label": "actionable"}
+{"text": "Confirm a birthday party with Alyssa Day", "label": "actionable"}
+{"text": "Text Patricia Rodriguez the address", "label": "actionable"}
+{"text": "Print the design doc", "label": "actionable"}
+{"text": "Register for the annual picnic", "label": "actionable"}
+{"text": "Order a new monitor from Walgreens", "label": "actionable"}
+{"text": "Schedule a birthday party", "label": "actionable"}
+{"text": "Average response time: 9 AM", "label": "non-actionable"}
+{"text": "Franklin Wright mentioned the marketing strategy", "label": "non-actionable"}
+{"text": "Set up the portal", "label": "actionable"}
+{"text": "Peck-Griffith is based in the lobby", "label": "non-actionable"}
+{"text": "Samantha Robertson mentioned the quarterly report", "label": "non-actionable"}
+{"text": "Update the due date in the website", "label": "actionable"}
+{"text": "The broken doorknob needs attention", "label": "actionable"}
+{"text": "The office will be closed Tuesday", "label": "non-actionable"}
+{"text": "The office will be closed Monday", "label": "non-actionable"}
+{"text": "Send the presentation to Denise Mccann", "label": "actionable"}
+{"text": "Return printer paper to Office Depot", "label": "actionable"}
+{"text": "the design doc was published Monday", "label": "non-actionable"}
+{"text": "File the summary", "label": "actionable"}
+{"text": "Return a new monitor to the grocery store", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The the billing system update is available", "label": "non-actionable"}
+{"text": "Set up the dashboard", "label": "actionable"}
+{"text": "Average response time: 11 AM", "label": "non-actionable"}
+{"text": "Brian Fitzgerald is the new Restaurant manager", "label": "non-actionable"}
+{"text": "Industry average is 14%", "label": "non-actionable"}
+{"text": "The the server update is available", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Register for a client meeting", "label": "actionable"}
+{"text": "The new policy takes effect the 20th", "label": "non-actionable"}
+{"text": "Current balance: $346", "label": "non-actionable"}
+{"text": "Industry average is 76%", "label": "non-actionable"}
+{"text": "Robert Shelton is the new Airline pilot", "label": "non-actionable"}
+{"text": "Clean bedroom", "label": "actionable"}
+{"text": "File the spreadsheet", "label": "actionable"}
+{"text": "light bulbs is broken", "label": "non-actionable"}
+{"text": "The office could use some work", "label": "non-actionable"}
+{"text": "Email Angela Vaughn about the vendor agreement", "label": "actionable"}
+{"text": "Mr. Jesus Thomas is the new Engineer, aeronautical", "label": "non-actionable"}
+{"text": "Industry average is 85%", "label": "non-actionable"}
+{"text": "Carney, White and Carter is based in the storage closet", "label": "non-actionable"}
+{"text": "The guest room could use some work", "label": "non-actionable"}
+{"text": "Industry average is 40%", "label": "non-actionable"}
+{"text": "The running toilet needs attention", "label": "actionable"}
+{"text": "Sabrina Austin works at Hawkins, Lynch and Barrett", "label": "non-actionable"}
+{"text": "Average response time: 8:30 AM", "label": "non-actionable"}
+{"text": "Buy coffee filters", "label": "actionable"}
+{"text": "Team size: 7% of target", "label": "non-actionable"}
+{"text": "Send the report to Nathan Freeman", "label": "actionable"}
+{"text": "File the draft", "label": "actionable"}
+{"text": "Book the weekly standup for next week", "label": "actionable"}
+{"text": "Running low on batteries", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Download the agenda from the API", "label": "actionable"}
+{"text": "Schedule the annual picnic", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Industry average is 9%", "label": "non-actionable"}
+{"text": "Time to think about the hiring plan", "label": "non-actionable"}
+{"text": "Back up pricing information", "label": "actionable"}
+{"text": "Tammy Mcdowell mentioned the budget", "label": "non-actionable"}
+{"text": "Robert Richardson mentioned the quarterly report", "label": "non-actionable"}
+{"text": "Reply to Brittany Farmer's message", "label": "actionable"}
+{"text": "Send the spreadsheet to Jason Powell", "label": "actionable"}
+{"text": "Jennifer Chavez is the new Best boy", "label": "non-actionable"}
+{"text": "Download the analysis from the dashboard", "label": "actionable"}
+{"text": "Fix missing label", "label": "actionable"}
+{"text": "The the annual picnic was a success", "label": "non-actionable"}
+{"text": "Revenue was up 79%", "label": "non-actionable"}
+{"text": "Inventory is at 61% capacity", "label": "non-actionable"}
+{"text": "The the server update is available", "label": "non-actionable"}
+{"text": "Set up the website", "label": "actionable"}
+{"text": "the billing system seems slow lately", "label": "non-actionable"}
+{"text": "Buy hand soap", "label": "actionable"}
+{"text": "Engineering budget was approved", "label": "non-actionable"}
+{"text": "light bulbs is broken", "label": "non-actionable"}
+{"text": "Fix permission error", "label": "actionable"}
+{"text": "The den could use some work", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Company founded in Friday", "label": "non-actionable"}
+{"text": "Fix typo", "label": "actionable"}
+{"text": "Print the invoice", "label": "actionable"}
+{"text": "The the annual picnic had 68% attendance", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Text Michael Evans the directions", "label": "actionable"}
+{"text": "Register for the product demo", "label": "actionable"}
+{"text": "the summary was published Tuesday", "label": "non-actionable"}
+{"text": "Kathleen Ramos joined the the department team", "label": "non-actionable"}
+{"text": "The Google Docs license expires next Thursday", "label": "non-actionable"}
+{"text": "Average response time: 3 PM", "label": "non-actionable"}
+{"text": "Schedule the annual picnic", "label": "actionable"}
+{"text": "Review the agenda", "label": "actionable"}
+{"text": "Back up performance metrics", "label": "actionable"}
+{"text": "Order stamps from Amazon", "label": "actionable"}
+{"text": "the presentation was published the 20th", "label": "non-actionable"}
+{"text": "Return hand soap to Target", "label": "actionable"}
+{"text": "Reply to Stephen Mckee's message", "label": "actionable"}
+{"text": "the meeting notes is outdated", "label": "actionable"}
+{"text": "The Asana license expires tomorrow", "label": "non-actionable"}
+{"text": "the brief was published Friday", "label": "non-actionable"}
+{"text": "Confirm the quarterly review with Dr. Hannah Patterson", "label": "actionable"}
+{"text": "Pick up batteries from Home Depot", "label": "actionable"}
+{"text": "Need more budget", "label": "non-actionable"}
+{"text": "The office will be closed this weekend", "label": "non-actionable"}
+{"text": "the draft was published next week", "label": "non-actionable"}
+{"text": "the contract was published next week", "label": "non-actionable"}
+{"text": "Running low on a new monitor", "label": "actionable"}
+{"text": "Set up the app", "label": "actionable"}
+{"text": "Need more server capacity", "label": "non-actionable"}
+{"text": "Update the description in the CRM", "label": "actionable"}
+{"text": "Order coffee filters from Best Buy", "label": "actionable"}
+{"text": "Email Justin Baker about compliance requirements", "label": "actionable"}
+{"text": "The garage could use some work", "label": "non-actionable"}
+{"text": "Angela Walsh joined the the team team", "label": "non-actionable"}
+{"text": "Send the spreadsheet to Joyce Solis", "label": "actionable"}
+{"text": "Time to think about the hiring plan", "label": "non-actionable"}
+{"text": "The new policy takes effect this weekend", "label": "non-actionable"}
+{"text": "Revenue was up 44%", "label": "non-actionable"}
+{"text": "Kim Erickson asked about the product launch", "label": "actionable"}
+{"text": "Review the proposal", "label": "actionable"}
+{"text": "The stuck window needs attention", "label": "actionable"}
+{"text": "Time to think about inventory counts", "label": "non-actionable"}
+{"text": "Buy printer paper", "label": "actionable"}
+{"text": "Bryan Parker mentioned the marketing strategy", "label": "non-actionable"}
+{"text": "Submit the analysis to Procurement", "label": "actionable"}
+{"text": "Company founded in this weekend", "label": "non-actionable"}
+{"text": "Server uptime: 71%", "label": "non-actionable"}
+{"text": "Email Kelly Donovan about the hiring plan", "label": "actionable"}
+{"text": "Average response time: noon", "label": "non-actionable"}
+{"text": "Clean den", "label": "actionable"}
+{"text": "Average response time: 9 AM", "label": "non-actionable"}
+{"text": "Stephanie Marshall works at Byrd-Moore", "label": "non-actionable"}
+{"text": "Kelly Edwards asked about the proposal", "label": "actionable"}
+{"text": "groceries is broken", "label": "non-actionable"}
+{"text": "Lauren Jackson asked about the product launch", "label": "actionable"}
+{"text": "Order batteries from Target", "label": "actionable"}
+{"text": "The a birthday party had 84% attendance", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Need more printer ink", "label": "non-actionable"}
+{"text": "Text Sharon Cherry the time", "label": "actionable"}
+{"text": "Submit the draft to HR", "label": "actionable"}
+{"text": "Knight Group is based in the conference room", "label": "non-actionable"}
+{"text": "Back up the updated contacts", "label": "actionable"}
+{"text": "the vendor agreement is interesting", "label": "non-actionable"}
+{"text": "Return a gift card to Best Buy", "label": "actionable"}
+{"text": "Frank Lopez is the new Field trials officer", "label": "non-actionable"}
+{"text": "Sean Osborne works at Lozano Ltd", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Susan Rivas joined the the interns team", "label": "non-actionable"}
+{"text": "The the password manager license expires next Thursday", "label": "non-actionable"}
+{"text": "Elizabeth Sharp mentioned performance reviews", "label": "non-actionable"}
+{"text": "Team size: 66% of target", "label": "non-actionable"}
+{"text": "Tracy Jones joined the the team team", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Pick up notebooks from Staples", "label": "actionable"}
+{"text": "Confirm the weekly standup with Laura Roberts", "label": "actionable"}
+{"text": "Revenue was up 19%", "label": "non-actionable"}
+{"text": "Company founded in Tuesday", "label": "non-actionable"}
+{"text": "Write the spreadsheet", "label": "actionable"}
+{"text": "Clean bathroom", "label": "actionable"}
+{"text": "The new policy takes effect Monday", "label": "non-actionable"}
+{"text": "cleaning supplies is broken", "label": "non-actionable"}
+{"text": "Clean guest room", "label": "actionable"}
+{"text": "Print the brief", "label": "actionable"}
+{"text": "Reid, Weber and Lin is based in the lobby", "label": "non-actionable"}
+{"text": "Fix permission error", "label": "actionable"}
+{"text": "Book the weekly standup for next week", "label": "actionable"}
+{"text": "Register for the product demo", "label": "actionable"}
+{"text": "The new policy takes effect March 15", "label": "non-actionable"}
+{"text": "Update the due date in the portal", "label": "actionable"}
+{"text": "Pay $627 for a parking pass", "label": "actionable"}
+{"text": "the inventory tracker seems slow lately", "label": "non-actionable"}
+{"text": "Tanner Mitchell DDS joined the the department team", "label": "non-actionable"}
+{"text": "Time to think about the proposal", "label": "non-actionable"}
+{"text": "Send the agenda to Kathryn Snyder", "label": "actionable"}
+{"text": "Engineering budget was approved", "label": "non-actionable"}
+{"text": "The new policy takes effect next Thursday", "label": "non-actionable"}
+{"text": "The Notion license expires Friday", "label": "non-actionable"}
+{"text": "Michael Perry joined the the committee team", "label": "non-actionable"}
+{"text": "Update the contact info in the API", "label": "actionable"}
+{"text": "the agenda is outdated", "label": "actionable"}
+{"text": "Industry average is 31%", "label": "non-actionable"}
+{"text": "Pick up paint from Costco", "label": "actionable"}
+{"text": "paint is broken", "label": "non-actionable"}
+{"text": "Call Evelyn Galvan", "label": "actionable"}
+{"text": "Submit the report to Customer Support", "label": "actionable"}
+{"text": "Text Monica Herrera the confirmation number", "label": "actionable"}
+{"text": "The a birthday party had 86% attendance", "label": "non-actionable"}
+{"text": "Team size: 37% of target", "label": "non-actionable"}
+{"text": "Time to think about the budget", "label": "non-actionable"}
+{"text": "Need more printer ink", "label": "non-actionable"}
+{"text": "Schedule the weekly standup", "label": "actionable"}
+{"text": "Order printer paper from Costco", "label": "actionable"}
+{"text": "Download the spreadsheet from the API", "label": "actionable"}
+{"text": "The office could use some work", "label": "non-actionable"}
+{"text": "Pay $4,418 for a software license", "label": "actionable"}
+{"text": "the memo is outdated", "label": "actionable"}
+{"text": "Operations budget was approved", "label": "non-actionable"}
+{"text": "Pay $4,385 for a new laptop", "label": "actionable"}
+{"text": "Company founded in Tuesday", "label": "non-actionable"}
+{"text": "Pay $3,740 for access credentials", "label": "actionable"}
+{"text": "Pay $236 for the budget approval", "label": "actionable"}
+{"text": "The Linear license expires Tuesday", "label": "non-actionable"}
+{"text": "The new policy takes effect next Thursday", "label": "non-actionable"}
+{"text": "Shelly Alexander works at Lozano, Smith and Thomas", "label": "non-actionable"}
+{"text": "Email Margaret Hawkins DDS about the hiring plan", "label": "actionable"}
+{"text": "Inventory is at 23% capacity", "label": "non-actionable"}
+{"text": "The the weekly standup was a success", "label": "non-actionable"}
+{"text": "Server uptime: 52%", "label": "non-actionable"}
+{"text": "the draft is outdated", "label": "actionable"}
+{"text": "Submit the spec to IT", "label": "actionable"}
+{"text": "Company founded in March 15", "label": "non-actionable"}
+{"text": "Emily Douglas's birthday is this weekend", "label": "non-actionable"}
+{"text": "Holly Salinas joined the the family team", "label": "non-actionable"}
+{"text": "Brenda Thornton's birthday is tomorrow", "label": "non-actionable"}
+{"text": "Review the analysis", "label": "actionable"}
+{"text": "The a dinner party was a success", "label": "non-actionable"}
+{"text": "Nelson-Fischer is based in the living room", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Mckay-Mcdaniel is based in the office", "label": "non-actionable"}
+{"text": "Fix crash", "label": "actionable"}
+{"text": "Submit the meeting notes to Sales", "label": "actionable"}
+{"text": "Inventory is at 94% capacity", "label": "non-actionable"}
+{"text": "The office will be closed next week", "label": "non-actionable"}
+{"text": "Running low on cleaning supplies", "label": "actionable"}
+{"text": "The office will be closed next week", "label": "non-actionable"}
+{"text": "Book the offsite retreat for next Thursday", "label": "actionable"}
+{"text": "Send the memo to Deborah Figueroa", "label": "actionable"}
+{"text": "extension cord is broken", "label": "non-actionable"}
+{"text": "File the design doc", "label": "actionable"}
+{"text": "the spreadsheet is outdated", "label": "actionable"}
+{"text": "Time to think about the project timeline", "label": "non-actionable"}
+{"text": "Set up the dashboard", "label": "actionable"}
+{"text": "Buy stamps", "label": "actionable"}
+{"text": "Schedule a team lunch", "label": "actionable"}
+{"text": "Fix leaky faucet", "label": "actionable"}
+{"text": "Company founded in March 15", "label": "non-actionable"}
+{"text": "The new policy takes effect Tuesday", "label": "non-actionable"}
+{"text": "Submit the proposal to Sales", "label": "actionable"}
+{"text": "The a dinner party had 77% attendance", "label": "non-actionable"}
+{"text": "the memo was published Friday", "label": "non-actionable"}
+{"text": "paint is broken", "label": "non-actionable"}
+{"text": "Company founded in this weekend", "label": "non-actionable"}
+{"text": "The the weekly standup was a success", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Inventory is at 28% capacity", "label": "non-actionable"}
+{"text": "Download the proposal from the inventory tracker", "label": "actionable"}
+{"text": "the budget is interesting", "label": "non-actionable"}
+{"text": "Marketing budget was approved", "label": "non-actionable"}
+{"text": "Russell, Lynn and Johnson is based in the garage", "label": "non-actionable"}
+{"text": "Clean bedroom", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Submit the spreadsheet to Finance", "label": "actionable"}
+{"text": "Confirm a client meeting with Joseph Coleman", "label": "actionable"}
+{"text": "Email Victoria Larson about performance reviews", "label": "actionable"}
+{"text": "Download the summary from the API", "label": "actionable"}
+{"text": "Molly Watts mentioned the redesign", "label": "non-actionable"}
+{"text": "Book the offsite retreat for tomorrow", "label": "actionable"}
+{"text": "Buy a gift card", "label": "actionable"}
+{"text": "Book a birthday party for March 15", "label": "actionable"}
+{"text": "Order groceries from Home Depot", "label": "actionable"}
+{"text": "Kelly Torres's birthday is Tuesday", "label": "non-actionable"}
+{"text": "Team size: 66% of target", "label": "non-actionable"}
+{"text": "Call Zachary Ferrell", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "The Notion license expires March 15", "label": "non-actionable"}
+{"text": "the vendor agreement is interesting", "label": "non-actionable"}
+{"text": "Back up the updated contacts", "label": "actionable"}
+{"text": "File the meeting notes", "label": "actionable"}
+{"text": "Industry average is 9%", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The new policy takes effect March 15", "label": "non-actionable"}
+{"text": "Running low on a phone charger", "label": "actionable"}
+{"text": "Update the description in the server", "label": "actionable"}
+{"text": "The Google Docs license expires this weekend", "label": "non-actionable"}
+{"text": "Company founded in tomorrow", "label": "non-actionable"}
+{"text": "Update the address in the server", "label": "actionable"}
+{"text": "The the board meeting was a success", "label": "non-actionable"}
+{"text": "The new policy takes effect next week", "label": "non-actionable"}
+{"text": "Call Christopher Smith", "label": "actionable"}
+{"text": "Pick up light bulbs from Amazon", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Legal budget was approved", "label": "non-actionable"}
+{"text": "the database seems slow lately", "label": "non-actionable"}
+{"text": "Ashley Smith mentioned the contract renewal", "label": "non-actionable"}
+{"text": "Brian Graham joined the the board team", "label": "non-actionable"}
+{"text": "Text Paula Moreno the meeting link", "label": "actionable"}
+{"text": "Return hand soap to Office Depot", "label": "actionable"}
+{"text": "Call Alexander Collins", "label": "actionable"}
+{"text": "File the summary", "label": "actionable"}
+{"text": "Text John Whitehead the agenda", "label": "actionable"}
+{"text": "Confirm the weekly standup with Jamie Arnold", "label": "actionable"}
+{"text": "Email Melissa Brewer about the marketing strategy", "label": "actionable"}
+{"text": "Paul Thompson works at Buchanan LLC", "label": "non-actionable"}
+{"text": "Book a dinner party for next week", "label": "actionable"}
+{"text": "Reply to Donald Wright's message", "label": "actionable"}
+{"text": "Email Shirley Suarez about the quarterly report", "label": "actionable"}
+{"text": "Submit the design doc to Finance", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "the proposal is outdated", "label": "actionable"}
+{"text": "Industry average is 47%", "label": "non-actionable"}
+{"text": "Inventory is at 85% capacity", "label": "non-actionable"}
+{"text": "Print the report", "label": "actionable"}
+{"text": "Marketing budget was approved", "label": "non-actionable"}
+{"text": "Back up the Q3 numbers", "label": "actionable"}
+{"text": "Server uptime: 76%", "label": "non-actionable"}
+{"text": "Print the summary", "label": "actionable"}
+{"text": "the agenda was published Monday", "label": "non-actionable"}
+{"text": "Call Nicole Herring", "label": "actionable"}
+{"text": "Micheal Osborn works at Ponce, Downs and Contreras", "label": "non-actionable"}
+{"text": "the agenda was published Tuesday", "label": "non-actionable"}
+{"text": "the app seems slow lately", "label": "non-actionable"}
+{"text": "Current balance: $4,322", "label": "non-actionable"}
+{"text": "The stuck window needs attention", "label": "actionable"}
+{"text": "Back up performance metrics", "label": "actionable"}
+{"text": "Schedule a team lunch", "label": "actionable"}
+{"text": "the summary is outdated", "label": "actionable"}
+{"text": "cleaning supplies is broken", "label": "non-actionable"}
+{"text": "Submit the design doc to Marketing", "label": "actionable"}
+{"text": "The 1Password license expires next week", "label": "non-actionable"}
+{"text": "Erin Martinez works at Russo-Pugh", "label": "non-actionable"}
+{"text": "Current balance: $4,323", "label": "non-actionable"}
+{"text": "Pay $310 for training materials", "label": "actionable"}
+{"text": "Buy packing tape", "label": "actionable"}
+{"text": "Buy notebooks", "label": "actionable"}
+{"text": "The leaky faucet needs attention", "label": "actionable"}
+{"text": "Call Rodney Morales", "label": "actionable"}
+{"text": "Team size: 81% of target", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The new policy takes effect this weekend", "label": "non-actionable"}
+{"text": "a new keyboard is broken", "label": "non-actionable"}
+{"text": "Travis Walker works at Wilkerson-Arias", "label": "non-actionable"}
+{"text": "The the inventory tracker update is available", "label": "non-actionable"}
+{"text": "Revenue was up 87%", "label": "non-actionable"}
+{"text": "the contract was published March 15", "label": "non-actionable"}
+{"text": "Download the contract from the CRM", "label": "actionable"}
+{"text": "Server uptime: 55%", "label": "non-actionable"}
+{"text": "The the inventory tracker update is available", "label": "non-actionable"}
+{"text": "Buy hand soap", "label": "actionable"}
+{"text": "Write the memo", "label": "actionable"}
+{"text": "the presentation is outdated", "label": "actionable"}
+{"text": "Order hand soap from Target", "label": "actionable"}
+{"text": "Reply to Christina Walters's message", "label": "actionable"}
+{"text": "Current balance: $3,293", "label": "non-actionable"}
+{"text": "Pick up batteries from Amazon", "label": "actionable"}
+{"text": "Fix login bug", "label": "actionable"}
+{"text": "Clean garage", "label": "actionable"}
+{"text": "Fix slow query", "label": "actionable"}
+{"text": "Review the spreadsheet", "label": "actionable"}
+{"text": "Write the spreadsheet", "label": "actionable"}
+{"text": "Back up the sales data", "label": "actionable"}
+{"text": "Revenue was up 46%", "label": "non-actionable"}
+{"text": "Running low on batteries", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Revenue was up 68%", "label": "non-actionable"}
+{"text": "Confirm the board meeting with Megan Young", "label": "actionable"}
+{"text": "Time to think about the marketing strategy", "label": "non-actionable"}
+{"text": "File the spreadsheet", "label": "actionable"}
+{"text": "the presentation is outdated", "label": "actionable"}
+{"text": "the analysis is outdated", "label": "actionable"}
+{"text": "The the website update is available", "label": "non-actionable"}
+{"text": "the proposal was published this weekend", "label": "non-actionable"}
+{"text": "Susan Mendez works at Hill-Whitney", "label": "non-actionable"}
+{"text": "Order hand soap from Costco", "label": "actionable"}
+{"text": "The kitchen could use some work", "label": "non-actionable"}
+{"text": "Pick up light bulbs from Trader Joe's", "label": "actionable"}
+{"text": "Virginia Sandoval works at Murray, Brown and Stone", "label": "non-actionable"}
+{"text": "The the weekly standup was a success", "label": "non-actionable"}
+{"text": "Write the meeting notes", "label": "actionable"}
+{"text": "the report was published the 20th", "label": "non-actionable"}
+{"text": "Need more meeting rooms", "label": "non-actionable"}
+{"text": "William Buchanan is the new Engineer, land", "label": "non-actionable"}
+{"text": "The living room could use some work", "label": "non-actionable"}
+{"text": "Confirm a birthday party with Derek Zuniga", "label": "actionable"}
+{"text": "File the contract", "label": "actionable"}
+{"text": "The the board meeting was a success", "label": "non-actionable"}
+{"text": "the migration is interesting", "label": "non-actionable"}
+{"text": "the API seems slow lately", "label": "non-actionable"}
+{"text": "Customer Support budget was approved", "label": "non-actionable"}
+{"text": "Review the draft", "label": "actionable"}
+{"text": "Download the brief from the backend", "label": "actionable"}
+{"text": "Call Amber Wright", "label": "actionable"}
+{"text": "Average response time: 3 PM", "label": "non-actionable"}
+{"text": "Return stamps to Amazon", "label": "actionable"}
+{"text": "Revenue was up 45%", "label": "non-actionable"}
+{"text": "Clean garage", "label": "actionable"}
+{"text": "Legal budget was approved", "label": "non-actionable"}
+{"text": "The office will be closed March 15", "label": "non-actionable"}
+{"text": "Mrs. Virginia Daniels mentioned the contract renewal", "label": "non-actionable"}
+{"text": "Running low on a new monitor", "label": "actionable"}
+{"text": "File the proposal", "label": "actionable"}
+{"text": "Email Tricia Valencia about performance reviews", "label": "actionable"}
+{"text": "Richard Smith's birthday is Monday", "label": "non-actionable"}
+{"text": "Clean guest room", "label": "actionable"}
+{"text": "Average response time: 1 PM", "label": "non-actionable"}
+{"text": "Company founded in next week", "label": "non-actionable"}
+{"text": "Call Allison Hill", "label": "actionable"}
+{"text": "Order a gift card from Home Depot", "label": "actionable"}
+{"text": "Order coffee filters from Office Depot", "label": "actionable"}
+{"text": "Text Cristian Santos the meeting link", "label": "actionable"}
+{"text": "Back up performance metrics", "label": "actionable"}
+{"text": "the CRM seems slow lately", "label": "non-actionable"}
+{"text": "Fix alignment problem", "label": "actionable"}
+{"text": "the rollout plan is interesting", "label": "non-actionable"}
+{"text": "Register for a client meeting", "label": "actionable"}
+{"text": "the database seems slow lately", "label": "non-actionable"}
+{"text": "The Figma license expires next Thursday", "label": "non-actionable"}
+{"text": "Schedule the product demo", "label": "actionable"}
+{"text": "Update the contact info in the billing system", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "The office will be closed tomorrow", "label": "non-actionable"}
+{"text": "Send the analysis to Mark Brown", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The the weekly standup was a success", "label": "non-actionable"}
+{"text": "Time to think about the hiring plan", "label": "non-actionable"}
+{"text": "Buy printer paper", "label": "actionable"}
+{"text": "Company founded in the 20th", "label": "non-actionable"}
+{"text": "Send the proposal to Angel Perry", "label": "actionable"}
+{"text": "Clean attic", "label": "actionable"}
+{"text": "Book the annual picnic for Monday", "label": "actionable"}
+{"text": "Running low on hand soap", "label": "actionable"}
+{"text": "the design doc was published the 20th", "label": "non-actionable"}
+{"text": "Laura Hernandez asked about the product launch", "label": "actionable"}
+{"text": "Industry average is 30%", "label": "non-actionable"}
+{"text": "Pay $2,364 for a parking pass", "label": "actionable"}
+{"text": "Order paint from Staples", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Server uptime: 31%", "label": "non-actionable"}
+{"text": "The Asana license expires Monday", "label": "non-actionable"}
+{"text": "Clean bedroom", "label": "actionable"}
+{"text": "Register for a training session", "label": "actionable"}
+{"text": "Write the proposal", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Review the report", "label": "actionable"}
+{"text": "Casey Gillespie mentioned the proposal", "label": "non-actionable"}
+{"text": "Team size: 92% of target", "label": "non-actionable"}
+{"text": "Return notebooks to Staples", "label": "actionable"}
+{"text": "Cook and Sons is based in the garage", "label": "non-actionable"}
+{"text": "Revenue was up 50%", "label": "non-actionable"}
+{"text": "Order notebooks from Best Buy", "label": "actionable"}
+{"text": "Jeanette Harrison is the new Naval architect", "label": "non-actionable"}
+{"text": "Pay $1,974 for office supplies", "label": "actionable"}
+{"text": "The loose shelf needs attention", "label": "actionable"}
+{"text": "the spreadsheet was published this weekend", "label": "non-actionable"}
+{"text": "Order a gift card from IKEA", "label": "actionable"}
+{"text": "The Basecamp license expires the 20th", "label": "non-actionable"}
+{"text": "The new policy takes effect Tuesday", "label": "non-actionable"}
+{"text": "Download the invoice from the inventory tracker", "label": "actionable"}
+{"text": "Team size: 74% of target", "label": "non-actionable"}
+{"text": "The Linear license expires Tuesday", "label": "non-actionable"}
+{"text": "Return light bulbs to Trader Joe's", "label": "actionable"}
+{"text": "Fix typo", "label": "actionable"}
+{"text": "Send the memo to Judy Baker", "label": "actionable"}
+{"text": "Set up the database", "label": "actionable"}
+{"text": "Set up the CRM", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "The new policy takes effect next Thursday", "label": "non-actionable"}
+{"text": "The cracked tile needs attention", "label": "actionable"}
+{"text": "inventory counts is interesting", "label": "non-actionable"}
+{"text": "Email William Herrera about the contract renewal", "label": "actionable"}
+{"text": "the contract renewal is interesting", "label": "non-actionable"}
+{"text": "Inventory is at 90% capacity", "label": "non-actionable"}
+{"text": "Company founded in next Thursday", "label": "non-actionable"}
+{"text": "The broken doorknob needs attention", "label": "actionable"}
+{"text": "Write the spec", "label": "actionable"}
+{"text": "Register for a workshop", "label": "actionable"}
+{"text": "Write the presentation", "label": "actionable"}
+{"text": "Confirm the offsite retreat with Mark Perez", "label": "actionable"}
+{"text": "notebooks is broken", "label": "non-actionable"}
+{"text": "Buy paint", "label": "actionable"}
+{"text": "the analysis is outdated", "label": "actionable"}
+{"text": "Pick up printer paper from Walgreens", "label": "actionable"}
+{"text": "Buy a gift card", "label": "actionable"}
+{"text": "Return cleaning supplies to Best Buy", "label": "actionable"}
+{"text": "Schedule the offsite retreat", "label": "actionable"}
+{"text": "Order extension cord from Trader Joe's", "label": "actionable"}
+{"text": "Schedule a training session", "label": "actionable"}
+{"text": "Industry average is 40%", "label": "non-actionable"}
+{"text": "Send the analysis to Daniel Baker", "label": "actionable"}
+{"text": "The stuck window needs attention", "label": "actionable"}
+{"text": "Pick up coffee filters from Office Depot", "label": "actionable"}
+{"text": "The a team lunch had 78% attendance", "label": "non-actionable"}
+{"text": "Update the priority in the CRM", "label": "actionable"}
+{"text": "Inventory is at 36% capacity", "label": "non-actionable"}
+{"text": "Write the contract", "label": "actionable"}
+{"text": "the proposal was published next Thursday", "label": "non-actionable"}
+{"text": "Update the contact info in the server", "label": "actionable"}
+{"text": "The Google Docs license expires tomorrow", "label": "non-actionable"}
+{"text": "Set up the database", "label": "actionable"}
+{"text": "Elizabeth Vasquez's birthday is Friday", "label": "non-actionable"}
+{"text": "Current balance: $4,903", "label": "non-actionable"}
+{"text": "the marketing strategy is interesting", "label": "non-actionable"}
+{"text": "Write the invoice", "label": "actionable"}
+{"text": "Company founded in March 15", "label": "non-actionable"}
+{"text": "Update the contact info in the API", "label": "actionable"}
+{"text": "Jennifer Simpson DVM asked about the contract renewal", "label": "actionable"}
+{"text": "Email Melissa Gates about the vendor agreement", "label": "actionable"}
+{"text": "Schedule the weekly standup", "label": "actionable"}
+{"text": "the spreadsheet was published the 20th", "label": "non-actionable"}
+{"text": "Kristie Willis's birthday is March 15", "label": "non-actionable"}
+{"text": "Register for a birthday party", "label": "actionable"}
+{"text": "Inventory is at 2% capacity", "label": "non-actionable"}
+{"text": "Miller, Murphy and Craig is based in the warehouse", "label": "non-actionable"}
+{"text": "Running low on a phone charger", "label": "actionable"}
+{"text": "Charles Williams joined the the board team", "label": "non-actionable"}
+{"text": "The garage could use some work", "label": "non-actionable"}
+{"text": "Renee Bruce's birthday is March 15", "label": "non-actionable"}
+{"text": "The the board meeting was a success", "label": "non-actionable"}
+{"text": "Book a workshop for next Thursday", "label": "actionable"}
+{"text": "Send the presentation to Lauren Daniels", "label": "actionable"}
+{"text": "Revenue was up 41%", "label": "non-actionable"}
+{"text": "Buy stamps", "label": "actionable"}
+{"text": "Taylor Hernandez's birthday is this weekend", "label": "non-actionable"}
+{"text": "Server uptime: 85%", "label": "non-actionable"}
+{"text": "Fix crash", "label": "actionable"}
+{"text": "Book the quarterly review for March 15", "label": "actionable"}
+{"text": "Reyes, Chase and Jenkins is based in the patio", "label": "non-actionable"}
+{"text": "Need more time", "label": "non-actionable"}
+{"text": "Clean garage", "label": "actionable"}
+{"text": "Gregory Peck mentioned compliance requirements", "label": "non-actionable"}
+{"text": "The cracked tile needs attention", "label": "actionable"}
+{"text": "Company founded in Tuesday", "label": "non-actionable"}
+{"text": "Write the draft", "label": "actionable"}
+{"text": "the invoice was published March 15", "label": "non-actionable"}
+{"text": "Industry average is 84%", "label": "non-actionable"}
+{"text": "inventory counts is interesting", "label": "non-actionable"}
+{"text": "Server uptime: 17%", "label": "non-actionable"}
+{"text": "Average response time: 11 AM", "label": "non-actionable"}
+{"text": "Inventory is at 70% capacity", "label": "non-actionable"}
+{"text": "Need more staff", "label": "non-actionable"}
+{"text": "Email John Bishop about the project timeline", "label": "actionable"}
+{"text": "Reply to Katherine Salas's message", "label": "actionable"}
+{"text": "the website seems slow lately", "label": "non-actionable"}
+{"text": "Fix login bug", "label": "actionable"}
+{"text": "Submit the summary to Sales", "label": "actionable"}
+{"text": "Paula Lane mentioned the vendor agreement", "label": "non-actionable"}
+{"text": "Call Victoria Garcia", "label": "actionable"}
+{"text": "The new policy takes effect next week", "label": "non-actionable"}
+{"text": "Set up the app", "label": "actionable"}
+{"text": "Set up the dashboard", "label": "actionable"}
+{"text": "Email Justin Torres about performance reviews", "label": "actionable"}
+{"text": "Company founded in March 15", "label": "non-actionable"}
+{"text": "Pay $1,305 for travel reimbursement", "label": "actionable"}
+{"text": "Submit the proposal to Customer Support", "label": "actionable"}
+{"text": "envelopes is broken", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Average response time: 2 PM", "label": "non-actionable"}
+{"text": "the draft was published tomorrow", "label": "non-actionable"}
+{"text": "Sales budget was approved", "label": "non-actionable"}
+{"text": "Write the invoice", "label": "actionable"}
+{"text": "The office will be closed next week", "label": "non-actionable"}
+{"text": "Write the presentation", "label": "actionable"}
+{"text": "Buy stamps", "label": "actionable"}
+{"text": "The the billing system update is available", "label": "non-actionable"}
+{"text": "File the report", "label": "actionable"}
+{"text": "Melissa Taylor asked about the product launch", "label": "actionable"}
+{"text": "the API seems slow lately", "label": "non-actionable"}
+{"text": "compliance requirements is interesting", "label": "non-actionable"}
+{"text": "Back up customer feedback", "label": "actionable"}
+{"text": "Legal budget was approved", "label": "non-actionable"}
+{"text": "The new policy takes effect this weekend", "label": "non-actionable"}
+{"text": "Time to think about inventory counts", "label": "non-actionable"}
+{"text": "Average response time: 4:30 PM", "label": "non-actionable"}
+{"text": "Clean den", "label": "actionable"}
+{"text": "Pay $1,143 for access credentials", "label": "actionable"}
+{"text": "Team size: 92% of target", "label": "non-actionable"}
+{"text": "Call Matthew Foster", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Amber Cooper mentioned compliance requirements", "label": "non-actionable"}
+{"text": "Brandon Long MD's birthday is Monday", "label": "non-actionable"}
+{"text": "Average response time: 5 PM", "label": "non-actionable"}
+{"text": "Industry average is 44%", "label": "non-actionable"}
+{"text": "Fix formatting issue", "label": "actionable"}
+{"text": "Download the agenda from the dashboard", "label": "actionable"}
+{"text": "Review the spec", "label": "actionable"}
+{"text": "Pay $3,296 for the budget approval", "label": "actionable"}
+{"text": "Hicks-Martinez is based in the storage closet", "label": "non-actionable"}
+{"text": "Morgan Davis's birthday is Friday", "label": "non-actionable"}
+{"text": "the API seems slow lately", "label": "non-actionable"}
+{"text": "Text Brent Jordan the meeting link", "label": "actionable"}
+{"text": "Register for the product demo", "label": "actionable"}
+{"text": "Company founded in March 15", "label": "non-actionable"}
+{"text": "Timothy Johnson mentioned the product launch", "label": "non-actionable"}
+{"text": "Cheryl Cooke's birthday is Friday", "label": "non-actionable"}
+{"text": "Call Rebecca Valencia", "label": "actionable"}
+{"text": "Revenue was up 56%", "label": "non-actionable"}
+{"text": "Time to think about the migration", "label": "non-actionable"}
+{"text": "Casey Hernandez mentioned performance reviews", "label": "non-actionable"}
+{"text": "Hughes, Hoffman and Green is based in the office", "label": "non-actionable"}
+{"text": "Schedule the quarterly review", "label": "actionable"}
+{"text": "Average response time: 8:30 AM", "label": "non-actionable"}
+{"text": "Micheal Wallace joined the the board team", "label": "non-actionable"}
+{"text": "Robin Thompson's birthday is Friday", "label": "non-actionable"}
+{"text": "The office will be closed March 15", "label": "non-actionable"}
+{"text": "The a birthday party had 24% attendance", "label": "non-actionable"}
+{"text": "Time to think about the budget", "label": "non-actionable"}
+{"text": "Review the summary", "label": "actionable"}
+{"text": "coffee filters is broken", "label": "non-actionable"}
+{"text": "Fix leaky faucet", "label": "actionable"}
+{"text": "Clean basement", "label": "actionable"}
+{"text": "Send the memo to Theresa Clark", "label": "actionable"}
+{"text": "Buy packing tape", "label": "actionable"}
+{"text": "the analysis is outdated", "label": "actionable"}
+{"text": "Team size: 81% of target", "label": "non-actionable"}
+{"text": "Text Brenda Hall the address", "label": "actionable"}
+{"text": "Pick up a gift card from Office Depot", "label": "actionable"}
+{"text": "Revenue was up 59%", "label": "non-actionable"}
+{"text": "Need more time", "label": "non-actionable"}
+{"text": "The the database update is available", "label": "non-actionable"}
+{"text": "Company founded in this weekend", "label": "non-actionable"}
+{"text": "Send the draft to James Ferrell", "label": "actionable"}
+{"text": "Janet Kane DVM asked about the budget", "label": "actionable"}
+{"text": "Pay $1,175 for a software license", "label": "actionable"}
+{"text": "File the proposal", "label": "actionable"}
+{"text": "Revenue was up 57%", "label": "non-actionable"}
+{"text": "The Obsidian license expires the 20th", "label": "non-actionable"}
+{"text": "Lucas Group is based in the garage", "label": "non-actionable"}
+{"text": "Server uptime: 87%", "label": "non-actionable"}
+{"text": "Running low on stamps", "label": "actionable"}
+{"text": "Text Elizabeth Perkins the confirmation number", "label": "actionable"}
+{"text": "Average response time: 5 PM", "label": "non-actionable"}
+{"text": "The new policy takes effect March 15", "label": "non-actionable"}
+{"text": "Jonathan Jacobson asked about the redesign", "label": "actionable"}
+{"text": "Paula Bradley works at Ware and Sons", "label": "non-actionable"}
+{"text": "Daniel Bush asked about the quarterly report", "label": "actionable"}
+{"text": "Revenue was up 38%", "label": "non-actionable"}
+{"text": "Return a new keyboard to the hardware store", "label": "actionable"}
+{"text": "The the product demo was a success", "label": "non-actionable"}
+{"text": "Pick up coffee filters from Staples", "label": "actionable"}
+{"text": "Reply to Ashley Waller's message", "label": "actionable"}
+{"text": "The office will be closed the 20th", "label": "non-actionable"}
+{"text": "The broken doorknob needs attention", "label": "actionable"}
+{"text": "Reply to Danny Morgan's message", "label": "actionable"}
+{"text": "Schedule the offsite retreat", "label": "actionable"}
+{"text": "Current balance: $3,754", "label": "non-actionable"}
+{"text": "cleaning supplies is broken", "label": "non-actionable"}
+{"text": "The bedroom could use some work", "label": "non-actionable"}
+{"text": "The den could use some work", "label": "non-actionable"}
+{"text": "Pick up packing tape from Best Buy", "label": "actionable"}
+{"text": "Customer Support budget was approved", "label": "non-actionable"}
+{"text": "Send the report to Diana May", "label": "actionable"}
+{"text": "Need more time", "label": "non-actionable"}
+{"text": "Order packing tape from Best Buy", "label": "actionable"}
+{"text": "Current balance: $368", "label": "non-actionable"}
+{"text": "Running low on cleaning supplies", "label": "actionable"}
+{"text": "Send the contract to Kenneth Scott", "label": "actionable"}
+{"text": "The Linear license expires tomorrow", "label": "non-actionable"}
+{"text": "Julie Bird's birthday is Monday", "label": "non-actionable"}
+{"text": "The office will be closed next week", "label": "non-actionable"}
+{"text": "Schedule the quarterly review", "label": "actionable"}
+{"text": "Call Michael Bradshaw", "label": "actionable"}
+{"text": "The office will be closed Tuesday", "label": "non-actionable"}
+{"text": "Return printer paper to Best Buy", "label": "actionable"}
+{"text": "Average response time: 11 AM", "label": "non-actionable"}
+{"text": "Book the board meeting for tomorrow", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Book the offsite retreat for Friday", "label": "actionable"}
+{"text": "Time to think about the redesign", "label": "non-actionable"}
+{"text": "Company founded in Tuesday", "label": "non-actionable"}
+{"text": "Engineering budget was approved", "label": "non-actionable"}
+{"text": "Print the draft", "label": "actionable"}
+{"text": "Fix display glitch", "label": "actionable"}
+{"text": "Send the design doc to Lori Guerrero", "label": "actionable"}
+{"text": "Current balance: $3,852", "label": "non-actionable"}
+{"text": "Download the design doc from the CRM", "label": "actionable"}
+{"text": "Average response time: 4:30 PM", "label": "non-actionable"}
+{"text": "James Brooks joined the the committee team", "label": "non-actionable"}
+{"text": "Pay $3,531 for a parking pass", "label": "actionable"}
+{"text": "Need more paper", "label": "non-actionable"}
+{"text": "Pay $395 for access credentials", "label": "actionable"}
+{"text": "The new policy takes effect tomorrow", "label": "non-actionable"}
+{"text": "Current balance: $1,437", "label": "non-actionable"}
+{"text": "Time to think about the rollout plan", "label": "non-actionable"}
+{"text": "Team size: 28% of target", "label": "non-actionable"}
+{"text": "The Google Docs license expires tomorrow", "label": "non-actionable"}
+{"text": "Randy Cannon asked about the product launch", "label": "actionable"}
+{"text": "Write the contract", "label": "actionable"}
+{"text": "Send the invoice to David Martinez", "label": "actionable"}
+{"text": "The Linear license expires Tuesday", "label": "non-actionable"}
+{"text": "Shelley Miller mentioned the proposal", "label": "non-actionable"}
+{"text": "Need more meeting rooms", "label": "non-actionable"}
+{"text": "Email Bryan Herrera about performance reviews", "label": "actionable"}
+{"text": "Need more time", "label": "non-actionable"}
+{"text": "Return light bulbs to Trader Joe's", "label": "actionable"}
+{"text": "the report is outdated", "label": "actionable"}
+{"text": "Pay $3,037 for a parking pass", "label": "actionable"}
+{"text": "the presentation is outdated", "label": "actionable"}
+{"text": "Text Lawrence Adkins the confirmation number", "label": "actionable"}
+{"text": "Update the contact info in the backend", "label": "actionable"}
+{"text": "The a client meeting was a success", "label": "non-actionable"}
+{"text": "Kiara Little asked about the proposal", "label": "actionable"}
+{"text": "The a team lunch was a success", "label": "non-actionable"}
+{"text": "the proposal is outdated", "label": "actionable"}
+{"text": "The a dinner party was a success", "label": "non-actionable"}
+{"text": "The cracked tile needs attention", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "light bulbs is broken", "label": "non-actionable"}
+{"text": "extension cord is broken", "label": "non-actionable"}
+{"text": "Book a training session for Friday", "label": "actionable"}
+{"text": "Return stamps to Trader Joe's", "label": "actionable"}
+{"text": "Return groceries to Best Buy", "label": "actionable"}
+{"text": "The loose shelf needs attention", "label": "actionable"}
+{"text": "the agenda was published Monday", "label": "non-actionable"}
+{"text": "Andrew Reeves is the new Public relations account executive", "label": "non-actionable"}
+{"text": "The the quarterly review had 90% attendance", "label": "non-actionable"}
+{"text": "Set up the portal", "label": "actionable"}
+{"text": "Company founded in next Thursday", "label": "non-actionable"}
+{"text": "Leslie Bell's birthday is Tuesday", "label": "non-actionable"}
+{"text": "Time to think about the marketing strategy", "label": "non-actionable"}
+{"text": "The office will be closed the 20th", "label": "non-actionable"}
+{"text": "Procurement budget was approved", "label": "non-actionable"}
+{"text": "Server uptime: 83%", "label": "non-actionable"}
+{"text": "the contract renewal is interesting", "label": "non-actionable"}
+{"text": "Write the proposal", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Pay $4,419 for travel reimbursement", "label": "actionable"}
+{"text": "The Obsidian license expires Tuesday", "label": "non-actionable"}
+{"text": "Print the brief", "label": "actionable"}
+{"text": "The the weekly standup was a success", "label": "non-actionable"}
+{"text": "The a client meeting had 8% attendance", "label": "non-actionable"}
+{"text": "Industry average is 98%", "label": "non-actionable"}
+{"text": "The the billing system update is available", "label": "non-actionable"}
+{"text": "The office will be closed next week", "label": "non-actionable"}
+{"text": "Inventory is at 48% capacity", "label": "non-actionable"}
+{"text": "Write the memo", "label": "actionable"}
+{"text": "Legal budget was approved", "label": "non-actionable"}
+{"text": "the CRM seems slow lately", "label": "non-actionable"}
+{"text": "Book a birthday party for tomorrow", "label": "actionable"}
+{"text": "The basement could use some work", "label": "non-actionable"}
+{"text": "the spreadsheet is outdated", "label": "actionable"}
+{"text": "File the agenda", "label": "actionable"}
+{"text": "Clean guest room", "label": "actionable"}
+{"text": "Company founded in the 20th", "label": "non-actionable"}
+{"text": "Submit the brief to Marketing", "label": "actionable"}
+{"text": "Pick up batteries from Best Buy", "label": "actionable"}
+{"text": "Email Denise Jones about inventory counts", "label": "actionable"}
+{"text": "Reply to Stephanie Ross's message", "label": "actionable"}
+{"text": "Fix alignment problem", "label": "actionable"}
+{"text": "the meeting notes is outdated", "label": "actionable"}
+{"text": "Time to think about the product launch", "label": "non-actionable"}
+{"text": "Buy a phone charger", "label": "actionable"}
+{"text": "Call Larry Dixon", "label": "actionable"}
+{"text": "Back up performance metrics", "label": "actionable"}
+{"text": "Theresa Osborn is the new Secretary/administrator", "label": "non-actionable"}
+{"text": "Team size: 47% of target", "label": "non-actionable"}
+{"text": "Time to think about the proposal", "label": "non-actionable"}
+{"text": "Book the weekly standup for tomorrow", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Call Debra Christian", "label": "actionable"}
+{"text": "Submit the memo to HR", "label": "actionable"}
+{"text": "The office will be closed Monday", "label": "non-actionable"}
+{"text": "Back up customer feedback", "label": "actionable"}
+{"text": "Update the price in the dashboard", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Jason Love mentioned the hiring plan", "label": "non-actionable"}
+{"text": "Pick up envelopes from IKEA", "label": "actionable"}
+{"text": "Download the spreadsheet from the billing system", "label": "actionable"}
+{"text": "Back up the Q3 numbers", "label": "actionable"}
+{"text": "Reply to Sarah Moore's message", "label": "actionable"}
+{"text": "David Molina asked about the marketing strategy", "label": "actionable"}
+{"text": "the draft was published tomorrow", "label": "non-actionable"}
+{"text": "Brad Walker is the new Investment banker, operational", "label": "non-actionable"}
+{"text": "File the memo", "label": "actionable"}
+{"text": "The broken doorknob needs attention", "label": "actionable"}
+{"text": "Call Erin Warner", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Time to think about the rollout plan", "label": "non-actionable"}
+{"text": "the draft is outdated", "label": "actionable"}
+{"text": "The Monday.com license expires Friday", "label": "non-actionable"}
+{"text": "File the meeting notes", "label": "actionable"}
+{"text": "Clean kitchen", "label": "actionable"}
+{"text": "Update the contact info in the API", "label": "actionable"}
+{"text": "Print the summary", "label": "actionable"}
+{"text": "Fix slow query", "label": "actionable"}
+{"text": "Need more budget", "label": "non-actionable"}
+{"text": "Current balance: $1,310", "label": "non-actionable"}
+{"text": "Pick up coffee filters from Office Depot", "label": "actionable"}
+{"text": "Confirm the annual picnic with Jeffrey Chavez", "label": "actionable"}
+{"text": "Rhonda Chavez mentioned the marketing strategy", "label": "non-actionable"}
+{"text": "The office will be closed March 15", "label": "non-actionable"}
+{"text": "Industry average is 78%", "label": "non-actionable"}
+{"text": "File the brief", "label": "actionable"}
+{"text": "Print the proposal", "label": "actionable"}
+{"text": "Average response time: 10 AM", "label": "non-actionable"}
+{"text": "Register for the weekly standup", "label": "actionable"}
+{"text": "Current balance: $951", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Current balance: $859", "label": "non-actionable"}
+{"text": "Confirm a team lunch with Connie Lawrence", "label": "actionable"}
+{"text": "Running low on hand soap", "label": "actionable"}
+{"text": "Patricia Le works at Jordan and Sons", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "The den could use some work", "label": "non-actionable"}
+{"text": "Back up the updated contacts", "label": "actionable"}
+{"text": "Write the presentation", "label": "actionable"}
+{"text": "Review the report", "label": "actionable"}
+{"text": "Team size: 55% of target", "label": "non-actionable"}
+{"text": "Review the spec", "label": "actionable"}
+{"text": "Print the draft", "label": "actionable"}
+{"text": "the report was published the 20th", "label": "non-actionable"}
+{"text": "Send the invoice to Angelica Keith", "label": "actionable"}
+{"text": "Print the invoice", "label": "actionable"}
+{"text": "Inventory is at 74% capacity", "label": "non-actionable"}
+{"text": "The the weekly standup had 9% attendance", "label": "non-actionable"}
+{"text": "The office will be closed Friday", "label": "non-actionable"}
+{"text": "Text Sandra Aguilar the directions", "label": "actionable"}
+{"text": "Register for the weekly standup", "label": "actionable"}
+{"text": "Schedule the offsite retreat", "label": "actionable"}
+{"text": "Email Cheyenne Horton about the hiring plan", "label": "actionable"}
+{"text": "The Asana license expires March 15", "label": "non-actionable"}
+{"text": "The garage could use some work", "label": "non-actionable"}
+{"text": "The leaky faucet needs attention", "label": "actionable"}
+{"text": "Current balance: $1,823", "label": "non-actionable"}
+{"text": "The the quarterly review had 98% attendance", "label": "non-actionable"}
+{"text": "Return paint to the grocery store", "label": "actionable"}
+{"text": "Company founded in this weekend", "label": "non-actionable"}
+{"text": "Pay $3,635 for the budget approval", "label": "actionable"}
+{"text": "Running low on printer paper", "label": "actionable"}
+{"text": "The the backend update is available", "label": "non-actionable"}
+{"text": "the website seems slow lately", "label": "non-actionable"}
+{"text": "Operations budget was approved", "label": "non-actionable"}
+{"text": "the vendor agreement is interesting", "label": "non-actionable"}
+{"text": "The the offsite retreat was a success", "label": "non-actionable"}
+{"text": "Kaitlin Medina mentioned compliance requirements", "label": "non-actionable"}
+{"text": "Server uptime: 48%", "label": "non-actionable"}
+{"text": "Write the meeting notes", "label": "actionable"}
+{"text": "Send the brief to Anthony Humphrey", "label": "actionable"}
+{"text": "Submit the analysis to Finance", "label": "actionable"}
+{"text": "The kitchen could use some work", "label": "non-actionable"}
+{"text": "The a client meeting had 71% attendance", "label": "non-actionable"}
+{"text": "Back up performance metrics", "label": "actionable"}
+{"text": "Book a workshop for tomorrow", "label": "actionable"}
+{"text": "Tricia Williams joined the the board team", "label": "non-actionable"}
+{"text": "Print the summary", "label": "actionable"}
+{"text": "Submit the spreadsheet to Marketing", "label": "actionable"}
+{"text": "Lance Morales joined the the committee team", "label": "non-actionable"}
+{"text": "Average response time: 9 AM", "label": "non-actionable"}
+{"text": "The Jira license expires the 20th", "label": "non-actionable"}
+{"text": "Inventory is at 89% capacity", "label": "non-actionable"}
+{"text": "Register for a workshop", "label": "actionable"}
+{"text": "Operations budget was approved", "label": "non-actionable"}
+{"text": "Juan Daniels joined the the department team", "label": "non-actionable"}
+{"text": "Review the agenda", "label": "actionable"}
+{"text": "Register for a dinner party", "label": "actionable"}
+{"text": "the memo is outdated", "label": "actionable"}
+{"text": "Return coffee filters to Walgreens", "label": "actionable"}
+{"text": "Email Madison Poole about the quarterly report", "label": "actionable"}
+{"text": "Write the spreadsheet", "label": "actionable"}
+{"text": "Team size: 95% of target", "label": "non-actionable"}
+{"text": "Send the invoice to Tina Sanders", "label": "actionable"}
+{"text": "Inventory is at 58% capacity", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Lori Marshall joined the the interns team", "label": "non-actionable"}
+{"text": "Pay $534 for a parking pass", "label": "actionable"}
+{"text": "Pick up coffee filters from Home Depot", "label": "actionable"}
+{"text": "Back up pricing information", "label": "actionable"}
+{"text": "Text Debra Davidson the time", "label": "actionable"}
+{"text": "Fix permission error", "label": "actionable"}
+{"text": "Team size: 59% of target", "label": "non-actionable"}
+{"text": "Order hand soap from IKEA", "label": "actionable"}
+{"text": "Running low on printer paper", "label": "actionable"}
+{"text": "The kitchen could use some work", "label": "non-actionable"}
+{"text": "Update the status in the inventory tracker", "label": "actionable"}
+{"text": "Current balance: $470", "label": "non-actionable"}
+{"text": "Print the summary", "label": "actionable"}
+{"text": "The the dashboard update is available", "label": "non-actionable"}
+{"text": "Set up the app", "label": "actionable"}
+{"text": "Company founded in tomorrow", "label": "non-actionable"}
+{"text": "Adam Burgess joined the the board team", "label": "non-actionable"}
+{"text": "Pick up coffee filters from Costco", "label": "actionable"}
+{"text": "Buy extension cord", "label": "actionable"}
+{"text": "Reply to Marc Moore's message", "label": "actionable"}
+{"text": "Send the report to Noah Rhodes", "label": "actionable"}
+{"text": "Submit the meeting notes to HR", "label": "actionable"}
+{"text": "Print the design doc", "label": "actionable"}
+{"text": "The a birthday party had 77% attendance", "label": "non-actionable"}
+{"text": "The the backend update is available", "label": "non-actionable"}
+{"text": "Schedule the offsite retreat", "label": "actionable"}
+{"text": "Sherry Woods asked about the rollout plan", "label": "actionable"}
+{"text": "the portal seems slow lately", "label": "non-actionable"}
+{"text": "Print the brief", "label": "actionable"}
+{"text": "Clean attic", "label": "actionable"}
+{"text": "Time to think about the quarterly report", "label": "non-actionable"}
+{"text": "The new policy takes effect this weekend", "label": "non-actionable"}
+{"text": "The new policy takes effect Tuesday", "label": "non-actionable"}
+{"text": "Print the analysis", "label": "actionable"}
+{"text": "The the quarterly review was a success", "label": "non-actionable"}
+{"text": "Reply to Michelle Harmon's message", "label": "actionable"}
+{"text": "Gonzales Group is based in the warehouse", "label": "non-actionable"}
+{"text": "Company founded in Monday", "label": "non-actionable"}
+{"text": "Update the status in the portal", "label": "actionable"}
+{"text": "Print the invoice", "label": "actionable"}
+{"text": "Call Steve Sanchez", "label": "actionable"}
+{"text": "The stuck window needs attention", "label": "actionable"}
+{"text": "Mason Johnson works at Boone-Simmons", "label": "non-actionable"}
+{"text": "Text Jessica Callahan the address", "label": "actionable"}
+{"text": "Order a new monitor from Staples", "label": "actionable"}
+{"text": "Blake Harrell is the new Librarian, academic", "label": "non-actionable"}
+{"text": "Buy a new keyboard", "label": "actionable"}
+{"text": "Pick up cleaning supplies from IKEA", "label": "actionable"}
+{"text": "Company founded in this weekend", "label": "non-actionable"}
+{"text": "Running low on coffee filters", "label": "actionable"}
+{"text": "Joseph Wilson mentioned inventory counts", "label": "non-actionable"}
+{"text": "Email Gabrielle Davis about the project timeline", "label": "actionable"}
+{"text": "Update the status in the API", "label": "actionable"}
+{"text": "The a training session was a success", "label": "non-actionable"}
+{"text": "Fix formatting issue", "label": "actionable"}
+{"text": "Submit the contract to Marketing", "label": "actionable"}
+{"text": "Confirm a training session with Tommy Walter", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Fix permission error", "label": "actionable"}
+{"text": "the dashboard seems slow lately", "label": "non-actionable"}
+{"text": "Running low on packing tape", "label": "actionable"}
+{"text": "Register for a workshop", "label": "actionable"}
+{"text": "Current balance: $506", "label": "non-actionable"}
+{"text": "Team size: 75% of target", "label": "non-actionable"}
+{"text": "Update the due date in the portal", "label": "actionable"}
+{"text": "Write the contract", "label": "actionable"}
+{"text": "Print the memo", "label": "actionable"}
+{"text": "Team size: 90% of target", "label": "non-actionable"}
+{"text": "Sara Haas's birthday is next Thursday", "label": "non-actionable"}
+{"text": "Email Richard Henson about the project timeline", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Download the invoice from the portal", "label": "actionable"}
+{"text": "Order packing tape from the grocery store", "label": "actionable"}
+{"text": "Current balance: $446", "label": "non-actionable"}
+{"text": "the backend seems slow lately", "label": "non-actionable"}
+{"text": "Email Michael Elliott about the quarterly report", "label": "actionable"}
+{"text": "The office will be closed Friday", "label": "non-actionable"}
+{"text": "Linda Ramirez's birthday is the 20th", "label": "non-actionable"}
+{"text": "Set up the API", "label": "actionable"}
+{"text": "Time to think about inventory counts", "label": "non-actionable"}
+{"text": "Write the spreadsheet", "label": "actionable"}
+{"text": "Heather Fields is the new Web designer", "label": "non-actionable"}
+{"text": "Text Paul Castaneda the meeting link", "label": "actionable"}
+{"text": "Confirm a dinner party with Yvonne Chambers", "label": "actionable"}
+{"text": "Clean den", "label": "actionable"}
+{"text": "Write the design doc", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Submit the agenda to Engineering", "label": "actionable"}
+{"text": "Server uptime: 78%", "label": "non-actionable"}
+{"text": "Call Adam Vaughan", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Industry average is 18%", "label": "non-actionable"}
+{"text": "Schedule the annual picnic", "label": "actionable"}
+{"text": "the inventory tracker seems slow lately", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "File the proposal", "label": "actionable"}
+{"text": "The office will be closed tomorrow", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "The the board meeting had 59% attendance", "label": "non-actionable"}
+{"text": "Revenue was up 37%", "label": "non-actionable"}
+{"text": "Update the due date in the website", "label": "actionable"}
+{"text": "The a team lunch had 8% attendance", "label": "non-actionable"}
+{"text": "the product launch is interesting", "label": "non-actionable"}
+{"text": "IT budget was approved", "label": "non-actionable"}
+{"text": "Current balance: $2,791", "label": "non-actionable"}
+{"text": "Pick up extension cord from Trader Joe's", "label": "actionable"}
+{"text": "Eric Clark works at Duran LLC", "label": "non-actionable"}
+{"text": "envelopes is broken", "label": "non-actionable"}
+{"text": "Print the meeting notes", "label": "actionable"}
+{"text": "Elizabeth Sanchez joined the the family team", "label": "non-actionable"}
+{"text": "Evelyn Martinez's birthday is Friday", "label": "non-actionable"}
+{"text": "Pick up envelopes from Walmart", "label": "actionable"}
+{"text": "The squeaky hinge needs attention", "label": "actionable"}
+{"text": "Register for a training session", "label": "actionable"}
+{"text": "The office will be closed Tuesday", "label": "non-actionable"}
+{"text": "Register for a dinner party", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "The attic could use some work", "label": "non-actionable"}
+{"text": "The the product demo was a success", "label": "non-actionable"}
+{"text": "Zachary Michael asked about the rollout plan", "label": "actionable"}
+{"text": "the dashboard seems slow lately", "label": "non-actionable"}
+{"text": "the summary was published next week", "label": "non-actionable"}
+{"text": "Register for the quarterly review", "label": "actionable"}
+{"text": "Confirm a team lunch with Christopher Rubio", "label": "actionable"}
+{"text": "Server uptime: 18%", "label": "non-actionable"}
+{"text": "Reply to Jamie Smith's message", "label": "actionable"}
+{"text": "Joel Johnson works at Decker-Jones", "label": "non-actionable"}
+{"text": "The new policy takes effect next Thursday", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "the website seems slow lately", "label": "non-actionable"}
+{"text": "Company founded in this weekend", "label": "non-actionable"}
+{"text": "The Google Docs license expires next week", "label": "non-actionable"}
+{"text": "The the board meeting had 53% attendance", "label": "non-actionable"}
+{"text": "Download the agenda from the CRM", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Jeremy West's birthday is Monday", "label": "non-actionable"}
+{"text": "Kimberly Matthews joined the the team team", "label": "non-actionable"}
+{"text": "Order batteries from Target", "label": "actionable"}
+{"text": "Buy paint", "label": "actionable"}
+{"text": "Team size: 93% of target", "label": "non-actionable"}
+{"text": "Industry average is 65%", "label": "non-actionable"}
+{"text": "Jerry Watson works at Hines-Berry", "label": "non-actionable"}
+{"text": "the presentation is outdated", "label": "actionable"}
+{"text": "The new policy takes effect next Thursday", "label": "non-actionable"}
+{"text": "the product launch is interesting", "label": "non-actionable"}
+{"text": "Average response time: 2 PM", "label": "non-actionable"}
+{"text": "The office could use some work", "label": "non-actionable"}
+{"text": "Need more budget", "label": "non-actionable"}
+{"text": "Confirm the weekly standup with Anthony Everett", "label": "actionable"}
+{"text": "The office will be closed the 20th", "label": "non-actionable"}
+{"text": "Thomas Peterson mentioned the quarterly report", "label": "non-actionable"}
+{"text": "Set up the app", "label": "actionable"}
+{"text": "Download the summary from the backend", "label": "actionable"}
+{"text": "Savannah Gilbert joined the the interns team", "label": "non-actionable"}
+{"text": "Industry average is 6%", "label": "non-actionable"}
+{"text": "Clean den", "label": "actionable"}
+{"text": "The the dashboard update is available", "label": "non-actionable"}
+{"text": "The the weekly standup was a success", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Text Dr. William Warren the time", "label": "actionable"}
+{"text": "Return notebooks to the hardware store", "label": "actionable"}
+{"text": "Inventory is at 59% capacity", "label": "non-actionable"}
+{"text": "Fix crash", "label": "actionable"}
+{"text": "Running low on extension cord", "label": "actionable"}
+{"text": "Book the board meeting for March 15", "label": "actionable"}
+{"text": "The office will be closed March 15", "label": "non-actionable"}
+{"text": "Buy coffee filters", "label": "actionable"}
+{"text": "Veronica Silva asked about performance reviews", "label": "actionable"}
+{"text": "Jacob Hoffman works at Allen-Martinez", "label": "non-actionable"}
+{"text": "The a workshop was a success", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Matthew Schwartz asked about the migration", "label": "actionable"}
+{"text": "HR budget was approved", "label": "non-actionable"}
+{"text": "the billing system seems slow lately", "label": "non-actionable"}
+{"text": "Average response time: 2 PM", "label": "non-actionable"}
+{"text": "Team size: 45% of target", "label": "non-actionable"}
+{"text": "a gift card is broken", "label": "non-actionable"}
+{"text": "Print the design doc", "label": "actionable"}
+{"text": "Submit the summary to Engineering", "label": "actionable"}
+{"text": "Running low on envelopes", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Book the product demo for next Thursday", "label": "actionable"}
+{"text": "Reply to Jose Schultz's message", "label": "actionable"}
+{"text": "Running low on a new monitor", "label": "actionable"}
+{"text": "File the spec", "label": "actionable"}
+{"text": "Buy envelopes", "label": "actionable"}
+{"text": "Set up the dashboard", "label": "actionable"}
+{"text": "The the weekly standup was a success", "label": "non-actionable"}
+{"text": "Submit the analysis to Procurement", "label": "actionable"}
+{"text": "William Day is the new Production assistant, television", "label": "non-actionable"}
+{"text": "Andrew Avila's birthday is next week", "label": "non-actionable"}
+{"text": "Pick up groceries from Office Depot", "label": "actionable"}
+{"text": "the project timeline is interesting", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "The a training session was a success", "label": "non-actionable"}
+{"text": "Revenue was up 73%", "label": "non-actionable"}
+{"text": "The new policy takes effect next Thursday", "label": "non-actionable"}
+{"text": "paint is broken", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "The office will be closed tomorrow", "label": "non-actionable"}
+{"text": "Mark Stevens's birthday is the 20th", "label": "non-actionable"}
+{"text": "Current balance: $639", "label": "non-actionable"}
+{"text": "Confirm the quarterly review with Anna Henderson", "label": "actionable"}
+{"text": "Schedule the board meeting", "label": "actionable"}
+{"text": "Register for a team lunch", "label": "actionable"}
+{"text": "Submit the summary to Customer Support", "label": "actionable"}
+{"text": "Book a team lunch for this weekend", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Inventory is at 63% capacity", "label": "non-actionable"}
+{"text": "Running low on extension cord", "label": "actionable"}
+{"text": "the summary is outdated", "label": "actionable"}
+{"text": "Dale Ryan mentioned the contract renewal", "label": "non-actionable"}
+{"text": "Reply to William Baker's message", "label": "actionable"}
+{"text": "Victor Morris mentioned the proposal", "label": "non-actionable"}
+{"text": "Bradley Coleman is the new Planning and development surveyor", "label": "non-actionable"}
+{"text": "Update the due date in the website", "label": "actionable"}
+{"text": "Server uptime: 48%", "label": "non-actionable"}
+{"text": "Schedule the annual picnic", "label": "actionable"}
+{"text": "Current balance: $3,946", "label": "non-actionable"}
+{"text": "Erin Anderson joined the the family team", "label": "non-actionable"}
+{"text": "Andrew Shaw MD's birthday is March 15", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "coffee filters is broken", "label": "non-actionable"}
+{"text": "Team size: 94% of target", "label": "non-actionable"}
+{"text": "The the annual picnic had 29% attendance", "label": "non-actionable"}
+{"text": "Book a team lunch for the 20th", "label": "actionable"}
+{"text": "Revenue was up 88%", "label": "non-actionable"}
+{"text": "The running toilet needs attention", "label": "actionable"}
+{"text": "Harrell, Brock and Mcdonald is based in the storage closet", "label": "non-actionable"}
+{"text": "Server uptime: 4%", "label": "non-actionable"}
+{"text": "George Miranda joined the the family team", "label": "non-actionable"}
+{"text": "Gilmore-Washington is based in the conference room", "label": "non-actionable"}
+{"text": "Order a gift card from Best Buy", "label": "actionable"}
+{"text": "Team size: 54% of target", "label": "non-actionable"}
+{"text": "Order a gift card from Amazon", "label": "actionable"}
+{"text": "Confirm a client meeting with Aimee Montoya", "label": "actionable"}
+{"text": "Order coffee filters from Amazon", "label": "actionable"}
+{"text": "Call David Wright", "label": "actionable"}
+{"text": "Set up the API", "label": "actionable"}
+{"text": "Update the address in the app", "label": "actionable"}
+{"text": "The the API update is available", "label": "non-actionable"}
+{"text": "Confirm a dinner party with Amber Kidd", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The office will be closed Monday", "label": "non-actionable"}
+{"text": "The cracked tile needs attention", "label": "actionable"}
+{"text": "Current balance: $2,480", "label": "non-actionable"}
+{"text": "The living room could use some work", "label": "non-actionable"}
+{"text": "Team size: 39% of target", "label": "non-actionable"}
+{"text": "compliance requirements is interesting", "label": "non-actionable"}
+{"text": "Fix leaky faucet", "label": "actionable"}
+{"text": "Average response time: 3 PM", "label": "non-actionable"}
+{"text": "Team size: 9% of target", "label": "non-actionable"}
+{"text": "Need more meeting rooms", "label": "non-actionable"}
+{"text": "Reply to Darlene Miller's message", "label": "actionable"}
+{"text": "Revenue was up 58%", "label": "non-actionable"}
+{"text": "Running low on packing tape", "label": "actionable"}
+{"text": "the inventory tracker seems slow lately", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Text Debra Morton the address", "label": "actionable"}
+{"text": "Need more meeting rooms", "label": "non-actionable"}
+{"text": "Update the due date in the API", "label": "actionable"}
+{"text": "Current balance: $788", "label": "non-actionable"}
+{"text": "Server uptime: 17%", "label": "non-actionable"}
+{"text": "The loose shelf needs attention", "label": "actionable"}
+{"text": "the presentation was published tomorrow", "label": "non-actionable"}
+{"text": "Reply to Megan Orr's message", "label": "actionable"}
+{"text": "Revenue was up 16%", "label": "non-actionable"}
+{"text": "Industry average is 33%", "label": "non-actionable"}
+{"text": "Running low on notebooks", "label": "actionable"}
+{"text": "Need more printer ink", "label": "non-actionable"}
+{"text": "Confirm the quarterly review with Robert Oconnell", "label": "actionable"}
+{"text": "Christian Vaughn asked about the proposal", "label": "actionable"}
+{"text": "the agenda was published the 20th", "label": "non-actionable"}
+{"text": "Email Jessica Holmes about the vendor agreement", "label": "actionable"}
+{"text": "The the annual picnic was a success", "label": "non-actionable"}
+{"text": "Fix display glitch", "label": "actionable"}
+{"text": "Matthew Tucker is the new Private music teacher", "label": "non-actionable"}
+{"text": "the design doc is outdated", "label": "actionable"}
+{"text": "Text Robert Potter the time", "label": "actionable"}
+{"text": "Download the spreadsheet from the backend", "label": "actionable"}
+{"text": "Need more meeting rooms", "label": "non-actionable"}
+{"text": "Inventory is at 8% capacity", "label": "non-actionable"}
+{"text": "Pick up coffee filters from Walgreens", "label": "actionable"}
+{"text": "The the dashboard update is available", "label": "non-actionable"}
+{"text": "Schedule a client meeting", "label": "actionable"}
+{"text": "Industry average is 31%", "label": "non-actionable"}
+{"text": "Text Courtney Mills the confirmation number", "label": "actionable"}
+{"text": "Schedule a workshop", "label": "actionable"}
+{"text": "the memo is outdated", "label": "actionable"}
+{"text": "The office will be closed March 15", "label": "non-actionable"}
+{"text": "Pick up a new keyboard from Office Depot", "label": "actionable"}
 {"text": "The Jira license expires next Thursday", "label": "non-actionable"}
-{"text": "Server uptime: 66%", "label": "non-actionable"}
-{"text": "Current balance: $754", "label": "non-actionable"}
+{"text": "Book the board meeting for Friday", "label": "actionable"}
+{"text": "Robert Reese asked about the migration", "label": "actionable"}
+{"text": "Dwayne Klein mentioned performance reviews", "label": "non-actionable"}
+{"text": "Clean office", "label": "actionable"}
+{"text": "Send the report to Brian Rodriguez", "label": "actionable"}
+{"text": "Average response time: 1 PM", "label": "non-actionable"}
+{"text": "Schedule the offsite retreat", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Confirm the offsite retreat with Crystal Johnson", "label": "actionable"}
+{"text": "Download the spec from the portal", "label": "actionable"}
+{"text": "File the brief", "label": "actionable"}
+{"text": "Thompson PLC is based in the garage", "label": "non-actionable"}
+{"text": "Send the memo to Jeffrey Johnson", "label": "actionable"}
+{"text": "Send the summary to Lisa Barnes", "label": "actionable"}
+{"text": "Server uptime: 72%", "label": "non-actionable"}
+{"text": "Pay $3,530 for office supplies", "label": "actionable"}
+{"text": "Julia Wilson works at Jimenez Ltd", "label": "non-actionable"}
+{"text": "Confirm the quarterly review with Jeffrey Chandler", "label": "actionable"}
+{"text": "Lauren Maldonado is the new Systems analyst", "label": "non-actionable"}
+{"text": "Print the agenda", "label": "actionable"}
+{"text": "The the portal update is available", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "The Figma license expires next Thursday", "label": "non-actionable"}
+{"text": "Revenue was up 17%", "label": "non-actionable"}
+{"text": "the app seems slow lately", "label": "non-actionable"}
+{"text": "Time to think about the migration", "label": "non-actionable"}
+{"text": "Book a dinner party for this weekend", "label": "actionable"}
+{"text": "Server uptime: 1%", "label": "non-actionable"}
+{"text": "IT budget was approved", "label": "non-actionable"}
+{"text": "Update the price in the portal", "label": "actionable"}
+{"text": "Order a phone charger from Home Depot", "label": "actionable"}
+{"text": "The den could use some work", "label": "non-actionable"}
+{"text": "Inventory is at 66% capacity", "label": "non-actionable"}
+{"text": "Buy extension cord", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The new policy takes effect the 20th", "label": "non-actionable"}
+{"text": "The the CRM update is available", "label": "non-actionable"}
+{"text": "Running low on packing tape", "label": "actionable"}
+{"text": "Call Michael Lyons", "label": "actionable"}
+{"text": "The a client meeting had 21% attendance", "label": "non-actionable"}
+{"text": "Order envelopes from Target", "label": "actionable"}
+{"text": "The new policy takes effect next Thursday", "label": "non-actionable"}
+{"text": "File the invoice", "label": "actionable"}
+{"text": "The Notion license expires Friday", "label": "non-actionable"}
+{"text": "Pay $3,740 for travel reimbursement", "label": "actionable"}
+{"text": "Send the brief to Daniel Murphy", "label": "actionable"}
+{"text": "Set up the inventory tracker", "label": "actionable"}
+{"text": "Set up the database", "label": "actionable"}
+{"text": "Review the invoice", "label": "actionable"}
+{"text": "Team size: 56% of target", "label": "non-actionable"}
+{"text": "Reply to Richard Aguirre's message", "label": "actionable"}
+{"text": "Company founded in next week", "label": "non-actionable"}
+{"text": "Buy cleaning supplies", "label": "actionable"}
+{"text": "Write the design doc", "label": "actionable"}
+{"text": "Order a new monitor from Staples", "label": "actionable"}
+{"text": "Set up the website", "label": "actionable"}
+{"text": "Call Lisa Hensley", "label": "actionable"}
+{"text": "Clean basement", "label": "actionable"}
+{"text": "Email Amy Silva about the hiring plan", "label": "actionable"}
+{"text": "Industry average is 10%", "label": "non-actionable"}
+{"text": "Average response time: 2 PM", "label": "non-actionable"}
+{"text": "Server uptime: 76%", "label": "non-actionable"}
+{"text": "Erik Garcia is the new Runner, broadcasting/film/video", "label": "non-actionable"}
+{"text": "The garage could use some work", "label": "non-actionable"}
+{"text": "File the report", "label": "actionable"}
+{"text": "Buy paint", "label": "actionable"}
+{"text": "Update the price in the API", "label": "actionable"}
+{"text": "hand soap is broken", "label": "non-actionable"}
+{"text": "Send the invoice to Sharon Cochran", "label": "actionable"}
+{"text": "The new policy takes effect March 15", "label": "non-actionable"}
+{"text": "Current balance: $1,299", "label": "non-actionable"}
+{"text": "The the database update is available", "label": "non-actionable"}
+{"text": "The a client meeting had 6% attendance", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "the product launch is interesting", "label": "non-actionable"}
+{"text": "Team size: 90% of target", "label": "non-actionable"}
+{"text": "Schedule a team lunch", "label": "actionable"}
+{"text": "Schedule the annual picnic", "label": "actionable"}
+{"text": "Buy paint", "label": "actionable"}
+{"text": "Download the spreadsheet from the server", "label": "actionable"}
+{"text": "Update the price in the API", "label": "actionable"}
+{"text": "Customer Support budget was approved", "label": "non-actionable"}
+{"text": "Server uptime: 85%", "label": "non-actionable"}
+{"text": "Procurement budget was approved", "label": "non-actionable"}
+{"text": "the report is outdated", "label": "actionable"}
+{"text": "Back up survey results", "label": "actionable"}
+{"text": "Industry average is 96%", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Fisher, Wilson and Brown is based in the garage", "label": "non-actionable"}
+{"text": "The new policy takes effect March 15", "label": "non-actionable"}
 {"text": "Review the meeting notes", "label": "actionable"}
+{"text": "inventory counts is interesting", "label": "non-actionable"}
+{"text": "Time to think about compliance requirements", "label": "non-actionable"}
+{"text": "Review the memo", "label": "actionable"}
+{"text": "Send the presentation to Alex Hernandez", "label": "actionable"}
+{"text": "Ronald Ross joined the the interns team", "label": "non-actionable"}
+{"text": "Weber-Richards is based in the server room", "label": "non-actionable"}
+{"text": "Email April Frost about the marketing strategy", "label": "actionable"}
+{"text": "Average response time: 4:30 PM", "label": "non-actionable"}
+{"text": "File the spreadsheet", "label": "actionable"}
+{"text": "Confirm a training session with Fred Smith", "label": "actionable"}
+{"text": "Need more server capacity", "label": "non-actionable"}
+{"text": "Revenue was up 46%", "label": "non-actionable"}
+{"text": "Running low on a gift card", "label": "actionable"}
+{"text": "Reginald Knapp mentioned the migration", "label": "non-actionable"}
+{"text": "Luke Craig joined the the volunteers team", "label": "non-actionable"}
+{"text": "Print the presentation", "label": "actionable"}
+{"text": "The 1Password license expires March 15", "label": "non-actionable"}
+{"text": "Call Lisa Jackson", "label": "actionable"}
+{"text": "The the API update is available", "label": "non-actionable"}
+{"text": "Clean basement", "label": "actionable"}
+{"text": "Tammy Bell is the new Education officer, community", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "The attic could use some work", "label": "non-actionable"}
+{"text": "Text Daniel Salinas the address", "label": "actionable"}
+{"text": "The a dinner party had 28% attendance", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "the summary is outdated", "label": "actionable"}
+{"text": "The a training session was a success", "label": "non-actionable"}
+{"text": "Buy extension cord", "label": "actionable"}
+{"text": "David Lopez asked about the vendor agreement", "label": "actionable"}
+{"text": "James Martin is the new Diagnostic radiographer", "label": "non-actionable"}
+{"text": "Update the priority in the portal", "label": "actionable"}
+{"text": "Average response time: 5 PM", "label": "non-actionable"}
+{"text": "Shannon Hester's birthday is next week", "label": "non-actionable"}
+{"text": "the spreadsheet was published next week", "label": "non-actionable"}
+{"text": "Register for a dinner party", "label": "actionable"}
+{"text": "Text Victor Baker the agenda", "label": "actionable"}
+{"text": "Text Kathy Rivas the confirmation number", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Book a birthday party for Friday", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "The new policy takes effect next week", "label": "non-actionable"}
+{"text": "Running low on a phone charger", "label": "actionable"}
+{"text": "The new policy takes effect tomorrow", "label": "non-actionable"}
+{"text": "inventory counts is interesting", "label": "non-actionable"}
+{"text": "Amanda Harris joined the the team team", "label": "non-actionable"}
+{"text": "Revenue was up 13%", "label": "non-actionable"}
+{"text": "Update the contact info in the portal", "label": "actionable"}
+{"text": "Inventory is at 63% capacity", "label": "non-actionable"}
+{"text": "Revenue was up 57%", "label": "non-actionable"}
+{"text": "The den could use some work", "label": "non-actionable"}
+{"text": "Current balance: $1,241", "label": "non-actionable"}
+{"text": "a phone charger is broken", "label": "non-actionable"}
+{"text": "Schedule a dinner party", "label": "actionable"}
+{"text": "James Greene's birthday is tomorrow", "label": "non-actionable"}
+{"text": "Text Kirk Carter the meeting link", "label": "actionable"}
+{"text": "Average response time: noon", "label": "non-actionable"}
+{"text": "Write the draft", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Moore Group is based in the lobby", "label": "non-actionable"}
+{"text": "Back up survey results", "label": "actionable"}
+{"text": "Need more staff", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Pick up stamps from Home Depot", "label": "actionable"}
+{"text": "Inventory is at 32% capacity", "label": "non-actionable"}
+{"text": "Email Timothy Duncan about performance reviews", "label": "actionable"}
+{"text": "Return stamps to IKEA", "label": "actionable"}
+{"text": "Schedule a workshop", "label": "actionable"}
+{"text": "The loose shelf needs attention", "label": "actionable"}
+{"text": "Martha Bailey asked about the migration", "label": "actionable"}
+{"text": "Time to think about the rollout plan", "label": "non-actionable"}
+{"text": "packing tape is broken", "label": "non-actionable"}
+{"text": "Register for the product demo", "label": "actionable"}
+{"text": "Download the analysis from the server", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "the proposal is interesting", "label": "non-actionable"}
+{"text": "Server uptime: 79%", "label": "non-actionable"}
+{"text": "Gallegos PLC is based in the living room", "label": "non-actionable"}
+{"text": "Elizabeth Mendez asked about the quarterly report", "label": "actionable"}
+{"text": "Amy Kelley mentioned the marketing strategy", "label": "non-actionable"}
+{"text": "Download the memo from the app", "label": "actionable"}
+{"text": "Fix formatting issue", "label": "actionable"}
+{"text": "Raymond Le asked about the rollout plan", "label": "actionable"}
+{"text": "Set up the dashboard", "label": "actionable"}
+{"text": "Back up customer feedback", "label": "actionable"}
+{"text": "Clean bathroom", "label": "actionable"}
+{"text": "Print the report", "label": "actionable"}
+{"text": "the spreadsheet was published this weekend", "label": "non-actionable"}
+{"text": "The office will be closed Monday", "label": "non-actionable"}
+{"text": "Clean den", "label": "actionable"}
+{"text": "Review the design doc", "label": "actionable"}
+{"text": "Running low on stamps", "label": "actionable"}
+{"text": "The a client meeting had 17% attendance", "label": "non-actionable"}
+{"text": "Current balance: $4,611", "label": "non-actionable"}
+{"text": "The office will be closed this weekend", "label": "non-actionable"}
+{"text": "Lisa Henderson joined the the interns team", "label": "non-actionable"}
+{"text": "Team size: 25% of target", "label": "non-actionable"}
+{"text": "Clean garage", "label": "actionable"}
+{"text": "Book the offsite retreat for the 20th", "label": "actionable"}
+{"text": "Buy envelopes", "label": "actionable"}
+{"text": "Confirm the annual picnic with Jennifer Adkins", "label": "actionable"}
+{"text": "Company founded in Tuesday", "label": "non-actionable"}
+{"text": "Davidson LLC is based in the front desk", "label": "non-actionable"}
+{"text": "the migration is interesting", "label": "non-actionable"}
+{"text": "Team size: 10% of target", "label": "non-actionable"}
+{"text": "the analysis was published the 20th", "label": "non-actionable"}
+{"text": "Write the summary", "label": "actionable"}
+{"text": "Book a birthday party for tomorrow", "label": "actionable"}
+{"text": "Set up the database", "label": "actionable"}
+{"text": "File the design doc", "label": "actionable"}
+{"text": "Send the invoice to Carol Tucker", "label": "actionable"}
+{"text": "Submit the spec to IT", "label": "actionable"}
+{"text": "Reply to Benjamin Smith's message", "label": "actionable"}
+{"text": "Call Aaron Wise", "label": "actionable"}
+{"text": "The guest room could use some work", "label": "non-actionable"}
+{"text": "Roger Olson is the new Hotel manager", "label": "non-actionable"}
+{"text": "Company founded in next Thursday", "label": "non-actionable"}
+{"text": "Server uptime: 42%", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Write the analysis", "label": "actionable"}
+{"text": "Review the presentation", "label": "actionable"}
+{"text": "Order extension cord from Costco", "label": "actionable"}
+{"text": "Bryant, Obrien and Robertson is based in the office", "label": "non-actionable"}
+{"text": "Revenue was up 91%", "label": "non-actionable"}
+{"text": "Update the priority in the dashboard", "label": "actionable"}
+{"text": "Lisa Perry asked about the quarterly report", "label": "actionable"}
+{"text": "Reply to Cathy Robinson's message", "label": "actionable"}
+{"text": "Review the memo", "label": "actionable"}
+{"text": "Review the report", "label": "actionable"}
+{"text": "Register for a birthday party", "label": "actionable"}
+{"text": "The basement could use some work", "label": "non-actionable"}
+{"text": "Need more paper", "label": "non-actionable"}
+{"text": "Engineering budget was approved", "label": "non-actionable"}
+{"text": "The guest room could use some work", "label": "non-actionable"}
+{"text": "Update the due date in the inventory tracker", "label": "actionable"}
+{"text": "Call Mary Marshall", "label": "actionable"}
+{"text": "Pick up hand soap from Staples", "label": "actionable"}
+{"text": "Revenue was up 92%", "label": "non-actionable"}
+{"text": "Schedule a birthday party", "label": "actionable"}
+{"text": "The new policy takes effect Tuesday", "label": "non-actionable"}
+{"text": "Return printer paper to Costco", "label": "actionable"}
+{"text": "The the board meeting had 33% attendance", "label": "non-actionable"}
+{"text": "Kidd Group is based in the patio", "label": "non-actionable"}
+{"text": "Return batteries to CVS", "label": "actionable"}
+{"text": "The new policy takes effect Tuesday", "label": "non-actionable"}
+{"text": "Team size: 15% of target", "label": "non-actionable"}
+{"text": "the contract is outdated", "label": "actionable"}
+{"text": "Legal budget was approved", "label": "non-actionable"}
+{"text": "File the presentation", "label": "actionable"}
+{"text": "Team size: 92% of target", "label": "non-actionable"}
+{"text": "Submit the summary to Engineering", "label": "actionable"}
+{"text": "Return cleaning supplies to the hardware store", "label": "actionable"}
+{"text": "Tina Ballard asked about the marketing strategy", "label": "actionable"}
+{"text": "Call Abigail Shaffer", "label": "actionable"}
+{"text": "Set up the inventory tracker", "label": "actionable"}
+{"text": "Inventory is at 4% capacity", "label": "non-actionable"}
+{"text": "Order coffee filters from Best Buy", "label": "actionable"}
+{"text": "Lisa Randall mentioned the budget", "label": "non-actionable"}
+{"text": "Industry average is 17%", "label": "non-actionable"}
+{"text": "Time to think about inventory counts", "label": "non-actionable"}
+{"text": "Review the summary", "label": "actionable"}
+{"text": "The office will be closed next Thursday", "label": "non-actionable"}
+{"text": "Confirm the quarterly review with Matthew Harrington", "label": "actionable"}
+{"text": "Email Angelica Tucker about the migration", "label": "actionable"}
+{"text": "Fix display glitch", "label": "actionable"}
+{"text": "Randy Smith asked about the quarterly report", "label": "actionable"}
+{"text": "Book a client meeting for next Thursday", "label": "actionable"}
+{"text": "Industry average is 36%", "label": "non-actionable"}
+{"text": "Ian Jordan joined the the volunteers team", "label": "non-actionable"}
+{"text": "Company founded in Tuesday", "label": "non-actionable"}
+{"text": "Submit the agenda to HR", "label": "actionable"}
+{"text": "Pay $3,980 for equipment upgrade", "label": "actionable"}
+{"text": "Email Denise Jacobs about the hiring plan", "label": "actionable"}
+{"text": "Fix permission error", "label": "actionable"}
+{"text": "Download the agenda from the website", "label": "actionable"}
+{"text": "Pick up extension cord from Amazon", "label": "actionable"}
+{"text": "Send the brief to Daniel Kennedy", "label": "actionable"}
+{"text": "The cracked tile needs attention", "label": "actionable"}
+{"text": "the agenda is outdated", "label": "actionable"}
+{"text": "Book the offsite retreat for this weekend", "label": "actionable"}
+{"text": "Clean guest room", "label": "actionable"}
+{"text": "Book a training session for Monday", "label": "actionable"}
+{"text": "Time to think about performance reviews", "label": "non-actionable"}
+{"text": "Back up the latest figures", "label": "actionable"}
+{"text": "Set up the website", "label": "actionable"}
+{"text": "File the invoice", "label": "actionable"}
+{"text": "Return stamps to Amazon", "label": "actionable"}
+{"text": "William Long works at Grant-Diaz", "label": "non-actionable"}
+{"text": "Server uptime: 14%", "label": "non-actionable"}
+{"text": "Kevin Williams works at Simpson-Khan", "label": "non-actionable"}
+{"text": "Server uptime: 68%", "label": "non-actionable"}
+{"text": "The the product demo was a success", "label": "non-actionable"}
+{"text": "Sharon Barnes is the new Designer, jewellery", "label": "non-actionable"}
+{"text": "Review the spec", "label": "actionable"}
+{"text": "File the meeting notes", "label": "actionable"}
+{"text": "Back up pricing information", "label": "actionable"}
+{"text": "Call Sherri Baker", "label": "actionable"}
+{"text": "The office will be closed next week", "label": "non-actionable"}
+{"text": "Schedule a dinner party", "label": "actionable"}
+{"text": "Operations budget was approved", "label": "non-actionable"}
+{"text": "Schedule a team lunch", "label": "actionable"}
+{"text": "Stacey Pena is the new Recruitment consultant", "label": "non-actionable"}
+{"text": "Betty Fletcher works at Collins Group", "label": "non-actionable"}
+{"text": "Call Sherry Decker", "label": "actionable"}
+{"text": "Time to think about the proposal", "label": "non-actionable"}
+{"text": "The new policy takes effect Tuesday", "label": "non-actionable"}
+{"text": "Industry average is 17%", "label": "non-actionable"}
+{"text": "The the weekly standup had 68% attendance", "label": "non-actionable"}
+{"text": "Write the meeting notes", "label": "actionable"}
+{"text": "Pick up printer paper from the hardware store", "label": "actionable"}
+{"text": "Back up pricing information", "label": "actionable"}
+{"text": "Revenue was up 70%", "label": "non-actionable"}
+{"text": "The the annual picnic was a success", "label": "non-actionable"}
+{"text": "Fix login bug", "label": "actionable"}
+{"text": "Register for the quarterly review", "label": "actionable"}
+{"text": "the project timeline is interesting", "label": "non-actionable"}
+{"text": "Return extension cord to IKEA", "label": "actionable"}
+{"text": "performance reviews is interesting", "label": "non-actionable"}
+{"text": "Pick up a gift card from Trader Joe's", "label": "actionable"}
+{"text": "the invoice was published next Thursday", "label": "non-actionable"}
+{"text": "Book a birthday party for next Thursday", "label": "actionable"}
+{"text": "Back up the updated contacts", "label": "actionable"}
+{"text": "Engineering budget was approved", "label": "non-actionable"}
+{"text": "Reply to Allen Rosales's message", "label": "actionable"}
+{"text": "The Figma license expires next week", "label": "non-actionable"}
+{"text": "the memo is outdated", "label": "actionable"}
+{"text": "The a workshop was a success", "label": "non-actionable"}
+{"text": "Industry average is 79%", "label": "non-actionable"}
+{"text": "Average response time: 11 AM", "label": "non-actionable"}
+{"text": "Return notebooks to the grocery store", "label": "actionable"}
+{"text": "Write the meeting notes", "label": "actionable"}
+{"text": "Brian Martin mentioned the project timeline", "label": "non-actionable"}
+{"text": "Call Garrett Lin", "label": "actionable"}
+{"text": "Need more time", "label": "non-actionable"}
+{"text": "Call Joshua Blair", "label": "actionable"}
+{"text": "Pick up a new keyboard from Home Depot", "label": "actionable"}
+{"text": "Email Jamie Walton about the migration", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Wayne Powell's birthday is next Thursday", "label": "non-actionable"}
+{"text": "Book the weekly standup for next Thursday", "label": "actionable"}
+{"text": "Current balance: $3,431", "label": "non-actionable"}
+{"text": "Time to think about the redesign", "label": "non-actionable"}
+{"text": "Inventory is at 7% capacity", "label": "non-actionable"}
+{"text": "Print the spec", "label": "actionable"}
+{"text": "Average response time: 10 AM", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "the dashboard seems slow lately", "label": "non-actionable"}
+{"text": "Schedule the board meeting", "label": "actionable"}
+{"text": "The the offsite retreat was a success", "label": "non-actionable"}
+{"text": "Krista Roberts joined the the team team", "label": "non-actionable"}
+{"text": "Thomas Williams joined the the volunteers team", "label": "non-actionable"}
+{"text": "Download the spec from the app", "label": "actionable"}
+{"text": "Average response time: 10 AM", "label": "non-actionable"}
+{"text": "Customer Support budget was approved", "label": "non-actionable"}
+{"text": "John Coffey asked about the proposal", "label": "actionable"}
+{"text": "Register for the quarterly review", "label": "actionable"}
+{"text": "Running low on coffee filters", "label": "actionable"}
+{"text": "Pay $4,012 for training materials", "label": "actionable"}
+{"text": "Reply to Stephanie Salazar's message", "label": "actionable"}
+{"text": "Pay $484 for a parking pass", "label": "actionable"}
+{"text": "paint is broken", "label": "non-actionable"}
+{"text": "Review the presentation", "label": "actionable"}
+{"text": "Aaron Miller works at Lewis-Hernandez", "label": "non-actionable"}
+{"text": "Finance budget was approved", "label": "non-actionable"}
+{"text": "Server uptime: 70%", "label": "non-actionable"}
+{"text": "Company founded in next Thursday", "label": "non-actionable"}
+{"text": "Text Jordan Henderson the address", "label": "actionable"}
+{"text": "Revenue was up 9%", "label": "non-actionable"}
+{"text": "Confirm a team lunch with Cameron Parker", "label": "actionable"}
+{"text": "The 1Password license expires March 15", "label": "non-actionable"}
+{"text": "Pay $2,767 for a parking pass", "label": "actionable"}
+{"text": "Submit the analysis to Operations", "label": "actionable"}
+{"text": "Stacey Stewart is the new Insurance claims handler", "label": "non-actionable"}
+{"text": "Revenue was up 35%", "label": "non-actionable"}
+{"text": "Register for the annual picnic", "label": "actionable"}
+{"text": "Register for a birthday party", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "the redesign is interesting", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Christopher Mckinney is the new Ecologist", "label": "non-actionable"}
+{"text": "Confirm the board meeting with Courtney Gonzalez", "label": "actionable"}
+{"text": "Team size: 37% of target", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Running low on envelopes", "label": "actionable"}
+{"text": "The a workshop had 61% attendance", "label": "non-actionable"}
+{"text": "Text Ethan Adams the agenda", "label": "actionable"}
+{"text": "Write the presentation", "label": "actionable"}
+{"text": "File the spec", "label": "actionable"}
+{"text": "The office will be closed next week", "label": "non-actionable"}
+{"text": "The a team lunch had 81% attendance", "label": "non-actionable"}
+{"text": "the memo is outdated", "label": "actionable"}
+{"text": "Revenue was up 37%", "label": "non-actionable"}
+{"text": "Team size: 6% of target", "label": "non-actionable"}
+{"text": "Pay $3,543 for the budget approval", "label": "actionable"}
+{"text": "Text Julia Torres the confirmation number", "label": "actionable"}
+{"text": "Reply to Patty Perez's message", "label": "actionable"}
+{"text": "The the offsite retreat was a success", "label": "non-actionable"}
+{"text": "Lauren Keller works at Griffin Group", "label": "non-actionable"}
+{"text": "The a dinner party was a success", "label": "non-actionable"}
+{"text": "Text John Pierce the confirmation number", "label": "actionable"}
+{"text": "The Obsidian license expires Monday", "label": "non-actionable"}
+{"text": "The a training session was a success", "label": "non-actionable"}
+{"text": "Need more printer ink", "label": "non-actionable"}
+{"text": "Current balance: $4,435", "label": "non-actionable"}
+{"text": "Fix missing label", "label": "actionable"}
+{"text": "Edward French works at Wise, Conley and Stephenson", "label": "non-actionable"}
+{"text": "Team size: 11% of target", "label": "non-actionable"}
+{"text": "the app seems slow lately", "label": "non-actionable"}
+{"text": "Julie Dominguez works at White, Taylor and Baldwin", "label": "non-actionable"}
+{"text": "the analysis was published next week", "label": "non-actionable"}
+{"text": "Set up the backend", "label": "actionable"}
+{"text": "Buy a phone charger", "label": "actionable"}
+{"text": "Set up the dashboard", "label": "actionable"}
+{"text": "Schedule a client meeting", "label": "actionable"}
+{"text": "Industry average is 36%", "label": "non-actionable"}
+{"text": "Colleen Wright asked about inventory counts", "label": "actionable"}
+{"text": "Rachel Bradley mentioned the proposal", "label": "non-actionable"}
+{"text": "Time to think about the proposal", "label": "non-actionable"}
+{"text": "Pay $2,042 for travel reimbursement", "label": "actionable"}
+{"text": "Need more time", "label": "non-actionable"}
+{"text": "Write the spec", "label": "actionable"}
+{"text": "the database seems slow lately", "label": "non-actionable"}
+{"text": "Call Elizabeth Oliver DDS", "label": "actionable"}
+{"text": "Download the contract from the app", "label": "actionable"}
+{"text": "Server uptime: 38%", "label": "non-actionable"}
+{"text": "The the dashboard update is available", "label": "non-actionable"}
+{"text": "the analysis is outdated", "label": "actionable"}
+{"text": "Time to think about inventory counts", "label": "non-actionable"}
+{"text": "Robert Harrison's birthday is the 20th", "label": "non-actionable"}
+{"text": "The Figma license expires next week", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Current balance: $2,058", "label": "non-actionable"}
+{"text": "Print the brief", "label": "actionable"}
+{"text": "Susan Davis asked about the rollout plan", "label": "actionable"}
+{"text": "Pick up a new keyboard from Walgreens", "label": "actionable"}
+{"text": "Submit the spreadsheet to HR", "label": "actionable"}
+{"text": "Set up the backend", "label": "actionable"}
+{"text": "Pick up stamps from Target", "label": "actionable"}
+{"text": "The the app update is available", "label": "non-actionable"}
+{"text": "Time to think about the vendor agreement", "label": "non-actionable"}
+{"text": "Text Holly Wood the directions", "label": "actionable"}
+{"text": "Industry average is 47%", "label": "non-actionable"}
+{"text": "Nicole Hamilton MD's birthday is Friday", "label": "non-actionable"}
+{"text": "Back up customer feedback", "label": "actionable"}
+{"text": "File the spreadsheet", "label": "actionable"}
+{"text": "HR budget was approved", "label": "non-actionable"}
+{"text": "Joyce Brown asked about the rollout plan", "label": "actionable"}
+{"text": "Need more budget", "label": "non-actionable"}
+{"text": "the brief was published this weekend", "label": "non-actionable"}
+{"text": "the migration is interesting", "label": "non-actionable"}
+{"text": "Return light bulbs to Office Depot", "label": "actionable"}
+{"text": "The new policy takes effect tomorrow", "label": "non-actionable"}
+{"text": "The the annual picnic had 83% attendance", "label": "non-actionable"}
+{"text": "Need more budget", "label": "non-actionable"}
+{"text": "Text Julie Alexander the meeting link", "label": "actionable"}
+{"text": "Running low on groceries", "label": "actionable"}
+{"text": "Back up customer feedback", "label": "actionable"}
+{"text": "Fix broken link", "label": "actionable"}
+{"text": "Return groceries to Trader Joe's", "label": "actionable"}
+{"text": "Set up the server", "label": "actionable"}
+{"text": "Average response time: 8:30 AM", "label": "non-actionable"}
+{"text": "Buy light bulbs", "label": "actionable"}
+{"text": "File the spec", "label": "actionable"}
+{"text": "Schedule the annual picnic", "label": "actionable"}
+{"text": "Set up the website", "label": "actionable"}
+{"text": "Review the agenda", "label": "actionable"}
+{"text": "Time to think about performance reviews", "label": "non-actionable"}
+{"text": "a new keyboard is broken", "label": "non-actionable"}
+{"text": "Keith Rodriguez asked about the marketing strategy", "label": "actionable"}
+{"text": "Back up performance metrics", "label": "actionable"}
+{"text": "The a training session had 77% attendance", "label": "non-actionable"}
+{"text": "Order a gift card from the grocery store", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "the server seems slow lately", "label": "non-actionable"}
+{"text": "Need more time", "label": "non-actionable"}
+{"text": "the rollout plan is interesting", "label": "non-actionable"}
+{"text": "The the board meeting was a success", "label": "non-actionable"}
+{"text": "Michael Johnson asked about performance reviews", "label": "actionable"}
+{"text": "Matthew Moon works at Shea Group", "label": "non-actionable"}
+{"text": "Server uptime: 36%", "label": "non-actionable"}
+{"text": "Register for the annual picnic", "label": "actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "Fix broken link", "label": "actionable"}
+{"text": "Confirm a dinner party with Stephanie Manning", "label": "actionable"}
+{"text": "Operations budget was approved", "label": "non-actionable"}
+{"text": "The office will be closed Friday", "label": "non-actionable"}
+{"text": "Running low on notebooks", "label": "actionable"}
+{"text": "Update the due date in the app", "label": "actionable"}
+{"text": "Return coffee filters to Amazon", "label": "actionable"}
+{"text": "Clean attic", "label": "actionable"}
+{"text": "Reply to Philip Cannon's message", "label": "actionable"}
+{"text": "Team size: 93% of target", "label": "non-actionable"}
+{"text": "Donald Donaldson works at Davis-Lewis", "label": "non-actionable"}
+{"text": "Inventory is at 68% capacity", "label": "non-actionable"}
+{"text": "Tanya Russell mentioned compliance requirements", "label": "non-actionable"}
+{"text": "Hunter Kramer joined the the family team", "label": "non-actionable"}
+{"text": "the proposal was published the 20th", "label": "non-actionable"}
+{"text": "Fix display glitch", "label": "actionable"}
+{"text": "Current balance: $3,286", "label": "non-actionable"}
+{"text": "The bathroom could use some work", "label": "non-actionable"}
+{"text": "hand soap is broken", "label": "non-actionable"}
+{"text": "the invoice was published Monday", "label": "non-actionable"}
+{"text": "Kevin Davis asked about the migration", "label": "actionable"}
+{"text": "The the server update is available", "label": "non-actionable"}
+{"text": "Whitaker, Drake and Jones is based in the kitchen", "label": "non-actionable"}
+{"text": "Engineering budget was approved", "label": "non-actionable"}
+{"text": "Operations budget was approved", "label": "non-actionable"}
+{"text": "Sales budget was approved", "label": "non-actionable"}
+{"text": "The a client meeting had 88% attendance", "label": "non-actionable"}
+{"text": "Write the design doc", "label": "actionable"}
+{"text": "Industry average is 87%", "label": "non-actionable"}
+{"text": "Reply to Ricky Davis II's message", "label": "actionable"}
+{"text": "Back up pricing information", "label": "actionable"}
+{"text": "Julie Herrera joined the the interns team", "label": "non-actionable"}
+{"text": "Running low on paint", "label": "actionable"}
+{"text": "Fix login bug", "label": "actionable"}
+{"text": "Register for a workshop", "label": "actionable"}
+{"text": "Reply to Brian Ramirez's message", "label": "actionable"}
+{"text": "Terri Murphy is the new Travel agency manager", "label": "non-actionable"}
+{"text": "The the API update is available", "label": "non-actionable"}
+{"text": "Write the presentation", "label": "actionable"}
+{"text": "The the inventory tracker update is available", "label": "non-actionable"}
+{"text": "Set up the website", "label": "actionable"}
+{"text": "Text Lindsay Martinez the meeting link", "label": "actionable"}
+{"text": "File the analysis", "label": "actionable"}
+{"text": "Print the agenda", "label": "actionable"}
+{"text": "The Asana license expires March 15", "label": "non-actionable"}
+{"text": "Industry average is 96%", "label": "non-actionable"}
+{"text": "Print the proposal", "label": "actionable"}
+{"text": "Write the spec", "label": "actionable"}
+{"text": "Fix formatting issue", "label": "actionable"}
+{"text": "The Airtable license expires Friday", "label": "non-actionable"}
+{"text": "The a workshop had 71% attendance", "label": "non-actionable"}
+{"text": "File the presentation", "label": "actionable"}
+{"text": "Revenue was up 29%", "label": "non-actionable"}
+{"text": "Pay $2,217 for a new laptop", "label": "actionable"}
+{"text": "The Linear license expires tomorrow", "label": "non-actionable"}
+{"text": "Submit the memo to Operations", "label": "actionable"}
+{"text": "Company founded in this weekend", "label": "non-actionable"}
+{"text": "Running low on hand soap", "label": "actionable"}
+{"text": "a new monitor is broken", "label": "non-actionable"}
+{"text": "Kenneth Lopez works at Miller, Villegas and Jones", "label": "non-actionable"}
+{"text": "Company founded in the 20th", "label": "non-actionable"}
+{"text": "the spreadsheet is outdated", "label": "actionable"}
+{"text": "The bedroom could use some work", "label": "non-actionable"}
+{"text": "Update the contact info in the API", "label": "actionable"}
+{"text": "Jordan Chambers works at Baker, James and Little", "label": "non-actionable"}
+{"text": "File the contract", "label": "actionable"}
+{"text": "Reply to David Davis's message", "label": "actionable"}
+{"text": "Average response time: 3 PM", "label": "non-actionable"}
+{"text": "Fix typo", "label": "actionable"}
+{"text": "Julie Spencer is the new Architectural technologist", "label": "non-actionable"}
+{"text": "The new policy takes effect Friday", "label": "non-actionable"}
+{"text": "Print the summary", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Server uptime: 96%", "label": "non-actionable"}
+{"text": "Server uptime: 54%", "label": "non-actionable"}
+{"text": "the contract is outdated", "label": "actionable"}
+{"text": "Jake Campbell joined the the team team", "label": "non-actionable"}
+{"text": "The office will be closed Monday", "label": "non-actionable"}
+{"text": "Register for the offsite retreat", "label": "actionable"}
+{"text": "light bulbs is broken", "label": "non-actionable"}
+{"text": "Industry average is 12%", "label": "non-actionable"}
+{"text": "The broken doorknob needs attention", "label": "actionable"}
+{"text": "Confirm a training session with John Daniel", "label": "actionable"}
+{"text": "Revenue was up 61%", "label": "non-actionable"}
+{"text": "Server uptime: 42%", "label": "non-actionable"}
+{"text": "Inventory is at 24% capacity", "label": "non-actionable"}
+{"text": "Write the invoice", "label": "actionable"}
+{"text": "Jeremy Scott asked about the hiring plan", "label": "actionable"}
+{"text": "Print the memo", "label": "actionable"}
+{"text": "the analysis is outdated", "label": "actionable"}
+{"text": "Text Christopher Parker the confirmation number", "label": "actionable"}
+{"text": "The the portal update is available", "label": "non-actionable"}
+{"text": "Dr. Kimberly Lindsey works at Guerrero Inc", "label": "non-actionable"}
+{"text": "the billing system seems slow lately", "label": "non-actionable"}
+{"text": "Sales budget was approved", "label": "non-actionable"}
+{"text": "The stuck window needs attention", "label": "actionable"}
+{"text": "File the design doc", "label": "actionable"}
+{"text": "Clean attic", "label": "actionable"}
+{"text": "Order envelopes from CVS", "label": "actionable"}
+{"text": "notebooks is broken", "label": "non-actionable"}
+{"text": "Pick up packing tape from Target", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Clean living room", "label": "actionable"}
+{"text": "Revenue was up 22%", "label": "non-actionable"}
+{"text": "Confirm the product demo with Shane Henderson", "label": "actionable"}
+{"text": "The new policy takes effect the 20th", "label": "non-actionable"}
+{"text": "Reply to Nathan Maldonado's message", "label": "actionable"}
+{"text": "Set up the database", "label": "actionable"}
+{"text": "Call Tracy House", "label": "actionable"}
+{"text": "Submit the proposal to Engineering", "label": "actionable"}
+{"text": "Book the quarterly review for Tuesday", "label": "actionable"}
+{"text": "Order light bulbs from Staples", "label": "actionable"}
+{"text": "The a dinner party had 74% attendance", "label": "non-actionable"}
+{"text": "Clean garage", "label": "actionable"}
+{"text": "Reply to Shannon Walker's message", "label": "actionable"}
+{"text": "Return batteries to Walgreens", "label": "actionable"}
+{"text": "the marketing strategy is interesting", "label": "non-actionable"}
+{"text": "Book a dinner party for Tuesday", "label": "actionable"}
+{"text": "The a dinner party had 55% attendance", "label": "non-actionable"}
+{"text": "Krista Martinez joined the the family team", "label": "non-actionable"}
+{"text": "the billing system seems slow lately", "label": "non-actionable"}
+{"text": "Review the draft", "label": "actionable"}
+{"text": "The new policy takes effect tomorrow", "label": "non-actionable"}
+{"text": "the memo is outdated", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "a new keyboard is broken", "label": "non-actionable"}
+{"text": "David, Moore and Hopkins is based in the lobby", "label": "non-actionable"}
+{"text": "The stuck window needs attention", "label": "actionable"}
+{"text": "Back up pricing information", "label": "actionable"}
+{"text": "Order paint from Walmart", "label": "actionable"}
+{"text": "Reply to Bailey Duran DDS's message", "label": "actionable"}
+{"text": "Download the spec from the app", "label": "actionable"}
+{"text": "The bathroom could use some work", "label": "non-actionable"}
+{"text": "Operations budget was approved", "label": "non-actionable"}
+{"text": "extension cord is broken", "label": "non-actionable"}
+{"text": "Clean garage", "label": "actionable"}
+{"text": "Book the weekly standup for the 20th", "label": "actionable"}
+{"text": "Industry average is 15%", "label": "non-actionable"}
+{"text": "Submit the report to Marketing", "label": "actionable"}
+{"text": "the presentation is outdated", "label": "actionable"}
+{"text": "Fix alignment problem", "label": "actionable"}
+{"text": "The the portal update is available", "label": "non-actionable"}
+{"text": "Stout-Armstrong is based in the lobby", "label": "non-actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "George Harper is the new Lecturer, higher education", "label": "non-actionable"}
+{"text": "Current balance: $1,262", "label": "non-actionable"}
+{"text": "King-Smith is based in the server room", "label": "non-actionable"}
+{"text": "Schedule the annual picnic", "label": "actionable"}
+{"text": "Reply to Michael Wang's message", "label": "actionable"}
+{"text": "Industry average is 10%", "label": "non-actionable"}
+{"text": "Ronald Foster's birthday is Tuesday", "label": "non-actionable"}
+{"text": "Schedule the annual picnic", "label": "actionable"}
+{"text": "Current balance: $2,696", "label": "non-actionable"}
+{"text": "Pay $681 for a new laptop", "label": "actionable"}
+{"text": "Download the meeting notes from the CRM", "label": "actionable"}
+{"text": "The den could use some work", "label": "non-actionable"}
+{"text": "Print the report", "label": "actionable"}
+{"text": "Alyssa Nelson joined the the volunteers team", "label": "non-actionable"}
+{"text": "The office will be closed this weekend", "label": "non-actionable"}
+{"text": "Book a workshop for Friday", "label": "actionable"}
+{"text": "Confirm the offsite retreat with Whitney Peters", "label": "actionable"}
+{"text": "Register for the quarterly review", "label": "actionable"}
+{"text": "Reply to Daniel Wagner's message", "label": "actionable"}
+{"text": "The the offsite retreat had 49% attendance", "label": "non-actionable"}
+{"text": "Kim, Jenkins and Rhodes is based in the lobby", "label": "non-actionable"}
+{"text": "Order extension cord from Office Depot", "label": "actionable"}
+{"text": "Last quarter's results were strong", "label": "non-actionable"}
+{"text": "Inventory is at 33% capacity", "label": "non-actionable"}
+{"text": "Print the agenda", "label": "actionable"}
+{"text": "Frazier-Cooper is based in the patio", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "William Evans mentioned the marketing strategy", "label": "non-actionable"}
+{"text": "Review the invoice", "label": "actionable"}
+{"text": "The the weekly standup was a success", "label": "non-actionable"}
+{"text": "Send the contract to Michael Lewis", "label": "actionable"}
+{"text": "Industry average is 1%", "label": "non-actionable"}
+{"text": "coffee filters is broken", "label": "non-actionable"}
+{"text": "Return a gift card to IKEA", "label": "actionable"}
+{"text": "Elizabeth Rogers mentioned the vendor agreement", "label": "non-actionable"}
+{"text": "Update the price in the inventory tracker", "label": "actionable"}
+{"text": "Buy groceries", "label": "actionable"}
+{"text": "IT budget was approved", "label": "non-actionable"}
+{"text": "Need more time", "label": "non-actionable"}
+{"text": "Running low on coffee filters", "label": "actionable"}
+{"text": "File the spreadsheet", "label": "actionable"}
+{"text": "Set up the backend", "label": "actionable"}
+{"text": "the brief is outdated", "label": "actionable"}
+{"text": "Fix broken link", "label": "actionable"}
+{"text": "groceries is broken", "label": "non-actionable"}
+{"text": "The leaky faucet needs attention", "label": "actionable"}
+{"text": "Send the meeting notes to Gerald Hensley", "label": "actionable"}
+{"text": "Pick up cleaning supplies from Trader Joe's", "label": "actionable"}
+{"text": "hand soap is broken", "label": "non-actionable"}
+{"text": "Submit the meeting notes to Finance", "label": "actionable"}
+{"text": "Vincent Jackson works at Stevens, Norris and Cox", "label": "non-actionable"}
+{"text": "The cracked tile needs attention", "label": "actionable"}
+{"text": "Time to think about the redesign", "label": "non-actionable"}
+{"text": "Laurie Sanchez mentioned the contract renewal", "label": "non-actionable"}
+{"text": "Book a dinner party for the 20th", "label": "actionable"}
+{"text": "The the server update is available", "label": "non-actionable"}
+{"text": "Submit the agenda to IT", "label": "actionable"}
+{"text": "Need more time", "label": "non-actionable"}
+{"text": "The new policy takes effect tomorrow", "label": "non-actionable"}
+{"text": "the server seems slow lately", "label": "non-actionable"}
+{"text": "The new policy takes effect tomorrow", "label": "non-actionable"}
+{"text": "Server uptime: 23%", "label": "non-actionable"}
+{"text": "The the CRM update is available", "label": "non-actionable"}
+{"text": "Send the invoice to Pamela Boyd", "label": "actionable"}
+{"text": "Current balance: $1,320", "label": "non-actionable"}
+{"text": "Return printer paper to IKEA", "label": "actionable"}
+{"text": "Return groceries to Trader Joe's", "label": "actionable"}
+{"text": "Schedule a birthday party", "label": "actionable"}
+{"text": "Server uptime: 40%", "label": "non-actionable"}
+{"text": "Need more staff", "label": "non-actionable"}
+{"text": "Write the brief", "label": "actionable"}
+{"text": "the memo was published next week", "label": "non-actionable"}
+{"text": "the invoice is outdated", "label": "actionable"}
+{"text": "Time to think about the redesign", "label": "non-actionable"}
+{"text": "Schedule a training session", "label": "actionable"}
+{"text": "Stephen Taylor works at Watson-Avery", "label": "non-actionable"}
+{"text": "Pamela Butler works at Johnson, Small and Gardner", "label": "non-actionable"}
+{"text": "Pick up paint from the grocery store", "label": "actionable"}
+{"text": "Schedule a birthday party", "label": "actionable"}
+{"text": "Register for the board meeting", "label": "actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Romero, Suarez and Shields is based in the garage", "label": "non-actionable"}
+{"text": "Download the agenda from the portal", "label": "actionable"}
+{"text": "The attic could use some work", "label": "non-actionable"}
+{"text": "Michael Ruiz joined the the department team", "label": "non-actionable"}
+{"text": "Michael Farrell's birthday is next Thursday", "label": "non-actionable"}
+{"text": "Inventory is at 65% capacity", "label": "non-actionable"}
+{"text": "the quarterly report is interesting", "label": "non-actionable"}
+{"text": "Order groceries from Costco", "label": "actionable"}
+{"text": "Rivera PLC is based in the storage closet", "label": "non-actionable"}
+{"text": "Inventory is at 87% capacity", "label": "non-actionable"}
+{"text": "Send the summary to Gina Moore", "label": "actionable"}
+{"text": "Gary Santiago is the new Designer, multimedia", "label": "non-actionable"}
+{"text": "Susan Hopkins's birthday is March 15", "label": "non-actionable"}
+{"text": "Server uptime: 66%", "label": "non-actionable"}
+{"text": "Call David Alvarez", "label": "actionable"}
+{"text": "Clean kitchen", "label": "actionable"}
+{"text": "Review the spreadsheet", "label": "actionable"}
+{"text": "Rebecca Taylor is the new Fitness centre manager", "label": "non-actionable"}
+{"text": "Write the design doc", "label": "actionable"}
+{"text": "Inventory is at 40% capacity", "label": "non-actionable"}
+{"text": "cleaning supplies is broken", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "The office will be closed the 20th", "label": "non-actionable"}
+{"text": "Back up the Q3 numbers", "label": "actionable"}
+{"text": "Update the contact info in the app", "label": "actionable"}
+{"text": "Michael Miller asked about the quarterly report", "label": "actionable"}
+{"text": "Current balance: $1,918", "label": "non-actionable"}
+{"text": "Server uptime: 19%", "label": "non-actionable"}
+{"text": "Pay $1,917 for access credentials", "label": "actionable"}
+{"text": "Reply to Ashley Barton's message", "label": "actionable"}
+{"text": "The new policy takes effect Monday", "label": "non-actionable"}
+{"text": "the budget is interesting", "label": "non-actionable"}
+{"text": "Review the meeting notes", "label": "actionable"}
+{"text": "the migration is interesting", "label": "non-actionable"}
+{"text": "Print the spec", "label": "actionable"}
+{"text": "Order extension cord from Best Buy", "label": "actionable"}
+{"text": "The a workshop had 16% attendance", "label": "non-actionable"}
+{"text": "The the annual picnic had 67% attendance", "label": "non-actionable"}
+{"text": "Nancy Brown asked about performance reviews", "label": "actionable"}
+{"text": "Confirm the board meeting with Dustin Jordan", "label": "actionable"}
+{"text": "The squeaky hinge needs attention", "label": "actionable"}
+{"text": "Time to think about the marketing strategy", "label": "non-actionable"}
+{"text": "Todd Rosales MD asked about the vendor agreement", "label": "actionable"}
+{"text": "Patricia Morrow joined the the department team", "label": "non-actionable"}
+{"text": "Company founded in next Thursday", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Order hand soap from Best Buy", "label": "actionable"}
+{"text": "The attic could use some work", "label": "non-actionable"}
+{"text": "The project is on track", "label": "non-actionable"}
+{"text": "Reply to Ryan Munoz's message", "label": "actionable"}
+{"text": "Fix broken link", "label": "actionable"}
+{"text": "The office will be closed tomorrow", "label": "non-actionable"}
+{"text": "Set up the API", "label": "actionable"}
+{"text": "the backend seems slow lately", "label": "non-actionable"}
+{"text": "The meeting was productive", "label": "non-actionable"}
+{"text": "File the design doc", "label": "actionable"}
+{"text": "Text Joshua Cooke the agenda", "label": "actionable"}
+{"text": "Katie Mcneil joined the the family team", "label": "non-actionable"}
+{"text": "Register for the weekly standup", "label": "actionable"}
+{"text": "Send the report to Cassandra Gaines", "label": "actionable"}
+{"text": "Need more meeting rooms", "label": "non-actionable"}
+{"text": "Buy hand soap", "label": "actionable"}
+{"text": "Need more paper", "label": "non-actionable"}
+{"text": "Update the status in the portal", "label": "actionable"}

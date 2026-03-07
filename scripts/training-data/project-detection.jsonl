@@ -1,240 +1,2409 @@
-{"text": "Send the draft to Sarah Romero", "label": "single-action"}
-{"text": "Launch the API update", "label": "project"}
-{"text": "Complete the the marketing strategy certification", "label": "project"}
-{"text": "Sign the contract", "label": "single-action"}
-{"text": "Launch the API update", "label": "project"}
-{"text": "Sort out the product launch", "label": "project"}
-{"text": "Sign the contract", "label": "single-action"}
-{"text": "Reply to Timothy Duncan's email", "label": "single-action"}
-{"text": "Update the status in the inventory tracker", "label": "single-action"}
-{"text": "Implement user profiles", "label": "project"}
-{"text": "Migrate the backend to AWS", "label": "project"}
-{"text": "Organize the quarterly review for the board", "label": "project"}
-{"text": "Coordinate a training session across the family", "label": "project"}
-{"text": "Research performance reviews", "label": "single-action"}
-{"text": "Drop off notebooks at the front desk", "label": "single-action"}
-{"text": "Onboard Sharon James to the team", "label": "project"}
-{"text": "Take out the trash", "label": "single-action"}
-{"text": "Deal with the broken link", "label": "project"}
-{"text": "Remodel the den", "label": "project"}
-{"text": "Deal with the routing issue", "label": "project"}
-{"text": "Lock the bathroom", "label": "single-action"}
-{"text": "Drop off packing tape at the office", "label": "single-action"}
+{"text": "Take care of the loose shelf", "label": "single-action"}
+{"text": "Lock the garage", "label": "single-action"}
+{"text": "Drop off a new keyboard at the living room", "label": "single-action"}
+{"text": "Pick up a new monitor from IKEA", "label": "single-action"}
+{"text": "Text Kelly Owen the address", "label": "single-action"}
+{"text": "Check the server for updates", "label": "single-action"}
+{"text": "Schedule a call with Christopher Williams", "label": "single-action"}
+{"text": "Text Dylan Cruz the address", "label": "single-action"}
+{"text": "Send the design doc to Kaitlyn Guerra", "label": "single-action"}
+{"text": "Develop a strategy for the project timeline", "label": "project"}
+{"text": "Research and select a new Jira", "label": "project"}
 {"text": "Water the plants", "label": "single-action"}
-{"text": "Charge the cleaning supplies", "label": "single-action"}
+{"text": "Move to a new the garage", "label": "project"}
+{"text": "Onboard Andrew Stewart to the team", "label": "project"}
+{"text": "Update the price in the server", "label": "single-action"}
+{"text": "Develop a strategy for compliance requirements", "label": "project"}
+{"text": "Approve the analysis", "label": "single-action"}
+{"text": "Organize the quarterly review for the board", "label": "project"}
+{"text": "Pay $4,884 for groceries", "label": "single-action"}
+{"text": "Complete the the rollout plan certification", "label": "project"}
+{"text": "Order light bulbs online", "label": "single-action"}
+{"text": "Update the presentation", "label": "single-action"}
+{"text": "Update the brief", "label": "single-action"}
+{"text": "Download the agenda", "label": "single-action"}
+{"text": "Redesign the app", "label": "project"}
+{"text": "Reply to Vanessa Cardenas's email", "label": "single-action"}
+{"text": "Plan the a dinner party", "label": "project"}
+{"text": "Update the brief", "label": "single-action"}
+{"text": "Complete the the marketing strategy certification", "label": "project"}
+{"text": "Approve the contract", "label": "single-action"}
+{"text": "Build freelance consulting", "label": "project"}
+{"text": "Pick up notebooks from Walgreens", "label": "single-action"}
+{"text": "Lock the basement", "label": "single-action"}
+{"text": "Launch the redesigned dashboard", "label": "project"}
+{"text": "Redesign the database", "label": "project"}
+{"text": "Organize the quarterly review for the volunteers", "label": "project"}
+{"text": "Organize the offsite retreat for the department", "label": "project"}
+{"text": "Develop a strategy for the rollout plan", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Establish a process for the vendor agreement", "label": "project"}
+{"text": "Print the memo", "label": "single-action"}
+{"text": "Order printer paper online", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Implement the settings page", "label": "project"}
+{"text": "Create a training program for the department", "label": "project"}
+{"text": "Write and publish the spreadsheet", "label": "project"}
+{"text": "Research the marketing strategy", "label": "single-action"}
+{"text": "File the report in the server", "label": "single-action"}
+{"text": "Look into Figma", "label": "single-action"}
+{"text": "Buy light bulbs", "label": "single-action"}
+{"text": "Deal with the typo", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Establish a process for the product launch", "label": "project"}
+{"text": "Download the invoice", "label": "single-action"}
+{"text": "File the agenda in the website", "label": "single-action"}
 {"text": "Redesign the portal", "label": "project"}
-{"text": "Establish a process for performance reviews", "label": "project"}
-{"text": "Redesign the inventory tracker", "label": "project"}
-{"text": "Approve the memo", "label": "single-action"}
-{"text": "Charge the envelopes", "label": "single-action"}
-{"text": "Handle the project timeline for Ashley Lee", "label": "project"}
-{"text": "Email Crystal Robinson the design doc", "label": "single-action"}
-{"text": "Drop off envelopes at the storage closet", "label": "single-action"}
-{"text": "Text Heather Jenkins the agenda", "label": "single-action"}
-{"text": "Coordinate the quarterly review across the board", "label": "project"}
-{"text": "Call Ann Williams", "label": "single-action"}
+{"text": "Plan a trip to the living room", "label": "project"}
+{"text": "Plan the a training session", "label": "project"}
+{"text": "Improve the the CRM", "label": "project"}
+{"text": "Take care of the cracked tile", "label": "single-action"}
+{"text": "Develop a strategy for the contract renewal", "label": "project"}
+{"text": "Write and publish the agenda", "label": "project"}
+{"text": "Download the summary", "label": "single-action"}
+{"text": "Check the backend for updates", "label": "single-action"}
+{"text": "Set up the inventory tracker for the team", "label": "project"}
+{"text": "Develop a strategy for the marketing strategy", "label": "project"}
+{"text": "Drop off notebooks at the storage closet", "label": "single-action"}
+{"text": "Reply to Julie Gilbert's email", "label": "single-action"}
+{"text": "Reply to Jonathan Dougherty's email", "label": "single-action"}
+{"text": "Onboard Ms. Susan Vargas to the team", "label": "project"}
+{"text": "Charge the a phone charger", "label": "single-action"}
+{"text": "Hire a new Surveyor, building control", "label": "project"}
+{"text": "Establish a process for compliance requirements", "label": "project"}
 {"text": "Plan a trip to the server room", "label": "project"}
+{"text": "Remodel the office", "label": "project"}
+{"text": "Set up the new the garage office", "label": "project"}
+{"text": "Plan the the board meeting", "label": "project"}
+{"text": "Improve the the API", "label": "project"}
+{"text": "Order a new monitor online", "label": "single-action"}
+{"text": "Redesign the database", "label": "project"}
+{"text": "Set up the database for the team", "label": "project"}
+{"text": "Get the kitchen ready", "label": "project"}
+{"text": "Set up the app for the team", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Buy extension cord", "label": "single-action"}
+{"text": "Improve the the website", "label": "project"}
+{"text": "Return light bulbs to Costco", "label": "single-action"}
+{"text": "Redesign the inventory tracker", "label": "project"}
+{"text": "Remodel the guest room", "label": "project"}
+{"text": "Sign the draft", "label": "single-action"}
+{"text": "Pay $731 for a phone charger", "label": "single-action"}
+{"text": "Complete the the hiring plan certification", "label": "project"}
+{"text": "Update the meeting notes", "label": "single-action"}
+{"text": "Lock the guest room", "label": "single-action"}
+{"text": "Build a YouTube channel", "label": "project"}
+{"text": "Send the design doc to Laura Aguirre", "label": "single-action"}
+{"text": "Organize the offsite retreat for the interns", "label": "project"}
+{"text": "Print the analysis", "label": "single-action"}
+{"text": "Improve the the server", "label": "project"}
+{"text": "Hire a new Geneticist, molecular", "label": "project"}
+{"text": "Approve the analysis", "label": "single-action"}
+{"text": "Implement notifications", "label": "project"}
+{"text": "Order paint online", "label": "single-action"}
+{"text": "Overhaul the the app", "label": "project"}
+{"text": "Download the draft", "label": "single-action"}
+{"text": "Update the brief", "label": "single-action"}
+{"text": "Create a training program for the team", "label": "project"}
+{"text": "Prepare for the the offsite retreat", "label": "project"}
+{"text": "Pick up a gift card from Best Buy", "label": "single-action"}
+{"text": "Take care of the broken doorknob", "label": "single-action"}
+{"text": "Take care of the stuck window", "label": "single-action"}
+{"text": "Implement dark mode", "label": "project"}
+{"text": "Improve the the inventory tracker", "label": "project"}
+{"text": "Download the memo", "label": "single-action"}
+{"text": "Set up the new the server room office", "label": "project"}
+{"text": "Plan a trip to the garage", "label": "project"}
+{"text": "Deal with the routing issue", "label": "project"}
+{"text": "Buy a new keyboard", "label": "single-action"}
+{"text": "Charge the extension cord", "label": "single-action"}
+{"text": "Pay $2,701 for coffee filters", "label": "single-action"}
+{"text": "Build a YouTube channel", "label": "project"}
+{"text": "Implement dark mode", "label": "project"}
+{"text": "Establish a process for performance reviews", "label": "project"}
+{"text": "Reply to Thomas Thomas's email", "label": "single-action"}
+{"text": "Plan the a team lunch", "label": "project"}
+{"text": "Onboard Zachary Huff to the team", "label": "project"}
+{"text": "Establish a process for the product launch", "label": "project"}
+{"text": "Remodel the bathroom", "label": "project"}
+{"text": "Migrate the app to Docker", "label": "project"}
+{"text": "Order packing tape online", "label": "single-action"}
+{"text": "Remodel the living room", "label": "project"}
+{"text": "Book a workshop for Friday", "label": "single-action"}
+{"text": "Send the draft to Stephanie Foster", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Redesign the database", "label": "project"}
+{"text": "Text Holly Shaw the address", "label": "single-action"}
+{"text": "Approve the memo", "label": "single-action"}
+{"text": "Prepare for the the annual picnic", "label": "project"}
+{"text": "File the summary in the database", "label": "single-action"}
+{"text": "Drop off stamps at the kitchen", "label": "single-action"}
+{"text": "Clean the den", "label": "single-action"}
+{"text": "Look into 1Password", "label": "single-action"}
+{"text": "Lock the garage", "label": "single-action"}
+{"text": "Organize a team lunch for the family", "label": "project"}
+{"text": "Build a podcast", "label": "project"}
+{"text": "Deal with the formatting issue", "label": "project"}
+{"text": "Charge the coffee filters", "label": "single-action"}
+{"text": "Refill coffee pods", "label": "single-action"}
+{"text": "Update the contact info in the CRM", "label": "single-action"}
+{"text": "Write and publish the design doc", "label": "project"}
+{"text": "Launch the new feature", "label": "project"}
+{"text": "Approve the draft", "label": "single-action"}
+{"text": "Develop a strategy for performance reviews", "label": "project"}
+{"text": "Move to a new the office", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Download the invoice", "label": "single-action"}
+{"text": "Create a training program for the volunteers", "label": "project"}
+{"text": "Coordinate a training session across the family", "label": "project"}
+{"text": "Prepare for the the annual picnic", "label": "project"}
+{"text": "Buy cleaning supplies", "label": "single-action"}
+{"text": "Onboard Robert Contreras to the team", "label": "project"}
+{"text": "Look into Jira", "label": "single-action"}
+{"text": "Clean the kitchen", "label": "single-action"}
+{"text": "Implement user profiles", "label": "project"}
+{"text": "Deploy the redesigned dashboard to Vercel", "label": "project"}
+{"text": "Schedule a call with Leslie Carpenter", "label": "single-action"}
+{"text": "Lock the office", "label": "single-action"}
+{"text": "Complete the the redesign certification", "label": "project"}
+{"text": "Deal with the leaky faucet", "label": "project"}
+{"text": "Send the memo to Rachel Young", "label": "single-action"}
+{"text": "Download the spreadsheet", "label": "single-action"}
+{"text": "Clean the living room", "label": "single-action"}
+{"text": "Update the memo", "label": "single-action"}
+{"text": "Launch the plugin", "label": "project"}
+{"text": "Onboard Pamela Romero to the team", "label": "project"}
+{"text": "Move to a new the warehouse", "label": "project"}
+{"text": "Sort out the proposal", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Establish a process for the rollout plan", "label": "project"}
+{"text": "Lock the guest room", "label": "single-action"}
+{"text": "Download the invoice", "label": "single-action"}
+{"text": "Charge the a new monitor", "label": "single-action"}
+{"text": "Develop a strategy for the project timeline", "label": "project"}
+{"text": "Launch the plugin", "label": "project"}
+{"text": "Redesign the database", "label": "project"}
+{"text": "Check the server for updates", "label": "single-action"}
+{"text": "File the analysis in the website", "label": "single-action"}
+{"text": "Overhaul the the website", "label": "project"}
+{"text": "Pick up extension cord from CVS", "label": "single-action"}
+{"text": "File the invoice in the dashboard", "label": "single-action"}
+{"text": "Charge the packing tape", "label": "single-action"}
+{"text": "Pick up envelopes from Trader Joe's", "label": "single-action"}
+{"text": "Plan a trip to the warehouse", "label": "project"}
+{"text": "Print the agenda", "label": "single-action"}
+{"text": "Set up the app for the team", "label": "project"}
+{"text": "Set up the new the patio office", "label": "project"}
+{"text": "Handle inventory counts for Monica Stuart", "label": "project"}
+{"text": "Download the contract", "label": "single-action"}
+{"text": "Overhaul the the CRM", "label": "project"}
+{"text": "Deal with the leaky faucet", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Remodel the guest room", "label": "project"}
+{"text": "Redesign the inventory tracker", "label": "project"}
+{"text": "Call Evelyn Williams", "label": "single-action"}
+{"text": "Deal with the broken link", "label": "project"}
+{"text": "Pay $2,643 for paint", "label": "single-action"}
+{"text": "Text Karla Ramos the meeting link", "label": "single-action"}
+{"text": "Take care of the squeaky hinge", "label": "single-action"}
+{"text": "Download the report", "label": "single-action"}
+{"text": "Implement notifications", "label": "project"}
+{"text": "Get the attic ready", "label": "project"}
+{"text": "Drop off light bulbs at the garage", "label": "single-action"}
+{"text": "Sign the analysis", "label": "single-action"}
+{"text": "Call Jamie Chavez", "label": "single-action"}
+{"text": "Remodel the kitchen", "label": "project"}
+{"text": "Complete the the project timeline certification", "label": "project"}
+{"text": "Book the quarterly review for next Thursday", "label": "single-action"}
+{"text": "File the meeting notes in the app", "label": "single-action"}
+{"text": "Get the basement ready", "label": "project"}
+{"text": "Pay $2,425 for hand soap", "label": "single-action"}
+{"text": "Organize a training session for the interns", "label": "project"}
+{"text": "Plan the the quarterly review", "label": "project"}
+{"text": "Text Christina Hicks the agenda", "label": "single-action"}
+{"text": "Buy envelopes", "label": "single-action"}
+{"text": "Overhaul the the database", "label": "project"}
+{"text": "Build writing a book", "label": "project"}
+{"text": "Establish a process for compliance requirements", "label": "project"}
+{"text": "Text Veronica King the address", "label": "single-action"}
+{"text": "Deploy the redesigned dashboard to Kubernetes", "label": "project"}
+{"text": "Drop off coffee filters at the garage", "label": "single-action"}
+{"text": "Approve the presentation", "label": "single-action"}
+{"text": "Renovate the garage", "label": "project"}
+{"text": "Complete the the rollout plan certification", "label": "project"}
+{"text": "Deal with the display glitch", "label": "project"}
+{"text": "Establish a process for the contract renewal", "label": "project"}
+{"text": "Create a training program for the volunteers", "label": "project"}
+{"text": "Research and select a new Notion", "label": "project"}
+{"text": "Sign the spreadsheet", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Download the brief", "label": "single-action"}
+{"text": "Improve the the billing system", "label": "project"}
+{"text": "Refill whiteboard markers", "label": "single-action"}
+{"text": "Order groceries online", "label": "single-action"}
+{"text": "Establish a process for the marketing strategy", "label": "project"}
+{"text": "Remodel the kitchen", "label": "project"}
+{"text": "Print the spec", "label": "single-action"}
+{"text": "Print the spec", "label": "single-action"}
+{"text": "File the spreadsheet in the API", "label": "single-action"}
+{"text": "Develop a strategy for inventory counts", "label": "project"}
+{"text": "Pick up a new monitor from Home Depot", "label": "single-action"}
+{"text": "Deal with the crash", "label": "project"}
+{"text": "Onboard Renee Mcdaniel to the team", "label": "project"}
+{"text": "File the report in the website", "label": "single-action"}
+{"text": "Plan a trip to the warehouse", "label": "project"}
+{"text": "Text Mr. Dylan Frye MD the confirmation number", "label": "single-action"}
+{"text": "Create a training program for the department", "label": "project"}
+{"text": "Complete the the contract renewal certification", "label": "project"}
+{"text": "Update the brief", "label": "single-action"}
+{"text": "Sign the memo", "label": "single-action"}
+{"text": "Deploy the redesigned dashboard to Vercel", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Check the server for updates", "label": "single-action"}
+{"text": "Schedule a call with Mrs. Tricia Stewart", "label": "single-action"}
+{"text": "Set up the database for the team", "label": "project"}
+{"text": "Migrate the API to Docker", "label": "project"}
+{"text": "Sign the summary", "label": "single-action"}
+{"text": "Write and publish the contract", "label": "project"}
+{"text": "Update the analysis", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Research the proposal", "label": "single-action"}
+{"text": "Deal with the missing label", "label": "project"}
+{"text": "Print the draft", "label": "single-action"}
+{"text": "Create a training program for the committee", "label": "project"}
+{"text": "Text Brian Butler the directions", "label": "single-action"}
+{"text": "Coordinate a dinner party across the board", "label": "project"}
+{"text": "Research the project timeline", "label": "single-action"}
+{"text": "Pay $3,265 for a gift card", "label": "single-action"}
+{"text": "Download the proposal", "label": "single-action"}
+{"text": "Set up the new Nicoleview office", "label": "project"}
+{"text": "Plan a trip to North Amandahaven", "label": "project"}
+{"text": "Overhaul the the API", "label": "project"}
+{"text": "Buy a new monitor", "label": "single-action"}
+{"text": "Email Lisa Davis the spec", "label": "single-action"}
+{"text": "Hire a new Geochemist", "label": "project"}
+{"text": "Overhaul the the app", "label": "project"}
+{"text": "Deal with the crash", "label": "project"}
+{"text": "Remodel the garage", "label": "project"}
+{"text": "Look into Slack", "label": "single-action"}
+{"text": "Call Howard Norman", "label": "single-action"}
+{"text": "Check the portal for updates", "label": "single-action"}
+{"text": "Deploy the plugin to Docker", "label": "project"}
+{"text": "Pay $2,301 for a new monitor", "label": "single-action"}
+{"text": "Send the agenda to Yvonne Gonzalez", "label": "single-action"}
+{"text": "Sign the proposal", "label": "single-action"}
+{"text": "Reply to Michael Taylor's email", "label": "single-action"}
+{"text": "Research and select a new 1Password", "label": "project"}
+{"text": "Clean the attic", "label": "single-action"}
+{"text": "Buy printer paper", "label": "single-action"}
+{"text": "Look into Asana", "label": "single-action"}
+{"text": "Charge the cleaning supplies", "label": "single-action"}
+{"text": "Email Angela Morrison the brief", "label": "single-action"}
+{"text": "Send the proposal to Yolanda Mendoza", "label": "single-action"}
+{"text": "Research and select a new Google Docs", "label": "project"}
+{"text": "Redesign the API", "label": "project"}
+{"text": "Look into Basecamp", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Return notebooks to IKEA", "label": "single-action"}
+{"text": "Coordinate the offsite retreat across the volunteers", "label": "project"}
+{"text": "Update the description in the backend", "label": "single-action"}
+{"text": "Plan a trip to the conference room", "label": "project"}
+{"text": "File the proposal in the server", "label": "single-action"}
+{"text": "Clean the bathroom", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Clean the basement", "label": "single-action"}
+{"text": "Set up the new the front desk office", "label": "project"}
+{"text": "Set up the new the garage office", "label": "project"}
+{"text": "Migrate the billing system to Kubernetes", "label": "project"}
+{"text": "Implement dark mode", "label": "project"}
+{"text": "Build writing a book", "label": "project"}
+{"text": "Handle the contract renewal for Ian Young", "label": "project"}
+{"text": "Take care of the cracked tile", "label": "single-action"}
+{"text": "Return a new monitor to Walgreens", "label": "single-action"}
+{"text": "Lock the den", "label": "single-action"}
+{"text": "Coordinate a training session across the committee", "label": "project"}
+{"text": "Schedule a call with Garrett Lane", "label": "single-action"}
+{"text": "Take care of the running toilet", "label": "single-action"}
+{"text": "Check the billing system for updates", "label": "single-action"}
+{"text": "Implement the search feature", "label": "project"}
+{"text": "Send the invoice to Julian Wood", "label": "single-action"}
+{"text": "Onboard Yvonne Chambers to the team", "label": "project"}
+{"text": "Research the contract renewal", "label": "single-action"}
+{"text": "Implement the export function", "label": "project"}
+{"text": "Email Mark Maddox the brief", "label": "single-action"}
+{"text": "Hire a new Accommodation manager", "label": "project"}
+{"text": "Take care of the loose shelf", "label": "single-action"}
+{"text": "Approve the brief", "label": "single-action"}
+{"text": "Renovate the bathroom", "label": "project"}
+{"text": "Download the spreadsheet", "label": "single-action"}
+{"text": "Overhaul the the billing system", "label": "project"}
+{"text": "Look into Google Docs", "label": "single-action"}
+{"text": "Sign the agenda", "label": "single-action"}
+{"text": "Send the spreadsheet to Brent Rodgers", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Lock the guest room", "label": "single-action"}
+{"text": "Update the price in the portal", "label": "single-action"}
+{"text": "Reply to Vincent Mueller's email", "label": "single-action"}
+{"text": "Text James Brooks the meeting link", "label": "single-action"}
+{"text": "Order a new keyboard online", "label": "single-action"}
+{"text": "Buy hand soap", "label": "single-action"}
+{"text": "Redesign the inventory tracker", "label": "project"}
+{"text": "Return a new keyboard to Amazon", "label": "single-action"}
+{"text": "Set up the backend for the team", "label": "project"}
+{"text": "Plan the the product demo", "label": "project"}
+{"text": "Implement the search feature", "label": "project"}
+{"text": "Send the draft to Jerry Pierce", "label": "single-action"}
+{"text": "Write and publish the memo", "label": "project"}
+{"text": "Clean the bathroom", "label": "single-action"}
+{"text": "Get the bedroom ready", "label": "project"}
+{"text": "Plan a trip to West Erik", "label": "project"}
+{"text": "File the meeting notes in the inventory tracker", "label": "single-action"}
+{"text": "Pick up a gift card from Trader Joe's", "label": "single-action"}
+{"text": "Migrate the app to Azure", "label": "project"}
+{"text": "Deploy the API update to AWS", "label": "project"}
+{"text": "Pick up printer paper from Office Depot", "label": "single-action"}
+{"text": "File the analysis in the app", "label": "single-action"}
+{"text": "Check the database for updates", "label": "single-action"}
+{"text": "Complete the the budget certification", "label": "project"}
+{"text": "Coordinate the weekly standup across the volunteers", "label": "project"}
+{"text": "Hire a new Sales executive", "label": "project"}
+{"text": "Book the annual picnic for next week", "label": "single-action"}
+{"text": "Lock the bathroom", "label": "single-action"}
+{"text": "Redesign the API", "label": "project"}
+{"text": "Schedule a call with Linda Baker", "label": "single-action"}
+{"text": "Charge the groceries", "label": "single-action"}
+{"text": "Improve the the dashboard", "label": "project"}
+{"text": "Reply to Joel Johnson's email", "label": "single-action"}
+{"text": "Redesign the server", "label": "project"}
+{"text": "Return cleaning supplies to Best Buy", "label": "single-action"}
+{"text": "Overhaul the the app", "label": "project"}
+{"text": "Organize a training session for the committee", "label": "project"}
+{"text": "Download the meeting notes", "label": "single-action"}
+{"text": "Implement the export function", "label": "project"}
+{"text": "Redesign the website", "label": "project"}
+{"text": "Develop a strategy for the contract renewal", "label": "project"}
+{"text": "Call Ryan Richardson", "label": "single-action"}
+{"text": "Send the spec to Eric Nguyen", "label": "single-action"}
+{"text": "Set up the new the conference room office", "label": "project"}
+{"text": "Plan the the product demo", "label": "project"}
+{"text": "Remodel the den", "label": "project"}
+{"text": "Plan a trip to the living room", "label": "project"}
+{"text": "Pick up a phone charger from Target", "label": "single-action"}
+{"text": "Check the inventory tracker for updates", "label": "single-action"}
+{"text": "Plan the the board meeting", "label": "project"}
+{"text": "Charge the printer paper", "label": "single-action"}
+{"text": "Launch the new feature", "label": "project"}
+{"text": "Overhaul the the CRM", "label": "project"}
+{"text": "Order a new keyboard online", "label": "single-action"}
+{"text": "Renovate the living room", "label": "project"}
+{"text": "Download the agenda", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Implement the settings page", "label": "project"}
+{"text": "Lock the kitchen", "label": "single-action"}
+{"text": "Build an online course", "label": "project"}
+{"text": "Refill sticky notes", "label": "single-action"}
+{"text": "Organize the annual picnic for the board", "label": "project"}
+{"text": "Clean the bathroom", "label": "single-action"}
+{"text": "Hire a new Recruitment consultant", "label": "project"}
+{"text": "Take care of the cracked tile", "label": "single-action"}
+{"text": "Return groceries to Office Depot", "label": "single-action"}
+{"text": "Send the spec to Richard Johnson", "label": "single-action"}
+{"text": "Renovate the den", "label": "project"}
+{"text": "Migrate the backend to AWS", "label": "project"}
+{"text": "Research the migration", "label": "single-action"}
+{"text": "Schedule a call with Erica Alvarez", "label": "single-action"}
+{"text": "Overhaul the the dashboard", "label": "project"}
+{"text": "Get the office ready", "label": "project"}
+{"text": "Pay $1,086 for a phone charger", "label": "single-action"}
+{"text": "Remodel the bathroom", "label": "project"}
+{"text": "Lock the den", "label": "single-action"}
+{"text": "Build freelance consulting", "label": "project"}
+{"text": "Charge the stamps", "label": "single-action"}
+{"text": "Sign the brief", "label": "single-action"}
+{"text": "File the spreadsheet in the billing system", "label": "single-action"}
+{"text": "Develop a strategy for the marketing strategy", "label": "project"}
+{"text": "Prepare for the a training session", "label": "project"}
+{"text": "Refill snacks", "label": "single-action"}
+{"text": "Approve the invoice", "label": "single-action"}
+{"text": "Build a YouTube channel", "label": "project"}
+{"text": "Research the vendor agreement", "label": "single-action"}
+{"text": "Update the price in the API", "label": "single-action"}
+{"text": "Plan a trip to the conference room", "label": "project"}
+{"text": "Organize a training session for the committee", "label": "project"}
+{"text": "Build a podcast", "label": "project"}
+{"text": "Deploy the plugin to AWS", "label": "project"}
+{"text": "Book a training session for Tuesday", "label": "single-action"}
+{"text": "Order a new keyboard online", "label": "single-action"}
+{"text": "Get the basement ready", "label": "project"}
+{"text": "Email Gregory Matthews the presentation", "label": "single-action"}
+{"text": "Refill sticky notes", "label": "single-action"}
+{"text": "Research and select a new Airtable", "label": "project"}
+{"text": "Renovate the garage", "label": "project"}
+{"text": "Overhaul the the database", "label": "project"}
+{"text": "Overhaul the the CRM", "label": "project"}
+{"text": "Build an online course", "label": "project"}
+{"text": "Research and select a new Trello", "label": "project"}
+{"text": "Drop off envelopes at North Juanfort", "label": "single-action"}
+{"text": "Hire a new Trading standards officer", "label": "project"}
+{"text": "Download the spec", "label": "single-action"}
+{"text": "Deal with the missing label", "label": "project"}
+{"text": "Onboard Jerry Christensen to the team", "label": "project"}
+{"text": "Reply to Tony Wagner's email", "label": "single-action"}
+{"text": "Build freelance consulting", "label": "project"}
+{"text": "Deploy the mobile app to Vercel", "label": "project"}
+{"text": "Coordinate a client meeting across the department", "label": "project"}
+{"text": "Text Donald Horne the time", "label": "single-action"}
+{"text": "Pay $4,730 for stamps", "label": "single-action"}
+{"text": "Schedule a call with Kaitlyn Harvey", "label": "single-action"}
+{"text": "Set up the backend for the team", "label": "project"}
+{"text": "Update the spreadsheet", "label": "single-action"}
+{"text": "Onboard Andrea Martin to the team", "label": "project"}
+{"text": "Set up the website for the team", "label": "project"}
+{"text": "Remodel the den", "label": "project"}
+{"text": "Clean the office", "label": "single-action"}
+{"text": "Book the annual picnic for tomorrow", "label": "single-action"}
+{"text": "Handle the project timeline for Brandon Holden", "label": "project"}
+{"text": "Update the agenda", "label": "single-action"}
+{"text": "Redesign the server", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Download the agenda", "label": "single-action"}
+{"text": "Download the analysis", "label": "single-action"}
+{"text": "Text Kathryn Barnes the meeting link", "label": "single-action"}
+{"text": "Redesign the server", "label": "project"}
+{"text": "Research the product launch", "label": "single-action"}
+{"text": "Refill whiteboard markers", "label": "single-action"}
+{"text": "Return hand soap to CVS", "label": "single-action"}
+{"text": "Drop off a phone charger at the living room", "label": "single-action"}
+{"text": "Text Justin Riley the meeting link", "label": "single-action"}
+{"text": "Organize the offsite retreat for the board", "label": "project"}
+{"text": "Hire a new Warden/ranger", "label": "project"}
+{"text": "Pick up a new monitor from Costco", "label": "single-action"}
+{"text": "Clean the bedroom", "label": "single-action"}
+{"text": "Approve the spreadsheet", "label": "single-action"}
+{"text": "Pay $1,503 for extension cord", "label": "single-action"}
+{"text": "Onboard David Griffith to the team", "label": "project"}
+{"text": "Send the contract to Morgan Valencia", "label": "single-action"}
+{"text": "Approve the proposal", "label": "single-action"}
+{"text": "Research and select a new Basecamp", "label": "project"}
+{"text": "Launch the new feature", "label": "project"}
+{"text": "Print the spec", "label": "single-action"}
+{"text": "Build a blog", "label": "project"}
+{"text": "Pay $2,258 for notebooks", "label": "single-action"}
+{"text": "Set up the new the patio office", "label": "project"}
+{"text": "Migrate the backend to AWS", "label": "project"}
+{"text": "Text John Morales the address", "label": "single-action"}
+{"text": "Research and select a new Airtable", "label": "project"}
+{"text": "Update the draft", "label": "single-action"}
+{"text": "Plan a trip to New David", "label": "project"}
+{"text": "Deal with the typo", "label": "project"}
+{"text": "Lock the garage", "label": "single-action"}
+{"text": "Deploy the mobile app to Docker", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Approve the spec", "label": "single-action"}
+{"text": "Text Jason Morgan the confirmation number", "label": "single-action"}
+{"text": "Pay $600 for a phone charger", "label": "single-action"}
+{"text": "Plan a trip to the server room", "label": "project"}
+{"text": "Call Vincent Reynolds", "label": "single-action"}
+{"text": "Schedule a call with Patricia Becker", "label": "single-action"}
+{"text": "Charge the notebooks", "label": "single-action"}
+{"text": "Update the draft", "label": "single-action"}
+{"text": "Return coffee filters to the grocery store", "label": "single-action"}
+{"text": "Schedule a call with Amy Castillo", "label": "single-action"}
+{"text": "Send the contract to Katelyn Perez", "label": "single-action"}
+{"text": "Look into Asana", "label": "single-action"}
+{"text": "Research the contract renewal", "label": "single-action"}
+{"text": "Approve the agenda", "label": "single-action"}
+{"text": "Overhaul the the backend", "label": "project"}
+{"text": "Pick up notebooks from IKEA", "label": "single-action"}
+{"text": "Coordinate the board meeting across the family", "label": "project"}
+{"text": "Send the analysis to James Bradley", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Implement dark mode", "label": "project"}
+{"text": "Set up the billing system for the team", "label": "project"}
+{"text": "Research and select a new Slack", "label": "project"}
+{"text": "Complete the the redesign certification", "label": "project"}
+{"text": "Get the kitchen ready", "label": "project"}
+{"text": "Update the price in the inventory tracker", "label": "single-action"}
+{"text": "Prepare for the the product demo", "label": "project"}
+{"text": "Migrate the CRM to AWS", "label": "project"}
+{"text": "Send the analysis to Amy Martinez", "label": "single-action"}
+{"text": "Renovate the den", "label": "project"}
+{"text": "Complete the the contract renewal certification", "label": "project"}
+{"text": "Print the summary", "label": "single-action"}
+{"text": "Move to a new the lobby", "label": "project"}
+{"text": "Research the contract renewal", "label": "single-action"}
+{"text": "Approve the proposal", "label": "single-action"}
+{"text": "Take care of the leaky faucet", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Plan a trip to the garage", "label": "project"}
+{"text": "Approve the presentation", "label": "single-action"}
+{"text": "Set up the new the garage office", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Print the report", "label": "single-action"}
+{"text": "Get the office ready", "label": "project"}
+{"text": "Build freelance consulting", "label": "project"}
+{"text": "Email Connor King the spec", "label": "single-action"}
+{"text": "Hire a new Banker", "label": "project"}
+{"text": "Print the draft", "label": "single-action"}
+{"text": "Create a training program for the team", "label": "project"}
+{"text": "Schedule a call with Jessica Cox", "label": "single-action"}
+{"text": "Write and publish the summary", "label": "project"}
+{"text": "File the summary in the dashboard", "label": "single-action"}
+{"text": "Launch the new feature", "label": "project"}
+{"text": "Handle performance reviews for Taylor Johnson", "label": "project"}
+{"text": "File the memo in the database", "label": "single-action"}
+{"text": "Look into Google Docs", "label": "single-action"}
+{"text": "Redesign the CRM", "label": "project"}
+{"text": "Email Curtis Jacobs the proposal", "label": "single-action"}
+{"text": "Clean the bathroom", "label": "single-action"}
+{"text": "Drop off cleaning supplies at East Karen", "label": "single-action"}
+{"text": "Text Adam Rodriguez the agenda", "label": "single-action"}
+{"text": "Set up the new the warehouse office", "label": "project"}
+{"text": "Refill whiteboard markers", "label": "single-action"}
+{"text": "Pick up groceries from Costco", "label": "single-action"}
+{"text": "Sort out the product launch", "label": "project"}
+{"text": "File the memo in the portal", "label": "single-action"}
+{"text": "Approve the summary", "label": "single-action"}
+{"text": "Research compliance requirements", "label": "single-action"}
+{"text": "Improve the the billing system", "label": "project"}
+{"text": "Set up the new the kitchen office", "label": "project"}
+{"text": "Complete the the marketing strategy certification", "label": "project"}
+{"text": "Overhaul the the dashboard", "label": "project"}
+{"text": "Drop off batteries at Meghanview", "label": "single-action"}
+{"text": "Research the budget", "label": "single-action"}
+{"text": "Handle the quarterly report for Jacqueline Miles DVM", "label": "project"}
+{"text": "Migrate the app to Docker", "label": "project"}
+{"text": "Prepare for the a birthday party", "label": "project"}
+{"text": "Plan a trip to the storage closet", "label": "project"}
+{"text": "Redesign the API", "label": "project"}
+{"text": "Research and select a new Trello", "label": "project"}
+{"text": "Move to a new Port Anthonybury", "label": "project"}
+{"text": "Sign the invoice", "label": "single-action"}
+{"text": "Redesign the backend", "label": "project"}
+{"text": "Redesign the website", "label": "project"}
+{"text": "Email Matthew Jones the brief", "label": "single-action"}
+{"text": "Charge the printer paper", "label": "single-action"}
+{"text": "Take care of the running toilet", "label": "single-action"}
+{"text": "Implement the settings page", "label": "project"}
+{"text": "Improve the the backend", "label": "project"}
+{"text": "Redesign the billing system", "label": "project"}
+{"text": "Call Matthew Parker", "label": "single-action"}
+{"text": "Schedule a call with John Bryant", "label": "single-action"}
+{"text": "Return stamps to Trader Joe's", "label": "single-action"}
+{"text": "Get the office ready", "label": "project"}
+{"text": "Implement the settings page", "label": "project"}
+{"text": "Prepare for the the product demo", "label": "project"}
+{"text": "Return a gift card to Walgreens", "label": "single-action"}
+{"text": "Improve the the billing system", "label": "project"}
+{"text": "Launch version 2.0", "label": "project"}
+{"text": "Set up the new the lobby office", "label": "project"}
+{"text": "Schedule a call with Dawn Mullins", "label": "single-action"}
+{"text": "Order notebooks online", "label": "single-action"}
+{"text": "Sign the invoice", "label": "single-action"}
+{"text": "File the proposal in the database", "label": "single-action"}
+{"text": "Move to a new the storage closet", "label": "project"}
+{"text": "Clean the garage", "label": "single-action"}
+{"text": "Take care of the squeaky hinge", "label": "single-action"}
+{"text": "Research and select a new 1Password", "label": "project"}
+{"text": "Organize a client meeting for the department", "label": "project"}
+{"text": "Download the spreadsheet", "label": "single-action"}
+{"text": "Build an online course", "label": "project"}
+{"text": "Coordinate the offsite retreat across the family", "label": "project"}
+{"text": "Launch the API update", "label": "project"}
+{"text": "Download the proposal", "label": "single-action"}
+{"text": "Set up the new the server room office", "label": "project"}
+{"text": "Buy groceries", "label": "single-action"}
+{"text": "Get the living room ready", "label": "project"}
+{"text": "Send the analysis to Paul Perez", "label": "single-action"}
+{"text": "Establish a process for the marketing strategy", "label": "project"}
+{"text": "Send the memo to Aaron Gomez", "label": "single-action"}
+{"text": "Download the contract", "label": "single-action"}
+{"text": "Lock the bedroom", "label": "single-action"}
+{"text": "Deploy the redesigned dashboard to Kubernetes", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Reply to Christopher Morris's email", "label": "single-action"}
+{"text": "Set up the new the lobby office", "label": "project"}
+{"text": "Implement user profiles", "label": "project"}
+{"text": "Pay $366 for extension cord", "label": "single-action"}
+{"text": "Print the brief", "label": "single-action"}
+{"text": "Move to a new West Kennethfurt", "label": "project"}
+{"text": "Return a new monitor to Trader Joe's", "label": "single-action"}
+{"text": "Prepare for the a birthday party", "label": "project"}
+{"text": "Sign the memo", "label": "single-action"}
+{"text": "Buy light bulbs", "label": "single-action"}
+{"text": "Lock the guest room", "label": "single-action"}
+{"text": "Book a birthday party for March 15", "label": "single-action"}
+{"text": "Print the draft", "label": "single-action"}
+{"text": "Establish a process for the proposal", "label": "project"}
+{"text": "Deal with the routing issue", "label": "project"}
+{"text": "Develop a strategy for the migration", "label": "project"}
+{"text": "Plan a trip to New Stacyland", "label": "project"}
+{"text": "Lock the bedroom", "label": "single-action"}
+{"text": "Pay $440 for coffee filters", "label": "single-action"}
+{"text": "Prepare for the the weekly standup", "label": "project"}
+{"text": "Coordinate a client meeting across the committee", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Update the description in the inventory tracker", "label": "single-action"}
+{"text": "Build a podcast", "label": "project"}
+{"text": "Move to a new the kitchen", "label": "project"}
+{"text": "Onboard Andrew Ruiz to the team", "label": "project"}
+{"text": "Return notebooks to Best Buy", "label": "single-action"}
+{"text": "Approve the proposal", "label": "single-action"}
+{"text": "Clean the bathroom", "label": "single-action"}
+{"text": "Reply to Trevor Foley's email", "label": "single-action"}
+{"text": "Text Crystal Hansen the confirmation number", "label": "single-action"}
+{"text": "Complete the the hiring plan certification", "label": "project"}
+{"text": "Establish a process for the rollout plan", "label": "project"}
+{"text": "Look into Airtable", "label": "single-action"}
+{"text": "Complete the the vendor agreement certification", "label": "project"}
+{"text": "Deploy the plugin to Kubernetes", "label": "project"}
+{"text": "Improve the the database", "label": "project"}
+{"text": "Move to a new the patio", "label": "project"}
+{"text": "Create a training program for the board", "label": "project"}
+{"text": "Implement the settings page", "label": "project"}
+{"text": "Sort out the quarterly report", "label": "project"}
+{"text": "Develop a strategy for performance reviews", "label": "project"}
+{"text": "Pay $858 for a phone charger", "label": "single-action"}
+{"text": "Refill hand sanitizer", "label": "single-action"}
+{"text": "Write and publish the proposal", "label": "project"}
+{"text": "Send the proposal to Mr. Kenneth Andrews", "label": "single-action"}
+{"text": "Remodel the living room", "label": "project"}
+{"text": "Implement the export function", "label": "project"}
+{"text": "Call Brent Burton", "label": "single-action"}
+{"text": "Organize a workshop for the board", "label": "project"}
+{"text": "Sort out the contract renewal", "label": "project"}
+{"text": "Send the agenda to Belinda Miller", "label": "single-action"}
+{"text": "Research the marketing strategy", "label": "single-action"}
+{"text": "Email Robert Carter the proposal", "label": "single-action"}
+{"text": "Migrate the portal to Vercel", "label": "project"}
+{"text": "Call Andrea Decker", "label": "single-action"}
+{"text": "Set up the new the server room office", "label": "project"}
+{"text": "Overhaul the the website", "label": "project"}
+{"text": "Reply to Elizabeth Rogers's email", "label": "single-action"}
+{"text": "Refill snacks", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Organize the annual picnic for the team", "label": "project"}
+{"text": "Organize a training session for the department", "label": "project"}
+{"text": "Develop a strategy for the product launch", "label": "project"}
+{"text": "Return paint to Office Depot", "label": "single-action"}
+{"text": "Schedule a call with Jacqueline Hernandez", "label": "single-action"}
+{"text": "Sign the presentation", "label": "single-action"}
+{"text": "Implement the settings page", "label": "project"}
+{"text": "Pick up a new keyboard from Trader Joe's", "label": "single-action"}
+{"text": "Charge the packing tape", "label": "single-action"}
+{"text": "Refill sticky notes", "label": "single-action"}
+{"text": "Book the quarterly review for Monday", "label": "single-action"}
+{"text": "Sort out the redesign", "label": "project"}
+{"text": "Organize the product demo for the department", "label": "project"}
+{"text": "Sort out the vendor agreement", "label": "project"}
+{"text": "Create a training program for the department", "label": "project"}
+{"text": "Plan the the quarterly review", "label": "project"}
+{"text": "Launch version 2.0", "label": "project"}
+{"text": "Set up the app for the team", "label": "project"}
+{"text": "Launch the API update", "label": "project"}
+{"text": "Overhaul the the website", "label": "project"}
+{"text": "Sort out the vendor agreement", "label": "project"}
+{"text": "Improve the the backend", "label": "project"}
+{"text": "Redesign the dashboard", "label": "project"}
+{"text": "Deploy the plugin to Docker", "label": "project"}
+{"text": "Book a dinner party for next week", "label": "single-action"}
+{"text": "Update the summary", "label": "single-action"}
+{"text": "Get the den ready", "label": "project"}
+{"text": "Drop off groceries at the kitchen", "label": "single-action"}
+{"text": "Text Jeremy Barnes the directions", "label": "single-action"}
+{"text": "Set up the database for the team", "label": "project"}
+{"text": "Hire a new Geneticist, molecular", "label": "project"}
+{"text": "Clean the den", "label": "single-action"}
+{"text": "Book a training session for March 15", "label": "single-action"}
+{"text": "Launch the new feature", "label": "project"}
+{"text": "Drop off batteries at the warehouse", "label": "single-action"}
+{"text": "Prepare for the a client meeting", "label": "project"}
+{"text": "Handle the migration for Michelle Smith", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Deploy the mobile app to Azure", "label": "project"}
+{"text": "Research and select a new Obsidian", "label": "project"}
+{"text": "Get the guest room ready", "label": "project"}
+{"text": "Sign the presentation", "label": "single-action"}
+{"text": "Handle the proposal for David Smith", "label": "project"}
+{"text": "Renovate the office", "label": "project"}
+{"text": "Update the price in the dashboard", "label": "single-action"}
+{"text": "Return packing tape to Office Depot", "label": "single-action"}
+{"text": "Get the bedroom ready", "label": "project"}
+{"text": "Drop off paint at the office", "label": "single-action"}
+{"text": "Set up the billing system for the team", "label": "project"}
+{"text": "Clean the den", "label": "single-action"}
+{"text": "Research and select a new Monday.com", "label": "project"}
+{"text": "Write and publish the invoice", "label": "project"}
+{"text": "Set up the billing system for the team", "label": "project"}
+{"text": "Sort out inventory counts", "label": "project"}
+{"text": "Print the meeting notes", "label": "single-action"}
+{"text": "Plan the a dinner party", "label": "project"}
+{"text": "Prepare for the a team lunch", "label": "project"}
+{"text": "Prepare for the a workshop", "label": "project"}
+{"text": "Complete the the budget certification", "label": "project"}
+{"text": "Plan the a birthday party", "label": "project"}
+{"text": "Download the contract", "label": "single-action"}
+{"text": "Improve the the portal", "label": "project"}
+{"text": "Reply to Lisa Carr's email", "label": "single-action"}
+{"text": "Refill hand sanitizer", "label": "single-action"}
+{"text": "Build an online course", "label": "project"}
+{"text": "Pay $3,607 for envelopes", "label": "single-action"}
+{"text": "Migrate the inventory tracker to GCP", "label": "project"}
+{"text": "Coordinate a dinner party across the volunteers", "label": "project"}
+{"text": "Update the priority in the server", "label": "single-action"}
+{"text": "Lock the attic", "label": "single-action"}
+{"text": "Handle the redesign for Erin Simon", "label": "project"}
+{"text": "Organize the offsite retreat for the board", "label": "project"}
+{"text": "Take care of the running toilet", "label": "single-action"}
+{"text": "Renovate the guest room", "label": "project"}
+{"text": "Migrate the server to Kubernetes", "label": "project"}
+{"text": "Move to a new West Jasonbury", "label": "project"}
+{"text": "Reply to Megan Sanders's email", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Lock the garage", "label": "single-action"}
+{"text": "Improve the the website", "label": "project"}
+{"text": "Onboard Brooke Thompson to the team", "label": "project"}
+{"text": "Prepare for the the product demo", "label": "project"}
+{"text": "Improve the the server", "label": "project"}
+{"text": "Create a training program for the volunteers", "label": "project"}
+{"text": "Handle the project timeline for Shelia Roberts", "label": "project"}
+{"text": "Book a birthday party for the 20th", "label": "single-action"}
+{"text": "Hire a new Production engineer", "label": "project"}
+{"text": "Charge the a new monitor", "label": "single-action"}
+{"text": "Take care of the stuck window", "label": "single-action"}
+{"text": "Set up the billing system for the team", "label": "project"}
+{"text": "Prepare for the the weekly standup", "label": "project"}
+{"text": "Look into the password manager", "label": "single-action"}
+{"text": "Take care of the stuck window", "label": "single-action"}
+{"text": "File the memo in the CRM", "label": "single-action"}
+{"text": "Plan a trip to the garage", "label": "project"}
+{"text": "Email Katherine Browning the design doc", "label": "single-action"}
+{"text": "Buy envelopes", "label": "single-action"}
+{"text": "Establish a process for the hiring plan", "label": "project"}
+{"text": "Launch the redesigned dashboard", "label": "project"}
+{"text": "Renovate the garage", "label": "project"}
+{"text": "Build writing a book", "label": "project"}
+{"text": "Build a blog", "label": "project"}
+{"text": "Clean the garage", "label": "single-action"}
+{"text": "File the memo in the website", "label": "single-action"}
+{"text": "Develop a strategy for the vendor agreement", "label": "project"}
+{"text": "Lock the attic", "label": "single-action"}
+{"text": "Implement dark mode", "label": "project"}
+{"text": "Order a gift card online", "label": "single-action"}
+{"text": "Pay $424 for printer paper", "label": "single-action"}
+{"text": "Print the report", "label": "single-action"}
+{"text": "Deploy version 2.0 to Azure", "label": "project"}
+{"text": "Update the memo", "label": "single-action"}
+{"text": "Organize the weekly standup for the family", "label": "project"}
+{"text": "Organize a training session for the department", "label": "project"}
+{"text": "Onboard Danny Morgan to the team", "label": "project"}
+{"text": "Organize the offsite retreat for the committee", "label": "project"}
+{"text": "Establish a process for the proposal", "label": "project"}
+{"text": "Migrate the inventory tracker to Kubernetes", "label": "project"}
+{"text": "Prepare for the the annual picnic", "label": "project"}
+{"text": "Deal with the missing label", "label": "project"}
+{"text": "Renovate the guest room", "label": "project"}
+{"text": "Check the app for updates", "label": "single-action"}
+{"text": "File the agenda in the API", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Coordinate the offsite retreat across the department", "label": "project"}
+{"text": "Improve the the server", "label": "project"}
+{"text": "Hire a new Geoscientist", "label": "project"}
+{"text": "Call Taylor Perez", "label": "single-action"}
+{"text": "Deal with the routing issue", "label": "project"}
+{"text": "Email Melinda Evans the agenda", "label": "single-action"}
+{"text": "Build writing a book", "label": "project"}
+{"text": "Set up the API for the team", "label": "project"}
+{"text": "Hire a new Landscape architect", "label": "project"}
+{"text": "Lock the office", "label": "single-action"}
+{"text": "Update the meeting notes", "label": "single-action"}
+{"text": "Sort out inventory counts", "label": "project"}
+{"text": "Sort out inventory counts", "label": "project"}
+{"text": "Migrate the website to GCP", "label": "project"}
+{"text": "Drop off envelopes at Littlemouth", "label": "single-action"}
+{"text": "Drop off extension cord at the server room", "label": "single-action"}
+{"text": "Develop a strategy for the proposal", "label": "project"}
+{"text": "Migrate the server to GCP", "label": "project"}
+{"text": "Handle the project timeline for Kevin Berry", "label": "project"}
+{"text": "Sort out the quarterly report", "label": "project"}
+{"text": "Lock the living room", "label": "single-action"}
+{"text": "Plan the the weekly standup", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Move to a new the warehouse", "label": "project"}
+{"text": "Renovate the basement", "label": "project"}
+{"text": "Buy envelopes", "label": "single-action"}
+{"text": "Organize the board meeting for the board", "label": "project"}
+{"text": "Update the price in the CRM", "label": "single-action"}
+{"text": "Drop off stamps at the warehouse", "label": "single-action"}
+{"text": "Launch the plugin", "label": "project"}
+{"text": "Call Valerie Lane", "label": "single-action"}
+{"text": "Call Phillip Jimenez", "label": "single-action"}
+{"text": "Set up the CRM for the team", "label": "project"}
+{"text": "Book a training session for next Thursday", "label": "single-action"}
+{"text": "Email Mark Watson the meeting notes", "label": "single-action"}
+{"text": "Download the spreadsheet", "label": "single-action"}
+{"text": "Approve the proposal", "label": "single-action"}
+{"text": "Create a training program for the department", "label": "project"}
+{"text": "Get the den ready", "label": "project"}
+{"text": "Print the design doc", "label": "single-action"}
+{"text": "Deploy the API update to Kubernetes", "label": "project"}
+{"text": "Coordinate the product demo across the interns", "label": "project"}
+{"text": "Hire a new Designer, jewellery", "label": "project"}
+{"text": "Call Charles Johnson", "label": "single-action"}
+{"text": "Print the draft", "label": "single-action"}
+{"text": "Coordinate the offsite retreat across the board", "label": "project"}
+{"text": "Update the contract", "label": "single-action"}
+{"text": "Remodel the bathroom", "label": "project"}
+{"text": "Buy batteries", "label": "single-action"}
+{"text": "Sign the draft", "label": "single-action"}
+{"text": "Organize the quarterly review for the board", "label": "project"}
+{"text": "Establish a process for the vendor agreement", "label": "project"}
+{"text": "Remodel the office", "label": "project"}
+{"text": "Plan the the annual picnic", "label": "project"}
+{"text": "Approve the memo", "label": "single-action"}
+{"text": "Refill snacks", "label": "single-action"}
+{"text": "Get the office ready", "label": "project"}
+{"text": "Buy printer paper", "label": "single-action"}
+{"text": "Update the spreadsheet", "label": "single-action"}
+{"text": "Take care of the loose shelf", "label": "single-action"}
+{"text": "Deal with the broken link", "label": "project"}
+{"text": "Buy notebooks", "label": "single-action"}
+{"text": "Sign the spec", "label": "single-action"}
+{"text": "Update the contact info in the dashboard", "label": "single-action"}
+{"text": "Establish a process for the product launch", "label": "project"}
+{"text": "Implement the export function", "label": "project"}
+{"text": "Take care of the leaky faucet", "label": "single-action"}
+{"text": "Overhaul the the CRM", "label": "project"}
+{"text": "Plan the a birthday party", "label": "project"}
+{"text": "Send the analysis to Evelyn Martinez", "label": "single-action"}
+{"text": "Clean the bathroom", "label": "single-action"}
+{"text": "Move to a new the conference room", "label": "project"}
+{"text": "Complete the the rollout plan certification", "label": "project"}
+{"text": "Hire a new Sales executive", "label": "project"}
+{"text": "Refill coffee pods", "label": "single-action"}
+{"text": "Schedule a call with Jessica Wright", "label": "single-action"}
+{"text": "Call Kelly Reese", "label": "single-action"}
+{"text": "Renovate the attic", "label": "project"}
+{"text": "Return batteries to Walgreens", "label": "single-action"}
+{"text": "Sort out the vendor agreement", "label": "project"}
+{"text": "Deploy the plugin to GCP", "label": "project"}
+{"text": "Check the inventory tracker for updates", "label": "single-action"}
+{"text": "Lock the attic", "label": "single-action"}
+{"text": "Deal with the formatting issue", "label": "project"}
+{"text": "Deploy the API update to Kubernetes", "label": "project"}
+{"text": "Remodel the attic", "label": "project"}
+{"text": "Charge the groceries", "label": "single-action"}
+{"text": "Order groceries online", "label": "single-action"}
+{"text": "Migrate the app to Docker", "label": "project"}
+{"text": "Look into Monday.com", "label": "single-action"}
+{"text": "Plan a trip to the lobby", "label": "project"}
+{"text": "Update the report", "label": "single-action"}
+{"text": "Improve the the billing system", "label": "project"}
+{"text": "Improve the the backend", "label": "project"}
+{"text": "File the spreadsheet in the portal", "label": "single-action"}
+{"text": "Handle the project timeline for Thomas Butler", "label": "project"}
+{"text": "Plan the a workshop", "label": "project"}
+{"text": "Sort out the rollout plan", "label": "project"}
+{"text": "Set up the website for the team", "label": "project"}
+{"text": "Refill paper towels", "label": "single-action"}
+{"text": "Implement the export function", "label": "project"}
+{"text": "Coordinate a dinner party across the volunteers", "label": "project"}
+{"text": "Set up the CRM for the team", "label": "project"}
+{"text": "Remodel the basement", "label": "project"}
+{"text": "Drop off groceries at the storage closet", "label": "single-action"}
+{"text": "Plan the the annual picnic", "label": "project"}
+{"text": "Hire a new Learning disability nurse", "label": "project"}
+{"text": "Prepare for the a training session", "label": "project"}
+{"text": "Return envelopes to the grocery store", "label": "single-action"}
+{"text": "Approve the memo", "label": "single-action"}
+{"text": "Refill paper towels", "label": "single-action"}
+{"text": "Check the backend for updates", "label": "single-action"}
+{"text": "Drop off groceries at the conference room", "label": "single-action"}
+{"text": "Renovate the attic", "label": "project"}
+{"text": "Email Randy Pearson the spreadsheet", "label": "single-action"}
+{"text": "Complete the the rollout plan certification", "label": "project"}
+{"text": "Coordinate the quarterly review across the board", "label": "project"}
+{"text": "Reply to Raymond Kramer's email", "label": "single-action"}
+{"text": "Schedule a call with Parker Jefferson", "label": "single-action"}
+{"text": "Update the spreadsheet", "label": "single-action"}
+{"text": "Plan a trip to the patio", "label": "project"}
+{"text": "Write and publish the draft", "label": "project"}
+{"text": "Print the spec", "label": "single-action"}
+{"text": "Organize a training session for the department", "label": "project"}
+{"text": "Look into Obsidian", "label": "single-action"}
+{"text": "Develop a strategy for the rollout plan", "label": "project"}
+{"text": "Establish a process for the marketing strategy", "label": "project"}
+{"text": "Establish a process for the product launch", "label": "project"}
+{"text": "Drop off a gift card at the server room", "label": "single-action"}
+{"text": "Schedule a call with Amanda Diaz", "label": "single-action"}
+{"text": "Charge the a new keyboard", "label": "single-action"}
+{"text": "Order a new keyboard online", "label": "single-action"}
+{"text": "Create a training program for the committee", "label": "project"}
+{"text": "Look into Jira", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Order a gift card online", "label": "single-action"}
+{"text": "Lock the garage", "label": "single-action"}
+{"text": "Print the analysis", "label": "single-action"}
+{"text": "Plan a trip to the living room", "label": "project"}
+{"text": "Send the proposal to Seth Harvey", "label": "single-action"}
+{"text": "Schedule a call with Penny Bowman", "label": "single-action"}
+{"text": "Research the vendor agreement", "label": "single-action"}
+{"text": "Implement the settings page", "label": "project"}
+{"text": "Pick up batteries from Amazon", "label": "single-action"}
+{"text": "Refill snacks", "label": "single-action"}
+{"text": "Reply to Brian Scott's email", "label": "single-action"}
+{"text": "Improve the the inventory tracker", "label": "project"}
+{"text": "Research and select a new Obsidian", "label": "project"}
+{"text": "Update the status in the billing system", "label": "single-action"}
+{"text": "Improve the the website", "label": "project"}
+{"text": "Handle inventory counts for Kelly Small", "label": "project"}
+{"text": "Update the status in the website", "label": "single-action"}
+{"text": "Refill paper towels", "label": "single-action"}
+{"text": "Pay $3,080 for a phone charger", "label": "single-action"}
+{"text": "Book the product demo for tomorrow", "label": "single-action"}
+{"text": "Onboard Danielle Odonnell to the team", "label": "project"}
+{"text": "Pick up notebooks from IKEA", "label": "single-action"}
+{"text": "Approve the memo", "label": "single-action"}
+{"text": "Sort out the vendor agreement", "label": "project"}
+{"text": "Renovate the bedroom", "label": "project"}
+{"text": "Get the bathroom ready", "label": "project"}
+{"text": "Text Bryan Allen the directions", "label": "single-action"}
+{"text": "Get the attic ready", "label": "project"}
+{"text": "Plan a trip to the garage", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Drop off stamps at the living room", "label": "single-action"}
 {"text": "Look into Trello", "label": "single-action"}
-{"text": "Buy coffee filters", "label": "single-action"}
+{"text": "Implement the settings page", "label": "project"}
+{"text": "Order a gift card online", "label": "single-action"}
+{"text": "Complete the the rollout plan certification", "label": "project"}
+{"text": "Pick up batteries from the grocery store", "label": "single-action"}
+{"text": "Set up the server for the team", "label": "project"}
+{"text": "Set up the app for the team", "label": "project"}
+{"text": "Organize the annual picnic for the department", "label": "project"}
+{"text": "Email Melissa Fox the agenda", "label": "single-action"}
+{"text": "Print the draft", "label": "single-action"}
+{"text": "Renovate the bedroom", "label": "project"}
+{"text": "Write and publish the draft", "label": "project"}
+{"text": "Refill sticky notes", "label": "single-action"}
+{"text": "Establish a process for compliance requirements", "label": "project"}
+{"text": "Set up the new the storage closet office", "label": "project"}
+{"text": "Write and publish the analysis", "label": "project"}
+{"text": "Overhaul the the CRM", "label": "project"}
+{"text": "Set up the new the living room office", "label": "project"}
+{"text": "Email Lori Orr the proposal", "label": "single-action"}
+{"text": "Develop a strategy for performance reviews", "label": "project"}
+{"text": "Clean the office", "label": "single-action"}
+{"text": "Establish a process for the rollout plan", "label": "project"}
+{"text": "Redesign the backend", "label": "project"}
+{"text": "Overhaul the the inventory tracker", "label": "project"}
+{"text": "Remodel the garage", "label": "project"}
+{"text": "Update the status in the server", "label": "single-action"}
+{"text": "Deal with the alignment problem", "label": "project"}
+{"text": "Set up the new the lobby office", "label": "project"}
+{"text": "Buy groceries", "label": "single-action"}
+{"text": "Update the brief", "label": "single-action"}
+{"text": "Download the memo", "label": "single-action"}
+{"text": "File the meeting notes in the database", "label": "single-action"}
+{"text": "Complete the the project timeline certification", "label": "project"}
+{"text": "Write and publish the summary", "label": "project"}
+{"text": "Onboard Beth Sanford to the team", "label": "project"}
+{"text": "Send the agenda to Brett Rivera", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Remodel the living room", "label": "project"}
+{"text": "Reply to Mark Mccall's email", "label": "single-action"}
+{"text": "Develop a strategy for inventory counts", "label": "project"}
+{"text": "Pay $3,895 for groceries", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Prepare for the a training session", "label": "project"}
+{"text": "Set up the new Tinaborough office", "label": "project"}
+{"text": "Order packing tape online", "label": "single-action"}
+{"text": "Set up the new the server room office", "label": "project"}
+{"text": "Move to a new the garage", "label": "project"}
+{"text": "Sort out performance reviews", "label": "project"}
+{"text": "Update the price in the portal", "label": "single-action"}
+{"text": "Sign the draft", "label": "single-action"}
+{"text": "Send the presentation to Anthony Castillo", "label": "single-action"}
+{"text": "Print the memo", "label": "single-action"}
+{"text": "Update the invoice", "label": "single-action"}
+{"text": "Renovate the office", "label": "project"}
+{"text": "Research and select a new Notion", "label": "project"}
+{"text": "Prepare for the a birthday party", "label": "project"}
+{"text": "Email Meghan Cisneros the design doc", "label": "single-action"}
+{"text": "Email Brad Walker the spreadsheet", "label": "single-action"}
+{"text": "Renovate the office", "label": "project"}
+{"text": "Research the contract renewal", "label": "single-action"}
+{"text": "Text Michael Berger the meeting link", "label": "single-action"}
+{"text": "Migrate the dashboard to Azure", "label": "project"}
+{"text": "Plan the the product demo", "label": "project"}
+{"text": "Reply to Steve Paul's email", "label": "single-action"}
+{"text": "Establish a process for the quarterly report", "label": "project"}
+{"text": "Update the meeting notes", "label": "single-action"}
+{"text": "Take care of the cracked tile", "label": "single-action"}
+{"text": "Check the dashboard for updates", "label": "single-action"}
+{"text": "Clean the office", "label": "single-action"}
+{"text": "Move to a new the kitchen", "label": "project"}
+{"text": "Look into the password manager", "label": "single-action"}
+{"text": "Schedule a call with Valerie Davis", "label": "single-action"}
+{"text": "Write and publish the brief", "label": "project"}
+{"text": "Launch the API update", "label": "project"}
+{"text": "Renovate the kitchen", "label": "project"}
+{"text": "Pay $1,816 for batteries", "label": "single-action"}
+{"text": "Plan a trip to the storage closet", "label": "project"}
+{"text": "Pick up printer paper from Walgreens", "label": "single-action"}
+{"text": "Redesign the dashboard", "label": "project"}
+{"text": "Check the dashboard for updates", "label": "single-action"}
+{"text": "Redesign the app", "label": "project"}
+{"text": "Refill coffee pods", "label": "single-action"}
+{"text": "Pick up groceries from Home Depot", "label": "single-action"}
+{"text": "Update the brief", "label": "single-action"}
+{"text": "Reply to Andrew Berg's email", "label": "single-action"}
+{"text": "Send the contract to Kathleen Parker", "label": "single-action"}
+{"text": "Deal with the display glitch", "label": "project"}
+{"text": "Renovate the office", "label": "project"}
+{"text": "Clean the garage", "label": "single-action"}
+{"text": "Text Brittany White the agenda", "label": "single-action"}
+{"text": "Update the meeting notes", "label": "single-action"}
+{"text": "Implement dark mode", "label": "project"}
+{"text": "Establish a process for performance reviews", "label": "project"}
+{"text": "Update the design doc", "label": "single-action"}
+{"text": "Redesign the API", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Complete the the rollout plan certification", "label": "project"}
+{"text": "Coordinate a client meeting across the interns", "label": "project"}
+{"text": "Look into Google Docs", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Deal with the crash", "label": "project"}
+{"text": "Handle the migration for Timothy Smith", "label": "project"}
+{"text": "Sign the meeting notes", "label": "single-action"}
+{"text": "Get the guest room ready", "label": "project"}
+{"text": "Sign the proposal", "label": "single-action"}
+{"text": "Update the contract", "label": "single-action"}
+{"text": "Look into Linear", "label": "single-action"}
+{"text": "Establish a process for the marketing strategy", "label": "project"}
+{"text": "Establish a process for the budget", "label": "project"}
+{"text": "Take care of the leaky faucet", "label": "single-action"}
+{"text": "Clean the office", "label": "single-action"}
+{"text": "Check the app for updates", "label": "single-action"}
+{"text": "Build a YouTube channel", "label": "project"}
+{"text": "Book the product demo for this weekend", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Charge the a new keyboard", "label": "single-action"}
+{"text": "Pick up stamps from CVS", "label": "single-action"}
+{"text": "Schedule a call with John Castro DVM", "label": "single-action"}
+{"text": "Buy cleaning supplies", "label": "single-action"}
+{"text": "Hire a new General practice doctor", "label": "project"}
+{"text": "Charge the a phone charger", "label": "single-action"}
+{"text": "Redesign the dashboard", "label": "project"}
+{"text": "Sign the spec", "label": "single-action"}
+{"text": "Write and publish the memo", "label": "project"}
+{"text": "Charge the extension cord", "label": "single-action"}
+{"text": "Pick up printer paper from Staples", "label": "single-action"}
+{"text": "Buy packing tape", "label": "single-action"}
+{"text": "Clean the guest room", "label": "single-action"}
+{"text": "Charge the a gift card", "label": "single-action"}
+{"text": "Update the analysis", "label": "single-action"}
+{"text": "Hire a new Printmaker", "label": "project"}
+{"text": "Drop off light bulbs at the patio", "label": "single-action"}
+{"text": "Look into Basecamp", "label": "single-action"}
+{"text": "Move to a new the patio", "label": "project"}
+{"text": "Look into Basecamp", "label": "single-action"}
+{"text": "Handle the vendor agreement for Tammy Barron", "label": "project"}
+{"text": "Research and select a new the password manager", "label": "project"}
+{"text": "Get the bathroom ready", "label": "project"}
+{"text": "Print the contract", "label": "single-action"}
+{"text": "Set up the new the conference room office", "label": "project"}
+{"text": "Onboard Andrew Diaz to the team", "label": "project"}
+{"text": "Implement dark mode", "label": "project"}
+{"text": "Create a training program for the volunteers", "label": "project"}
+{"text": "Launch version 2.0", "label": "project"}
+{"text": "Book the weekly standup for Monday", "label": "single-action"}
+{"text": "Sort out performance reviews", "label": "project"}
+{"text": "Organize a client meeting for the committee", "label": "project"}
+{"text": "Plan the a dinner party", "label": "project"}
+{"text": "Remodel the den", "label": "project"}
+{"text": "Pay $1,089 for printer paper", "label": "single-action"}
+{"text": "Reply to Angela Fry's email", "label": "single-action"}
+{"text": "Get the attic ready", "label": "project"}
+{"text": "Move to a new the office", "label": "project"}
+{"text": "Plan the a dinner party", "label": "project"}
+{"text": "Set up the new Lake Aimee office", "label": "project"}
+{"text": "Approve the analysis", "label": "single-action"}
+{"text": "Remodel the bedroom", "label": "project"}
+{"text": "Look into Linear", "label": "single-action"}
+{"text": "Charge the cleaning supplies", "label": "single-action"}
+{"text": "Buy hand soap", "label": "single-action"}
+{"text": "Onboard Nicole Wilson to the team", "label": "project"}
+{"text": "Plan a trip to the storage closet", "label": "project"}
+{"text": "Remodel the bedroom", "label": "project"}
+{"text": "Drop off packing tape at the kitchen", "label": "single-action"}
+{"text": "Improve the the website", "label": "project"}
+{"text": "Lock the basement", "label": "single-action"}
+{"text": "Lock the attic", "label": "single-action"}
+{"text": "Research and select a new Google Docs", "label": "project"}
+{"text": "Develop a strategy for the proposal", "label": "project"}
+{"text": "Plan the the board meeting", "label": "project"}
+{"text": "Buy groceries", "label": "single-action"}
+{"text": "Sort out the proposal", "label": "project"}
+{"text": "Email Richard Cooper the presentation", "label": "single-action"}
+{"text": "Schedule a call with Kimberly Morris", "label": "single-action"}
+{"text": "Charge the a gift card", "label": "single-action"}
+{"text": "Set up the database for the team", "label": "project"}
+{"text": "Coordinate a workshop across the team", "label": "project"}
+{"text": "Write and publish the invoice", "label": "project"}
+{"text": "Launch the API update", "label": "project"}
+{"text": "Build a YouTube channel", "label": "project"}
+{"text": "Handle the hiring plan for Holly Walker", "label": "project"}
+{"text": "Deploy the plugin to Vercel", "label": "project"}
+{"text": "Take care of the loose shelf", "label": "single-action"}
+{"text": "Return a new monitor to CVS", "label": "single-action"}
+{"text": "Text James Miller the address", "label": "single-action"}
+{"text": "Research and select a new 1Password", "label": "project"}
+{"text": "Write and publish the draft", "label": "project"}
+{"text": "Develop a strategy for the product launch", "label": "project"}
+{"text": "Order extension cord online", "label": "single-action"}
+{"text": "Clean the office", "label": "single-action"}
+{"text": "Look into 1Password", "label": "single-action"}
+{"text": "Pay $659 for printer paper", "label": "single-action"}
+{"text": "Email Dennis Diaz the draft", "label": "single-action"}
+{"text": "Print the brief", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Handle the rollout plan for Jeffrey Murphy", "label": "project"}
+{"text": "Hire a new Chief Technology Officer", "label": "project"}
+{"text": "Overhaul the the API", "label": "project"}
+{"text": "Book the annual picnic for tomorrow", "label": "single-action"}
+{"text": "Look into Obsidian", "label": "single-action"}
+{"text": "Write and publish the invoice", "label": "project"}
+{"text": "Reply to Jerry Palmer's email", "label": "single-action"}
+{"text": "Renovate the bathroom", "label": "project"}
+{"text": "Write and publish the meeting notes", "label": "project"}
+{"text": "Check the CRM for updates", "label": "single-action"}
+{"text": "Text Crystal Pham the directions", "label": "single-action"}
+{"text": "Complete the performance reviews certification", "label": "project"}
+{"text": "Develop a strategy for inventory counts", "label": "project"}
+{"text": "Migrate the backend to Vercel", "label": "project"}
+{"text": "Implement the export function", "label": "project"}
+{"text": "Order batteries online", "label": "single-action"}
+{"text": "Lock the attic", "label": "single-action"}
+{"text": "Clean the bedroom", "label": "single-action"}
+{"text": "Order a phone charger online", "label": "single-action"}
+{"text": "Redesign the portal", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Update the due date in the app", "label": "single-action"}
+{"text": "Handle inventory counts for Edwin Morrison", "label": "project"}
+{"text": "Book a birthday party for March 15", "label": "single-action"}
+{"text": "Schedule a call with Anthony Gonzales", "label": "single-action"}
+{"text": "Research the product launch", "label": "single-action"}
+{"text": "Order hand soap online", "label": "single-action"}
+{"text": "Hire a new Optometrist", "label": "project"}
+{"text": "Renovate the den", "label": "project"}
+{"text": "Set up the new Williamchester office", "label": "project"}
+{"text": "Set up the app for the team", "label": "project"}
+{"text": "Remodel the bathroom", "label": "project"}
+{"text": "Move to a new Bassport", "label": "project"}
+{"text": "Write and publish the summary", "label": "project"}
+{"text": "Set up the new Elizabethstad office", "label": "project"}
+{"text": "Print the draft", "label": "single-action"}
+{"text": "Text Cindy Clayton the address", "label": "single-action"}
+{"text": "Develop a strategy for the product launch", "label": "project"}
+{"text": "Download the design doc", "label": "single-action"}
+{"text": "Email Christopher Sloan the memo", "label": "single-action"}
+{"text": "Overhaul the the database", "label": "project"}
+{"text": "Develop a strategy for the proposal", "label": "project"}
+{"text": "Establish a process for the migration", "label": "project"}
+{"text": "Implement user profiles", "label": "project"}
+{"text": "Hire a new Water quality scientist", "label": "project"}
+{"text": "Update the address in the server", "label": "single-action"}
+{"text": "Renovate the den", "label": "project"}
+{"text": "Drop off a gift card at the front desk", "label": "single-action"}
+{"text": "Get the office ready", "label": "project"}
+{"text": "Pay $2,485 for packing tape", "label": "single-action"}
+{"text": "Redesign the CRM", "label": "project"}
+{"text": "Onboard Melissa Hernandez to the team", "label": "project"}
+{"text": "Remodel the bedroom", "label": "project"}
+{"text": "Complete the the hiring plan certification", "label": "project"}
+{"text": "Launch the redesigned dashboard", "label": "project"}
+{"text": "Update the due date in the backend", "label": "single-action"}
+{"text": "Prepare for the a birthday party", "label": "project"}
+{"text": "Handle the migration for Jeremy Adams", "label": "project"}
+{"text": "Handle the product launch for Carmen Bond", "label": "project"}
+{"text": "Coordinate the quarterly review across the department", "label": "project"}
+{"text": "Return hand soap to IKEA", "label": "single-action"}
+{"text": "Write and publish the analysis", "label": "project"}
+{"text": "Sign the meeting notes", "label": "single-action"}
+{"text": "Build a side business", "label": "project"}
+{"text": "Schedule a call with Bobby Franklin", "label": "single-action"}
+{"text": "Take care of the squeaky hinge", "label": "single-action"}
+{"text": "Onboard Angelica Tucker to the team", "label": "project"}
+{"text": "Organize the board meeting for the department", "label": "project"}
+{"text": "Create a training program for the board", "label": "project"}
+{"text": "Renovate the garage", "label": "project"}
+{"text": "Set up the new the garage office", "label": "project"}
+{"text": "Write and publish the meeting notes", "label": "project"}
 {"text": "Water the plants", "label": "single-action"}
 {"text": "Migrate the portal to Vercel", "label": "project"}
-{"text": "Take out the trash", "label": "single-action"}
-{"text": "Improve the the inventory tracker", "label": "project"}
-{"text": "Buy a new monitor", "label": "single-action"}
-{"text": "Refill whiteboard markers", "label": "single-action"}
-{"text": "Handle inventory counts for Brenda White", "label": "project"}
-{"text": "Improve the the inventory tracker", "label": "project"}
-{"text": "Update the brief", "label": "single-action"}
-{"text": "Pay $4,895 for a new monitor", "label": "single-action"}
-{"text": "Deploy the mobile app to Azure", "label": "project"}
-{"text": "Improve the the dashboard", "label": "project"}
-{"text": "Create a training program for the volunteers", "label": "project"}
-{"text": "Set up the new the living room office", "label": "project"}
-{"text": "Establish a process for the product launch", "label": "project"}
-{"text": "Redesign the dashboard", "label": "project"}
-{"text": "Plan the a workshop", "label": "project"}
-{"text": "Take out the trash", "label": "single-action"}
-{"text": "Overhaul the the app", "label": "project"}
-{"text": "Pay $4,168 for light bulbs", "label": "single-action"}
-{"text": "Take care of the cracked tile", "label": "single-action"}
-{"text": "Call Katie Rodriguez", "label": "single-action"}
-{"text": "Order printer paper online", "label": "single-action"}
-{"text": "Prepare for the a client meeting", "label": "project"}
-{"text": "Create a training program for the department", "label": "project"}
-{"text": "Schedule a call with Michelle Stanton", "label": "single-action"}
-{"text": "Migrate the app to Azure", "label": "project"}
-{"text": "Develop a strategy for the rollout plan", "label": "project"}
-{"text": "Onboard Donald Walker to the team", "label": "project"}
-{"text": "Complete the the redesign certification", "label": "project"}
-{"text": "Email Christopher Smith the contract", "label": "single-action"}
-{"text": "File the draft in the backend", "label": "single-action"}
-{"text": "Print the contract", "label": "single-action"}
-{"text": "Look into Airtable", "label": "single-action"}
-{"text": "Pick up coffee filters from Amazon", "label": "single-action"}
-{"text": "Download the spreadsheet", "label": "single-action"}
-{"text": "Take care of the stuck window", "label": "single-action"}
-{"text": "Drop off groceries at the office", "label": "single-action"}
-{"text": "Hire a new Clinical research associate", "label": "project"}
-{"text": "Research the budget", "label": "single-action"}
-{"text": "Approve the presentation", "label": "single-action"}
+{"text": "Reply to Carrie Wright's email", "label": "single-action"}
 {"text": "Write and publish the proposal", "label": "project"}
-{"text": "Set up the database for the team", "label": "project"}
-{"text": "Redesign the API", "label": "project"}
-{"text": "Create a training program for the team", "label": "project"}
-{"text": "Call Shannon Jones", "label": "single-action"}
-{"text": "Plan a trip to the lobby", "label": "project"}
-{"text": "Set up the database for the team", "label": "project"}
-{"text": "Build a blog", "label": "project"}
-{"text": "Remodel the office", "label": "project"}
-{"text": "Organize a training session for the department", "label": "project"}
-{"text": "Renovate the garage", "label": "project"}
-{"text": "Clean the guest room", "label": "single-action"}
-{"text": "Onboard Gina Moore to the team", "label": "project"}
-{"text": "Sort out the project timeline", "label": "project"}
-{"text": "Email Nicholas Cabrera the analysis", "label": "single-action"}
-{"text": "Research and select a new 1Password", "label": "project"}
-{"text": "Pick up a new keyboard from IKEA", "label": "single-action"}
-{"text": "Schedule a call with Amy Chandler", "label": "single-action"}
-{"text": "Book the product demo for Monday", "label": "single-action"}
-{"text": "Get the den ready", "label": "project"}
-{"text": "Onboard Andrew Stewart to the team", "label": "project"}
-{"text": "Print the meeting notes", "label": "single-action"}
-{"text": "Complete the the contract renewal certification", "label": "project"}
-{"text": "Move to a new the office", "label": "project"}
-{"text": "Organize the quarterly review for the team", "label": "project"}
-{"text": "Update the analysis", "label": "single-action"}
-{"text": "Implement the settings page", "label": "project"}
-{"text": "Call Theresa Martin", "label": "single-action"}
-{"text": "Launch the plugin", "label": "project"}
+{"text": "Set up the dashboard for the team", "label": "project"}
 {"text": "Build an online course", "label": "project"}
-{"text": "Update the analysis", "label": "single-action"}
-{"text": "Set up the new the garage office", "label": "project"}
-{"text": "Reply to Arthur James's email", "label": "single-action"}
-{"text": "Set up the inventory tracker for the team", "label": "project"}
-{"text": "Buy envelopes", "label": "single-action"}
-{"text": "Write and publish the contract", "label": "project"}
-{"text": "Update the description in the backend", "label": "single-action"}
-{"text": "Set up the website for the team", "label": "project"}
-{"text": "Take out the trash", "label": "single-action"}
-{"text": "Implement the settings page", "label": "project"}
-{"text": "Download the spreadsheet", "label": "single-action"}
-{"text": "Set up the new the lobby office", "label": "project"}
-{"text": "Take care of the stuck window", "label": "single-action"}
-{"text": "Coordinate the quarterly review across the department", "label": "project"}
-{"text": "Text Danny Morgan the directions", "label": "single-action"}
-{"text": "Prepare for the a dinner party", "label": "project"}
-{"text": "Get the kitchen ready", "label": "project"}
-{"text": "Remodel the living room", "label": "project"}
-{"text": "Reply to James Martin's email", "label": "single-action"}
-{"text": "Clean the office", "label": "single-action"}
-{"text": "Check the billing system for updates", "label": "single-action"}
-{"text": "Renovate the garage", "label": "project"}
-{"text": "Remodel the den", "label": "project"}
-{"text": "Approve the agenda", "label": "single-action"}
-{"text": "Return a new monitor to Walgreens", "label": "single-action"}
-{"text": "Organize the annual picnic for the department", "label": "project"}
-{"text": "Implement notifications", "label": "project"}
-{"text": "Buy batteries", "label": "single-action"}
-{"text": "Pay $3,991 for coffee filters", "label": "single-action"}
-{"text": "Write and publish the summary", "label": "project"}
-{"text": "Send the spreadsheet to Michael Lewis", "label": "single-action"}
-{"text": "Renovate the bathroom", "label": "project"}
-{"text": "Coordinate a birthday party across the team", "label": "project"}
-{"text": "Refill hand sanitizer", "label": "single-action"}
-{"text": "Pick up coffee filters from Office Depot", "label": "single-action"}
-{"text": "Pay $1,751 for cleaning supplies", "label": "single-action"}
-{"text": "Reply to Nicole Vaughn's email", "label": "single-action"}
-{"text": "Move to a new the server room", "label": "project"}
-{"text": "Deal with the broken link", "label": "project"}
+{"text": "Write and publish the draft", "label": "project"}
 {"text": "Water the plants", "label": "single-action"}
-{"text": "Hire a new Designer, jewellery", "label": "project"}
-{"text": "Research the budget", "label": "single-action"}
-{"text": "File the draft in the app", "label": "single-action"}
-{"text": "Print the summary", "label": "single-action"}
-{"text": "Send the contract to Lisa Brandt", "label": "single-action"}
-{"text": "Develop a strategy for the product launch", "label": "project"}
-{"text": "Establish a process for the vendor agreement", "label": "project"}
-{"text": "Complete the the budget certification", "label": "project"}
-{"text": "Update the address in the portal", "label": "single-action"}
-{"text": "Look into Notion", "label": "single-action"}
-{"text": "Overhaul the the database", "label": "project"}
-{"text": "Text David Bradley the meeting link", "label": "single-action"}
-{"text": "Book a team lunch for Tuesday", "label": "single-action"}
-{"text": "Charge the groceries", "label": "single-action"}
+{"text": "Create a training program for the interns", "label": "project"}
+{"text": "Handle the quarterly report for Christopher Taylor", "label": "project"}
+{"text": "Pick up groceries from IKEA", "label": "single-action"}
+{"text": "Write and publish the presentation", "label": "project"}
+{"text": "Plan the a team lunch", "label": "project"}
+{"text": "Remodel the basement", "label": "project"}
+{"text": "Complete the the contract renewal certification", "label": "project"}
+{"text": "Prepare for the the annual picnic", "label": "project"}
 {"text": "Refill whiteboard markers", "label": "single-action"}
+{"text": "Organize the quarterly review for the team", "label": "project"}
+{"text": "Onboard Jennifer Olson to the team", "label": "project"}
+{"text": "Research the proposal", "label": "single-action"}
+{"text": "Improve the the CRM", "label": "project"}
+{"text": "Research the project timeline", "label": "single-action"}
+{"text": "Check the billing system for updates", "label": "single-action"}
+{"text": "Coordinate a dinner party across the interns", "label": "project"}
+{"text": "Launch the API update", "label": "project"}
+{"text": "Set up the new the living room office", "label": "project"}
+{"text": "Sign the memo", "label": "single-action"}
+{"text": "Launch the redesigned dashboard", "label": "project"}
+{"text": "Take care of the squeaky hinge", "label": "single-action"}
+{"text": "Drop off groceries at the patio", "label": "single-action"}
+{"text": "Develop a strategy for the redesign", "label": "project"}
+{"text": "Sort out the budget", "label": "project"}
+{"text": "Research the contract renewal", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Hire a new Conference centre manager", "label": "project"}
+{"text": "Write and publish the draft", "label": "project"}
+{"text": "Email Cody Holmes the design doc", "label": "single-action"}
+{"text": "Approve the analysis", "label": "single-action"}
+{"text": "Get the basement ready", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Plan a trip to the office", "label": "project"}
+{"text": "Prepare for the the annual picnic", "label": "project"}
+{"text": "Download the brief", "label": "single-action"}
+{"text": "Pick up a new keyboard from Home Depot", "label": "single-action"}
+{"text": "Implement dark mode", "label": "project"}
+{"text": "Build a podcast", "label": "project"}
+{"text": "Refill whiteboard markers", "label": "single-action"}
+{"text": "Hire a new Clinical research associate", "label": "project"}
+{"text": "Order packing tape online", "label": "single-action"}
+{"text": "Complete the the hiring plan certification", "label": "project"}
+{"text": "Sign the analysis", "label": "single-action"}
+{"text": "Set up the billing system for the team", "label": "project"}
+{"text": "Hire a new Computer games developer", "label": "project"}
+{"text": "Set up the new the front desk office", "label": "project"}
+{"text": "Update the priority in the portal", "label": "single-action"}
+{"text": "Plan the a client meeting", "label": "project"}
+{"text": "Text Stephanie York the address", "label": "single-action"}
+{"text": "Buy a new keyboard", "label": "single-action"}
+{"text": "Migrate the dashboard to AWS", "label": "project"}
+{"text": "Plan the the offsite retreat", "label": "project"}
+{"text": "Text Tyler Hill the agenda", "label": "single-action"}
+{"text": "Research and select a new 1Password", "label": "project"}
+{"text": "Look into Trello", "label": "single-action"}
+{"text": "Sign the draft", "label": "single-action"}
+{"text": "Order stamps online", "label": "single-action"}
+{"text": "Return extension cord to the grocery store", "label": "single-action"}
+{"text": "Coordinate a team lunch across the volunteers", "label": "project"}
+{"text": "Drop off groceries at New Brookefurt", "label": "single-action"}
+{"text": "Improve the the CRM", "label": "project"}
+{"text": "Update the due date in the database", "label": "single-action"}
+{"text": "Onboard Gloria Atkinson to the team", "label": "project"}
+{"text": "Deal with the display glitch", "label": "project"}
+{"text": "Write and publish the spec", "label": "project"}
+{"text": "Refill printer toner", "label": "single-action"}
+{"text": "Onboard Edward Novak to the team", "label": "project"}
+{"text": "Develop a strategy for the redesign", "label": "project"}
+{"text": "Drop off notebooks at the kitchen", "label": "single-action"}
+{"text": "Pick up printer paper from Best Buy", "label": "single-action"}
+{"text": "Sign the analysis", "label": "single-action"}
+{"text": "Sign the spreadsheet", "label": "single-action"}
+{"text": "Clean the guest room", "label": "single-action"}
+{"text": "Update the presentation", "label": "single-action"}
+{"text": "Handle the quarterly report for Jonathan Nelson", "label": "project"}
+{"text": "Develop a strategy for the hiring plan", "label": "project"}
+{"text": "Look into Airtable", "label": "single-action"}
+{"text": "Create a training program for the interns", "label": "project"}
+{"text": "Call Cheyenne Parsons", "label": "single-action"}
+{"text": "Book the annual picnic for next Thursday", "label": "single-action"}
+{"text": "Send the analysis to Shelley Cook", "label": "single-action"}
+{"text": "Get the guest room ready", "label": "project"}
+{"text": "Schedule a call with Tracy Phillips", "label": "single-action"}
+{"text": "Get the attic ready", "label": "project"}
+{"text": "Return packing tape to Staples", "label": "single-action"}
+{"text": "Plan a trip to Danielchester", "label": "project"}
+{"text": "Email Heather Sanders the analysis", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Book a dinner party for next Thursday", "label": "single-action"}
+{"text": "Email Heather Lane the memo", "label": "single-action"}
+{"text": "Prepare for the a client meeting", "label": "project"}
+{"text": "Improve the the website", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Refill printer toner", "label": "single-action"}
+{"text": "Deal with the leaky faucet", "label": "project"}
+{"text": "Print the design doc", "label": "single-action"}
+{"text": "Email Kaylee Hays the presentation", "label": "single-action"}
+{"text": "Clean the garage", "label": "single-action"}
+{"text": "Clean the garage", "label": "single-action"}
+{"text": "Deploy the mobile app to GCP", "label": "project"}
+{"text": "Lock the bathroom", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Build freelance consulting", "label": "project"}
+{"text": "Take care of the squeaky hinge", "label": "single-action"}
+{"text": "Look into Google Docs", "label": "single-action"}
+{"text": "Schedule a call with Brandon Gregory", "label": "single-action"}
+{"text": "Set up the dashboard for the team", "label": "project"}
+{"text": "Research the hiring plan", "label": "single-action"}
+{"text": "Get the attic ready", "label": "project"}
+{"text": "Complete the the product launch certification", "label": "project"}
+{"text": "Buy packing tape", "label": "single-action"}
+{"text": "Check the website for updates", "label": "single-action"}
+{"text": "Launch the mobile app", "label": "project"}
+{"text": "Move to a new the office", "label": "project"}
+{"text": "Refill printer toner", "label": "single-action"}
+{"text": "Organize the product demo for the team", "label": "project"}
+{"text": "Charge the groceries", "label": "single-action"}
+{"text": "File the contract in the CRM", "label": "single-action"}
+{"text": "Charge the extension cord", "label": "single-action"}
+{"text": "Charge the notebooks", "label": "single-action"}
+{"text": "Get the bedroom ready", "label": "project"}
+{"text": "Call Antonio Garcia", "label": "single-action"}
+{"text": "Call Erin Bishop", "label": "single-action"}
+{"text": "Approve the meeting notes", "label": "single-action"}
+{"text": "Schedule a call with Andrew Williams", "label": "single-action"}
+{"text": "Write and publish the report", "label": "project"}
+{"text": "Email Justin Nelson the memo", "label": "single-action"}
+{"text": "Check the portal for updates", "label": "single-action"}
+{"text": "Buy paint", "label": "single-action"}
+{"text": "Move to a new the storage closet", "label": "project"}
+{"text": "Book the product demo for next week", "label": "single-action"}
+{"text": "Coordinate a birthday party across the team", "label": "project"}
+{"text": "Research and select a new Obsidian", "label": "project"}
+{"text": "Organize a client meeting for the board", "label": "project"}
+{"text": "Build a side business", "label": "project"}
+{"text": "Improve the the CRM", "label": "project"}
+{"text": "Charge the a phone charger", "label": "single-action"}
+{"text": "Check the inventory tracker for updates", "label": "single-action"}
+{"text": "Book a workshop for this weekend", "label": "single-action"}
+{"text": "Onboard Christina Dunn to the team", "label": "project"}
+{"text": "Look into Google Docs", "label": "single-action"}
+{"text": "Pay $277 for envelopes", "label": "single-action"}
+{"text": "Pay $3,632 for extension cord", "label": "single-action"}
+{"text": "Take care of the stuck window", "label": "single-action"}
+{"text": "Download the proposal", "label": "single-action"}
+{"text": "Call Michele Stone", "label": "single-action"}
+{"text": "Call John Russell", "label": "single-action"}
+{"text": "File the invoice in the billing system", "label": "single-action"}
+{"text": "Deploy the plugin to Docker", "label": "project"}
+{"text": "Migrate the API to Azure", "label": "project"}
+{"text": "Sort out the redesign", "label": "project"}
+{"text": "Call Heidi Roberts", "label": "single-action"}
+{"text": "Research performance reviews", "label": "single-action"}
+{"text": "Pick up coffee filters from Best Buy", "label": "single-action"}
+{"text": "Check the backend for updates", "label": "single-action"}
+{"text": "Get the attic ready", "label": "project"}
+{"text": "Order hand soap online", "label": "single-action"}
+{"text": "Charge the coffee filters", "label": "single-action"}
+{"text": "Create a training program for the interns", "label": "project"}
+{"text": "Improve the the inventory tracker", "label": "project"}
+{"text": "Reply to Brenda Bailey's email", "label": "single-action"}
+{"text": "Coordinate the board meeting across the team", "label": "project"}
+{"text": "File the proposal in the billing system", "label": "single-action"}
+{"text": "Migrate the billing system to GCP", "label": "project"}
+{"text": "Approve the contract", "label": "single-action"}
+{"text": "Call Regina Mcdonald", "label": "single-action"}
+{"text": "Buy groceries", "label": "single-action"}
+{"text": "Plan a trip to the office", "label": "project"}
+{"text": "Pick up cleaning supplies from the hardware store", "label": "single-action"}
+{"text": "Call Cindy Carr", "label": "single-action"}
+{"text": "Move to a new the kitchen", "label": "project"}
+{"text": "Send the report to Laurie Li", "label": "single-action"}
+{"text": "Sort out the budget", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Sort out the hiring plan", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Prepare for the a workshop", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Call Kaylee Murphy", "label": "single-action"}
+{"text": "Deploy the new feature to Kubernetes", "label": "project"}
+{"text": "Prepare for the the quarterly review", "label": "project"}
+{"text": "Plan the the quarterly review", "label": "project"}
+{"text": "Build a YouTube channel", "label": "project"}
+{"text": "Coordinate the annual picnic across the team", "label": "project"}
+{"text": "Book the board meeting for Tuesday", "label": "single-action"}
+{"text": "Deploy the new feature to Azure", "label": "project"}
+{"text": "Buy groceries", "label": "single-action"}
+{"text": "Refill hand sanitizer", "label": "single-action"}
+{"text": "Clean the office", "label": "single-action"}
+{"text": "Pick up envelopes from the hardware store", "label": "single-action"}
+{"text": "Onboard Amy Crane to the team", "label": "project"}
+{"text": "Print the agenda", "label": "single-action"}
+{"text": "Launch the API update", "label": "project"}
+{"text": "Approve the spec", "label": "single-action"}
+{"text": "Charge the a gift card", "label": "single-action"}
+{"text": "Get the attic ready", "label": "project"}
+{"text": "Create a training program for the family", "label": "project"}
+{"text": "Improve the the portal", "label": "project"}
+{"text": "Sign the analysis", "label": "single-action"}
+{"text": "Launch the API update", "label": "project"}
+{"text": "Buy groceries", "label": "single-action"}
+{"text": "Complete the inventory counts certification", "label": "project"}
+{"text": "Call Mr. Lawrence Edwards", "label": "single-action"}
+{"text": "Coordinate a workshop across the committee", "label": "project"}
+{"text": "Pick up coffee filters from Best Buy", "label": "single-action"}
+{"text": "Update the due date in the API", "label": "single-action"}
+{"text": "Update the proposal", "label": "single-action"}
+{"text": "Lock the guest room", "label": "single-action"}
+{"text": "Create a training program for the team", "label": "project"}
+{"text": "Refill coffee pods", "label": "single-action"}
+{"text": "Lock the bedroom", "label": "single-action"}
+{"text": "Launch the mobile app", "label": "project"}
+{"text": "Update the priority in the billing system", "label": "single-action"}
+{"text": "Deploy the redesigned dashboard to GCP", "label": "project"}
+{"text": "Redesign the website", "label": "project"}
+{"text": "Print the draft", "label": "single-action"}
+{"text": "Implement the export function", "label": "project"}
+{"text": "Pay $4,067 for groceries", "label": "single-action"}
+{"text": "Launch the redesigned dashboard", "label": "project"}
+{"text": "Look into Trello", "label": "single-action"}
+{"text": "Complete the the marketing strategy certification", "label": "project"}
+{"text": "Plan a trip to the conference room", "label": "project"}
+{"text": "Sort out the vendor agreement", "label": "project"}
+{"text": "Check the database for updates", "label": "single-action"}
+{"text": "Onboard Donald Walker to the team", "label": "project"}
+{"text": "Lock the kitchen", "label": "single-action"}
+{"text": "Migrate the server to Kubernetes", "label": "project"}
+{"text": "Sort out the rollout plan", "label": "project"}
+{"text": "Complete the the marketing strategy certification", "label": "project"}
+{"text": "Migrate the database to AWS", "label": "project"}
+{"text": "Refill paper towels", "label": "single-action"}
+{"text": "Onboard Sharon James to the team", "label": "project"}
+{"text": "Deal with the alignment problem", "label": "project"}
+{"text": "Move to a new the living room", "label": "project"}
+{"text": "Return envelopes to Staples", "label": "single-action"}
+{"text": "Email Paul Wilson the contract", "label": "single-action"}
+{"text": "Set up the backend for the team", "label": "project"}
+{"text": "Renovate the bathroom", "label": "project"}
+{"text": "Approve the meeting notes", "label": "single-action"}
+{"text": "Migrate the backend to Docker", "label": "project"}
+{"text": "Deploy version 2.0 to Kubernetes", "label": "project"}
+{"text": "Plan a trip to the kitchen", "label": "project"}
+{"text": "Research and select a new the password manager", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Renovate the living room", "label": "project"}
+{"text": "Renovate the kitchen", "label": "project"}
+{"text": "Handle the contract renewal for Rachel Lopez", "label": "project"}
+{"text": "Redesign the app", "label": "project"}
+{"text": "Reply to Elizabeth Spence DDS's email", "label": "single-action"}
+{"text": "Handle the budget for Jason Elliott", "label": "project"}
+{"text": "Write and publish the analysis", "label": "project"}
+{"text": "Take care of the cracked tile", "label": "single-action"}
+{"text": "Call Laura Higgins", "label": "single-action"}
+{"text": "Send the summary to Aimee Turner", "label": "single-action"}
+{"text": "Lock the basement", "label": "single-action"}
+{"text": "Sort out performance reviews", "label": "project"}
+{"text": "Move to a new Port Melindaburgh", "label": "project"}
+{"text": "Update the address in the billing system", "label": "single-action"}
+{"text": "Coordinate a training session across the family", "label": "project"}
+{"text": "Check the database for updates", "label": "single-action"}
+{"text": "Deal with the crash", "label": "project"}
+{"text": "Approve the agenda", "label": "single-action"}
+{"text": "Organize a birthday party for the department", "label": "project"}
+{"text": "Buy groceries", "label": "single-action"}
+{"text": "Book a birthday party for this weekend", "label": "single-action"}
+{"text": "Text Curtis Williams the time", "label": "single-action"}
+{"text": "Look into Figma", "label": "single-action"}
+{"text": "Plan the the board meeting", "label": "project"}
+{"text": "Call Timothy Dawson", "label": "single-action"}
+{"text": "Schedule a call with Kaitlyn Charles", "label": "single-action"}
+{"text": "File the brief in the server", "label": "single-action"}
+{"text": "Research and select a new Google Docs", "label": "project"}
+{"text": "Improve the the dashboard", "label": "project"}
+{"text": "Renovate the garage", "label": "project"}
+{"text": "Build an online course", "label": "project"}
+{"text": "Build a YouTube channel", "label": "project"}
+{"text": "Overhaul the the database", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Create a training program for the team", "label": "project"}
+{"text": "Book the board meeting for next week", "label": "single-action"}
+{"text": "Organize a dinner party for the board", "label": "project"}
+{"text": "Handle the marketing strategy for Victoria Kennedy", "label": "project"}
+{"text": "Prepare for the the weekly standup", "label": "project"}
+{"text": "Build a side business", "label": "project"}
+{"text": "Plan the a workshop", "label": "project"}
+{"text": "Set up the billing system for the team", "label": "project"}
+{"text": "Implement notifications", "label": "project"}
+{"text": "Refill snacks", "label": "single-action"}
+{"text": "Approve the draft", "label": "single-action"}
+{"text": "Update the due date in the API", "label": "single-action"}
+{"text": "Order a new keyboard online", "label": "single-action"}
+{"text": "Research and select a new Figma", "label": "project"}
+{"text": "Organize the board meeting for the interns", "label": "project"}
+{"text": "Coordinate the board meeting across the department", "label": "project"}
+{"text": "Sort out inventory counts", "label": "project"}
+{"text": "Renovate the bedroom", "label": "project"}
+{"text": "Research the vendor agreement", "label": "single-action"}
+{"text": "Pick up cleaning supplies from Walmart", "label": "single-action"}
+{"text": "Sign the agenda", "label": "single-action"}
+{"text": "Update the meeting notes", "label": "single-action"}
+{"text": "Download the brief", "label": "single-action"}
 {"text": "Research the redesign", "label": "single-action"}
 {"text": "Water the plants", "label": "single-action"}
-{"text": "Hire a new Banker", "label": "project"}
-{"text": "Download the analysis", "label": "single-action"}
-{"text": "Lock the basement", "label": "single-action"}
-{"text": "Lock the bathroom", "label": "single-action"}
-{"text": "Prepare for the a team lunch", "label": "project"}
-{"text": "Hire a new Cartographer", "label": "project"}
-{"text": "Plan the the annual picnic", "label": "project"}
-{"text": "Look into Slack", "label": "single-action"}
-{"text": "Prepare for the the annual picnic", "label": "project"}
-{"text": "Order hand soap online", "label": "single-action"}
-{"text": "File the memo in the server", "label": "single-action"}
-{"text": "Return a new keyboard to the hardware store", "label": "single-action"}
-{"text": "Book a team lunch for Friday", "label": "single-action"}
-{"text": "Take care of the squeaky hinge", "label": "single-action"}
-{"text": "Research and select a new Basecamp", "label": "project"}
-{"text": "Order stamps online", "label": "single-action"}
-{"text": "Develop a strategy for compliance requirements", "label": "project"}
-{"text": "Deploy the new feature to Azure", "label": "project"}
-{"text": "Plan the a dinner party", "label": "project"}
-{"text": "Establish a process for compliance requirements", "label": "project"}
-{"text": "Check the billing system for updates", "label": "single-action"}
-{"text": "Handle the hiring plan for Shannon Jones", "label": "project"}
-{"text": "Send the draft to Mark Conner", "label": "single-action"}
-{"text": "Migrate the backend to Vercel", "label": "project"}
-{"text": "Lock the den", "label": "single-action"}
-{"text": "Refill sticky notes", "label": "single-action"}
-{"text": "Handle the vendor agreement for Savannah Garcia", "label": "project"}
-{"text": "Develop a strategy for the project timeline", "label": "project"}
-{"text": "Move to a new the living room", "label": "project"}
-{"text": "Return a new monitor to Walmart", "label": "single-action"}
-{"text": "Research and select a new the password manager", "label": "project"}
-{"text": "Launch version 2.0", "label": "project"}
-{"text": "Sign the analysis", "label": "single-action"}
-{"text": "Order light bulbs online", "label": "single-action"}
-{"text": "Create a training program for the committee", "label": "project"}
-{"text": "Update the proposal", "label": "single-action"}
-{"text": "Schedule a call with Kim Martinez", "label": "single-action"}
-{"text": "Sign the summary", "label": "single-action"}
-{"text": "Set up the new the front desk office", "label": "project"}
-{"text": "Deal with the login bug", "label": "project"}
-{"text": "Check the API for updates", "label": "single-action"}
-{"text": "Plan a trip to the conference room", "label": "project"}
-{"text": "Plan a trip to the conference room", "label": "project"}
-{"text": "Clean the living room", "label": "single-action"}
-{"text": "Move to a new the conference room", "label": "project"}
-{"text": "Approve the analysis", "label": "single-action"}
-{"text": "Download the presentation", "label": "single-action"}
-{"text": "Sort out the product launch", "label": "project"}
-{"text": "Deploy the plugin to Kubernetes", "label": "project"}
-{"text": "Build a side business", "label": "project"}
-{"text": "Renovate the attic", "label": "project"}
-{"text": "Improve the the server", "label": "project"}
-{"text": "Write and publish the analysis", "label": "project"}
-{"text": "Sort out the product launch", "label": "project"}
-{"text": "Book the annual picnic for the 20th", "label": "single-action"}
-{"text": "Overhaul the the CRM", "label": "project"}
-{"text": "Plan the a workshop", "label": "project"}
-{"text": "Schedule a call with Mark Perez", "label": "single-action"}
-{"text": "Return hand soap to Target", "label": "single-action"}
-{"text": "Charge the printer paper", "label": "single-action"}
-{"text": "Build a YouTube channel", "label": "project"}
-{"text": "Email Amy Valdez the brief", "label": "single-action"}
-{"text": "Clean the living room", "label": "single-action"}
-{"text": "File the memo in the app", "label": "single-action"}
-{"text": "Update the address in the database", "label": "single-action"}
-{"text": "Pick up extension cord from Office Depot", "label": "single-action"}
+{"text": "Migrate the backend to GCP", "label": "project"}
+{"text": "Migrate the API to Docker", "label": "project"}
+{"text": "Update the meeting notes", "label": "single-action"}
+{"text": "Look into Linear", "label": "single-action"}
+{"text": "Coordinate the weekly standup across the family", "label": "project"}
+{"text": "Send the report to Jessica Norris", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Research the product launch", "label": "single-action"}
+{"text": "Remodel the bathroom", "label": "project"}
+{"text": "Refill snacks", "label": "single-action"}
+{"text": "Download the spreadsheet", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Book a workshop for tomorrow", "label": "single-action"}
 {"text": "Overhaul the the server", "label": "project"}
-{"text": "Text Patricia Peterson the confirmation number", "label": "single-action"}
-{"text": "Check the inventory tracker for updates", "label": "single-action"}
-{"text": "Get the attic ready", "label": "project"}
+{"text": "Print the brief", "label": "single-action"}
+{"text": "Improve the the website", "label": "project"}
+{"text": "Overhaul the the database", "label": "project"}
+{"text": "Renovate the guest room", "label": "project"}
+{"text": "Email Nichole Walker the presentation", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Implement user profiles", "label": "project"}
+{"text": "Call Marcus Winters", "label": "single-action"}
+{"text": "Research and select a new Obsidian", "label": "project"}
+{"text": "Deploy version 2.0 to Azure", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Check the dashboard for updates", "label": "single-action"}
+{"text": "Sort out the hiring plan", "label": "project"}
+{"text": "Email Rachel Holland the report", "label": "single-action"}
+{"text": "Sort out the quarterly report", "label": "project"}
+{"text": "Plan the the annual picnic", "label": "project"}
+{"text": "Sign the brief", "label": "single-action"}
+{"text": "Set up the website for the team", "label": "project"}
+{"text": "Order paint online", "label": "single-action"}
+{"text": "Download the analysis", "label": "single-action"}
+{"text": "File the spec in the billing system", "label": "single-action"}
+{"text": "Complete the the migration certification", "label": "project"}
+{"text": "Return a new keyboard to CVS", "label": "single-action"}
+{"text": "Check the API for updates", "label": "single-action"}
+{"text": "Pick up envelopes from Amazon", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Organize a dinner party for the committee", "label": "project"}
+{"text": "Update the price in the billing system", "label": "single-action"}
+{"text": "Coordinate the weekly standup across the family", "label": "project"}
+{"text": "Approve the spec", "label": "single-action"}
+{"text": "Sign the meeting notes", "label": "single-action"}
+{"text": "Lock the attic", "label": "single-action"}
+{"text": "Develop a strategy for the quarterly report", "label": "project"}
+{"text": "Complete the the hiring plan certification", "label": "project"}
+{"text": "Handle the hiring plan for Kimberly Brown", "label": "project"}
+{"text": "Charge the paint", "label": "single-action"}
+{"text": "Move to a new the garage", "label": "project"}
+{"text": "Buy cleaning supplies", "label": "single-action"}
+{"text": "Book a training session for Tuesday", "label": "single-action"}
+{"text": "Create a training program for the volunteers", "label": "project"}
+{"text": "Coordinate a training session across the board", "label": "project"}
+{"text": "Handle the migration for Steven Griffin Jr.", "label": "project"}
+{"text": "Sign the proposal", "label": "single-action"}
+{"text": "Handle the hiring plan for Melissa Fowler", "label": "project"}
+{"text": "Migrate the CRM to GCP", "label": "project"}
+{"text": "Call Nathaniel Douglas", "label": "single-action"}
+{"text": "Complete the compliance requirements certification", "label": "project"}
+{"text": "Approve the spec", "label": "single-action"}
+{"text": "Hire a new Cartographer", "label": "project"}
+{"text": "Buy coffee filters", "label": "single-action"}
+{"text": "Charge the a new monitor", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Remodel the attic", "label": "project"}
+{"text": "Sort out the marketing strategy", "label": "project"}
+{"text": "Download the proposal", "label": "single-action"}
+{"text": "Onboard Ashley Waller to the team", "label": "project"}
+{"text": "Book the offsite retreat for March 15", "label": "single-action"}
+{"text": "Implement the search feature", "label": "project"}
+{"text": "Establish a process for the hiring plan", "label": "project"}
+{"text": "Migrate the CRM to GCP", "label": "project"}
+{"text": "Take care of the loose shelf", "label": "single-action"}
+{"text": "Lock the guest room", "label": "single-action"}
+{"text": "Look into the password manager", "label": "single-action"}
+{"text": "Develop a strategy for performance reviews", "label": "project"}
+{"text": "Get the office ready", "label": "project"}
+{"text": "Buy a new keyboard", "label": "single-action"}
+{"text": "Print the summary", "label": "single-action"}
+{"text": "Update the price in the inventory tracker", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Research the quarterly report", "label": "single-action"}
+{"text": "Plan a trip to the front desk", "label": "project"}
+{"text": "Launch the plugin", "label": "project"}
+{"text": "Deal with the slow query", "label": "project"}
+{"text": "Build a podcast", "label": "project"}
+{"text": "Remodel the office", "label": "project"}
+{"text": "Set up the backend for the team", "label": "project"}
+{"text": "Clean the den", "label": "single-action"}
+{"text": "Lock the garage", "label": "single-action"}
+{"text": "Text Gerald Chavez the meeting link", "label": "single-action"}
+{"text": "Set up the backend for the team", "label": "project"}
+{"text": "Overhaul the the inventory tracker", "label": "project"}
+{"text": "Launch version 2.0", "label": "project"}
+{"text": "Return a gift card to the grocery store", "label": "single-action"}
+{"text": "Pick up a phone charger from Costco", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Move to a new the warehouse", "label": "project"}
+{"text": "Organize the product demo for the family", "label": "project"}
+{"text": "Deploy the mobile app to Docker", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Return coffee filters to CVS", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Hire a new Chartered legal executive (England and Wales)", "label": "project"}
+{"text": "Move to a new the lobby", "label": "project"}
+{"text": "Email Damon Shaw the summary", "label": "single-action"}
+{"text": "Research and select a new Basecamp", "label": "project"}
+{"text": "Renovate the attic", "label": "project"}
+{"text": "Order a phone charger online", "label": "single-action"}
+{"text": "Create a training program for the committee", "label": "project"}
+{"text": "Plan the a birthday party", "label": "project"}
+{"text": "Handle the redesign for Melanie Larson", "label": "project"}
+{"text": "Order envelopes online", "label": "single-action"}
+{"text": "Schedule a call with Charles Schmidt", "label": "single-action"}
+{"text": "Update the status in the backend", "label": "single-action"}
+{"text": "Buy coffee filters", "label": "single-action"}
+{"text": "Hire a new Community development worker", "label": "project"}
+{"text": "Overhaul the the CRM", "label": "project"}
+{"text": "Prepare for the a training session", "label": "project"}
+{"text": "Clean the den", "label": "single-action"}
+{"text": "Send the presentation to Robin Thompson", "label": "single-action"}
+{"text": "Coordinate the offsite retreat across the volunteers", "label": "project"}
+{"text": "Handle the redesign for Julie Moore", "label": "project"}
+{"text": "Create a training program for the family", "label": "project"}
+{"text": "Clean the basement", "label": "single-action"}
+{"text": "Overhaul the the portal", "label": "project"}
+{"text": "Develop a strategy for the redesign", "label": "project"}
+{"text": "Deal with the login bug", "label": "project"}
+{"text": "File the invoice in the billing system", "label": "single-action"}
+{"text": "Look into Google Docs", "label": "single-action"}
+{"text": "Take care of the stuck window", "label": "single-action"}
+{"text": "Coordinate the offsite retreat across the volunteers", "label": "project"}
+{"text": "Plan the a dinner party", "label": "project"}
+{"text": "Onboard Matthew Cunningham to the team", "label": "project"}
+{"text": "Deal with the routing issue", "label": "project"}
+{"text": "Improve the the billing system", "label": "project"}
+{"text": "Book the product demo for Tuesday", "label": "single-action"}
+{"text": "Establish a process for the product launch", "label": "project"}
+{"text": "Return a new monitor to the hardware store", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Establish a process for compliance requirements", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Drop off a new monitor at the garage", "label": "single-action"}
+{"text": "Research and select a new Monday.com", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Set up the new the front desk office", "label": "project"}
+{"text": "Research the vendor agreement", "label": "single-action"}
+{"text": "Establish a process for the migration", "label": "project"}
+{"text": "Plan the a workshop", "label": "project"}
+{"text": "Build freelance consulting", "label": "project"}
+{"text": "Prepare for the the product demo", "label": "project"}
+{"text": "Update the spec", "label": "single-action"}
+{"text": "Refill coffee pods", "label": "single-action"}
+{"text": "Improve the the dashboard", "label": "project"}
+{"text": "Overhaul the the app", "label": "project"}
+{"text": "Text Jesse Santiago the meeting link", "label": "single-action"}
+{"text": "Deploy the API update to Docker", "label": "project"}
+{"text": "Implement the search feature", "label": "project"}
+{"text": "Launch the API update", "label": "project"}
+{"text": "Improve the the app", "label": "project"}
+{"text": "Get the office ready", "label": "project"}
+{"text": "Refill whiteboard markers", "label": "single-action"}
+{"text": "Email Theresa Barnes the brief", "label": "single-action"}
+{"text": "Schedule a call with Brittany Perry", "label": "single-action"}
+{"text": "Set up the new West Andrea office", "label": "project"}
+{"text": "Redesign the database", "label": "project"}
+{"text": "Implement notifications", "label": "project"}
+{"text": "Launch the new feature", "label": "project"}
+{"text": "Plan a trip to South David", "label": "project"}
+{"text": "Onboard Brent Jordan to the team", "label": "project"}
+{"text": "Renovate the garage", "label": "project"}
+{"text": "Sort out the hiring plan", "label": "project"}
+{"text": "Sort out the quarterly report", "label": "project"}
+{"text": "Move to a new Samuelfort", "label": "project"}
+{"text": "Take care of the stuck window", "label": "single-action"}
+{"text": "Move to a new the server room", "label": "project"}
+{"text": "Create a training program for the interns", "label": "project"}
+{"text": "Remodel the office", "label": "project"}
+{"text": "Build a podcast", "label": "project"}
+{"text": "Research and select a new Google Docs", "label": "project"}
+{"text": "Establish a process for the product launch", "label": "project"}
+{"text": "Return coffee filters to the hardware store", "label": "single-action"}
+{"text": "Check the portal for updates", "label": "single-action"}
+{"text": "Check the backend for updates", "label": "single-action"}
+{"text": "Update the contact info in the portal", "label": "single-action"}
+{"text": "Pay $4,281 for batteries", "label": "single-action"}
+{"text": "Print the memo", "label": "single-action"}
+{"text": "Overhaul the the billing system", "label": "project"}
+{"text": "Research and select a new Linear", "label": "project"}
+{"text": "Remodel the bathroom", "label": "project"}
+{"text": "Plan the the quarterly review", "label": "project"}
+{"text": "Text Meagan Calderon the meeting link", "label": "single-action"}
+{"text": "Migrate the database to GCP", "label": "project"}
+{"text": "Drop off batteries at the warehouse", "label": "single-action"}
+{"text": "Text Donna Mitchell the confirmation number", "label": "single-action"}
+{"text": "Order a new monitor online", "label": "single-action"}
+{"text": "Reply to Chelsea Barnett's email", "label": "single-action"}
+{"text": "Plan the the annual picnic", "label": "project"}
+{"text": "Launch the API update", "label": "project"}
+{"text": "Book the board meeting for Friday", "label": "single-action"}
+{"text": "Refill paper towels", "label": "single-action"}
+{"text": "Return a phone charger to CVS", "label": "single-action"}
+{"text": "Hire a new Clinical cytogeneticist", "label": "project"}
+{"text": "Onboard Jon Bates to the team", "label": "project"}
+{"text": "Remodel the bedroom", "label": "project"}
+{"text": "Pay $4,092 for groceries", "label": "single-action"}
+{"text": "Launch the plugin", "label": "project"}
+{"text": "Develop a strategy for inventory counts", "label": "project"}
+{"text": "Clean the attic", "label": "single-action"}
+{"text": "Establish a process for the proposal", "label": "project"}
+{"text": "Print the analysis", "label": "single-action"}
+{"text": "Onboard Pamela James to the team", "label": "project"}
+{"text": "Improve the the app", "label": "project"}
+{"text": "Move to a new the living room", "label": "project"}
+{"text": "Remodel the bathroom", "label": "project"}
+{"text": "Drop off batteries at the storage closet", "label": "single-action"}
+{"text": "Buy hand soap", "label": "single-action"}
+{"text": "Handle the budget for Megan Parker", "label": "project"}
+{"text": "Pay $3,821 for printer paper", "label": "single-action"}
+{"text": "Refill whiteboard markers", "label": "single-action"}
+{"text": "Approve the contract", "label": "single-action"}
+{"text": "Establish a process for the budget", "label": "project"}
+{"text": "Hire a new Tax adviser", "label": "project"}
+{"text": "Clean the attic", "label": "single-action"}
+{"text": "Plan the a team lunch", "label": "project"}
+{"text": "Complete the the migration certification", "label": "project"}
+{"text": "Plan the a client meeting", "label": "project"}
+{"text": "Take care of the broken doorknob", "label": "single-action"}
+{"text": "Implement dark mode", "label": "project"}
+{"text": "Buy a new monitor", "label": "single-action"}
+{"text": "Call Rebecca Jackson", "label": "single-action"}
+{"text": "Move to a new the patio", "label": "project"}
+{"text": "Pick up packing tape from CVS", "label": "single-action"}
+{"text": "Research the marketing strategy", "label": "single-action"}
+{"text": "Check the database for updates", "label": "single-action"}
+{"text": "Reply to Raymond Thomas's email", "label": "single-action"}
+{"text": "Approve the memo", "label": "single-action"}
+{"text": "Charge the a new monitor", "label": "single-action"}
+{"text": "Write and publish the meeting notes", "label": "project"}
+{"text": "Migrate the website to Vercel", "label": "project"}
+{"text": "Pay $1,677 for batteries", "label": "single-action"}
+{"text": "Email Sonia Day the brief", "label": "single-action"}
+{"text": "Plan a trip to the storage closet", "label": "project"}
+{"text": "Approve the agenda", "label": "single-action"}
+{"text": "Drop off stamps at the front desk", "label": "single-action"}
+{"text": "Get the guest room ready", "label": "project"}
+{"text": "Develop a strategy for compliance requirements", "label": "project"}
+{"text": "Call Donna Berry", "label": "single-action"}
+{"text": "Redesign the billing system", "label": "project"}
+{"text": "Create a training program for the board", "label": "project"}
+{"text": "Redesign the API", "label": "project"}
+{"text": "Overhaul the the CRM", "label": "project"}
+{"text": "Reply to Meghan Rush's email", "label": "single-action"}
+{"text": "Drop off printer paper at the kitchen", "label": "single-action"}
+{"text": "Deal with the permission error", "label": "project"}
+{"text": "Schedule a call with Brett Espinoza", "label": "single-action"}
+{"text": "Complete the the rollout plan certification", "label": "project"}
+{"text": "Send the draft to Richard Palmer", "label": "single-action"}
+{"text": "Deploy the new feature to AWS", "label": "project"}
+{"text": "Check the backend for updates", "label": "single-action"}
+{"text": "Set up the new New Hannahbury office", "label": "project"}
+{"text": "Order cleaning supplies online", "label": "single-action"}
+{"text": "Return a gift card to Target", "label": "single-action"}
+{"text": "Develop a strategy for compliance requirements", "label": "project"}
+{"text": "Charge the a gift card", "label": "single-action"}
+{"text": "Print the agenda", "label": "single-action"}
+{"text": "Take care of the running toilet", "label": "single-action"}
+{"text": "Deploy the new feature to GCP", "label": "project"}
+{"text": "Buy a new keyboard", "label": "single-action"}
+{"text": "Return light bulbs to the hardware store", "label": "single-action"}
+{"text": "Complete the the redesign certification", "label": "project"}
+{"text": "Hire a new Advertising account planner", "label": "project"}
+{"text": "Research and select a new 1Password", "label": "project"}
+{"text": "Text Samantha Davis the directions", "label": "single-action"}
+{"text": "Return batteries to the hardware store", "label": "single-action"}
+{"text": "Sort out the quarterly report", "label": "project"}
+{"text": "Send the meeting notes to Thomas Williams", "label": "single-action"}
+{"text": "Redesign the portal", "label": "project"}
+{"text": "Complete the compliance requirements certification", "label": "project"}
+{"text": "Create a training program for the volunteers", "label": "project"}
+{"text": "Reply to Carlos Browning's email", "label": "single-action"}
+{"text": "Pay $2,994 for a new monitor", "label": "single-action"}
+{"text": "Complete the the project timeline certification", "label": "project"}
+{"text": "Download the agenda", "label": "single-action"}
+{"text": "Pick up extension cord from IKEA", "label": "single-action"}
+{"text": "Launch the redesigned dashboard", "label": "project"}
+{"text": "Reply to Julie Dominguez's email", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Update the report", "label": "single-action"}
+{"text": "Reply to Kristen Salazar's email", "label": "single-action"}
+{"text": "Lock the garage", "label": "single-action"}
+{"text": "Set up the new the storage closet office", "label": "project"}
+{"text": "Plan the the board meeting", "label": "project"}
+{"text": "Approve the report", "label": "single-action"}
+{"text": "Set up the new the front desk office", "label": "project"}
+{"text": "Handle the migration for Steven West", "label": "project"}
+{"text": "Prepare for the a client meeting", "label": "project"}
+{"text": "Deploy the redesigned dashboard to Docker", "label": "project"}
+{"text": "Reply to Marie Wilson's email", "label": "single-action"}
+{"text": "Research the budget", "label": "single-action"}
+{"text": "Organize the annual picnic for the department", "label": "project"}
+{"text": "Hire a new Geographical information systems officer", "label": "project"}
+{"text": "Coordinate a team lunch across the department", "label": "project"}
+{"text": "Research inventory counts", "label": "single-action"}
+{"text": "Get the garage ready", "label": "project"}
+{"text": "Update the address in the database", "label": "single-action"}
+{"text": "Pay $3,358 for notebooks", "label": "single-action"}
+{"text": "Sign the brief", "label": "single-action"}
+{"text": "Overhaul the the billing system", "label": "project"}
+{"text": "Email Michael Cooper the proposal", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Call John Welch", "label": "single-action"}
+{"text": "Prepare for the a dinner party", "label": "project"}
+{"text": "Look into Obsidian", "label": "single-action"}
+{"text": "Send the contract to Gwendolyn Klein", "label": "single-action"}
+{"text": "Research and select a new Slack", "label": "project"}
+{"text": "Pay $4,818 for envelopes", "label": "single-action"}
+{"text": "Research performance reviews", "label": "single-action"}
+{"text": "Set up the billing system for the team", "label": "project"}
+{"text": "Lock the basement", "label": "single-action"}
+{"text": "Improve the the billing system", "label": "project"}
+{"text": "Clean the guest room", "label": "single-action"}
+{"text": "Get the office ready", "label": "project"}
+{"text": "Sort out the quarterly report", "label": "project"}
+{"text": "Plan the a team lunch", "label": "project"}
+{"text": "File the spreadsheet in the dashboard", "label": "single-action"}
+{"text": "Coordinate the quarterly review across the family", "label": "project"}
+{"text": "Book the quarterly review for next week", "label": "single-action"}
+{"text": "File the spreadsheet in the API", "label": "single-action"}
+{"text": "Remodel the garage", "label": "project"}
+{"text": "Remodel the attic", "label": "project"}
+{"text": "Migrate the website to Kubernetes", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Establish a process for performance reviews", "label": "project"}
+{"text": "Update the priority in the app", "label": "single-action"}
+{"text": "Set up the new the patio office", "label": "project"}
+{"text": "Develop a strategy for the hiring plan", "label": "project"}
+{"text": "Improve the the CRM", "label": "project"}
+{"text": "Buy notebooks", "label": "single-action"}
+{"text": "Set up the CRM for the team", "label": "project"}
+{"text": "Handle the budget for Rebecca Petersen", "label": "project"}
+{"text": "Print the draft", "label": "single-action"}
+{"text": "Schedule a call with Lawrence Harrington", "label": "single-action"}
+{"text": "Book a team lunch for next week", "label": "single-action"}
+{"text": "Move to a new the conference room", "label": "project"}
+{"text": "Create a training program for the committee", "label": "project"}
+{"text": "Charge the packing tape", "label": "single-action"}
+{"text": "Handle the contract renewal for Michael Love", "label": "project"}
+{"text": "Research the migration", "label": "single-action"}
+{"text": "Drop off batteries at the patio", "label": "single-action"}
+{"text": "Onboard Gina Moore to the team", "label": "project"}
 {"text": "Deploy the plugin to Vercel", "label": "project"}
-{"text": "Research and select a new Notion", "label": "project"}
+{"text": "Develop a strategy for the rollout plan", "label": "project"}
+{"text": "Deal with the broken link", "label": "project"}
+{"text": "Approve the proposal", "label": "single-action"}
+{"text": "Email Dr. Michele Vaughn the report", "label": "single-action"}
+{"text": "Redesign the API", "label": "project"}
+{"text": "Deploy the API update to AWS", "label": "project"}
+{"text": "Get the bedroom ready", "label": "project"}
+{"text": "Prepare for the the board meeting", "label": "project"}
+{"text": "File the presentation in the database", "label": "single-action"}
+{"text": "Take care of the leaky faucet", "label": "single-action"}
+{"text": "Download the design doc", "label": "single-action"}
+{"text": "Schedule a call with Angela Schultz", "label": "single-action"}
+{"text": "Clean the garage", "label": "single-action"}
+{"text": "Schedule a call with Matthew Walker", "label": "single-action"}
+{"text": "Research and select a new Jira", "label": "project"}
+{"text": "Prepare for the the offsite retreat", "label": "project"}
+{"text": "Implement notifications", "label": "project"}
+{"text": "Text Megan Moore the meeting link", "label": "single-action"}
+{"text": "Sort out the hiring plan", "label": "project"}
+{"text": "Remodel the den", "label": "project"}
+{"text": "Onboard Gregory Jones to the team", "label": "project"}
+{"text": "Lock the attic", "label": "single-action"}
+{"text": "Prepare for the the board meeting", "label": "project"}
+{"text": "Research and select a new 1Password", "label": "project"}
+{"text": "Order envelopes online", "label": "single-action"}
+{"text": "Call Charles Tyler", "label": "single-action"}
+{"text": "Set up the backend for the team", "label": "project"}
+{"text": "Handle the marketing strategy for Levi Fowler", "label": "project"}
+{"text": "Build a YouTube channel", "label": "project"}
+{"text": "Schedule a call with Kathryn Herrera", "label": "single-action"}
+{"text": "Deploy the new feature to Azure", "label": "project"}
+{"text": "Check the server for updates", "label": "single-action"}
+{"text": "Call Austin Osborne", "label": "single-action"}
+{"text": "Text Edwin David the meeting link", "label": "single-action"}
+{"text": "Take care of the cracked tile", "label": "single-action"}
+{"text": "Drop off groceries at the kitchen", "label": "single-action"}
+{"text": "Check the CRM for updates", "label": "single-action"}
+{"text": "Set up the new the garage office", "label": "project"}
+{"text": "Lock the basement", "label": "single-action"}
+{"text": "Complete the the hiring plan certification", "label": "project"}
+{"text": "Look into Slack", "label": "single-action"}
+{"text": "Clean the basement", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Send the contract to Carla Ewing", "label": "single-action"}
+{"text": "Organize the board meeting for the team", "label": "project"}
+{"text": "Update the invoice", "label": "single-action"}
+{"text": "File the presentation in the billing system", "label": "single-action"}
+{"text": "Call Christopher Lewis", "label": "single-action"}
+{"text": "Write and publish the brief", "label": "project"}
+{"text": "Plan a trip to the front desk", "label": "project"}
+{"text": "Plan a trip to the patio", "label": "project"}
+{"text": "Book the weekly standup for Friday", "label": "single-action"}
+{"text": "Call Tracy Bishop", "label": "single-action"}
+{"text": "Set up the new the warehouse office", "label": "project"}
+{"text": "Remodel the attic", "label": "project"}
+{"text": "Print the summary", "label": "single-action"}
+{"text": "Approve the memo", "label": "single-action"}
+{"text": "Approve the draft", "label": "single-action"}
+{"text": "Improve the the billing system", "label": "project"}
+{"text": "Call Eugene Higgins", "label": "single-action"}
+{"text": "Pay $1,945 for groceries", "label": "single-action"}
+{"text": "Sign the proposal", "label": "single-action"}
+{"text": "Renovate the den", "label": "project"}
+{"text": "Coordinate the offsite retreat across the interns", "label": "project"}
+{"text": "Take care of the leaky faucet", "label": "single-action"}
+{"text": "Pay $4,720 for hand soap", "label": "single-action"}
+{"text": "Schedule a call with Jessica Stevens", "label": "single-action"}
+{"text": "Look into 1Password", "label": "single-action"}
+{"text": "Charge the groceries", "label": "single-action"}
+{"text": "Launch the mobile app", "label": "project"}
+{"text": "Research the migration", "label": "single-action"}
+{"text": "Order notebooks online", "label": "single-action"}
+{"text": "Renovate the guest room", "label": "project"}
+{"text": "Plan a trip to the office", "label": "project"}
+{"text": "Plan the the quarterly review", "label": "project"}
+{"text": "Organize a dinner party for the team", "label": "project"}
+{"text": "Create a training program for the board", "label": "project"}
+{"text": "Migrate the CRM to AWS", "label": "project"}
+{"text": "Research the migration", "label": "single-action"}
+{"text": "Refill coffee pods", "label": "single-action"}
+{"text": "Email Richard Young the agenda", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Approve the invoice", "label": "single-action"}
+{"text": "Pick up envelopes from CVS", "label": "single-action"}
+{"text": "Onboard Dustin Nelson to the team", "label": "project"}
+{"text": "Implement notifications", "label": "project"}
+{"text": "Improve the the dashboard", "label": "project"}
+{"text": "Update the presentation", "label": "single-action"}
+{"text": "Launch the new feature", "label": "project"}
+{"text": "File the summary in the portal", "label": "single-action"}
+{"text": "Send the memo to Amanda Wood", "label": "single-action"}
+{"text": "Deal with the display glitch", "label": "project"}
+{"text": "Establish a process for the product launch", "label": "project"}
+{"text": "Overhaul the the portal", "label": "project"}
+{"text": "Onboard William Tran to the team", "label": "project"}
+{"text": "Coordinate a dinner party across the volunteers", "label": "project"}
+{"text": "Sort out the project timeline", "label": "project"}
+{"text": "Hire a new Broadcast presenter", "label": "project"}
+{"text": "File the memo in the backend", "label": "single-action"}
+{"text": "Drop off light bulbs at the office", "label": "single-action"}
+{"text": "Write and publish the design doc", "label": "project"}
+{"text": "Print the summary", "label": "single-action"}
+{"text": "Take care of the running toilet", "label": "single-action"}
+{"text": "File the summary in the portal", "label": "single-action"}
+{"text": "Organize a client meeting for the volunteers", "label": "project"}
+{"text": "Clean the den", "label": "single-action"}
+{"text": "Check the database for updates", "label": "single-action"}
+{"text": "Pay $1,136 for a gift card", "label": "single-action"}
+{"text": "Get the guest room ready", "label": "project"}
+{"text": "Write and publish the contract", "label": "project"}
+{"text": "Move to a new Patricialand", "label": "project"}
+{"text": "Set up the CRM for the team", "label": "project"}
+{"text": "Move to a new the patio", "label": "project"}
+{"text": "Book the annual picnic for Tuesday", "label": "single-action"}
+{"text": "Return hand soap to IKEA", "label": "single-action"}
+{"text": "Migrate the server to AWS", "label": "project"}
+{"text": "Migrate the database to Azure", "label": "project"}
+{"text": "Migrate the portal to GCP", "label": "project"}
+{"text": "Sign the spec", "label": "single-action"}
+{"text": "Implement the settings page", "label": "project"}
+{"text": "Update the priority in the portal", "label": "single-action"}
+{"text": "Overhaul the the server", "label": "project"}
+{"text": "Refill sticky notes", "label": "single-action"}
+{"text": "Create a training program for the committee", "label": "project"}
+{"text": "Remodel the garage", "label": "project"}
+{"text": "Order groceries online", "label": "single-action"}
+{"text": "Download the spec", "label": "single-action"}
+{"text": "Update the meeting notes", "label": "single-action"}
+{"text": "Plan a trip to Williamsbury", "label": "project"}
+{"text": "Charge the light bulbs", "label": "single-action"}
+{"text": "Get the kitchen ready", "label": "project"}
+{"text": "Get the basement ready", "label": "project"}
 {"text": "Print the presentation", "label": "single-action"}
-{"text": "Get the living room ready", "label": "project"}
+{"text": "Overhaul the the CRM", "label": "project"}
+{"text": "Check the billing system for updates", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Prepare for the a birthday party", "label": "project"}
+{"text": "File the proposal in the CRM", "label": "single-action"}
+{"text": "Implement notifications", "label": "project"}
+{"text": "Create a training program for the team", "label": "project"}
+{"text": "Order light bulbs online", "label": "single-action"}
+{"text": "Sign the proposal", "label": "single-action"}
+{"text": "Hire a new Theatre manager", "label": "project"}
+{"text": "Sign the proposal", "label": "single-action"}
+{"text": "Build a blog", "label": "project"}
+{"text": "Complete the the redesign certification", "label": "project"}
+{"text": "Research and select a new Slack", "label": "project"}
+{"text": "Write and publish the report", "label": "project"}
+{"text": "File the design doc in the app", "label": "single-action"}
+{"text": "Refill paper towels", "label": "single-action"}
+{"text": "Write and publish the meeting notes", "label": "project"}
+{"text": "Hire a new Buyer, retail", "label": "project"}
+{"text": "Launch the API update", "label": "project"}
+{"text": "File the analysis in the dashboard", "label": "single-action"}
+{"text": "Return envelopes to Amazon", "label": "single-action"}
+{"text": "Take care of the broken doorknob", "label": "single-action"}
+{"text": "Handle the contract renewal for Benjamin Henderson", "label": "project"}
+{"text": "Redesign the server", "label": "project"}
+{"text": "File the meeting notes in the API", "label": "single-action"}
+{"text": "Set up the new the storage closet office", "label": "project"}
+{"text": "Schedule a call with Lori Ingram", "label": "single-action"}
+{"text": "Research performance reviews", "label": "single-action"}
+{"text": "Update the invoice", "label": "single-action"}
+{"text": "Schedule a call with Autumn Hampton", "label": "single-action"}
+{"text": "Clean the basement", "label": "single-action"}
+{"text": "Look into Basecamp", "label": "single-action"}
+{"text": "Coordinate a dinner party across the team", "label": "project"}
+{"text": "Reply to Jody Jacobs's email", "label": "single-action"}
+{"text": "Research and select a new Monday.com", "label": "project"}
+{"text": "Create a training program for the committee", "label": "project"}
+{"text": "Approve the spreadsheet", "label": "single-action"}
+{"text": "Launch the new feature", "label": "project"}
+{"text": "Order a phone charger online", "label": "single-action"}
+{"text": "Book a team lunch for Monday", "label": "single-action"}
+{"text": "Write and publish the proposal", "label": "project"}
+{"text": "Charge the light bulbs", "label": "single-action"}
+{"text": "Update the status in the server", "label": "single-action"}
+{"text": "Update the status in the server", "label": "single-action"}
+{"text": "Email Lisa Brown the spec", "label": "single-action"}
+{"text": "Text Julian Conner the directions", "label": "single-action"}
+{"text": "Develop a strategy for the rollout plan", "label": "project"}
+{"text": "Research the contract renewal", "label": "single-action"}
+{"text": "Refill sticky notes", "label": "single-action"}
+{"text": "Handle performance reviews for Thomas Rodriguez", "label": "project"}
+{"text": "Deploy version 2.0 to Vercel", "label": "project"}
+{"text": "Send the spreadsheet to Madison Marshall", "label": "single-action"}
+{"text": "Update the contact info in the CRM", "label": "single-action"}
+{"text": "Check the portal for updates", "label": "single-action"}
+{"text": "Hire a new Private music teacher", "label": "project"}
+{"text": "Write and publish the spreadsheet", "label": "project"}
+{"text": "Look into Basecamp", "label": "single-action"}
+{"text": "Complete the the product launch certification", "label": "project"}
+{"text": "Sign the contract", "label": "single-action"}
+{"text": "Reply to Linda Ware's email", "label": "single-action"}
+{"text": "Handle the proposal for Edward Craig", "label": "project"}
+{"text": "Drop off hand soap at the front desk", "label": "single-action"}
+{"text": "Look into Basecamp", "label": "single-action"}
+{"text": "Research and select a new Airtable", "label": "project"}
+{"text": "Set up the app for the team", "label": "project"}
+{"text": "Prepare for the a birthday party", "label": "project"}
+{"text": "Onboard Jill Washington to the team", "label": "project"}
+{"text": "Charge the a phone charger", "label": "single-action"}
+{"text": "Charge the a new monitor", "label": "single-action"}
+{"text": "Set up the server for the team", "label": "project"}
+{"text": "Send the report to Shelia Johnson", "label": "single-action"}
+{"text": "Deploy the new feature to Docker", "label": "project"}
+{"text": "Book a client meeting for next week", "label": "single-action"}
+{"text": "Create a training program for the volunteers", "label": "project"}
+{"text": "Build writing a book", "label": "project"}
+{"text": "Plan the the offsite retreat", "label": "project"}
+{"text": "Set up the new the conference room office", "label": "project"}
+{"text": "Move to a new the conference room", "label": "project"}
+{"text": "Prepare for the a dinner party", "label": "project"}
+{"text": "Return packing tape to Target", "label": "single-action"}
+{"text": "Set up the database for the team", "label": "project"}
+{"text": "Create a training program for the volunteers", "label": "project"}
+{"text": "Establish a process for the marketing strategy", "label": "project"}
+{"text": "Print the proposal", "label": "single-action"}
+{"text": "Move to a new the garage", "label": "project"}
+{"text": "Return paint to IKEA", "label": "single-action"}
+{"text": "Email Steven Wiggins the memo", "label": "single-action"}
+{"text": "Take care of the broken doorknob", "label": "single-action"}
+{"text": "Overhaul the the website", "label": "project"}
+{"text": "Book a dinner party for tomorrow", "label": "single-action"}
+{"text": "Download the draft", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Handle the vendor agreement for Kelly Rice", "label": "project"}
+{"text": "Remodel the den", "label": "project"}
+{"text": "Prepare for the a team lunch", "label": "project"}
+{"text": "Create a training program for the interns", "label": "project"}
+{"text": "Plan a trip to the garage", "label": "project"}
+{"text": "Get the den ready", "label": "project"}
+{"text": "Set up the portal for the team", "label": "project"}
+{"text": "Move to a new Lake Heather", "label": "project"}
+{"text": "Refill snacks", "label": "single-action"}
+{"text": "Set up the new the lobby office", "label": "project"}
+{"text": "Launch the new feature", "label": "project"}
+{"text": "Sign the proposal", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Download the brief", "label": "single-action"}
+{"text": "Order printer paper online", "label": "single-action"}
+{"text": "Pick up hand soap from Walmart", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Migrate the backend to Vercel", "label": "project"}
+{"text": "Create a training program for the team", "label": "project"}
+{"text": "Refill printer toner", "label": "single-action"}
+{"text": "Call Christine Gallegos", "label": "single-action"}
+{"text": "Get the guest room ready", "label": "project"}
+{"text": "Pick up a gift card from the grocery store", "label": "single-action"}
+{"text": "Redesign the server", "label": "project"}
+{"text": "Plan a trip to the patio", "label": "project"}
+{"text": "Write and publish the memo", "label": "project"}
+{"text": "Email Joanna Pacheco the spreadsheet", "label": "single-action"}
+{"text": "Text William Day the meeting link", "label": "single-action"}
+{"text": "Move to a new the lobby", "label": "project"}
+{"text": "Deploy version 2.0 to Kubernetes", "label": "project"}
+{"text": "Develop a strategy for performance reviews", "label": "project"}
+{"text": "Create a training program for the committee", "label": "project"}
+{"text": "Return coffee filters to Walgreens", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Prepare for the a client meeting", "label": "project"}
+{"text": "Download the design doc", "label": "single-action"}
+{"text": "Check the dashboard for updates", "label": "single-action"}
+{"text": "Write and publish the spec", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Buy cleaning supplies", "label": "single-action"}
+{"text": "Update the spreadsheet", "label": "single-action"}
+{"text": "Overhaul the the portal", "label": "project"}
+{"text": "Pay $1,645 for light bulbs", "label": "single-action"}
+{"text": "Renovate the guest room", "label": "project"}
+{"text": "Refill sticky notes", "label": "single-action"}
+{"text": "Research the migration", "label": "single-action"}
+{"text": "Establish a process for the rollout plan", "label": "project"}
+{"text": "Deal with the routing issue", "label": "project"}
+{"text": "Coordinate the offsite retreat across the interns", "label": "project"}
+{"text": "Organize a client meeting for the volunteers", "label": "project"}
+{"text": "Drop off envelopes at Shannonberg", "label": "single-action"}
+{"text": "Clean the bathroom", "label": "single-action"}
+{"text": "Clean the guest room", "label": "single-action"}
+{"text": "Research and select a new Linear", "label": "project"}
+{"text": "Build a YouTube channel", "label": "project"}
+{"text": "Launch the plugin", "label": "project"}
+{"text": "Research the quarterly report", "label": "single-action"}
+{"text": "Renovate the living room", "label": "project"}
+{"text": "Onboard Jennifer Bass to the team", "label": "project"}
+{"text": "Set up the new the living room office", "label": "project"}
+{"text": "Reply to Billy Richard's email", "label": "single-action"}
+{"text": "Look into 1Password", "label": "single-action"}
+{"text": "Handle the hiring plan for Karen Gibson", "label": "project"}
+{"text": "Deal with the crash", "label": "project"}
+{"text": "Move to a new the kitchen", "label": "project"}
+{"text": "Sign the spreadsheet", "label": "single-action"}
+{"text": "Set up the new the server room office", "label": "project"}
+{"text": "Book the quarterly review for next Thursday", "label": "single-action"}
+{"text": "Book a dinner party for March 15", "label": "single-action"}
+{"text": "Update the contact info in the inventory tracker", "label": "single-action"}
+{"text": "Sign the memo", "label": "single-action"}
+{"text": "Renovate the bedroom", "label": "project"}
+{"text": "Pick up notebooks from Staples", "label": "single-action"}
+{"text": "Establish a process for the redesign", "label": "project"}
+{"text": "Establish a process for inventory counts", "label": "project"}
+{"text": "Migrate the app to AWS", "label": "project"}
+{"text": "Update the contact info in the backend", "label": "single-action"}
+{"text": "Sort out the project timeline", "label": "project"}
+{"text": "Hire a new Data processing manager", "label": "project"}
+{"text": "Lock the bathroom", "label": "single-action"}
+{"text": "Handle the redesign for Frances Gibson", "label": "project"}
+{"text": "Improve the the inventory tracker", "label": "project"}
+{"text": "Migrate the server to Kubernetes", "label": "project"}
+{"text": "Reply to Kristie Willis's email", "label": "single-action"}
+{"text": "Reply to Michelle Hampton's email", "label": "single-action"}
+{"text": "Onboard David Alvarez to the team", "label": "project"}
+{"text": "Migrate the API to Azure", "label": "project"}
+{"text": "Develop a strategy for the marketing strategy", "label": "project"}
+{"text": "Charge the cleaning supplies", "label": "single-action"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Plan a trip to the conference room", "label": "project"}
+{"text": "Email Brandon Simmons the design doc", "label": "single-action"}
+{"text": "Call Erik Patterson", "label": "single-action"}
+{"text": "Check the CRM for updates", "label": "single-action"}
+{"text": "Print the summary", "label": "single-action"}
+{"text": "Prepare for the a team lunch", "label": "project"}
+{"text": "Take out the trash", "label": "single-action"}
+{"text": "Check the server for updates", "label": "single-action"}
+{"text": "Renovate the attic", "label": "project"}
+{"text": "Order stamps online", "label": "single-action"}
+{"text": "Call Mr. Andrew Foster", "label": "single-action"}
+{"text": "Handle compliance requirements for Stephanie Harris", "label": "project"}
+{"text": "Plan the a birthday party", "label": "project"}
+{"text": "Set up the portal for the team", "label": "project"}
+{"text": "Overhaul the the website", "label": "project"}
+{"text": "Order cleaning supplies online", "label": "single-action"}
+{"text": "Hire a new Data scientist", "label": "project"}
+{"text": "Check the portal for updates", "label": "single-action"}
+{"text": "Research the rollout plan", "label": "single-action"}
+{"text": "Buy hand soap", "label": "single-action"}
+{"text": "Text Mark Cox the meeting link", "label": "single-action"}
+{"text": "Remodel the basement", "label": "project"}
+{"text": "Coordinate a training session across the volunteers", "label": "project"}
+{"text": "Pick up notebooks from Staples", "label": "single-action"}
+{"text": "Update the description in the server", "label": "single-action"}
+{"text": "Redesign the dashboard", "label": "project"}
+{"text": "Create a training program for the team", "label": "project"}
+{"text": "Book the offsite retreat for Monday", "label": "single-action"}
+{"text": "Print the meeting notes", "label": "single-action"}
+{"text": "Sort out the quarterly report", "label": "project"}
+{"text": "Print the spec", "label": "single-action"}
+{"text": "Write and publish the spreadsheet", "label": "project"}
+{"text": "Prepare for the a dinner party", "label": "project"}
+{"text": "Return a gift card to the grocery store", "label": "single-action"}
+{"text": "Return envelopes to Walmart", "label": "single-action"}
+{"text": "Deal with the alignment problem", "label": "project"}
+{"text": "Deploy the API update to GCP", "label": "project"}
+{"text": "Look into 1Password", "label": "single-action"}
+{"text": "Research the quarterly report", "label": "single-action"}
+{"text": "Deal with the missing label", "label": "project"}
+{"text": "Email Amber Taylor the brief", "label": "single-action"}
+{"text": "Schedule a call with Gavin Zhang", "label": "single-action"}
+{"text": "Charge the a new monitor", "label": "single-action"}
+{"text": "Prepare for the the weekly standup", "label": "project"}
+{"text": "Research performance reviews", "label": "single-action"}
+{"text": "Create a training program for the department", "label": "project"}
+{"text": "Launch the plugin", "label": "project"}
+{"text": "Text Matthew Johnson the confirmation number", "label": "single-action"}
+{"text": "Build a blog", "label": "project"}
+{"text": "Take care of the leaky faucet", "label": "single-action"}
+{"text": "Buy notebooks", "label": "single-action"}
+{"text": "Research and select a new Notion", "label": "project"}
+{"text": "Complete the the quarterly report certification", "label": "project"}
+{"text": "Email Tammy Little the memo", "label": "single-action"}
+{"text": "Develop a strategy for the redesign", "label": "project"}
+{"text": "Renovate the garage", "label": "project"}
+{"text": "Clean the bedroom", "label": "single-action"}
+{"text": "Organize the annual picnic for the department", "label": "project"}
+{"text": "Coordinate a dinner party across the volunteers", "label": "project"}
+{"text": "Develop a strategy for the proposal", "label": "project"}
+{"text": "File the summary in the app", "label": "single-action"}
+{"text": "Schedule a call with Douglas Gregory", "label": "single-action"}
+{"text": "Buy a new monitor", "label": "single-action"}
+{"text": "Coordinate a training session across the interns", "label": "project"}
+{"text": "Update the priority in the API", "label": "single-action"}
+{"text": "Lock the bathroom", "label": "single-action"}
+{"text": "Order notebooks online", "label": "single-action"}
+{"text": "Plan a trip to the patio", "label": "project"}
+{"text": "Improve the the app", "label": "project"}
+{"text": "Plan a trip to the server room", "label": "project"}
+{"text": "Build a blog", "label": "project"}
+{"text": "Write and publish the design doc", "label": "project"}
+{"text": "Drop off groceries at the conference room", "label": "single-action"}
+{"text": "Send the meeting notes to Mark Roberts", "label": "single-action"}
+{"text": "Return light bulbs to Amazon", "label": "single-action"}
+{"text": "Move to a new the conference room", "label": "project"}
+{"text": "Overhaul the the app", "label": "project"}
+{"text": "Launch the mobile app", "label": "project"}
+{"text": "Deploy the mobile app to AWS", "label": "project"}
+{"text": "Deal with the permission error", "label": "project"}
+{"text": "Redesign the inventory tracker", "label": "project"}
+{"text": "Remodel the garage", "label": "project"}
+{"text": "Hire a new Research scientist (life sciences)", "label": "project"}
+{"text": "Establish a process for the proposal", "label": "project"}
+{"text": "Create a training program for the committee", "label": "project"}
+{"text": "Download the summary", "label": "single-action"}
+{"text": "Update the brief", "label": "single-action"}
+{"text": "Text Paul Baker the meeting link", "label": "single-action"}
+{"text": "Get the den ready", "label": "project"}
+{"text": "Renovate the den", "label": "project"}
+{"text": "Organize the offsite retreat for the volunteers", "label": "project"}
+{"text": "Download the draft", "label": "single-action"}
+{"text": "Call Christina Cruz", "label": "single-action"}
+{"text": "Email Danielle Grimes the analysis", "label": "single-action"}
+{"text": "Check the app for updates", "label": "single-action"}
+{"text": "Research and select a new Monday.com", "label": "project"}
+{"text": "Take care of the leaky faucet", "label": "single-action"}
+{"text": "Establish a process for the proposal", "label": "project"}
+{"text": "Approve the agenda", "label": "single-action"}
+{"text": "Deploy version 2.0 to Vercel", "label": "project"}
+{"text": "Sign the agenda", "label": "single-action"}
+{"text": "Order stamps online", "label": "single-action"}
+{"text": "Update the contact info in the website", "label": "single-action"}
+{"text": "Improve the the billing system", "label": "project"}
+{"text": "Deploy version 2.0 to AWS", "label": "project"}
+{"text": "Book the annual picnic for next Thursday", "label": "single-action"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Deal with the permission error", "label": "project"}
+{"text": "Book a workshop for tomorrow", "label": "single-action"}
+{"text": "Schedule a call with Patrick Allen", "label": "single-action"}
+{"text": "Lock the guest room", "label": "single-action"}
+{"text": "Update the presentation", "label": "single-action"}
+{"text": "Take care of the squeaky hinge", "label": "single-action"}
+{"text": "Pick up batteries from Home Depot", "label": "single-action"}
+{"text": "File the invoice in the database", "label": "single-action"}
+{"text": "Plan a trip to Cantuport", "label": "project"}
+{"text": "Charge the a new keyboard", "label": "single-action"}
+{"text": "Deal with the crash", "label": "project"}
+{"text": "Return notebooks to Walmart", "label": "single-action"}
+{"text": "Drop off envelopes at Lake Christopher", "label": "single-action"}
+{"text": "Create a training program for the family", "label": "project"}
+{"text": "Pick up groceries from Costco", "label": "single-action"}
+{"text": "Pay $2,371 for extension cord", "label": "single-action"}
+{"text": "Buy a phone charger", "label": "single-action"}
+{"text": "Sort out the quarterly report", "label": "project"}
+{"text": "Send the agenda to Leslie Bell", "label": "single-action"}
+{"text": "Look into Linear", "label": "single-action"}
+{"text": "Pay $2,873 for packing tape", "label": "single-action"}
+{"text": "Onboard Melissa Brewer to the team", "label": "project"}
+{"text": "Text Heather White the agenda", "label": "single-action"}
+{"text": "Check the backend for updates", "label": "single-action"}
+{"text": "Update the spreadsheet", "label": "single-action"}
+{"text": "Drop off stamps at West Stephanieland", "label": "single-action"}
+{"text": "Reply to Chad Scott's email", "label": "single-action"}
+{"text": "Sort out the migration", "label": "project"}
+{"text": "Deploy the redesigned dashboard to Docker", "label": "project"}
+{"text": "Improve the the website", "label": "project"}
+{"text": "Overhaul the the API", "label": "project"}
+{"text": "Hire a new Radiographer, therapeutic", "label": "project"}
+{"text": "Reply to Tyler Stevens's email", "label": "single-action"}
+{"text": "Deal with the routing issue", "label": "project"}
+{"text": "Update the contact info in the dashboard", "label": "single-action"}
+{"text": "Move to a new the warehouse", "label": "project"}
+{"text": "Order coffee filters online", "label": "single-action"}
+{"text": "Complete the the contract renewal certification", "label": "project"}
+{"text": "Schedule a call with Katie Martinez", "label": "single-action"}
+{"text": "Drop off batteries at the front desk", "label": "single-action"}
+{"text": "Reply to Bianca Wood's email", "label": "single-action"}
+{"text": "Renovate the garage", "label": "project"}
+{"text": "Set up the backend for the team", "label": "project"}
+{"text": "Plan the a workshop", "label": "project"}
+{"text": "Deal with the display glitch", "label": "project"}
+{"text": "Migrate the database to AWS", "label": "project"}
+{"text": "Develop a strategy for the product launch", "label": "project"}
+{"text": "Hire a new Advertising account executive", "label": "project"}
+{"text": "Pay $2,793 for envelopes", "label": "single-action"}
+{"text": "Sort out the vendor agreement", "label": "project"}
+{"text": "Research and select a new Google Docs", "label": "project"}
+{"text": "Return a new keyboard to Amazon", "label": "single-action"}
+{"text": "Move to a new the living room", "label": "project"}
+{"text": "Redesign the website", "label": "project"}
+{"text": "Deal with the login bug", "label": "project"}
+{"text": "Take care of the leaky faucet", "label": "single-action"}
+{"text": "Download the presentation", "label": "single-action"}
+{"text": "Check the portal for updates", "label": "single-action"}
+{"text": "Onboard Peter Callahan Jr. to the team", "label": "project"}
+{"text": "Text Michelle Schmitt the meeting link", "label": "single-action"}
+{"text": "Research the marketing strategy", "label": "single-action"}
+{"text": "Reply to Benjamin Thompson's email", "label": "single-action"}
+{"text": "Research and select a new Notion", "label": "project"}
+{"text": "Reply to Vincent Jackson's email", "label": "single-action"}
+{"text": "Pick up coffee filters from Costco", "label": "single-action"}
+{"text": "Remodel the living room", "label": "project"}
+{"text": "Water the plants", "label": "single-action"}
+{"text": "Send the meeting notes to Erika Vang", "label": "single-action"}
+{"text": "Deal with the broken link", "label": "project"}
+{"text": "Get the office ready", "label": "project"}
+{"text": "Research the marketing strategy", "label": "single-action"}
+{"text": "Sort out the quarterly report", "label": "project"}
+{"text": "Sort out the budget", "label": "project"}
+{"text": "Send the meeting notes to Tyler Brewer", "label": "single-action"}
+{"text": "Call Donald Schultz", "label": "single-action"}
+{"text": "Drop off batteries at the kitchen", "label": "single-action"}
+{"text": "Overhaul the the portal", "label": "project"}
+{"text": "Print the presentation", "label": "single-action"}
