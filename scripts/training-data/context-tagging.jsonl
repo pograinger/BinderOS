@@ -1,0 +1,722 @@
+{"text": "Talk to Kimberly Navarro about the redesign", "label": "@agenda"}
+{"text": "Set up the server in the attic", "label": "@home"}
+{"text": "Call Mayo-Bowman billing department", "label": "@phone"}
+{"text": "Water the office plants", "label": "@office"}
+{"text": "Check the portal for the sales data", "label": "@computer"}
+{"text": "Share customer feedback with Glen Sheppard for feedback", "label": "@agenda"}
+{"text": "Grab snacks from the supply closet", "label": "@office"}
+{"text": "Swing by Office Depot for printer paper", "label": "@errands"}
+{"text": "Water the office plants", "label": "@office"}
+{"text": "Return a new monitor to Walmart", "label": "@errands"}
+{"text": "Create a presentation for the quarterly review", "label": "@computer"}
+{"text": "Ring Operations about access credentials", "label": "@phone"}
+{"text": "Take out the trash", "label": "@home"}
+{"text": "Stock the break room with coffee pods", "label": "@office"}
+{"text": "Propose an online course to Adam Mitchell", "label": "@agenda"}
+{"text": "Look up performance reviews", "label": "@computer"}
+{"text": "Text Theresa Miller the the meeting link", "label": "@phone"}
+{"text": "Deep clean the guest room", "label": "@home"}
+{"text": "Pick up cleaning supplies from Target", "label": "@errands"}
+{"text": "Get Dr. Elizabeth Ward's take on the product launch", "label": "@agenda"}
+{"text": "Update the project board in Airtable", "label": "@computer"}
+{"text": "Call Hickman Ltd billing department", "label": "@phone"}
+{"text": "Write a blog post about the contract renewal", "label": "@computer"}
+{"text": "Get paint for the office", "label": "@errands"}
+{"text": "Back up files to Kubernetes", "label": "@computer"}
+{"text": "Swing by Costco for cleaning supplies", "label": "@errands"}
+{"text": "Sort the recycling", "label": "@home"}
+{"text": "Create a presentation for a team lunch", "label": "@computer"}
+{"text": "Dial Joseph Obrien to discuss inventory counts", "label": "@phone"}
+{"text": "Edit the photo for the contract", "label": "@computer"}
+{"text": "Prepare the brief for Mark Lloyd", "label": "@computer"}
+{"text": "Set up the portal in the basement", "label": "@home"}
+{"text": "Send Richard Baker a quick message about the project timeline", "label": "@computer"}
+{"text": "Call Monica Herrera about the rollout plan", "label": "@phone"}
+{"text": "Set up the database in the garage", "label": "@home"}
+{"text": "Get keys copied at IKEA", "label": "@errands"}
+{"text": "Print the presentation on the office printer", "label": "@office"}
+{"text": "Phone the landlord about loose shelf", "label": "@phone"}
+{"text": "Order hand soap for the team", "label": "@computer"}
+{"text": "Dial into the client kickoff conference call", "label": "@phone"}
+{"text": "Run writing a book by Paige Carlson", "label": "@agenda"}
+{"text": "Phone Heidi Osborn to confirm the quarterly review", "label": "@phone"}
+{"text": "Debug the display glitch in the app", "label": "@computer"}
+{"text": "Run a blog by Jill Moore", "label": "@agenda"}
+{"text": "Send email to Gina Moore about the redesign", "label": "@computer"}
+{"text": "Process expenses in the backend", "label": "@computer"}
+{"text": "Fix the stuck window", "label": "@home"}
+{"text": "Text Cynthia Russell the confirmation number", "label": "@phone"}
+{"text": "Call the doctor to schedule an appointment", "label": "@phone"}
+{"text": "Confirm the weekly standup details with Kyle Preston", "label": "@agenda"}
+{"text": "Vacuum the den", "label": "@home"}
+{"text": "Take out the trash", "label": "@home"}
+{"text": "Swing by the living room to pick up a new keyboard", "label": "@errands"}
+{"text": "Dial Alexandra Le to discuss compliance requirements", "label": "@phone"}
+{"text": "Call Costco to check if coffee filters is in stock", "label": "@phone"}
+{"text": "Adjust the thermostat in the office", "label": "@office"}
+{"text": "Set up the app in the attic", "label": "@home"}
+{"text": "Set up automation in Slack", "label": "@computer"}
+{"text": "Set up the projector for the quarterly review", "label": "@office"}
+{"text": "Pick up flowers from the florist", "label": "@errands"}
+{"text": "Coordinate with Kristi Black on the hiring initiative", "label": "@agenda"}
+{"text": "Create a presentation for a workshop", "label": "@computer"}
+{"text": "Propose a podcast to Chris Reyes", "label": "@agenda"}
+{"text": "Call back Jamie Chavez about the brief", "label": "@phone"}
+{"text": "Replace the broken doorknob", "label": "@home"}
+{"text": "Pick up flowers from the florist", "label": "@errands"}
+{"text": "Get packing tape for the office", "label": "@errands"}
+{"text": "Declutter the desk drawer", "label": "@home"}
+{"text": "Stop by the bank to deposit check", "label": "@errands"}
+{"text": "Ring Annette Pearson to coordinate a team lunch", "label": "@phone"}
+{"text": "Order cleaning supplies for the team", "label": "@computer"}
+{"text": "Dial into the quarterly strategy conference call", "label": "@phone"}
+{"text": "Deploy the server to dev", "label": "@computer"}
+{"text": "Set up automation in Linear", "label": "@computer"}
+{"text": "Order stamps for the team", "label": "@computer"}
+{"text": "Refill the coffee machine", "label": "@office"}
+{"text": "Leave a message for Mia Sutton at Lynch and Sons", "label": "@phone"}
+{"text": "Set up the server in the den", "label": "@home"}
+{"text": "Check the API for performance metrics", "label": "@computer"}
+{"text": "Sync with Margaret Mullins about the hiring plan", "label": "@agenda"}
+{"text": "Bring up the budget with Julie Grant", "label": "@agenda"}
+{"text": "Replace the stuck window", "label": "@home"}
+{"text": "Mow the lawn", "label": "@home"}
+{"text": "Dial Rebecca Rodriguez to discuss the quarterly report", "label": "@phone"}
+{"text": "Call back Monica Logan about the spreadsheet", "label": "@phone"}
+{"text": "Adjust the thermostat in the office", "label": "@office"}
+{"text": "Do laundry", "label": "@home"}
+{"text": "Mention the marketing strategy to Angela Patterson at standup", "label": "@agenda"}
+{"text": "Research the product launch online", "label": "@computer"}
+{"text": "Draft the proposal in Jira", "label": "@computer"}
+{"text": "Send Joseph Ramos a quick message about inventory counts", "label": "@computer"}
+{"text": "Check on broken doorknob status", "label": "@home"}
+{"text": "Vacuum the garage", "label": "@home"}
+{"text": "Drop off a new keyboard at the living room", "label": "@errands"}
+{"text": "Follow up on the contract renewal with Laura Hines", "label": "@agenda"}
+{"text": "Stock the break room with paper towels", "label": "@office"}
+{"text": "Bring up the vendor agreement with Rebecca Ramsey", "label": "@agenda"}
+{"text": "Update David Russell on the product launch progress", "label": "@agenda"}
+{"text": "Drop off the summary at Michelle Cruz's desk", "label": "@office"}
+{"text": "Drop off extension cord at the server room", "label": "@errands"}
+{"text": "Rearrange furniture in bathroom", "label": "@home"}
+{"text": "Ask John Brown to prioritize the rollout plan", "label": "@agenda"}
+{"text": "Organize bookshelf at work", "label": "@office"}
+{"text": "Follow up on the product launch with Lori Clay", "label": "@agenda"}
+{"text": "Analyze the latest figures in Google Docs", "label": "@computer"}
+{"text": "Research the vendor agreement online", "label": "@computer"}
+{"text": "Change the air filter", "label": "@home"}
+{"text": "Create a presentation for a client meeting", "label": "@computer"}
+{"text": "Check the portal for pricing information", "label": "@computer"}
+{"text": "Drop off donation at the conference room", "label": "@errands"}
+{"text": "Drop off the package at the server room", "label": "@errands"}
+{"text": "Ask Scott Wilson to prioritize the vendor agreement", "label": "@agenda"}
+{"text": "Get Tamara Hooper's approval on the analysis", "label": "@agenda"}
+{"text": "Do laundry", "label": "@home"}
+{"text": "Text Katelyn Lee the the address", "label": "@phone"}
+{"text": "Pick up flowers from the florist", "label": "@errands"}
+{"text": "Post the the presentation on the bulletin board", "label": "@office"}
+{"text": "Sweep the guest room", "label": "@home"}
+{"text": "Ask Juan Moore about a team lunch", "label": "@agenda"}
+{"text": "Call Mario Skinner about the project timeline", "label": "@phone"}
+{"text": "Follow up with Destiny Strickland on the migration", "label": "@agenda"}
+{"text": "Get Barbara Anderson's approval on the agenda", "label": "@agenda"}
+{"text": "Discuss the migration with Jackie Tran at next 1:1", "label": "@agenda"}
+{"text": "Analyze the updated contacts in Figma", "label": "@computer"}
+{"text": "Ask Jared Sanchez for input on the hiring initiative", "label": "@agenda"}
+{"text": "Swing by the kitchen to pick up a new keyboard", "label": "@errands"}
+{"text": "Order stamps for the team", "label": "@computer"}
+{"text": "Pick up the prescription at Trader Joe's", "label": "@errands"}
+{"text": "Look up the budget", "label": "@computer"}
+{"text": "Ask Dillon Fernandez to prioritize the migration", "label": "@agenda"}
+{"text": "Export the Q3 numbers to CSV", "label": "@computer"}
+{"text": "Call CVS to check if stamps is in stock", "label": "@phone"}
+{"text": "Order cleaning supplies for the team", "label": "@computer"}
+{"text": "Fix the leaky faucet", "label": "@home"}
+{"text": "Dial into the client kickoff conference call", "label": "@phone"}
+{"text": "Propose an online course to Andre Wright", "label": "@agenda"}
+{"text": "Sync with Barry Bernard about the quarterly report", "label": "@agenda"}
+{"text": "Raise the hiring plan with Chase Baker in our next meeting", "label": "@agenda"}
+{"text": "Send Kyle Francis a quick message about the budget", "label": "@computer"}
+{"text": "Set up the projector for the board meeting", "label": "@office"}
+{"text": "Set up the bedroom for the meeting", "label": "@office"}
+{"text": "Check the mail in the office mailbox", "label": "@office"}
+{"text": "Research the hiring plan online", "label": "@computer"}
+{"text": "Propose a side business to Samantha Morse", "label": "@agenda"}
+{"text": "Leave voicemail for Dr. Steven Martin", "label": "@phone"}
+{"text": "Distribute the proposal to the team", "label": "@office"}
+{"text": "Prepare the contract for Jill Washington", "label": "@computer"}
+{"text": "Deep clean the bedroom", "label": "@home"}
+{"text": "Update the analysis in Obsidian", "label": "@computer"}
+{"text": "Pick up the prescription at Amazon", "label": "@errands"}
+{"text": "Grab packing tape on the way to work", "label": "@errands"}
+{"text": "Confirm a training session details with David Wood", "label": "@agenda"}
+{"text": "Write code for dark mode", "label": "@computer"}
+{"text": "Adjust the thermostat in the office", "label": "@office"}
+{"text": "Wash the dishes", "label": "@home"}
+{"text": "Prepare the memo for Jennifer Miller", "label": "@computer"}
+{"text": "Post the the spec on the bulletin board", "label": "@office"}
+{"text": "Get Deborah Miller's approval on the memo", "label": "@agenda"}
+{"text": "Raise the migration with Anthony Carter in our next meeting", "label": "@agenda"}
+{"text": "Get keys copied at Trader Joe's", "label": "@errands"}
+{"text": "Organize the shared kitchen", "label": "@office"}
+{"text": "Deploy the dashboard to staging", "label": "@computer"}
+{"text": "Ring Kristopher Harvey to coordinate a workshop", "label": "@phone"}
+{"text": "Run an online course by Christian Thompson", "label": "@agenda"}
+{"text": "Label the whiteboard markers in the storage room", "label": "@office"}
+{"text": "Organize the medicine cabinet", "label": "@home"}
+{"text": "Research the hiring plan online", "label": "@computer"}
+{"text": "Update Angela Wright on the redesign progress", "label": "@agenda"}
+{"text": "Drop off the spec at William Carr's desk", "label": "@office"}
+{"text": "Drop off donation at Frazierside", "label": "@errands"}
+{"text": "Phone Victoria Wyatt to confirm the offsite retreat", "label": "@phone"}
+{"text": "Put up signs for the weekly standup", "label": "@office"}
+{"text": "Check the dashboard for the updated contacts", "label": "@computer"}
+{"text": "Reserve the conference room for a client meeting", "label": "@office"}
+{"text": "Check the dashboard for the updated contacts", "label": "@computer"}
+{"text": "Organize bookshelf at work", "label": "@office"}
+{"text": "Back up files to Vercel", "label": "@computer"}
+{"text": "Update the project board in the password manager", "label": "@computer"}
+{"text": "Vacuum the living room", "label": "@home"}
+{"text": "Set up the backend in the den", "label": "@home"}
+{"text": "Back up files to AWS", "label": "@computer"}
+{"text": "Mow the lawn", "label": "@home"}
+{"text": "Take coffee filters to the dry cleaner", "label": "@errands"}
+{"text": "Go to the DMV to renew registration", "label": "@errands"}
+{"text": "Prepare the analysis for Zachary Graham", "label": "@computer"}
+{"text": "Dial Danielle Ford to discuss the project timeline", "label": "@phone"}
+{"text": "Follow up with Ruben Ruiz on the migration", "label": "@agenda"}
+{"text": "Sweep the guest room", "label": "@home"}
+{"text": "Leave voicemail for Andre Rivera", "label": "@phone"}
+{"text": "Water the office plants", "label": "@office"}
+{"text": "Phone the landlord about running toilet", "label": "@phone"}
+{"text": "Review pull request from Angie Henderson", "label": "@computer"}
+{"text": "Phone the landlord about broken doorknob", "label": "@phone"}
+{"text": "Drop off the package at Byrdburgh", "label": "@errands"}
+{"text": "Edit the photo for the presentation", "label": "@computer"}
+{"text": "Text Clifford Ford the meeting time", "label": "@phone"}
+{"text": "Talk to Jaime David about the rollout plan", "label": "@agenda"}
+{"text": "Water the plants", "label": "@home"}
+{"text": "Propose writing a book to Paul Hudson", "label": "@agenda"}
+{"text": "Call insurance company about the warranty claim", "label": "@phone"}
+{"text": "Set up the projector for a workshop", "label": "@office"}
+{"text": "Prepare the invoice for Benjamin Barton", "label": "@computer"}
+{"text": "Mention the product launch to Tiffany Vaughn at standup", "label": "@agenda"}
+{"text": "Restock the sticky notes", "label": "@office"}
+{"text": "Get sign-off from James Snow on the spreadsheet", "label": "@agenda"}
+{"text": "Call Julian Chapman about the vendor agreement", "label": "@phone"}
+{"text": "Go to the DMV to renew registration", "label": "@errands"}
+{"text": "Refill the coffee machine", "label": "@office"}
+{"text": "Return library books", "label": "@errands"}
+{"text": "Call Amazon to check if a phone charger is in stock", "label": "@phone"}
+{"text": "Take the car for an oil change", "label": "@errands"}
+{"text": "Organize the garage shelves", "label": "@home"}
+{"text": "Go to the garage for note taking", "label": "@errands"}
+{"text": "Pick up the printed the presentation", "label": "@office"}
+{"text": "Phone Angela Morton for a quick update", "label": "@phone"}
+{"text": "Get a gift card for the office", "label": "@errands"}
+{"text": "Send email to Ryan Munoz about the rollout plan", "label": "@computer"}
+{"text": "Drop off the spreadsheet at Trevor Young's desk", "label": "@office"}
+{"text": "Pick up groceries from Home Depot", "label": "@errands"}
+{"text": "Call Sherri Edwards about the vendor agreement", "label": "@phone"}
+{"text": "Look up the redesign", "label": "@computer"}
+{"text": "Analyze performance metrics in the password manager", "label": "@computer"}
+{"text": "Get envelopes for the office", "label": "@errands"}
+{"text": "Swing by the living room to pick up extension cord", "label": "@errands"}
+{"text": "Tidy up the guest room", "label": "@home"}
+{"text": "Restock the coffee pods", "label": "@office"}
+{"text": "Call Galloway LLC support about the billing error", "label": "@phone"}
+{"text": "Review pull request from Allison Hill", "label": "@computer"}
+{"text": "Call to make a reservation for a client meeting", "label": "@phone"}
+{"text": "Call Dyer, Potter and Mack billing department", "label": "@phone"}
+{"text": "Go to the DMV to renew registration", "label": "@errands"}
+{"text": "Call IKEA to check if batteries is in stock", "label": "@phone"}
+{"text": "Get paint for the office", "label": "@errands"}
+{"text": "Check on running toilet status", "label": "@home"}
+{"text": "Export the Q3 numbers to JSON", "label": "@computer"}
+{"text": "Return a gift card to Target", "label": "@errands"}
+{"text": "Set up the den for the meeting", "label": "@office"}
+{"text": "Phone the landlord about broken doorknob", "label": "@phone"}
+{"text": "Tidy up the living room", "label": "@home"}
+{"text": "Run the report in the API", "label": "@computer"}
+{"text": "Debug the routing issue in the API", "label": "@computer"}
+{"text": "Ring Sales about travel reimbursement", "label": "@phone"}
+{"text": "Clean the whiteboard after Friday wrap-up", "label": "@office"}
+{"text": "Ring Legal about training materials", "label": "@phone"}
+{"text": "Do laundry", "label": "@home"}
+{"text": "Return light bulbs to Best Buy", "label": "@errands"}
+{"text": "Grab hand soap on the way to work", "label": "@errands"}
+{"text": "Configure the billing system settings", "label": "@computer"}
+{"text": "Coordinate with Tracey Higgins on the website redesign", "label": "@agenda"}
+{"text": "Swing by Office Depot for envelopes", "label": "@errands"}
+{"text": "Check on loose shelf status", "label": "@home"}
+{"text": "Catch up with Brandon King", "label": "@agenda"}
+{"text": "Text Jennifer Rocha the agenda", "label": "@phone"}
+{"text": "Call the doctor to schedule an appointment", "label": "@phone"}
+{"text": "Adjust the thermostat in the office", "label": "@office"}
+{"text": "Write code for the search feature", "label": "@computer"}
+{"text": "Mow the lawn", "label": "@home"}
+{"text": "Distribute the presentation to the team", "label": "@office"}
+{"text": "Prepare the agenda for Timothy Carter", "label": "@computer"}
+{"text": "Fix the cracked tile", "label": "@home"}
+{"text": "Check the mail in the office mailbox", "label": "@office"}
+{"text": "Vacuum the bathroom", "label": "@home"}
+{"text": "Check on cracked tile status", "label": "@home"}
+{"text": "Dial John Calhoun to discuss inventory counts", "label": "@phone"}
+{"text": "Check with Parker Hill on the report status", "label": "@agenda"}
+{"text": "Call to make a reservation for a workshop", "label": "@phone"}
+{"text": "Look up performance reviews", "label": "@computer"}
+{"text": "Take hand soap to the dry cleaner", "label": "@errands"}
+{"text": "Catch up with Jane Mcneil", "label": "@agenda"}
+{"text": "Pick up the prescription at the hardware store", "label": "@errands"}
+{"text": "Distribute the agenda to the team", "label": "@office"}
+{"text": "Check on squeaky hinge status", "label": "@home"}
+{"text": "Discuss the vendor agreement with Michael Turner at next 1:1", "label": "@agenda"}
+{"text": "Sort the recycling", "label": "@home"}
+{"text": "Stop at the grocery store on the way home", "label": "@errands"}
+{"text": "Put up signs for the quarterly review", "label": "@office"}
+{"text": "Ask Susan Vargas about a training session", "label": "@agenda"}
+{"text": "Text Christina Brooks the agenda", "label": "@phone"}
+{"text": "Update the project board in Google Docs", "label": "@computer"}
+{"text": "Debug the crash in the app", "label": "@computer"}
+{"text": "Deep clean the bathroom", "label": "@home"}
+{"text": "Process expenses in the billing system", "label": "@computer"}
+{"text": "Bring up the hiring plan with Zachary Pierce", "label": "@agenda"}
+{"text": "Set up automation in Basecamp", "label": "@computer"}
+{"text": "Get Marie Gilbert's take on the product launch", "label": "@agenda"}
+{"text": "Return library books", "label": "@errands"}
+{"text": "Call Ryan, Burgess and Patterson support about the refund request", "label": "@phone"}
+{"text": "Drop off extension cord at South David", "label": "@errands"}
+{"text": "Talk to Joan Smith about compliance requirements", "label": "@agenda"}
+{"text": "Get keys copied at Trader Joe's", "label": "@errands"}
+{"text": "Vacuum the kitchen", "label": "@home"}
+{"text": "Pick up cleaning supplies from Amazon", "label": "@errands"}
+{"text": "Follow up on the contract renewal with Marissa Hernandez", "label": "@agenda"}
+{"text": "Look up the product launch", "label": "@computer"}
+{"text": "Configure the dashboard settings", "label": "@computer"}
+{"text": "Water the office plants", "label": "@office"}
+{"text": "Sort the recycling", "label": "@home"}
+{"text": "Set up the projector for the offsite retreat", "label": "@office"}
+{"text": "Post the the meeting notes on the bulletin board", "label": "@office"}
+{"text": "Update the spreadsheet with customer feedback", "label": "@computer"}
+{"text": "Take a phone charger to the dry cleaner", "label": "@errands"}
+{"text": "Discuss the migration with John Price at next 1:1", "label": "@agenda"}
+{"text": "Update the spreadsheet with survey results", "label": "@computer"}
+{"text": "Organize garage shelves at work", "label": "@office"}
+{"text": "Ring David Brown to coordinate a workshop", "label": "@phone"}
+{"text": "Deploy the CRM to dev", "label": "@computer"}
+{"text": "Share customer feedback with Gabrielle Snyder for feedback", "label": "@agenda"}
+{"text": "Coordinate with Alicia Gilmore on the migration", "label": "@agenda"}
+{"text": "Write code for the settings page", "label": "@computer"}
+{"text": "Get cleaning supplies for the office", "label": "@errands"}
+{"text": "Get sign-off from Tanya Johnston on the summary", "label": "@agenda"}
+{"text": "Clean the bathroom", "label": "@home"}
+{"text": "Update the spreadsheet with the Q3 numbers", "label": "@computer"}
+{"text": "Rearrange furniture in bathroom", "label": "@home"}
+{"text": "Post the the report on the bulletin board", "label": "@office"}
+{"text": "Follow up on the project timeline with Frank Garcia", "label": "@agenda"}
+{"text": "Check with Catherine Green on the summary status", "label": "@agenda"}
+{"text": "Check the mail in the office mailbox", "label": "@office"}
+{"text": "Swing by the kitchen to pick up a new keyboard", "label": "@errands"}
+{"text": "Follow up on inventory counts with Raymond Hancock", "label": "@agenda"}
+{"text": "Phone Rachel Mitchell to confirm the quarterly review", "label": "@phone"}
+{"text": "Organize filing cabinet at work", "label": "@office"}
+{"text": "Draft the spreadsheet in the password manager", "label": "@computer"}
+{"text": "Water the office plants", "label": "@office"}
+{"text": "Follow up on the redesign with Seth Booker", "label": "@agenda"}
+{"text": "Ask Brian Gould to prioritize the rollout plan", "label": "@agenda"}
+{"text": "Update Carla Collins on the quarterly report progress", "label": "@agenda"}
+{"text": "Update the spec in Obsidian", "label": "@computer"}
+{"text": "Go to the server room for file storage", "label": "@errands"}
+{"text": "Catch up with Kathleen Ramos", "label": "@agenda"}
+{"text": "Analyze user analytics in Basecamp", "label": "@computer"}
+{"text": "Set up the CRM in the bathroom", "label": "@home"}
+{"text": "Stock the break room with paper towels", "label": "@office"}
+{"text": "Text Michael Brown the time", "label": "@phone"}
+{"text": "Export user analytics to a spreadsheet", "label": "@computer"}
+{"text": "Restock the hand sanitizer", "label": "@office"}
+{"text": "Configure the app settings", "label": "@computer"}
+{"text": "Drop off a gift card at the office", "label": "@errands"}
+{"text": "Confirm a team lunch details with Douglas Carlson", "label": "@agenda"}
+{"text": "Paint the guest room", "label": "@home"}
+{"text": "Tidy up the bathroom", "label": "@home"}
+{"text": "Check on cracked tile status", "label": "@home"}
+{"text": "Pick up the prescription at Trader Joe's", "label": "@errands"}
+{"text": "Text Brent Jordan the the time", "label": "@phone"}
+{"text": "Write code for the export function", "label": "@computer"}
+{"text": "Get extension cord for the office", "label": "@errands"}
+{"text": "Cook tacos for dinner", "label": "@home"}
+{"text": "Call Young, Caldwell and Lewis support about the billing error", "label": "@phone"}
+{"text": "Call the doctor to schedule an appointment", "label": "@phone"}
+{"text": "Organize the shared kitchen", "label": "@office"}
+{"text": "Call insurance company about the refund request", "label": "@phone"}
+{"text": "Mow the lawn", "label": "@home"}
+{"text": "Sweep the office", "label": "@home"}
+{"text": "Grab hand sanitizer from the supply closet", "label": "@office"}
+{"text": "Water the plants", "label": "@home"}
+{"text": "Grab envelopes on the way to work", "label": "@errands"}
+{"text": "Sync with George Orozco about the hiring plan", "label": "@agenda"}
+{"text": "Run the report in the server", "label": "@computer"}
+{"text": "Leave voicemail for Troy Nielsen", "label": "@phone"}
+{"text": "Set up the garage for the meeting", "label": "@office"}
+{"text": "Sweep the den", "label": "@home"}
+{"text": "Get a new monitor from the pharmacy", "label": "@errands"}
+{"text": "Check the billing system for customer feedback", "label": "@computer"}
+{"text": "Debug the display glitch in the server", "label": "@computer"}
+{"text": "Clean the garage", "label": "@home"}
+{"text": "Order hand soap for the team", "label": "@computer"}
+{"text": "Phone Nathan Cortez for a quick update", "label": "@phone"}
+{"text": "Confirm a birthday party details with John Ray", "label": "@agenda"}
+{"text": "Get Jesse Parker's approval on the agenda", "label": "@agenda"}
+{"text": "Clean the den", "label": "@home"}
+{"text": "Go to the DMV to renew registration", "label": "@errands"}
+{"text": "Catch up with Jennifer Olson", "label": "@agenda"}
+{"text": "Organize bookshelf at work", "label": "@office"}
+{"text": "Share the latest figures with Daniel Perry for feedback", "label": "@agenda"}
+{"text": "Edit the photo for the spreadsheet", "label": "@computer"}
+{"text": "Text Brittany Moore the the meeting link", "label": "@phone"}
+{"text": "Organize filing cabinet at work", "label": "@office"}
+{"text": "Phone Timothy Duncan to confirm a dinner party", "label": "@phone"}
+{"text": "Deep clean the garage", "label": "@home"}
+{"text": "Run a blog by Jesse Rogers", "label": "@agenda"}
+{"text": "Set up the API in the guest room", "label": "@home"}
+{"text": "Do laundry", "label": "@home"}
+{"text": "Restock the printer toner", "label": "@office"}
+{"text": "Sort the recycling", "label": "@home"}
+{"text": "Get keys copied at the hardware store", "label": "@errands"}
+{"text": "Follow up with Christina Wilson on the office move", "label": "@agenda"}
+{"text": "Take the car for an oil change", "label": "@errands"}
+{"text": "Ring Pamela Romero to coordinate the weekly standup", "label": "@phone"}
+{"text": "Buy paint at the grocery store", "label": "@errands"}
+{"text": "Follow up on the proposal with Danny Skinner", "label": "@agenda"}
+{"text": "Check with Dwayne Campbell on the meeting notes status", "label": "@agenda"}
+{"text": "Pick up the printed the meeting notes", "label": "@office"}
+{"text": "Stop at Home Depot on the way home", "label": "@errands"}
+{"text": "Check the website for the Q3 numbers", "label": "@computer"}
+{"text": "Order cleaning supplies for the team", "label": "@computer"}
+{"text": "Grab paper towels from the supply closet", "label": "@office"}
+{"text": "Organize the shared kitchen", "label": "@office"}
+{"text": "Cook salad for dinner", "label": "@home"}
+{"text": "Check on leaky faucet status", "label": "@home"}
+{"text": "Phone Jacqueline Lam for a quick update", "label": "@phone"}
+{"text": "Research the hiring plan online", "label": "@computer"}
+{"text": "Pick up the printed the summary", "label": "@office"}
+{"text": "Print the draft on the office printer", "label": "@office"}
+{"text": "Run the report in the API", "label": "@computer"}
+{"text": "Call to make a reservation for a team lunch", "label": "@phone"}
+{"text": "Distribute the memo to the team", "label": "@office"}
+{"text": "Replace the leaky faucet", "label": "@home"}
+{"text": "Follow up on the product launch with Jesus Thomas", "label": "@agenda"}
+{"text": "Pick up flowers from the florist", "label": "@errands"}
+{"text": "Refill the coffee machine", "label": "@office"}
+{"text": "Follow up with Michael Martinez on the hiring initiative", "label": "@agenda"}
+{"text": "Text Jamie Arnold the directions", "label": "@phone"}
+{"text": "Drop off the memo at Erica Ramos's desk", "label": "@office"}
+{"text": "Coordinate with Lindsey Johnson on the product launch", "label": "@agenda"}
+{"text": "Clean the whiteboard after standup", "label": "@office"}
+{"text": "Ask Joseph Hansen about the annual picnic", "label": "@agenda"}
+{"text": "Reserve the conference room for the annual picnic", "label": "@office"}
+{"text": "Look up the redesign", "label": "@computer"}
+{"text": "Get Joanna Walton's take on the contract renewal", "label": "@agenda"}
+{"text": "Ring Derek Clark to coordinate a client meeting", "label": "@phone"}
+{"text": "Restock the whiteboard markers", "label": "@office"}
+{"text": "Draft the memo in Monday.com", "label": "@computer"}
+{"text": "Ask Stephanie Freeman for input on the website redesign", "label": "@agenda"}
+{"text": "Paint the basement", "label": "@home"}
+{"text": "Call George Group support about the warranty claim", "label": "@phone"}
+{"text": "Fix the loose shelf", "label": "@home"}
+{"text": "Call back Elizabeth Brown about the presentation", "label": "@phone"}
+{"text": "Call insurance company about the service outage", "label": "@phone"}
+{"text": "Draft the design doc in Notion", "label": "@computer"}
+{"text": "Leave a message for Mr. Philip Cannon at Keller PLC", "label": "@phone"}
+{"text": "Get sign-off from Alicia Hubbard on the design doc", "label": "@agenda"}
+{"text": "Organize the bookshelf", "label": "@home"}
+{"text": "Get Amanda Patel's approval on the invoice", "label": "@agenda"}
+{"text": "Talk to Patricia James about the contract renewal", "label": "@agenda"}
+{"text": "Stop by the bank to deposit check", "label": "@errands"}
+{"text": "Deploy the CRM to dev", "label": "@computer"}
+{"text": "Pick up the printed the invoice", "label": "@office"}
+{"text": "Configure the CRM settings", "label": "@computer"}
+{"text": "Ask Nathan Stewart about the offsite retreat", "label": "@agenda"}
+{"text": "Discuss compliance requirements with Keith Brown at next 1:1", "label": "@agenda"}
+{"text": "Raise compliance requirements with Amy Crane in our next meeting", "label": "@agenda"}
+{"text": "Update the spreadsheet in Google Docs", "label": "@computer"}
+{"text": "Grab packing tape on the way to work", "label": "@errands"}
+{"text": "Ask Kevin Rivas for input on the product launch", "label": "@agenda"}
+{"text": "Text Edward Moore the meeting time", "label": "@phone"}
+{"text": "Grab stamps on the way to work", "label": "@errands"}
+{"text": "Clean the kitchen", "label": "@home"}
+{"text": "Ring Finance about training materials", "label": "@phone"}
+{"text": "Declutter the medicine cabinet", "label": "@home"}
+{"text": "Write a blog post about the vendor agreement", "label": "@computer"}
+{"text": "Hang the new curtains", "label": "@home"}
+{"text": "Wash the dishes", "label": "@home"}
+{"text": "Write a blog post about the project timeline", "label": "@computer"}
+{"text": "Rearrange furniture in kitchen", "label": "@home"}
+{"text": "Drop off donation at Williamchester", "label": "@errands"}
+{"text": "Share the updated contacts with John Torres for feedback", "label": "@agenda"}
+{"text": "Grab coffee filters on the way to work", "label": "@errands"}
+{"text": "Send April Booth a quick message about the contract renewal", "label": "@computer"}
+{"text": "Set up the bathroom for the meeting", "label": "@office"}
+{"text": "Call Target to check if packing tape is in stock", "label": "@phone"}
+{"text": "Follow up with Patricia Marshall on the product launch", "label": "@agenda"}
+{"text": "Pick up the prescription at Walmart", "label": "@errands"}
+{"text": "Call Moore, Yu and Miller billing department", "label": "@phone"}
+{"text": "Swing by Walmart for packing tape", "label": "@errands"}
+{"text": "Rearrange furniture in den", "label": "@home"}
+{"text": "Text Melinda Cameron the meeting time", "label": "@phone"}
+{"text": "Deep clean the den", "label": "@home"}
+{"text": "Talk to Daniel Floyd at their desk", "label": "@office"}
+{"text": "Organize bookshelf at work", "label": "@office"}
+{"text": "Declutter the filing cabinet", "label": "@home"}
+{"text": "Return library books", "label": "@errands"}
+{"text": "Replace the loose shelf", "label": "@home"}
+{"text": "Ask Elizabeth Chapman for input on the annual report", "label": "@agenda"}
+{"text": "Update the contract in Linear", "label": "@computer"}
+{"text": "Call back Johnny Campos about the design doc", "label": "@phone"}
+{"text": "Review pull request from Cristian Santos", "label": "@computer"}
+{"text": "Text Michelle Ross the meeting time", "label": "@phone"}
+{"text": "Take stamps to the dry cleaner", "label": "@errands"}
+{"text": "Label the coffee pods in the storage room", "label": "@office"}
+{"text": "Draft the analysis in Slack", "label": "@computer"}
+{"text": "Look up the redesign", "label": "@computer"}
+{"text": "Follow up on the contract renewal with Aaron Barber", "label": "@agenda"}
+{"text": "Replace the loose shelf", "label": "@home"}
+{"text": "Mow the lawn", "label": "@home"}
+{"text": "Swing by the warehouse to pick up envelopes", "label": "@errands"}
+{"text": "Process expenses in the backend", "label": "@computer"}
+{"text": "Check with Stephanie Simmons on the analysis status", "label": "@agenda"}
+{"text": "Get paint from the pharmacy", "label": "@errands"}
+{"text": "Edit the photo for the proposal", "label": "@computer"}
+{"text": "Set up the guest room for the meeting", "label": "@office"}
+{"text": "Configure the server settings", "label": "@computer"}
+{"text": "Organize filing cabinet at work", "label": "@office"}
+{"text": "Print the summary on the office printer", "label": "@office"}
+{"text": "Send Travis Holland a quick message about the project timeline", "label": "@computer"}
+{"text": "Raise the budget with Mr. Jeremiah Reeves in our next meeting", "label": "@agenda"}
+{"text": "Grab a new monitor on the way to work", "label": "@errands"}
+{"text": "Organize the shared kitchen", "label": "@office"}
+{"text": "Set up automation in Figma", "label": "@computer"}
+{"text": "Call Lee Group billing department", "label": "@phone"}
+{"text": "Prepare the meeting notes for Evan Kennedy", "label": "@computer"}
+{"text": "Get a phone charger from the pharmacy", "label": "@errands"}
+{"text": "Pick up extension cord from Walmart", "label": "@errands"}
+{"text": "Phone Timothy Koch to confirm a dinner party", "label": "@phone"}
+{"text": "Return library books", "label": "@errands"}
+{"text": "Send Beth Sanford a quick message about compliance requirements", "label": "@computer"}
+{"text": "Mention the project timeline to Michael Harrison at standup", "label": "@agenda"}
+{"text": "Run the report in the database", "label": "@computer"}
+{"text": "Bring up the proposal with Annette Farmer", "label": "@agenda"}
+{"text": "Water the plants", "label": "@home"}
+{"text": "Talk to Matthew Harvey at their desk", "label": "@office"}
+{"text": "Do laundry", "label": "@home"}
+{"text": "Confirm the annual picnic details with Jean Carrillo", "label": "@agenda"}
+{"text": "Stop at the grocery store on the way home", "label": "@errands"}
+{"text": "Update the project board in Google Docs", "label": "@computer"}
+{"text": "Send email to Connie Lawrence about the product launch", "label": "@computer"}
+{"text": "Pick up printer paper from Costco", "label": "@errands"}
+{"text": "Get printer paper for the office", "label": "@errands"}
+{"text": "Set up automation in Slack", "label": "@computer"}
+{"text": "Change the air filter", "label": "@home"}
+{"text": "Dial into the quarterly strategy conference call", "label": "@phone"}
+{"text": "Change the air filter", "label": "@home"}
+{"text": "Get keys copied at the hardware store", "label": "@errands"}
+{"text": "Cook curry for dinner", "label": "@home"}
+{"text": "Call insurance company about the billing error", "label": "@phone"}
+{"text": "Leave voicemail for Lisa Hensley", "label": "@phone"}
+{"text": "Stop by the bank to deposit check", "label": "@errands"}
+{"text": "Go to the patio for design work", "label": "@errands"}
+{"text": "Run a podcast by Andrea Hall", "label": "@agenda"}
+{"text": "Drop off a gift card at the front desk", "label": "@errands"}
+{"text": "Call to make a reservation for the product demo", "label": "@phone"}
+{"text": "Leave a message for Anthony Fitzgerald at Adkins Inc", "label": "@phone"}
+{"text": "Leave voicemail for Derek Wright", "label": "@phone"}
+{"text": "Cook burgers for dinner", "label": "@home"}
+{"text": "Phone Bryan Zamora for a quick update", "label": "@phone"}
+{"text": "Catch up with Tracy Harrison", "label": "@agenda"}
+{"text": "Take the car for an oil change", "label": "@errands"}
+{"text": "Drop off the package at the warehouse", "label": "@errands"}
+{"text": "Check with Jack Snow on the summary status", "label": "@agenda"}
+{"text": "Drop off the package at the storage closet", "label": "@errands"}
+{"text": "Talk to Robert Hernandez at their desk", "label": "@office"}
+{"text": "Look up inventory counts", "label": "@computer"}
+{"text": "Set up the backend in the living room", "label": "@home"}
+{"text": "Label the hand sanitizer in the storage room", "label": "@office"}
+{"text": "Wash the dishes", "label": "@home"}
+{"text": "Bring up the rollout plan with Renee Hogan", "label": "@agenda"}
+{"text": "Order a new monitor for the team", "label": "@computer"}
+{"text": "Order light bulbs for the team", "label": "@computer"}
+{"text": "Sweep the kitchen", "label": "@home"}
+{"text": "Grab paint on the way to work", "label": "@errands"}
+{"text": "Catch up with Phillip Bennett", "label": "@agenda"}
+{"text": "Buy batteries at IKEA", "label": "@errands"}
+{"text": "Fix the stuck window", "label": "@home"}
+{"text": "Update the project board in Trello", "label": "@computer"}
+{"text": "Process expenses in the billing system", "label": "@computer"}
+{"text": "Put up signs for a dinner party", "label": "@office"}
+{"text": "Discuss the proposal with Colleen Brock at next 1:1", "label": "@agenda"}
+{"text": "Post the the brief on the bulletin board", "label": "@office"}
+{"text": "Buy a new monitor at Office Depot", "label": "@errands"}
+{"text": "Talk to Charles Watts about inventory counts", "label": "@agenda"}
+{"text": "Stock the break room with sticky notes", "label": "@office"}
+{"text": "Swing by IKEA for packing tape", "label": "@errands"}
+{"text": "Update the spreadsheet with user analytics", "label": "@computer"}
+{"text": "Text Kurt Leonard the meeting time", "label": "@phone"}
+{"text": "Get Diana Bean's take on the rollout plan", "label": "@agenda"}
+{"text": "Write a blog post about the budget", "label": "@computer"}
+{"text": "Return a new monitor to Trader Joe's", "label": "@errands"}
+{"text": "Buy light bulbs at Office Depot", "label": "@errands"}
+{"text": "Take out the trash", "label": "@home"}
+{"text": "Mail groceries at the post office", "label": "@errands"}
+{"text": "Cook roast for dinner", "label": "@home"}
+{"text": "Drop off the package at the living room", "label": "@errands"}
+{"text": "Check on running toilet status", "label": "@home"}
+{"text": "Order coffee filters for the team", "label": "@computer"}
+{"text": "Wash the dishes", "label": "@home"}
+{"text": "Mention the marketing strategy to Pedro Ramos at standup", "label": "@agenda"}
+{"text": "Organize pantry at work", "label": "@office"}
+{"text": "Follow up on the proposal with Sheila Pollard", "label": "@agenda"}
+{"text": "Catch up with Gina French", "label": "@agenda"}
+{"text": "Label the snacks in the storage room", "label": "@office"}
+{"text": "Stop by the bank to deposit check", "label": "@errands"}
+{"text": "Print the analysis on the office printer", "label": "@office"}
+{"text": "Get batteries from the pharmacy", "label": "@errands"}
+{"text": "Create a presentation for the offsite retreat", "label": "@computer"}
+{"text": "Drop off donation at the storage closet", "label": "@errands"}
+{"text": "Declutter the bookshelf", "label": "@home"}
+{"text": "Go to the DMV to renew registration", "label": "@errands"}
+{"text": "Send James Chase a quick message about the quarterly report", "label": "@computer"}
+{"text": "Prepare the design doc for Anthony Stone", "label": "@computer"}
+{"text": "Label the printer toner in the storage room", "label": "@office"}
+{"text": "Check the inventory tracker for survey results", "label": "@computer"}
+{"text": "Take the car for an oil change", "label": "@errands"}
+{"text": "Share the Q3 numbers with Lisa Allen for feedback", "label": "@agenda"}
+{"text": "Call Alexis Davis about the marketing strategy", "label": "@phone"}
+{"text": "Reserve the conference room for a client meeting", "label": "@office"}
+{"text": "Look up the hiring plan", "label": "@computer"}
+{"text": "Refill the coffee machine", "label": "@office"}
+{"text": "Declutter the desk drawer", "label": "@home"}
+{"text": "Check the mail in the office mailbox", "label": "@office"}
+{"text": "Text Carla Kelly the the address", "label": "@phone"}
+{"text": "Ask Shannon Mcclure for input on the migration", "label": "@agenda"}
+{"text": "Check the billing system for performance metrics", "label": "@computer"}
+{"text": "Run the report in the database", "label": "@computer"}
+{"text": "Change the air filter", "label": "@home"}
+{"text": "Update Karen Bender on the redesign progress", "label": "@agenda"}
+{"text": "Catch up with Emily Smith", "label": "@agenda"}
+{"text": "Paint the bedroom", "label": "@home"}
+{"text": "Grab paint on the way to work", "label": "@errands"}
+{"text": "Ask Andrea Holland about a dinner party", "label": "@agenda"}
+{"text": "Tidy up the kitchen", "label": "@home"}
+{"text": "Write code for user profiles", "label": "@computer"}
+{"text": "Get sign-off from Jennifer Carlson on the analysis", "label": "@agenda"}
+{"text": "Dial into the quarterly strategy conference call", "label": "@phone"}
+{"text": "Take out the trash", "label": "@home"}
+{"text": "Call Lee, Jones and Stanley support about the warranty claim", "label": "@phone"}
+{"text": "Take batteries to the dry cleaner", "label": "@errands"}
+{"text": "Organize bookshelf at work", "label": "@office"}
+{"text": "Process expenses in the portal", "label": "@computer"}
+{"text": "Go to the server room for planning", "label": "@errands"}
+{"text": "Grab paper towels from the supply closet", "label": "@office"}
+{"text": "Organize the pantry", "label": "@home"}
+{"text": "Check on running toilet status", "label": "@home"}
+{"text": "Paint the office", "label": "@home"}
+{"text": "Send email to Daniel Wagner about the migration", "label": "@computer"}
+{"text": "Sync with Anthony Sparks about the budget", "label": "@agenda"}
+{"text": "Call the doctor to schedule an appointment", "label": "@phone"}
+{"text": "Hang the new curtains", "label": "@home"}
+{"text": "Call back Richard Aguirre about the design doc", "label": "@phone"}
+{"text": "Send Stanley Washington a quick message about the product launch", "label": "@computer"}
+{"text": "Prepare the spec for Jennifer Hodges", "label": "@computer"}
+{"text": "Check on squeaky hinge status", "label": "@home"}
+{"text": "Phone the landlord about broken doorknob", "label": "@phone"}
+{"text": "Rearrange furniture in basement", "label": "@home"}
+{"text": "Return paint to Walmart", "label": "@errands"}
+{"text": "Stock the break room with whiteboard markers", "label": "@office"}
+{"text": "Go to the garage for project management", "label": "@errands"}
+{"text": "Get a gift card for the office", "label": "@errands"}
+{"text": "Phone Crystal Johnson for a quick update", "label": "@phone"}
+{"text": "Talk to Joy Mercado at their desk", "label": "@office"}
+{"text": "Leave a message for Linda Cruz at Ferrell, Rice and Maddox", "label": "@phone"}
+{"text": "Mail a new monitor at the post office", "label": "@errands"}
+{"text": "Catch up with Michael Ferguson", "label": "@agenda"}
+{"text": "Check the API for survey results", "label": "@computer"}
+{"text": "Prepare the spreadsheet for Brian Kirk", "label": "@computer"}
+{"text": "Mail a new monitor at the post office", "label": "@errands"}
+{"text": "Return library books", "label": "@errands"}
+{"text": "Back up files to AWS", "label": "@computer"}
+{"text": "Deploy the API to production", "label": "@computer"}
+{"text": "Write a blog post about the quarterly report", "label": "@computer"}
+{"text": "Stop by the bank to deposit check", "label": "@errands"}
+{"text": "Hang the new curtains", "label": "@home"}
+{"text": "Edit the photo for the agenda", "label": "@computer"}
+{"text": "Sync with Timothy Ramirez about the vendor agreement", "label": "@agenda"}
+{"text": "Analyze survey results in the password manager", "label": "@computer"}
+{"text": "Print the spec on the office printer", "label": "@office"}
+{"text": "Review pull request from Gabrielle Davis", "label": "@computer"}
+{"text": "Pick up flowers from the florist", "label": "@errands"}
+{"text": "Drop off the presentation at Nancy Hopkins's desk", "label": "@office"}
+{"text": "Mail notebooks at the post office", "label": "@errands"}
+{"text": "Look up the budget", "label": "@computer"}
+{"text": "Water the plants", "label": "@home"}
+{"text": "Sort the recycling", "label": "@home"}
+{"text": "Reserve the conference room for a birthday party", "label": "@office"}
+{"text": "Take the car for an oil change", "label": "@errands"}
+{"text": "Tidy up the bathroom", "label": "@home"}
+{"text": "Take out the trash", "label": "@home"}
+{"text": "Buy light bulbs at Best Buy", "label": "@errands"}
+{"text": "Back up files to GCP", "label": "@computer"}
+{"text": "Ring Operations about a software license", "label": "@phone"}
+{"text": "Pick up the printed the invoice", "label": "@office"}
+{"text": "Call insurance company about the service outage", "label": "@phone"}
+{"text": "Put up signs for a birthday party", "label": "@office"}
+{"text": "Grab a gift card on the way to work", "label": "@errands"}
+{"text": "Export customer feedback to PDF", "label": "@computer"}
+{"text": "Send Lauren Keller a quick message about inventory counts", "label": "@computer"}
+{"text": "Coordinate with Brittany Shepherd on the product launch", "label": "@agenda"}
+{"text": "Set up the API in the kitchen", "label": "@home"}
+{"text": "Check the mail in the office mailbox", "label": "@office"}
+{"text": "Update the spreadsheet with pricing information", "label": "@computer"}
+{"text": "Mention compliance requirements to Jason Henry at standup", "label": "@agenda"}
+{"text": "Follow up on compliance requirements with Derek Anderson", "label": "@agenda"}
+{"text": "Call the doctor to schedule an appointment", "label": "@phone"}
+{"text": "Put up signs for a team lunch", "label": "@office"}
+{"text": "Leave a message for John Daniel at Valdez, Lucas and Brown", "label": "@phone"}
+{"text": "Organize the shared kitchen", "label": "@office"}
+{"text": "Check the server for the latest figures", "label": "@computer"}
+{"text": "Organize the storage unit", "label": "@home"}
+{"text": "Catch up with Thomas Smith", "label": "@agenda"}
+{"text": "Debug the login bug in the dashboard", "label": "@computer"}
+{"text": "Clean the whiteboard after Monday planning", "label": "@office"}
+{"text": "Grab whiteboard markers from the supply closet", "label": "@office"}
+{"text": "Stop at CVS on the way home", "label": "@errands"}
+{"text": "Mail a gift card at the post office", "label": "@errands"}
+{"text": "Distribute the meeting notes to the team", "label": "@office"}
+{"text": "Get coffee filters from the pharmacy", "label": "@errands"}
+{"text": "Send Jason Simpson a quick message about compliance requirements", "label": "@computer"}
+{"text": "Get sign-off from Cynthia Alvarez on the spreadsheet", "label": "@agenda"}
+{"text": "Raise the quarterly report with Leslie Morris in our next meeting", "label": "@agenda"}
+{"text": "Set up the projector for a workshop", "label": "@office"}
+{"text": "Paint the living room", "label": "@home"}
+{"text": "Water the plants", "label": "@home"}
+{"text": "Clean the guest room", "label": "@home"}
+{"text": "Send email to Noah Rhodes about the redesign", "label": "@computer"}
+{"text": "Adjust the thermostat in the office", "label": "@office"}
+{"text": "Change the air filter", "label": "@home"}
+{"text": "Get Rick Lawrence's take on the quarterly report", "label": "@agenda"}
+{"text": "Update the invoice in Slack", "label": "@computer"}
+{"text": "Update Michael Valencia on the contract renewal progress", "label": "@agenda"}
+{"text": "Hang the new curtains", "label": "@home"}
+{"text": "Refill the coffee machine", "label": "@office"}
+{"text": "Drop off donation at the server room", "label": "@errands"}
+{"text": "Review pull request from Abigail Shaffer", "label": "@computer"}
+{"text": "Reserve the conference room for a workshop", "label": "@office"}
+{"text": "Clean the whiteboard after Monday planning", "label": "@office"}
+{"text": "Ask John Kelly to prioritize the contract renewal", "label": "@agenda"}
+{"text": "Hang the new curtains", "label": "@home"}
+{"text": "Clean the whiteboard after client kickoff", "label": "@office"}
+{"text": "Talk to Kayla Leon at their desk", "label": "@office"}
+{"text": "Export customer feedback to a spreadsheet", "label": "@computer"}
+{"text": "Stop at Costco on the way home", "label": "@errands"}
+{"text": "Call to make a reservation for the weekly standup", "label": "@phone"}
+{"text": "Get a gift card for the office", "label": "@errands"}
+{"text": "Wash the dishes", "label": "@home"}
