@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Device-Adaptive AI
 status: executing
-stopped_at: Completed 14-02-PLAN.md
-last_updated: "2026-03-06T18:52:20.890Z"
-last_activity: 2026-03-06 — Phase 14 Plan 02 complete (sanitization pipeline)
+stopped_at: Phase 17 context gathered
+last_updated: "2026-03-07T04:38:47.449Z"
+last_activity: 2026-03-07 — Phase 14 Plan 01 complete (NER training pipeline)
 progress:
-  total_phases: 5
+  total_phases: 8
   completed_phases: 2
   total_plans: 8
   completed_plans: 7
@@ -92,12 +92,18 @@ Phase 15 (Device-Adaptive LLM) is independent of Phases 13-14 and can execute on
 - Worker memory budget for sanitization model needs measurement (now using dedicated worker — architecture decided)
 - Android WASM LLM sentinel threshold (2 tokens/sec) needs validation on real mid-range hardware during Phase 15
 
+### Roadmap Evolution
+
+- Phase 17 added: Tier 2 GTD classification models
+- Phase 18 added: Tier 2 next action decomposition model
+- Phase 19 added: Tier 2 clarification wizard model
+
 ### Pending Todos
 
 None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T03:28:42Z
-Stopped at: Completed 14-01-PLAN.md
-Resume file: .planning/phases/14-sanitization-classifier/14-01-SUMMARY.md
+Last session: 2026-03-07T04:38:47.446Z
+Stopped at: Phase 17 context gathered
+Resume file: .planning/phases/17-tier-2-gtd-classification-models/17-CONTEXT.md
