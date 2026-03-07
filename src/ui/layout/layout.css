@@ -6513,3 +6513,331 @@ kbd {
 .review-resume-toast-discard:hover {
   border-color: var(--text-secondary, #999);
 }
+
+/* ============================================
+   Phase 14: Cloud Request Preview — Entity Map
+   ============================================ */
+
+/* Cloud preview modal (base styles — component existed since Phase 4 without CSS) */
+.cloud-preview-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 900;
+}
+
+.cloud-preview-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 901;
+  background: var(--bg-secondary, #161b22);
+  border: 1px solid var(--border-primary, #30363d);
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 640px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.cloud-preview-header {
+  margin-bottom: 16px;
+}
+
+.cloud-preview-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary, #e6edf3);
+  margin: 0;
+}
+
+.cloud-preview-info {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #8b949e);
+  margin-bottom: 12px;
+}
+
+.cloud-preview-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  background: var(--bg-primary, #0d1117);
+  border-radius: 6px;
+  border: 1px solid var(--border-primary, #30363d);
+}
+
+.cloud-preview-meta-row {
+  display: flex;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+
+.cloud-preview-meta-label {
+  color: var(--text-muted, #484f58);
+  min-width: 70px;
+}
+
+.cloud-preview-meta-value {
+  color: var(--text-primary, #e6edf3);
+}
+
+.cloud-preview-data-label {
+  font-size: 0.8rem;
+  color: var(--text-muted, #484f58);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cloud-preview-data {
+  margin-bottom: 16px;
+  border: 1px solid var(--border-primary, #30363d);
+  border-radius: 6px;
+  background: var(--bg-primary, #0d1117);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.cloud-preview-prompt {
+  padding: 12px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-primary, #e6edf3);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+}
+
+.cloud-preview-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.cloud-preview-btn {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cloud-preview-btn-cancel {
+  background: transparent;
+  color: var(--text-secondary, #8b949e);
+  border-color: var(--border-primary, #30363d);
+}
+
+.cloud-preview-btn-cancel:hover {
+  border-color: var(--text-secondary, #8b949e);
+}
+
+.cloud-preview-btn-approve {
+  background: var(--accent, #58a6ff);
+  color: #fff;
+  border-color: var(--accent, #58a6ff);
+}
+
+.cloud-preview-btn-approve:hover {
+  filter: brightness(1.1);
+}
+
+.cloud-preview-note {
+  font-size: 0.7rem;
+  color: var(--text-muted, #484f58);
+  margin-top: 12px;
+  text-align: center;
+}
+
+/* Entity count badge */
+.entity-count-badge-row {
+  margin-bottom: 8px;
+}
+
+.entity-count-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(88, 166, 255, 0.15);
+  color: var(--accent, #58a6ff);
+  border: 1px solid rgba(88, 166, 255, 0.3);
+}
+
+.entity-count-badge.entity-count-none {
+  background: rgba(139, 148, 158, 0.1);
+  color: var(--text-muted, #484f58);
+  border-color: rgba(139, 148, 158, 0.2);
+  font-weight: 400;
+}
+
+/* Entity map toggle button */
+.entity-map-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  margin-bottom: 8px;
+  background: transparent;
+  border: 1px solid var(--border-primary, #30363d);
+  border-radius: 6px;
+  color: var(--text-secondary, #8b949e);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.entity-map-toggle:hover {
+  background: var(--bg-tertiary, #21262d);
+  color: var(--text-primary, #e6edf3);
+}
+
+.entity-map-toggle-arrow {
+  font-size: 0.65rem;
+}
+
+/* Entity map table */
+.entity-map-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-primary, #30363d);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.entity-map-table th {
+  text-align: left;
+  padding: 6px 10px;
+  color: var(--text-muted, #484f58);
+  font-weight: 500;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--bg-tertiary, #21262d);
+  border-bottom: 1px solid var(--border-primary, #30363d);
+}
+
+.entity-map-table td {
+  padding: 6px 10px;
+  color: var(--text-primary, #e6edf3);
+  border-bottom: 1px solid var(--border-primary, #30363d);
+}
+
+.entity-map-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.entity-map-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Pseudonym column — monospace, colored per category */
+.entity-map-pseudonym {
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+/* Category color scheme */
+.entity-cat-person { color: #58a6ff; }
+.entity-cat-location { color: #3fb950; }
+.entity-cat-financial { color: #d29922; }
+.entity-cat-contact { color: #bc8cff; }
+.entity-cat-credential { color: #f85149; }
+
+/* Real value column */
+.entity-map-real {
+  color: var(--text-secondary, #8b949e);
+}
+
+/* Category badge */
+.entity-map-category {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid currentColor;
+  opacity: 0.8;
+}
+
+/* Restore toggle button */
+.entity-map-restore-btn {
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-secondary, #8b949e);
+  border: 1px solid var(--border-primary, #30363d);
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.entity-map-restore-btn:hover {
+  background: var(--bg-tertiary, #21262d);
+  border-color: var(--text-secondary, #8b949e);
+}
+
+.entity-map-restore-btn.entity-map-restore-active {
+  background: rgba(88, 166, 255, 0.15);
+  color: var(--accent, #58a6ff);
+  border-color: rgba(88, 166, 255, 0.3);
+}
+
+/* Restored row — muted styling */
+.entity-map-restored {
+  opacity: 0.5;
+}
+
+/* Pseudonym highlight in prompt text */
+.pseudonym-highlight {
+  padding: 1px 3px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.pseudonym-highlight.entity-cat-person {
+  background: rgba(88, 166, 255, 0.15);
+}
+
+.pseudonym-highlight.entity-cat-location {
+  background: rgba(63, 185, 80, 0.15);
+}
+
+.pseudonym-highlight.entity-cat-financial {
+  background: rgba(210, 153, 34, 0.15);
+}
+
+.pseudonym-highlight.entity-cat-contact {
+  background: rgba(188, 140, 255, 0.15);
+}
+
+.pseudonym-highlight.entity-cat-credential {
+  background: rgba(248, 81, 73, 0.15);
+}
+
+/* Restore warning */
+.entity-restore-warning {
+  font-size: 0.78rem;
+  color: var(--color-warning, #d29922);
+  padding: 6px 10px;
+  background: rgba(210, 153, 34, 0.1);
+  border: 1px solid rgba(210, 153, 34, 0.2);
+  border-radius: 6px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}

@@ -55,6 +55,7 @@ import { DEFAULT_CAP_CONFIG } from '../../types/config';
 import type { SavedFilter } from '../../storage/db';
 import type { AIProviderStatus } from '../../ai/adapters/adapter';
 import type { CloudRequestLogEntry } from '../../ai/key-vault';
+import type { DetectedEntity } from '../../ai/sanitization/types';
 import { dispatchAI } from '../../ai/router';
 import { BrowserAdapter, DEFAULT_MODEL_ID } from '../../ai/adapters/browser';
 import { triageInbox, cancelTriage } from '../../ai/triage';
@@ -104,6 +105,9 @@ export interface BinderState {
   // Phase 4: Cloud request preview state (wired by Shell.tsx -> CloudAdapter pre-send approval handler)
   pendingCloudRequest: CloudRequestLogEntry | null;
   pendingCloudRequestResolve: ((approved: boolean) => void) | null;
+  // Phase 14: Sanitization entity data for pre-send modal
+  pendingCloudRequestEntities: DetectedEntity[];
+  pendingCloudRequestEntityMap: Map<string, string>;
   // Phase 13: Multi-provider cloud settings
   activeCloudProvider: string;  // ProviderId, default 'anthropic'
   providerModels: Record<string, string>;  // user-overridden models per provider
@@ -155,6 +159,9 @@ const initialState: BinderState = {
   // Phase 4: Cloud request preview state
   pendingCloudRequest: null,
   pendingCloudRequestResolve: null,
+  // Phase 14: Sanitization entity data for pre-send modal
+  pendingCloudRequestEntities: [],
+  pendingCloudRequestEntityMap: new Map(),
   // Phase 13: Multi-provider cloud settings
   activeCloudProvider: 'anthropic',
   providerModels: {},
@@ -562,9 +569,13 @@ export function setSelectedLLMModel(modelId: string): void {
 export function setPendingCloudRequest(
   entry: CloudRequestLogEntry | null,
   resolve: ((approved: boolean) => void) | null,
+  entities?: DetectedEntity[],
+  entityMap?: Map<string, string>,
 ): void {
   setState('pendingCloudRequest', entry);
   setState('pendingCloudRequestResolve', resolve);
+  setState('pendingCloudRequestEntities', entities ?? []);
+  setState('pendingCloudRequestEntityMap', entityMap ?? new Map());
 }
 
 // --- Phase 5: Triage suggestion state (ephemeral, main-thread only) ---

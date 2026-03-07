@@ -55,7 +55,7 @@ export class OpenAICompatibleAdapter implements AIAdapter {
    * If not set, requests proceed without user approval (use in tests only).
    */
   private onPreSendApproval:
-    | ((entry: CloudRequestLogEntry) => Promise<boolean>)
+    | ((entry: CloudRequestLogEntry, entities?: import('../sanitization/types').DetectedEntity[], entityMap?: Map<string, string>) => Promise<boolean>)
     | null = null;
 
   constructor(config: OpenAICompatibleAdapterConfig) {
@@ -89,7 +89,7 @@ export class OpenAICompatibleAdapter implements AIAdapter {
    *   false — user cancelled (request throws)
    */
   setPreSendApprovalHandler(
-    handler: (entry: CloudRequestLogEntry) => Promise<boolean>,
+    handler: (entry: CloudRequestLogEntry, entities?: import('../sanitization/types').DetectedEntity[], entityMap?: Map<string, string>) => Promise<boolean>,
   ): void {
     this.onPreSendApproval = handler;
   }
@@ -135,7 +135,11 @@ export class OpenAICompatibleAdapter implements AIAdapter {
 
     // Pre-send preview: user must approve before data leaves device (CONTEXT.md locked decision)
     if (this.onPreSendApproval) {
-      const approved = await this.onPreSendApproval(logEntry);
+      const approved = await this.onPreSendApproval(
+        logEntry,
+        sanitizationResult.entities,
+        sanitizationResult.entityMap,
+      );
       if (!approved) {
         logEntry.status = 'cancelled';
         throw new Error('Cloud request cancelled by user');

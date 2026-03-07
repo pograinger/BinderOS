@@ -32,6 +32,7 @@ import { ReviewResumeToast } from '../components/ReviewResumeToast';
 import { state, setPendingCloudRequest, showAISettings, setShowAISettings, showCapture } from '../signals/store';
 import { getActiveAdapter } from '../../ai/router';
 import type { CloudRequestLogEntry } from '../../ai/key-vault';
+import type { DetectedEntity } from '../../ai/sanitization/types';
 
 // showAISettings / setShowAISettings now live in store.ts to avoid circular deps.
 
@@ -64,10 +65,10 @@ export function Shell() {
       const adapter = getActiveAdapter();
       // Duck-type check: any cloud adapter with setPreSendApprovalHandler
       if (adapter && 'setPreSendApprovalHandler' in adapter) {
-        (adapter as { setPreSendApprovalHandler: (h: (entry: CloudRequestLogEntry) => Promise<boolean>) => void })
-          .setPreSendApprovalHandler((entry: CloudRequestLogEntry) => {
+        (adapter as { setPreSendApprovalHandler: (h: (entry: CloudRequestLogEntry, entities?: DetectedEntity[], entityMap?: Map<string, string>) => Promise<boolean>) => void })
+          .setPreSendApprovalHandler((entry: CloudRequestLogEntry, entities?: DetectedEntity[], entityMap?: Map<string, string>) => {
             return new Promise<boolean>((resolve) => {
-              setPendingCloudRequest(entry, resolve);
+              setPendingCloudRequest(entry, resolve, entities, entityMap);
             });
           });
       }
@@ -120,6 +121,8 @@ export function Shell() {
       <Show when={state.pendingCloudRequest !== null}>
         <CloudRequestPreview
           entry={state.pendingCloudRequest!}
+          entities={state.pendingCloudRequestEntities}
+          entityMap={state.pendingCloudRequestEntityMap}
           onApprove={() => {
             state.pendingCloudRequestResolve?.(true);
             setPendingCloudRequest(null, null);
