@@ -144,3 +144,35 @@ Note: Phase 15 is independent of 13-14 and may execute in parallel with Phase 14
 | 14. Sanitization Classifier | 2/3 | In Progress|  | - |
 | 15. Device-Adaptive Local LLM | v4.0 | 0/TBD | Not started | - |
 | 16. ONNX Section Routing | v4.0 | 0/TBD | Not started | - |
+
+### Phase 17: Tier 2 GTD classification models
+
+**Goal:** Four ONNX classifiers (GTD list routing, actionability, project detection, context tagging) trained and deployed in the embedding worker, enabling offline sub-second GTD intelligence on triage cards with confidence indicators and correction logging
+**Requirements**: GTD-01, GTD-02, GTD-03, GTD-04, GTD-05, GTD-06, GTD-07, GTD-08
+**Depends on:** Phase 16
+**Plans:** 3 plans
+
+Plans:
+- [ ] 17-01-PLAN.md — Python training pipeline: Faker data generation, MLP+ONNX training, Node.js validation (GTD-01, GTD-02, GTD-03, GTD-04, GTD-05)
+- [ ] 17-02-PLAN.md — Browser integration: embedding worker multi-classifier, tier2 handler, triage cascade (GTD-05, GTD-06)
+- [ ] 17-03-PLAN.md — Triage card GTD display, classification-log extension, visual verification (GTD-07, GTD-08)
+
+### Phase 18: Tier 2 next action decomposition model
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 17
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 18 to break down)
+
+### Phase 19: Tier 2 clarification wizard model
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 18
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 19 to break down)
