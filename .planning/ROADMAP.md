@@ -150,7 +150,7 @@ Note: Phase 15 is independent of 13-14 and may execute in parallel with Phase 14
 **Goal:** Four ONNX classifiers (GTD list routing, actionability, project detection, context tagging) trained and deployed in the embedding worker, enabling offline sub-second GTD intelligence on triage cards with confidence indicators and correction logging
 **Requirements**: GTD-01, GTD-02, GTD-03, GTD-04, GTD-05, GTD-06, GTD-07, GTD-08
 **Depends on:** Phase 16
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 - [ ] 17-01-PLAN.md — Python training pipeline: Faker data generation, MLP+ONNX training, Node.js validation (GTD-01, GTD-02, GTD-03, GTD-04, GTD-05)
