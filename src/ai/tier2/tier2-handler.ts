@@ -21,7 +21,8 @@
  */
 
 import type { TierHandler } from './handler';
-import type { AITaskType, TieredRequest, TieredResult } from './types';
+import type { AITaskType, TieredRequest, TieredResult, GtdClassification, GtdClassifierName } from './types';
+import { GTD_CONFIDENCE_THRESHOLDS } from './types';
 import type { AtomType } from '../../types/atoms';
 import type { CentroidSet } from './centroid-builder';
 
@@ -54,6 +55,46 @@ type OnnxErrorMsg = {
   id: string;
   error: string;
 };
+
+// --- Worker communication: GTD path ---
+
+type GtdResultMsg = {
+  type: 'GTD_RESULT';
+  id: string;
+  vector: number[];
+  routing: Record<string, number> | null;
+  actionability: Record<string, number> | null;
+  project: Record<string, number> | null;
+  context: Record<string, number> | null;
+};
+
+type GtdErrorMsg = {
+  type: 'GTD_ERROR';
+  id: string;
+  error: string;
+};
+
+/**
+ * Send a GTD classification request to the embedding worker and wait for the result.
+ * Worker embeds text once and runs all 4 GTD ONNX classifiers on the same vector.
+ */
+function classifyGtdViaWorker(worker: Worker, text: string): Promise<GtdResultMsg> {
+  return new Promise((resolve, reject) => {
+    const id = crypto.randomUUID();
+
+    const handler = (event: MessageEvent) => {
+      const msg = event.data as GtdResultMsg | GtdErrorMsg;
+      if (msg.id !== id) return;
+
+      worker.removeEventListener('message', handler);
+      if (msg.type === 'GTD_RESULT') resolve(msg);
+      else if (msg.type === 'GTD_ERROR') reject(new Error(msg.error));
+    };
+
+    worker.addEventListener('message', handler);
+    worker.postMessage({ type: 'CLASSIFY_GTD', id, text });
+  });
+}
 
 /**
  * Send a centroid-based classification request to the embedding worker and wait for the result.
@@ -135,10 +176,13 @@ export function createTier2Handler(
     name: 'Compact Neural Models',
 
     canHandle(task: AITaskType): boolean {
-      if (task !== 'classify-type' && task !== 'route-section') return false;
+      if (task !== 'classify-type' && task !== 'route-section' && task !== 'classify-gtd') return false;
 
       const worker = getWorker();
       if (!worker) return false;
+
+      // GTD models load lazily; worker just needs to exist
+      if (task === 'classify-gtd') return true;
 
       if (task === 'classify-type') {
         // ONNX path: classifier ready means we can handle without centroids
@@ -279,6 +323,43 @@ export function createTier2Handler(
           confidence,
           sectionItemId: bestSectionId,
           reasoning: `Section centroid: similarity ${bestScore.toFixed(3)}, separation ${separation.toFixed(3)}`,
+        };
+      }
+
+      if (task === 'classify-gtd') {
+        const gtdResult = await classifyGtdViaWorker(worker, text);
+        _lastVector = gtdResult.vector;
+
+        // Build GtdClassification from raw scores + per-classifier thresholds
+        const gtd: GtdClassification = {};
+        const processScores = (
+          scores: Record<string, number> | null,
+          classifierName: GtdClassifierName,
+        ) => {
+          if (!scores) return undefined;
+          const entries = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+          const [topLabel, topScore] = entries[0] ?? ['unknown', 0];
+          const threshold = GTD_CONFIDENCE_THRESHOLDS[classifierName];
+          return { label: topLabel, confidence: topScore, isLowConfidence: topScore < threshold };
+        };
+
+        gtd.routing = processScores(gtdResult.routing, 'gtd-routing');
+        gtd.actionability = processScores(gtdResult.actionability, 'actionability');
+        gtd.project = processScores(gtdResult.project, 'project-detection');
+        gtd.context = processScores(gtdResult.context, 'context-tagging');
+
+        // Overall confidence = minimum confidence across all available classifiers
+        const confidences = [gtd.routing, gtd.actionability, gtd.project, gtd.context]
+          .filter(Boolean)
+          .map(c => c!.confidence);
+        const minConfidence = confidences.length > 0 ? Math.min(...confidences) : 0;
+
+        return {
+          tier: 2 as const,
+          confidence: minConfidence,
+          gtd,
+          reasoning: `GTD classifiers: routing=${gtd.routing?.label}(${gtd.routing?.confidence.toFixed(2)}), ` +
+            `actionability=${gtd.actionability?.label}, project=${gtd.project?.label}, context=${gtd.context?.label}`,
         };
       }
 

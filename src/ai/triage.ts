@@ -45,6 +45,22 @@ export interface TriageSuggestion {
   confidenceSpread?: number;
   /** Model's original top-1 suggestion before user interaction (CONF-03: prevents model-collapse feedback loops) */
   modelSuggestion?: AtomType;
+  /** GTD list routing suggestion (only for tasks) */
+  gtdRouting?: string;
+  gtdRoutingConfidence?: number;
+  gtdRoutingLowConfidence?: boolean;
+  /** Actionability assessment */
+  actionable?: boolean;
+  actionableConfidence?: number;
+  actionableLowConfidence?: boolean;
+  /** Project detection */
+  isProject?: boolean;
+  projectConfidence?: number;
+  projectLowConfidence?: boolean;
+  /** Context tag */
+  contextTag?: string;
+  contextTagConfidence?: number;
+  contextTagLowConfidence?: boolean;
 }
 
 // --- Module-level AbortController for cancellation ---
@@ -242,7 +258,7 @@ export async function triageInbox(
 
         const result = tieredResponse.result;
         if (result.type) {
-          onSuggestion({
+          const suggestion: TriageSuggestion = {
             inboxItemId: item.id,
             suggestedType: result.type,
             suggestedSectionItemId: result.sectionItemId ?? null,
@@ -255,7 +271,46 @@ export async function triageInbox(
             alternativeType: result.alternativeType,            // Phase 10: ambiguity from ONNX spread
             confidenceSpread: result.confidenceSpread,         // Phase 10: spread for logging
             modelSuggestion: result.type,                      // Phase 10: capture BEFORE user interaction (CONF-03)
-          });
+          };
+
+          // Cascade: if type is 'task', run GTD classifiers (Phase 17)
+          if (result.type === 'task') {
+            try {
+              const gtdResponse = await dispatchTiered({
+                requestId: crypto.randomUUID(),
+                task: 'classify-gtd',
+                features: { content: item.content, title: item.title, signal },
+              });
+              if (gtdResponse.result.gtd) {
+                const g = gtdResponse.result.gtd;
+                if (g.routing) {
+                  suggestion.gtdRouting = g.routing.label;
+                  suggestion.gtdRoutingConfidence = g.routing.confidence;
+                  suggestion.gtdRoutingLowConfidence = g.routing.isLowConfidence;
+                }
+                if (g.actionability) {
+                  suggestion.actionable = g.actionability.label === 'actionable';
+                  suggestion.actionableConfidence = g.actionability.confidence;
+                  suggestion.actionableLowConfidence = g.actionability.isLowConfidence;
+                }
+                if (g.project) {
+                  suggestion.isProject = g.project.label === 'project';
+                  suggestion.projectConfidence = g.project.confidence;
+                  suggestion.projectLowConfidence = g.project.isLowConfidence;
+                }
+                if (g.context) {
+                  suggestion.contextTag = g.context.label;
+                  suggestion.contextTagConfidence = g.context.confidence;
+                  suggestion.contextTagLowConfidence = g.context.isLowConfidence;
+                }
+              }
+            } catch (err) {
+              // GTD classification failure is non-fatal — type classification still valid
+              console.warn('[triage] GTD classification failed:', err);
+            }
+          }
+
+          onSuggestion(suggestion);
           continue;
         }
       }
