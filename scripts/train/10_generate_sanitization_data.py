@@ -54,7 +54,7 @@ ID_TO_LABEL = {v: k for k, v in LABEL_MAP.items()}
 # ---------------------------------------------------------------------------
 # Faker setup with multiple locales for diversity
 # ---------------------------------------------------------------------------
-fake = Faker(["en_US", "en_GB", "en_AU"])
+fake = Faker("en_US")
 Faker.seed(42)
 random.seed(42)
 

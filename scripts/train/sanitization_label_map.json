@@ -1,0 +1,13 @@
+{
+  "O": 0,
+  "B-PERSON": 1,
+  "I-PERSON": 2,
+  "B-LOCATION": 3,
+  "I-LOCATION": 4,
+  "B-FINANCIAL": 5,
+  "I-FINANCIAL": 6,
+  "B-CONTACT": 7,
+  "I-CONTACT": 8,
+  "B-CREDENTIAL": 9,
+  "I-CREDENTIAL": 10
+}
