@@ -32,6 +32,18 @@ export interface ClassificationEvent {
   embedding?: number[];
   /** Model's top-1 suggestion BEFORE user interaction (Phase 9+). Used to detect model-collapse feedback loops. */
   modelSuggestion?: AtomType;
+  /** GTD list routing suggestion (only for tasks) */
+  suggestedGtdRouting?: string;
+  /** User's chosen GTD routing (if corrected) */
+  chosenGtdRouting?: string;
+  /** Suggested actionability */
+  suggestedActionable?: boolean;
+  /** Suggested project status */
+  suggestedIsProject?: boolean;
+  /** Suggested context tag */
+  suggestedContextTag?: string;
+  /** User's chosen context tag (if corrected) */
+  chosenContextTag?: string;
 }
 
 const CONFIG_KEY = 'classification-events';
@@ -59,6 +71,30 @@ export async function getClassificationHistory(): Promise<ClassificationEvent[]>
   const entry = await db.config.get(CONFIG_KEY);
   if (!entry) return [];
   return entry.value as ClassificationEvent[];
+}
+
+/**
+ * Export classification history as JSONL string for retraining data.
+ * Includes GTD fields when present. Format compatible with training pipeline.
+ */
+export async function exportClassificationJSONL(): Promise<string> {
+  const history = await getClassificationHistory();
+  return history
+    .map(event => JSON.stringify({
+      text: event.content,
+      type_suggested: event.suggestedType,
+      type_chosen: event.chosenType,
+      gtd_routing_suggested: event.suggestedGtdRouting ?? null,
+      gtd_routing_chosen: event.chosenGtdRouting ?? null,
+      actionable_suggested: event.suggestedActionable ?? null,
+      is_project_suggested: event.suggestedIsProject ?? null,
+      context_tag_suggested: event.suggestedContextTag ?? null,
+      context_tag_chosen: event.chosenContextTag ?? null,
+      tier: event.tier ?? null,
+      confidence: event.confidence ?? null,
+      timestamp: event.timestamp,
+    }))
+    .join('\n');
 }
 
 /**

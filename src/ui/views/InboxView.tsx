@@ -158,6 +158,13 @@ export function InboxView() {
       tier: currentSuggestion?.tier,
       confidence: currentSuggestion?.confidence === 'high' ? 0.85 : 0.5,
       modelSuggestion: currentSuggestion?.modelSuggestion,
+      // Phase 17: GTD classification fields for retraining data accumulation
+      suggestedGtdRouting: currentSuggestion?.gtdRouting,
+      chosenGtdRouting: currentSuggestion?.gtdRouting, // same as suggested until correction UI added
+      suggestedActionable: currentSuggestion?.actionable,
+      suggestedIsProject: currentSuggestion?.isProject,
+      suggestedContextTag: currentSuggestion?.contextTag,
+      chosenContextTag: currentSuggestion?.contextTag, // same as suggested until correction UI added
     });
 
     sendCommand({

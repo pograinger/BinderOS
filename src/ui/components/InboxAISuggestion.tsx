@@ -112,6 +112,33 @@ export function InboxAISuggestion(props: InboxAISuggestionProps) {
             </div>
           </div>
 
+          {/* GTD badges for ambiguous path — only if either suggested type is task */}
+          <Show when={(props.suggestion.suggestedType === 'task' || props.suggestion.alternativeType === 'task') && props.suggestion.gtdRouting}>
+            <div class="ai-suggestion-gtd-badges">
+              <Show when={props.suggestion.gtdRouting}>
+                <span
+                  class={`ai-gtd-badge ai-gtd-badge--routing${props.suggestion.gtdRoutingLowConfidence ? ' ai-gtd-badge--low' : ''}`}
+                >
+                  {props.suggestion.gtdRouting}{props.suggestion.gtdRoutingLowConfidence ? '?' : ''}
+                </span>
+              </Show>
+              <Show when={props.suggestion.contextTag}>
+                <span
+                  class={`ai-gtd-badge ai-gtd-badge--context${props.suggestion.contextTagLowConfidence ? ' ai-gtd-badge--low' : ''}`}
+                >
+                  @{props.suggestion.contextTag}{props.suggestion.contextTagLowConfidence ? '?' : ''}
+                </span>
+              </Show>
+              <Show when={props.suggestion.isProject}>
+                <span
+                  class={`ai-gtd-badge ai-gtd-badge--project${props.suggestion.projectLowConfidence ? ' ai-gtd-badge--low' : ''}`}
+                >
+                  Project{props.suggestion.projectLowConfidence ? '?' : ''}
+                </span>
+              </Show>
+            </div>
+          </Show>
+
           {/* Related atom chips for ambiguous path */}
           <Show when={relatedAtoms().length > 0}>
             <div class="ai-suggestion-related">
@@ -146,6 +173,36 @@ export function InboxAISuggestion(props: InboxAISuggestionProps) {
             </Show>
             <span class="ai-suggestion-badge" title="AI-suggested">AI</span>
           </div>
+
+          {/* GTD classification badges — only for task atoms with GTD fields */}
+          <Show when={props.suggestion.suggestedType === 'task' && props.suggestion.gtdRouting}>
+            <div class="ai-suggestion-gtd-badges">
+              <Show when={props.suggestion.gtdRouting}>
+                <span
+                  class={`ai-gtd-badge ai-gtd-badge--routing${props.suggestion.gtdRoutingLowConfidence ? ' ai-gtd-badge--low' : ''}`}
+                  title={`GTD routing${props.suggestion.gtdRoutingConfidence != null ? ` (${Math.round(props.suggestion.gtdRoutingConfidence * 100)}%)` : ''}`}
+                >
+                  {props.suggestion.gtdRouting}{props.suggestion.gtdRoutingLowConfidence ? '?' : ''}
+                </span>
+              </Show>
+              <Show when={props.suggestion.contextTag}>
+                <span
+                  class={`ai-gtd-badge ai-gtd-badge--context${props.suggestion.contextTagLowConfidence ? ' ai-gtd-badge--low' : ''}`}
+                  title={`Context${props.suggestion.contextTagConfidence != null ? ` (${Math.round(props.suggestion.contextTagConfidence * 100)}%)` : ''}`}
+                >
+                  @{props.suggestion.contextTag}{props.suggestion.contextTagLowConfidence ? '?' : ''}
+                </span>
+              </Show>
+              <Show when={props.suggestion.isProject}>
+                <span
+                  class={`ai-gtd-badge ai-gtd-badge--project${props.suggestion.projectLowConfidence ? ' ai-gtd-badge--low' : ''}`}
+                  title={`Project detection${props.suggestion.projectConfidence != null ? ` (${Math.round(props.suggestion.projectConfidence * 100)}%)` : ''}`}
+                >
+                  Project{props.suggestion.projectLowConfidence ? '?' : ''}
+                </span>
+              </Show>
+            </div>
+          </Show>
 
           {/* Reasoning — truncated by default, expandable */}
           <div class={`ai-suggestion-reasoning${expanded() ? ' ai-suggestion-reasoning--expanded' : ''}`}>
