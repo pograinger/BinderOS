@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 14 — Prompt Sanitization (Plan 02 complete, Plan 03 next)
+**Current focus:** Phase 14 — Prompt Sanitization (Plans 01+02 complete, Plan 03 next)
 
 ## Current Position
 
 Phase: 14 of 16 (Prompt Sanitization)
-Plan: 2 of TBD
+Plan: 2 of 3
 Status: Executing
-Last activity: 2026-03-06 — Phase 14 Plan 02 complete (sanitization pipeline)
+Last activity: 2026-03-07 — Phase 14 Plan 01 complete (NER training pipeline)
 
 Progress: [█████████░] 94%
 
@@ -52,6 +52,7 @@ Progress: [█████████░] 94%
 | Phase 12 P03 | 5 | 1 tasks | 2 files |
 | Phase 13-multi-provider-cloud P01 | 12 | 2 tasks | 9 files |
 | Phase 13-multi-provider-cloud P02 | 4 | 3 tasks (incl. human-verify) | 4 files |
+| Phase 14-sanitization-classifier P01 | 48 | 2 tasks | 10 files |
 | Phase 14-sanitization-classifier P02 | 9 | 2 tasks | 11 files |
 
 ## Accumulated Context
@@ -97,6 +98,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06T18:51:00Z
-Stopped at: Completed 14-02-PLAN.md
-Resume file: .planning/phases/14-sanitization-classifier/14-02-SUMMARY.md
+Last session: 2026-03-07T03:28:42Z
+Stopped at: Completed 14-01-PLAN.md
+Resume file: .planning/phases/14-sanitization-classifier/14-01-SUMMARY.md
