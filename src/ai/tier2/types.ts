@@ -19,6 +19,7 @@ import type { AtomType } from '../../types/atoms';
  */
 export type AITaskType =
   | 'classify-type'      // Classify inbox item → AtomType
+  | 'classify-gtd'       // Runs all 4 GTD classifiers on a task
   | 'route-section'      // Suggest section placement
   | 'extract-entities'   // Regex-based entity extraction (Tier 1 only)
   | 'assess-staleness'   // Interpret WASM staleness score
@@ -33,12 +34,45 @@ export type AITaskType =
  */
 export const CONFIDENCE_THRESHOLDS: Record<AITaskType, number> = {
   'classify-type':    0.78,  // Calibrated for Platt-scaled ONNX probabilities (was 0.65 for centroid similarity)
+  'classify-gtd':     0.65,  // Not used directly; per-classifier thresholds in GTD_CONFIDENCE_THRESHOLDS
   'route-section':    0.60,
   'extract-entities': 0.50,
   'assess-staleness': 0.70,
   'summarize':        1.0,   // Always escalates to Tier 3
   'analyze-gtd':      1.0,   // Always escalates to Tier 3
 };
+
+// --- Per-classifier GTD confidence thresholds ---
+
+/**
+ * Individual confidence thresholds for each GTD classifier.
+ * Results below threshold are marked isLowConfidence: true (still returned, but flagged).
+ */
+export const GTD_CONFIDENCE_THRESHOLDS = {
+  'gtd-routing':        0.70,
+  'actionability':      0.80,
+  'project-detection':  0.75,
+  'context-tagging':    0.65,
+} as const;
+
+export type GtdClassifierName = keyof typeof GTD_CONFIDENCE_THRESHOLDS;
+
+// --- GTD classification result ---
+
+/**
+ * Per-classifier result from the GTD classification pipeline.
+ * Each field is optional — absent if that classifier's model failed to load.
+ */
+export interface GtdClassification {
+  /** GTD list routing: next-action, waiting-for, someday-maybe, reference */
+  routing?: { label: string; confidence: number; isLowConfidence: boolean };
+  /** Actionability: actionable, non-actionable */
+  actionability?: { label: string; confidence: number; isLowConfidence: boolean };
+  /** Project detection: project, single-action */
+  project?: { label: string; confidence: number; isLowConfidence: boolean };
+  /** Context tagging: @computer, @phone, @errands, @home, @office, @agenda */
+  context?: { label: string; confidence: number; isLowConfidence: boolean };
+}
 
 // --- Tiered request ---
 
@@ -103,6 +137,8 @@ export interface TieredResult {
   alternativeType?: AtomType;
   /** Confidence spread between top-1 and top-2 ONNX probabilities (for logging) */
   confidenceSpread?: number;
+  /** GTD classification results (only for tasks, from classify-gtd) */
+  gtd?: GtdClassification;
 }
 
 /**

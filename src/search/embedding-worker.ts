@@ -17,6 +17,7 @@
  *   { type: 'CLASSIFY_TYPE'; id: string; text: string; centroids: Record<string, number[]> }
  *   { type: 'ROUTE_SECTION'; id: string; text: string; centroids: Record<string, number[]> }
  *   { type: 'CLASSIFY_ONNX'; id: string; text: string }
+ *   { type: 'CLASSIFY_GTD'; id: string; text: string }
  *   { type: 'LOAD_CLASSIFIER' }
  * Outgoing:
  *   { type: 'EMBED_RESULT'; id: string; vectors: number[][]; atomIds?: string[] }
@@ -30,6 +31,9 @@
  *   { type: 'CLASSIFIER_READY' }
  *   { type: 'CLASSIFIER_PROGRESS'; percent: number }
  *   { type: 'CLASSIFIER_ERROR'; error: string }
+ *   { type: 'GTD_RESULT'; id: string; vector: number[]; routing: Record<string, number> | null; actionability: Record<string, number> | null; project: Record<string, number> | null; context: Record<string, number> | null }
+ *   { type: 'GTD_ERROR'; id: string; error: string }
+ *   { type: 'GTD_CLASSIFIERS_READY' }
  *
  * Graceful degradation: all errors are caught and returned as EMBED_ERROR,
  * never thrown — the main thread never blocks waiting for embeddings.
@@ -142,14 +146,42 @@ async function classifyAgainstCentroids(
   return { scores, vector };
 }
 
-// --- ONNX Classifier state ---
+// --- ONNX Classifier registry ---
 
-const CLASSIFIER_CACHE_NAME = 'onnx-classifier-v1';
-const CLASSIFIER_MODEL_PATH = 'models/classifiers/triage-type.onnx';
-const CLASSIFIER_CLASSES_PATH = 'models/classifiers/triage-type-classes.json';
+const CLASSIFIER_CACHE_NAME = 'onnx-classifier-v2';
 
+interface ClassifierConfig {
+  name: string;
+  modelPath: string;
+  classesPath: string;
+  session: ort.InferenceSession | null;
+  classMap: Record<string, string> | null;
+  loading: boolean;
+}
+
+// Type classifier loads eagerly (existing behavior)
+const TYPE_CLASSIFIER: ClassifierConfig = {
+  name: 'triage-type',
+  modelPath: 'models/classifiers/triage-type.onnx',
+  classesPath: 'models/classifiers/triage-type-classes.json',
+  session: null, classMap: null, loading: false,
+};
+
+// GTD classifiers load lazily on first CLASSIFY_GTD message
+const GTD_CLASSIFIERS: ClassifierConfig[] = [
+  { name: 'gtd-routing', modelPath: 'models/classifiers/gtd-routing.onnx',
+    classesPath: 'models/classifiers/gtd-routing-classes.json', session: null, classMap: null, loading: false },
+  { name: 'actionability', modelPath: 'models/classifiers/actionability.onnx',
+    classesPath: 'models/classifiers/actionability-classes.json', session: null, classMap: null, loading: false },
+  { name: 'project-detection', modelPath: 'models/classifiers/project-detection.onnx',
+    classesPath: 'models/classifiers/project-detection-classes.json', session: null, classMap: null, loading: false },
+  { name: 'context-tagging', modelPath: 'models/classifiers/context-tagging.onnx',
+    classesPath: 'models/classifiers/context-tagging-classes.json', session: null, classMap: null, loading: false },
+];
+
+// Legacy aliases for backward compatibility with existing loadClassifier/runClassifierInference
 let classifierSession: ort.InferenceSession | null = null;
-let classMap: Record<string, string> | null = null; // {"0":"decision","1":"event",...}
+let classMap: Record<string, string> | null = null;
 let classifierLoading = false;
 
 /**
@@ -229,9 +261,47 @@ function resolveBase(): string {
 }
 
 /**
- * Load the ONNX classifier model and class map.
- * Called eagerly at worker init — errors degrade gracefully to Tier 1.
- * Errors are caught and reported via CLASSIFIER_ERROR; function never throws.
+ * Load an ONNX classifier model and class map into a ClassifierConfig.
+ * Generic loader used by both eager (type classifier) and lazy (GTD) paths.
+ */
+async function loadClassifierConfig(config: ClassifierConfig): Promise<void> {
+  if (config.loading || config.session) return;
+  config.loading = true;
+
+  const base = resolveBase();
+  const modelUrl = `${base}${config.modelPath}`;
+  const classesUrl = `${base}${config.classesPath}`;
+
+  // Load class map (small JSON, can use simple cache-aware fetch)
+  const classesCache = await caches.open(CLASSIFIER_CACHE_NAME);
+  let classesResponse = await classesCache.match(classesUrl);
+  if (!classesResponse) {
+    const fetched = await fetch(classesUrl);
+    if (!fetched.ok) {
+      config.loading = false;
+      throw new Error(`Failed to fetch class map for ${config.name}: ${fetched.status}`);
+    }
+    const cloned = fetched.clone();
+    await classesCache.put(classesUrl, cloned);
+    classesResponse = await classesCache.match(classesUrl);
+  }
+  config.classMap = await classesResponse!.json() as Record<string, string>;
+
+  // Load ONNX model with progress reporting and Cache API persistence
+  const modelBuffer = await fetchWithCache(modelUrl);
+
+  // Create ONNX inference session (WASM backend, single-threaded)
+  config.session = await ort.InferenceSession.create(
+    new Uint8Array(modelBuffer),
+    { executionProviders: ['wasm'] },
+  );
+
+  config.loading = false;
+}
+
+/**
+ * Load the type classifier eagerly at worker init.
+ * Errors degrade gracefully to Tier 1 — never throws.
  */
 async function loadClassifier(): Promise<void> {
   if (classifierLoading || classifierSession) return;
@@ -239,34 +309,11 @@ async function loadClassifier(): Promise<void> {
 
   try {
     await cleanOldCaches();
+    await loadClassifierConfig(TYPE_CLASSIFIER);
 
-    const base = resolveBase();
-    const modelUrl = `${base}${CLASSIFIER_MODEL_PATH}`;
-    const classesUrl = `${base}${CLASSIFIER_CLASSES_PATH}`;
-
-    // Load class map (small JSON, can use simple cache-aware fetch)
-    const classesCache = await caches.open(CLASSIFIER_CACHE_NAME);
-    let classesResponse = await classesCache.match(classesUrl);
-    if (!classesResponse) {
-      const fetched = await fetch(classesUrl);
-      if (!fetched.ok) {
-        throw new Error(`Failed to fetch class map: ${fetched.status}`);
-      }
-      // Clone before consuming — cache.put consumes the body
-      const cloned = fetched.clone();
-      await classesCache.put(classesUrl, cloned);
-      classesResponse = await classesCache.match(classesUrl);
-    }
-    classMap = await classesResponse!.json() as Record<string, string>;
-
-    // Load ONNX model with progress reporting and Cache API persistence
-    const modelBuffer = await fetchWithCache(modelUrl);
-
-    // Create ONNX inference session (WASM backend, single-threaded)
-    classifierSession = await ort.InferenceSession.create(
-      new Uint8Array(modelBuffer),
-      { executionProviders: ['wasm'] },
-    );
+    // Sync legacy aliases for backward compatibility
+    classifierSession = TYPE_CLASSIFIER.session;
+    classMap = TYPE_CLASSIFIER.classMap;
 
     classifierLoading = false;
     self.postMessage({ type: 'CLASSIFIER_READY' });
@@ -278,34 +325,70 @@ async function loadClassifier(): Promise<void> {
   }
 }
 
+// --- GTD classifier lazy loading ---
+
+let gtdClassifiersLoaded = false;
+let gtdClassifiersLoading = false;
+
 /**
- * Run ONNX inference on a 384-dim embedding vector.
- * Returns per-class probability scores mapped to class label names.
- * Throws if classifier or class map is not loaded.
+ * Load all 4 GTD classifiers lazily on first CLASSIFY_GTD request.
+ * Individual load errors are caught — partially loaded classifiers still work.
  */
-async function runClassifierInference(embedding: number[]): Promise<Record<string, number>> {
-  if (!classifierSession || !classMap) {
-    throw new Error('Classifier not ready');
+async function loadGtdClassifiers(): Promise<void> {
+  if (gtdClassifiersLoaded || gtdClassifiersLoading) return;
+  gtdClassifiersLoading = true;
+  try {
+    await Promise.all(GTD_CLASSIFIERS.map(c => loadClassifierConfig(c)));
+    gtdClassifiersLoaded = true;
+    self.postMessage({ type: 'GTD_CLASSIFIERS_READY' });
+  } catch (err) {
+    // Some classifiers may have loaded — mark loaded if any succeeded
+    const anyLoaded = GTD_CLASSIFIERS.some(c => c.session !== null);
+    if (anyLoaded) {
+      gtdClassifiersLoaded = true;
+      self.postMessage({ type: 'GTD_CLASSIFIERS_READY' });
+    }
+    gtdClassifiersLoading = false;
+    console.error('[embedding-worker] GTD classifiers partial load error:', err);
+  }
+}
+
+/**
+ * Run ONNX inference on a 384-dim embedding vector using a specific classifier config.
+ * Returns per-class probability scores mapped to class label names.
+ */
+async function runClassifierOnEmbedding(
+  config: ClassifierConfig,
+  embedding: number[],
+): Promise<Record<string, number>> {
+  if (!config.session || !config.classMap) {
+    throw new Error(`Classifier ${config.name} not ready`);
   }
 
   const inputTensor = new ort.Tensor('float32', Float32Array.from(embedding), [1, 384]);
-  const results = await classifierSession.run({ [classifierSession.inputNames[0]!]: inputTensor });
+  const results = await config.session.run({ [config.session.inputNames[0]!]: inputTensor });
 
-  // Find probability output — skl2onnx CalibratedClassifierCV produces:
-  // outputNames[0] = label, outputNames[1] = probabilities (contains 'prob')
-  const outputNames = classifierSession.outputNames;
+  const outputNames = config.session.outputNames;
   const probaName = outputNames.find((n) => n.toLowerCase().includes('prob'))
     ?? (outputNames.length > 1 ? outputNames[1] : outputNames[0]);
 
   const probData = Array.from(results[probaName!]!.data as Float32Array);
 
-  // Map probability array to class label names via classMap
   const scores: Record<string, number> = {};
   for (let i = 0; i < probData.length; i++) {
-    const label = classMap[String(i)];
+    const label = config.classMap[String(i)];
     if (label) scores[label] = probData[i] ?? 0;
   }
   return scores;
+}
+
+/**
+ * Run ONNX inference on a 384-dim embedding vector using the type classifier.
+ * Delegates to runClassifierOnEmbedding with the TYPE_CLASSIFIER config.
+ * Throws if classifier or class map is not loaded.
+ */
+async function runClassifierInference(embedding: number[]): Promise<Record<string, number>> {
+  return runClassifierOnEmbedding(TYPE_CLASSIFIER, embedding);
 }
 
 // --- Message handler ---
@@ -316,6 +399,7 @@ type WorkerIncoming =
   | { type: 'CLASSIFY_TYPE'; id: string; text: string; centroids: Record<string, number[]> }
   | { type: 'ROUTE_SECTION'; id: string; text: string; centroids: Record<string, number[]> }
   | { type: 'CLASSIFY_ONNX'; id: string; text: string }
+  | { type: 'CLASSIFY_GTD'; id: string; text: string }
   | { type: 'LOAD_CLASSIFIER' };
 
 self.onmessage = async (event: MessageEvent) => {
@@ -380,6 +464,47 @@ self.onmessage = async (event: MessageEvent) => {
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       self.postMessage({ type: 'ONNX_ERROR', id: msg.id, error });
+    }
+    return;
+  }
+
+  if (msg.type === 'CLASSIFY_GTD') {
+    try {
+      // Lazy-load GTD classifiers on first request
+      if (!gtdClassifiersLoaded) {
+        await loadGtdClassifiers();
+      }
+
+      // Embed text once — reuse for all 4 classifiers
+      const vectors = await embedTexts([msg.text]);
+      const vector = vectors[0] ?? [];
+
+      // Run each loaded GTD classifier on the same embedding
+      const runIfReady = async (config: ClassifierConfig): Promise<Record<string, number> | null> => {
+        if (!config.session || !config.classMap) return null;
+        try {
+          return await runClassifierOnEmbedding(config, vector);
+        } catch {
+          return null;
+        }
+      };
+
+      const [routing, actionability, project, context] = await Promise.all(
+        GTD_CLASSIFIERS.map(c => runIfReady(c)),
+      );
+
+      self.postMessage({
+        type: 'GTD_RESULT',
+        id: msg.id,
+        vector,
+        routing,
+        actionability,
+        project,
+        context,
+      });
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      self.postMessage({ type: 'GTD_ERROR', id: msg.id, error });
     }
     return;
   }
