@@ -184,3 +184,33 @@ Plans:
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 19 to break down)
+
+### Phase 20: Multi-atom context engine
+
+**Goal:** ONNX models can gather multi-atom context (parent project, sibling tasks, linked entities, related atoms, metadata) to reconstruct meaningful intent before any cloud interaction — enabling context-aware sanitization and structured prompt assembly
+**Requirements**: TBD
+**Depends on:** Phase 19
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 20 to break down)
+
+### Phase 21: Cloud packet sanitization pipeline
+
+**Goal:** Local ONNX models produce structured, sanitized "cloud packets" — entity-masked text with stable IDs, context bundles (summaries not raw text), graph structure, and intent classification — ensuring the cloud never sees raw personal data while preserving reasoning ability
+**Requirements**: TBD
+**Depends on:** Phase 20
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 21 to break down)
+
+### Phase 22: Cloud reasoning integration and response re-merge
+
+**Goal:** Cloud model receives only sanitized structured packets and returns structured reasoning; local ONNX models validate cloud output, re-inject masked entities, enforce GTD rules, and update the atom graph — keeping the cloud stateless and blind to personal data
+**Requirements**: TBD
+**Depends on:** Phase 21
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 22 to break down)
