@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Device-Adaptive AI
 status: executing
-stopped_at: Completed 18-01-PLAN.md
-last_updated: "2026-03-08T20:30:54.235Z"
-last_activity: 2026-03-08 — Phase 18 Plan 01 complete (decomposition ONNX classifier trained)
+stopped_at: Completed 18-02-PLAN.md
+last_updated: "2026-03-08T20:42:36.000Z"
+last_activity: 2026-03-08 — Phase 18 Plan 02 complete (decomposition runtime pipeline)
 progress:
   total_phases: 11
   completed_phases: 3
   total_plans: 14
-  completed_plans: 11
-  percent: 92
+  completed_plans: 12
+  percent: 93
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 ## Current Position
 
 Phase: 18 of 19 (Tier 2 Next Action Decomposition Model)
-Plan: 1 of 3
+Plan: 2 of 3
 Status: In Progress
-Last activity: 2026-03-08 — Phase 18 Plan 01 complete (decomposition ONNX classifier trained)
+Last activity: 2026-03-08 — Phase 18 Plan 02 complete (decomposition runtime pipeline)
 
-Progress: [█████████░] 92%
+Progress: [█████████░] 93%
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Progress: [█████████░] 92%
 | Phase 17 P02 | 7 | 2 tasks | 4 files |
 | Phase 17 P03 | 45 | 2 tasks | 5 files |
 | Phase 18 P01 | 18 | 2 tasks | 6 files |
+| Phase 18 P02 | 10 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,9 @@ Recent decisions affecting v4.0:
 - [Phase 17]: ONNX wasmPaths must use object form { wasm } in Vite workers — string form triggers broken dynamic import()
 - [Phase 17]: GTD classifiers must run sequentially (not Promise.all) — single-threaded WASM backend errors on concurrent sessions
 - [Phase 18]: MLP(256,128) for 35-class decomposition classifier; 99.6% accuracy, 100% Node parity; 0.70 confidence threshold
+- [Phase 18]: Decomposition uses 0.60 confidence threshold (lower than type classification) — 35 classes + user-triggered = acceptable
+- [Phase 18]: Slot extractor reuses sanitization regex-patterns for PERSON/LOCATION — no duplicate entity detection
+- [Phase 18]: Decomposer uses classifyFn injection so tier2 handler provides pre-computed ONNX scores without double inference
 
 ### Phase Ordering Note
 
@@ -113,6 +117,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T20:30:54.228Z
-Stopped at: Completed 18-01-PLAN.md
+Last session: 2026-03-08T20:42:36.000Z
+Stopped at: Completed 18-02-PLAN.md
 Resume file: None

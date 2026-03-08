@@ -44,8 +44,8 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 
 - [x] **DECOMP-01**: Python training pipeline generates synthetic data and trains ONNX decomposition classifier with >95% accuracy
 - [x] **DECOMP-02**: Node.js validation confirms >95% Python/Node prediction parity for the decomposition model
-- [ ] **DECOMP-03**: Embedding worker loads decomposition ONNX model lazily and classifies text into pattern categories
-- [ ] **DECOMP-04**: Decomposition runtime produces personalized GTD next-action steps from pattern templates with slot-filling
+- [x] **DECOMP-03**: Embedding worker loads decomposition ONNX model lazily and classifies text into pattern categories
+- [x] **DECOMP-04**: Decomposition runtime produces personalized GTD next-action steps from pattern templates with slot-filling
 - [ ] **DECOMP-05**: User sees "Break this down" button on task and decision triage cards; tapping triggers decomposition flow
 - [ ] **DECOMP-06**: DecompositionFlow presents steps one at a time with accept/edit/skip and offers to mark parent as project
 
@@ -107,8 +107,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ONNX-03 | Phase 15 | Pending |
 | DECOMP-01 | Phase 18 | Complete |
 | DECOMP-02 | Phase 18 | Complete |
-| DECOMP-03 | Phase 18 | Pending |
-| DECOMP-04 | Phase 18 | Pending |
+| DECOMP-03 | Phase 18 | Complete |
+| DECOMP-04 | Phase 18 | Complete |
 | DECOMP-05 | Phase 18 | Pending |
 | DECOMP-06 | Phase 18 | Pending |
 

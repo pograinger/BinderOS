@@ -168,7 +168,7 @@ Plans:
   3. User reviews steps one at a time with accept/edit/skip controls; accepted steps are created as new inbox items for triage
   4. After decomposition, user is asked whether to mark the parent atom as a project
   5. Decomposition works fully offline with sub-second latency (no LLM call required)
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 18-01-PLAN.md — Python training pipeline: Faker data generation, MLP+ONNX training, Node.js validation (DECOMP-01, DECOMP-02)
