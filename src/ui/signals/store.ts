@@ -989,6 +989,12 @@ export const llmReady = createMemo(() => state.llmStatus === 'available');
  */
 export const cloudReady = createMemo(() => state.cloudStatus === 'available');
 
+// Phase 8: Tiered pipeline state (declared early — referenced by anyAIAvailable)
+export type Tier2Status = 'inactive' | 'initializing' | 'ready' | 'error';
+const [tier2Status, setTier2Status] = createSignal<Tier2Status>('inactive');
+const [tieredEnabled, setTieredEnabledSignal] = createSignal(false);
+export { tier2Status, tieredEnabled };
+
 /**
  * Reactive signal: true when any AI capability is available (browser LLM, cloud, or ONNX tier-2).
  */
@@ -1004,15 +1010,6 @@ export { showAISettings, setShowAISettings };
 /** Capture overlay signal — shared between app.tsx and AIOrb double-tap */
 const [showCapture, setShowCapture] = createSignal(false);
 export { showCapture, setShowCapture };
-
-// --- Phase 8: Tiered pipeline state ---
-
-export type Tier2Status = 'inactive' | 'initializing' | 'ready' | 'error';
-
-const [tier2Status, setTier2Status] = createSignal<Tier2Status>('inactive');
-const [tieredEnabled, setTieredEnabledSignal] = createSignal(false);
-
-export { tier2Status, tieredEnabled };
 
 // --- Phase 10: Classifier load state ---
 
