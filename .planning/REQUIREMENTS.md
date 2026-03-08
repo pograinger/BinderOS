@@ -46,8 +46,8 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 - [x] **DECOMP-02**: Node.js validation confirms >95% Python/Node prediction parity for the decomposition model
 - [x] **DECOMP-03**: Embedding worker loads decomposition ONNX model lazily and classifies text into pattern categories
 - [x] **DECOMP-04**: Decomposition runtime produces personalized GTD next-action steps from pattern templates with slot-filling
-- [ ] **DECOMP-05**: User sees "Break this down" button on task and decision triage cards; tapping triggers decomposition flow
-- [ ] **DECOMP-06**: DecompositionFlow presents steps one at a time with accept/edit/skip and offers to mark parent as project
+- [x] **DECOMP-05**: User sees "Break this down" button on task and decision triage cards; tapping triggers decomposition flow
+- [x] **DECOMP-06**: DecompositionFlow presents steps one at a time with accept/edit/skip and offers to mark parent as project
 
 ## Future Requirements
 
@@ -109,8 +109,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DECOMP-02 | Phase 18 | Complete |
 | DECOMP-03 | Phase 18 | Complete |
 | DECOMP-04 | Phase 18 | Complete |
-| DECOMP-05 | Phase 18 | Pending |
-| DECOMP-06 | Phase 18 | Pending |
+| DECOMP-05 | Phase 18 | Complete |
+| DECOMP-06 | Phase 18 | Complete |
 
 **Coverage:**
 - v4.0 requirements: 24 total
