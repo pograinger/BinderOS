@@ -115,6 +115,7 @@ export function AIRadialMenu(props: AIRadialMenuProps) {
       {/* Backdrop: click outside the orb area to close */}
       <div
         class="ai-radial-backdrop"
+        onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); props.onClose(); }}
         onClick={(e) => { e.stopPropagation(); props.onClose(); }}
         aria-hidden="true"
       />
@@ -133,6 +134,7 @@ export function AIRadialMenu(props: AIRadialMenuProps) {
                 class={`ai-radial-item${isPrimary() ? ' ai-radial-item--primary' : ''}`}
                 role="menuitem"
                 aria-label={action.label}
+                onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); handleAction(action.id); }}
                 onClick={(e) => { e.stopPropagation(); handleAction(action.id); }}
                 title={action.label}
               >

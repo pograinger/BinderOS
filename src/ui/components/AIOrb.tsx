@@ -127,6 +127,11 @@ export function AIOrb(props: AIOrpProps) {
   }
 
   function handleTouchEnd(e: TouchEvent) {
+    // If the touch target is inside the radial menu, let the menu button handle it
+    const target = e.target as HTMLElement;
+    if (target.closest('.ai-radial-menu') || target.closest('.ai-radial-backdrop')) {
+      return;
+    }
     e.preventDefault(); // Prevent iOS from synthesizing a delayed click
     touchHandled = true;
     handleTap();
