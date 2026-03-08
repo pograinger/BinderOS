@@ -990,9 +990,9 @@ export const llmReady = createMemo(() => state.llmStatus === 'available');
 export const cloudReady = createMemo(() => state.cloudStatus === 'available');
 
 /**
- * Reactive signal: true when any AI adapter is available (browser or cloud).
+ * Reactive signal: true when any AI capability is available (browser LLM, cloud, or ONNX tier-2).
  */
-export const anyAIAvailable = createMemo(() => llmReady() || cloudReady());
+export const anyAIAvailable = createMemo(() => llmReady() || cloudReady() || tieredEnabled());
 
 /**
  * UI signal: controls AI settings panel visibility.
