@@ -18,6 +18,7 @@
  *   { type: 'ROUTE_SECTION'; id: string; text: string; centroids: Record<string, number[]> }
  *   { type: 'CLASSIFY_ONNX'; id: string; text: string }
  *   { type: 'CLASSIFY_GTD'; id: string; text: string }
+ *   { type: 'CLASSIFY_DECOMPOSE'; id: string; text: string }
  *   { type: 'LOAD_CLASSIFIER' }
  * Outgoing:
  *   { type: 'EMBED_RESULT'; id: string; vectors: number[][]; atomIds?: string[] }
@@ -34,6 +35,9 @@
  *   { type: 'GTD_RESULT'; id: string; vector: number[]; routing: Record<string, number> | null; actionability: Record<string, number> | null; project: Record<string, number> | null; context: Record<string, number> | null }
  *   { type: 'GTD_ERROR'; id: string; error: string }
  *   { type: 'GTD_CLASSIFIERS_READY' }
+ *   { type: 'DECOMPOSE_RESULT'; id: string; scores: Record<string, number>; vector: number[] }
+ *   { type: 'DECOMPOSE_ERROR'; id: string; error: string }
+ *   { type: 'DECOMPOSITION_CLASSIFIER_READY' }
  *
  * Graceful degradation: all errors are caught and returned as EMBED_ERROR,
  * never thrown — the main thread never blocks waiting for embeddings.
@@ -176,6 +180,14 @@ const TYPE_CLASSIFIER: ClassifierConfig = {
   name: 'triage-type',
   modelPath: 'models/classifiers/triage-type.onnx',
   classesPath: 'models/classifiers/triage-type-classes.json',
+  session: null, classMap: null, loading: false,
+};
+
+// Decomposition classifier loads lazily on first CLASSIFY_DECOMPOSE message
+const DECOMPOSITION_CLASSIFIER: ClassifierConfig = {
+  name: 'decomposition',
+  modelPath: 'models/classifiers/decomposition.onnx',
+  classesPath: 'models/classifiers/decomposition-classes.json',
   session: null, classMap: null, loading: false,
 };
 
@@ -412,6 +424,7 @@ type WorkerIncoming =
   | { type: 'ROUTE_SECTION'; id: string; text: string; centroids: Record<string, number[]> }
   | { type: 'CLASSIFY_ONNX'; id: string; text: string }
   | { type: 'CLASSIFY_GTD'; id: string; text: string }
+  | { type: 'CLASSIFY_DECOMPOSE'; id: string; text: string }
   | { type: 'LOAD_CLASSIFIER' };
 
 self.onmessage = async (event: MessageEvent) => {
@@ -521,6 +534,34 @@ self.onmessage = async (event: MessageEvent) => {
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       self.postMessage({ type: 'GTD_ERROR', id: msg.id, error });
+    }
+    return;
+  }
+
+  if (msg.type === 'CLASSIFY_DECOMPOSE') {
+    try {
+      // Lazy-load decomposition classifier on first request
+      if (!DECOMPOSITION_CLASSIFIER.session) {
+        await loadClassifierConfig(DECOMPOSITION_CLASSIFIER);
+        self.postMessage({ type: 'DECOMPOSITION_CLASSIFIER_READY' });
+      }
+
+      // Embed text once
+      const vectors = await embedTexts([msg.text]);
+      const vector = vectors[0] ?? [];
+
+      // Run ONNX inference on the embedding — sequential (single-threaded WASM)
+      const scores = await runClassifierOnEmbedding(DECOMPOSITION_CLASSIFIER, vector);
+
+      self.postMessage({
+        type: 'DECOMPOSE_RESULT',
+        id: msg.id,
+        scores,
+        vector,
+      });
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      self.postMessage({ type: 'DECOMPOSE_ERROR', id: msg.id, error });
     }
     return;
   }

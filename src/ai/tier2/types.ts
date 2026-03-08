@@ -10,6 +10,7 @@
  */
 
 import type { AtomType } from '../../types/atoms';
+import type { DecomposedStep } from '../decomposition/categories';
 
 // --- AI task types ---
 
@@ -24,7 +25,8 @@ export type AITaskType =
   | 'extract-entities'   // Regex-based entity extraction (Tier 1 only)
   | 'assess-staleness'   // Interpret WASM staleness score
   | 'summarize'          // Always LLM (Tier 3 only)
-  | 'analyze-gtd';       // Always LLM (Tier 3 only)
+  | 'analyze-gtd'        // Always LLM (Tier 3 only)
+  | 'decompose';         // Decompose task/decision into GTD next-action steps
 
 // --- Confidence thresholds per task ---
 
@@ -40,6 +42,7 @@ export const CONFIDENCE_THRESHOLDS: Record<AITaskType, number> = {
   'assess-staleness': 0.70,
   'summarize':        1.0,   // Always escalates to Tier 3
   'analyze-gtd':      1.0,   // Always escalates to Tier 3
+  'decompose':        0.60,  // Lower threshold due to ~35 classes; user-triggered so acceptable
 };
 
 // --- Per-classifier GTD confidence thresholds ---
@@ -95,6 +98,8 @@ export interface TieredFeatures {
   typeDefinitions?: string;
   /** Full prompt override for Tier 3 (allows caller to pass pre-built prompts) */
   promptOverride?: string;
+  /** Atom type for decomposition (task/decision) */
+  atomType?: 'task' | 'decision';
   /** AbortSignal for cancellation */
   signal?: AbortSignal;
 }
@@ -139,6 +144,8 @@ export interface TieredResult {
   confidenceSpread?: number;
   /** GTD classification results (only for tasks, from classify-gtd) */
   gtd?: GtdClassification;
+  /** Decomposed next-action steps (for decompose task) */
+  decomposition?: DecomposedStep[];
 }
 
 /**

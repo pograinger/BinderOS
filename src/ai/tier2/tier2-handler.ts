@@ -25,6 +25,7 @@ import type { AITaskType, TieredRequest, TieredResult, GtdClassification, GtdCla
 import { GTD_CONFIDENCE_THRESHOLDS } from './types';
 import type { AtomType } from '../../types/atoms';
 import type { CentroidSet } from './centroid-builder';
+import { decomposeAtom } from '../decomposition/decomposer';
 
 // --- Worker communication: centroid path ---
 
@@ -70,6 +71,21 @@ type GtdResultMsg = {
 
 type GtdErrorMsg = {
   type: 'GTD_ERROR';
+  id: string;
+  error: string;
+};
+
+// --- Worker communication: Decomposition path ---
+
+type DecomposeResultMsg = {
+  type: 'DECOMPOSE_RESULT';
+  id: string;
+  scores: Record<string, number>;
+  vector: number[];
+};
+
+type DecomposeErrorMsg = {
+  type: 'DECOMPOSE_ERROR';
   id: string;
   error: string;
 };
@@ -153,6 +169,34 @@ function classifyViaONNX(
   });
 }
 
+/**
+ * Send a decomposition classification request to the embedding worker.
+ * Worker embeds text, lazy-loads the decomposition ONNX model, runs inference.
+ */
+function classifyDecomposeViaWorker(
+  worker: Worker,
+  text: string,
+): Promise<{ scores: Record<string, number>; vector: number[] }> {
+  return new Promise((resolve, reject) => {
+    const id = crypto.randomUUID();
+
+    const handler = (event: MessageEvent) => {
+      const msg = event.data as DecomposeResultMsg | DecomposeErrorMsg;
+      if (msg.id !== id) return;
+
+      worker.removeEventListener('message', handler);
+      if (msg.type === 'DECOMPOSE_RESULT') {
+        resolve({ scores: msg.scores, vector: msg.vector });
+      } else if (msg.type === 'DECOMPOSE_ERROR') {
+        reject(new Error(msg.error));
+      }
+    };
+
+    worker.addEventListener('message', handler);
+    worker.postMessage({ type: 'CLASSIFY_DECOMPOSE', id, text });
+  });
+}
+
 // --- Tier 2 Handler ---
 
 /**
@@ -176,13 +220,14 @@ export function createTier2Handler(
     name: 'Compact Neural Models',
 
     canHandle(task: AITaskType): boolean {
-      if (task !== 'classify-type' && task !== 'route-section' && task !== 'classify-gtd') return false;
+      if (task !== 'classify-type' && task !== 'route-section' && task !== 'classify-gtd' && task !== 'decompose') return false;
 
       const worker = getWorker();
       if (!worker) return false;
 
-      // GTD models load lazily; worker just needs to exist
+      // GTD and decompose models load lazily; worker just needs to exist
       if (task === 'classify-gtd') return true;
+      if (task === 'decompose') return true;
 
       if (task === 'classify-type') {
         // ONNX path: classifier ready means we can handle without centroids
@@ -360,6 +405,41 @@ export function createTier2Handler(
           gtd,
           reasoning: `GTD classifiers: routing=${gtd.routing?.label}(${gtd.routing?.confidence.toFixed(2)}), ` +
             `actionability=${gtd.actionability?.label}, project=${gtd.project?.label}, context=${gtd.context?.label}`,
+        };
+      }
+
+      if (task === 'decompose') {
+        // Classify via decomposition ONNX model
+        const { scores, vector } = await classifyDecomposeViaWorker(worker, text);
+        _lastVector = vector;
+
+        // Find top category and confidence
+        let topCategory = '';
+        let topScore = 0;
+        for (const [label, score] of Object.entries(scores)) {
+          if (score > topScore) {
+            topScore = score;
+            topCategory = label;
+          }
+        }
+
+        // Determine atom type for decomposition
+        const atomType = features.atomType ?? 'task';
+
+        // Create a classifyFn that returns the pre-computed scores
+        const classifyFn = async (_text: string) => ({
+          category: topCategory,
+          confidence: topScore,
+        });
+
+        // Run decomposition pipeline
+        const result = await decomposeAtom(text, atomType, classifyFn);
+
+        return {
+          tier: 2 as const,
+          confidence: topScore,
+          decomposition: result.steps,
+          reasoning: `Decomposition: ${result.category} (p=${topScore.toFixed(3)}, ${result.steps.length} steps)`,
         };
       }
 
