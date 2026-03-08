@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 ## Current Position
 
 Phase: 17 of 19 (Tier 2 GTD Classification Models)
-Plan: 2 of 3
-Status: Executing
-Last activity: 2026-03-07 — Phase 17 Plan 02 complete (GTD browser runtime integration)
+Plan: 3 of 3
+Status: Complete
+Last activity: 2026-03-08 — Phase 17 Plan 03 complete (GTD triage card display + bug fixes)
 
 Progress: [█████████░] 94%
 
@@ -56,6 +56,7 @@ Progress: [█████████░] 94%
 | Phase 14-sanitization-classifier P02 | 9 | 2 tasks | 11 files |
 | Phase 17 P01 | 10 | 2 tasks | 26 files |
 | Phase 17 P02 | 7 | 2 tasks | 4 files |
+| Phase 17 P03 | 45 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,8 @@ Recent decisions affecting v4.0:
 - [Phase 14-02]: Regex CONTACT precedence over NER PERSON in overlap resolution
 - [Phase 17]: MLP (256,128) for multi-class GTD classifiers, (128,64) for binary; all exceed 98% accuracy with 100% Python/Node parity
 - [Phase 17]: Classifier registry pattern (ClassifierConfig) replaces single-session globals; TYPE_CLASSIFIER loads eagerly, GTD_CLASSIFIERS load lazily
+- [Phase 17]: ONNX wasmPaths must use object form { wasm } in Vite workers — string form triggers broken dynamic import()
+- [Phase 17]: GTD classifiers must run sequentially (not Promise.all) — single-threaded WASM backend errors on concurrent sessions
 
 ### Phase Ordering Note
 
@@ -108,6 +111,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T05:33:42.279Z
-Stopped at: Completed 17-02-PLAN.md
+Last session: 2026-03-08
+Stopped at: Phase 17 complete, all 3 plans done
 Resume file: None
