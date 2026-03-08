@@ -56,6 +56,18 @@ env.localModelPath = '/models/';
 // Also avoids known ORT issue #26858 (hanging with external data + numThreads > 1).
 ort.env.wasm.proxy = false;
 ort.env.wasm.numThreads = 1;
+// Point ONNX Runtime to the WASM binary in public/.
+// MUST use object form { wasm } — string form bypasses ORT's inline bundled
+// WASM glue module and triggers a dynamic import() of the .mjs file, which
+// fails in Vite workers. Object form lets ORT use the inline module while
+// only overriding the .wasm binary location.
+const _wasmBase = (() => {
+  try {
+    const loc = (self as unknown as { location: Location }).location;
+    return loc.pathname.startsWith('/BinderOS/') ? '/BinderOS/' : '/';
+  } catch { return '/'; }
+})();
+ort.env.wasm.wasmPaths = { wasm: `${_wasmBase}ort-wasm-simd-threaded.jsep.wasm` };
 
 // --- Pipeline singleton ---
 
@@ -480,18 +492,22 @@ self.onmessage = async (event: MessageEvent) => {
       const vector = vectors[0] ?? [];
 
       // Run each loaded GTD classifier on the same embedding
+      // Run classifiers sequentially — ONNX Runtime single-threaded WASM
+      // backend errors with "Session already started" on concurrent runs.
       const runIfReady = async (config: ClassifierConfig): Promise<Record<string, number> | null> => {
         if (!config.session || !config.classMap) return null;
         try {
           return await runClassifierOnEmbedding(config, vector);
-        } catch {
+        } catch (err) {
+          console.error(`[embedding-worker] GTD classifier ${config.name} inference error:`, err);
           return null;
         }
       };
 
-      const [routing, actionability, project, context] = await Promise.all(
-        GTD_CLASSIFIERS.map(c => runIfReady(c)),
-      );
+      const routing = await runIfReady(GTD_CLASSIFIERS[0]!);
+      const actionability = await runIfReady(GTD_CLASSIFIERS[1]!);
+      const project = await runIfReady(GTD_CLASSIFIERS[2]!);
+      const context = await runIfReady(GTD_CLASSIFIERS[3]!);
 
       self.postMessage({
         type: 'GTD_RESULT',

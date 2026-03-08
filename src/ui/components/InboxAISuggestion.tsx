@@ -126,7 +126,7 @@ export function InboxAISuggestion(props: InboxAISuggestionProps) {
                 <span
                   class={`ai-gtd-badge ai-gtd-badge--context${props.suggestion.contextTagLowConfidence ? ' ai-gtd-badge--low' : ''}`}
                 >
-                  @{props.suggestion.contextTag}{props.suggestion.contextTagLowConfidence ? '?' : ''}
+                  {props.suggestion.contextTag}{props.suggestion.contextTagLowConfidence ? '?' : ''}
                 </span>
               </Show>
               <Show when={props.suggestion.isProject}>
@@ -190,7 +190,7 @@ export function InboxAISuggestion(props: InboxAISuggestionProps) {
                   class={`ai-gtd-badge ai-gtd-badge--context${props.suggestion.contextTagLowConfidence ? ' ai-gtd-badge--low' : ''}`}
                   title={`Context${props.suggestion.contextTagConfidence != null ? ` (${Math.round(props.suggestion.contextTagConfidence * 100)}%)` : ''}`}
                 >
-                  @{props.suggestion.contextTag}{props.suggestion.contextTagLowConfidence ? '?' : ''}
+                  {props.suggestion.contextTag}{props.suggestion.contextTagLowConfidence ? '?' : ''}
                 </span>
               </Show>
               <Show when={props.suggestion.isProject}>
