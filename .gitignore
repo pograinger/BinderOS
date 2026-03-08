@@ -39,3 +39,16 @@ public/models/.keep
 scripts/train/__pycache__/
 scripts/train/*.npy
 scripts/train/*.pyc
+scripts/train/.venv/
+scripts/train/sanitizer_training_output/
+scripts/train/test_embeddings.json
+scripts/train/python_predictions.json
+scripts/train/python_probabilities.json
+scripts/train/test-binder.json
+scripts/train/label_map.json
+
+# ONNX Runtime WASM (downloaded at build time, too large for git)
+public/ort-wasm-*.wasm
+
+# Claude Code
+.claude/

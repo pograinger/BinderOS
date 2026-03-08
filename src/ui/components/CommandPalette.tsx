@@ -19,6 +19,7 @@
 import { createSignal, createMemo, For, Show, createEffect } from 'solid-js';
 import { state, sendCommand, setActivePage, setSelectedAtomId } from '../signals/store';
 import { useRovingTabindex } from '../hooks/useRovingTabindex';
+import { importBinderFromFile } from '../../storage/import';
 
 // --- Types ---
 
@@ -145,6 +146,30 @@ export function CommandPalette(props: CommandPaletteProps) {
       label: 'Request Storage Persistence',
       category: 'action',
       action: () => { sendCommand({ type: 'REQUEST_PERSISTENCE' }); props.onClose(); },
+    },
+    {
+      id: 'action-import',
+      label: 'Import Binder...',
+      category: 'action',
+      action: () => {
+        props.onClose();
+        if (!window.confirm('This will replace ALL current data with the imported binder. Continue?')) return;
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = async () => {
+          const file = input.files?.[0];
+          if (!file) return;
+          try {
+            const result = await importBinderFromFile(file);
+            console.log(`[import] Loaded ${result.atoms} atoms, ${result.sectionItems} section items, ${result.inboxItems} inbox items`);
+            window.location.reload();
+          } catch (err) {
+            alert(`Import failed: ${err instanceof Error ? err.message : String(err)}`);
+          }
+        };
+        input.click();
+      },
     },
     {
       id: 'action-ai-settings',

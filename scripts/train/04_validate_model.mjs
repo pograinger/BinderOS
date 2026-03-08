@@ -1,9 +1,9 @@
 /**
- * 04_validate_model.mjs — Browser-runtime ONNX validation harness.
+ * 04_validate_model.mjs — Node.js ONNX validation harness.
  *
- * Uses onnxruntime-web WASM backend (same execution path as browsers) to
- * validate that triage-type.onnx predictions match Python onnxruntime
- * inference at >95% top-1 accuracy.
+ * Uses onnxruntime-node to validate that triage-type.onnx predictions match
+ * Python onnxruntime inference at >95% top-1 accuracy. The same ONNX model
+ * is used at runtime via onnxruntime-web in the browser.
  *
  * Pipeline position: After 03_train_classifier.py (ONNX + test artifacts must exist).
  *
@@ -11,7 +11,7 @@
  *   node scripts/train/04_validate_model.mjs
  *
  * Prerequisites:
- *   pnpm add -D onnxruntime-web          (already added in plan 02)
+ *   pnpm add -D onnxruntime-node         (Node.js ONNX runtime)
  *   python scripts/train/03_train_classifier.py  (generates ONNX + test artifacts)
  */
 
@@ -101,14 +101,12 @@ function loadArtifacts() {
 // Create ONNX inference session with WASM backend
 // ---------------------------------------------------------------------------
 async function createSession() {
-  // Import onnxruntime-web/wasm (not onnxruntime-web/node) — this is the
-  // browser-equivalent WASM backend. Same .wasm binary, same execution path.
   let ort;
   try {
-    ort = await import('onnxruntime-web/wasm');
+    ort = await import('onnxruntime-node');
   } catch (importErr) {
-    console.error('\nERROR: Failed to import onnxruntime-web/wasm.');
-    console.error('  onnxruntime-web not installed. Run: pnpm add -D onnxruntime-web');
+    console.error('\nERROR: Failed to import onnxruntime-node.');
+    console.error('  Run: pnpm add -D onnxruntime-node');
     console.error(`  Details: ${importErr.message}`);
     process.exit(1);
   }
@@ -116,13 +114,9 @@ async function createSession() {
   console.log('\n=== Creating ONNX Inference Session ===');
   console.log(`  Model: ${ONNX_MODEL_PATH}`);
 
-  // Load model as Uint8Array buffer — compatible with both Node.js and browser loading
-  const modelBuffer = readFileSync(ONNX_MODEL_PATH);
-  const modelUint8 = new Uint8Array(modelBuffer.buffer, modelBuffer.byteOffset, modelBuffer.byteLength);
-
-  // Use WASM execution provider — forced to match browser behavior
-  const session = await ort.InferenceSession.create(modelUint8, {
-    executionProviders: ['wasm'],
+  // onnxruntime-node can load directly from file path
+  const session = await ort.InferenceSession.create(ONNX_MODEL_PATH, {
+    executionProviders: ['cpu'],
   });
 
   console.log(`  Input names:  ${JSON.stringify(session.inputNames)}`);
@@ -279,7 +273,7 @@ function reportResults({ matchCount, totalCount, maxProbDiff, meanProbDiff, mism
 // ---------------------------------------------------------------------------
 async function main() {
   console.log('=== BinderOS triage-type.onnx Validation ===');
-  console.log('Backend: onnxruntime-web WASM (browser-equivalent)');
+  console.log('Backend: onnxruntime-node (CPU)');
 
   checkPrerequisites();
 

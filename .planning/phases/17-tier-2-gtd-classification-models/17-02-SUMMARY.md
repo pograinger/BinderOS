@@ -103,6 +103,10 @@ None - no external service configuration required.
 - TriageSuggestion now carries GTD fields for UI display in Phase 17-03
 - GtdClassification interface available for store signals and classification logging
 
+## Self-Check: PASSED
+
+All 4 modified files exist. Both task commits verified (ab305ad, 56dcb58). SUMMARY.md created.
+
 ---
 *Phase: 17-tier-2-gtd-classification-models*
 *Completed: 2026-03-07*

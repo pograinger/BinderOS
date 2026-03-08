@@ -84,6 +84,12 @@ function App() {
           (window as never as Record<string, unknown>).__seedDevData = seedDevData;
           console.log('[BinderOS] Dev seed available: window.__seedDevData()');
         });
+
+        // Expose test binder import for console access
+        import('./dev/import-binder').then(({ importTestBinder }) => {
+          (window as never as Record<string, unknown>).__importTestBinder = importTestBinder;
+          console.log('[BinderOS] Test binder import available: window.__importTestBinder()');
+        });
       }
     } catch (err) {
       console.error('[BinderOS] Worker initialization failed:', err);
