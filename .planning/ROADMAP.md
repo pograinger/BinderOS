@@ -108,7 +108,7 @@ Plans:
   1. User on a desktop with WebGPU enables local AI and the app loads WebLLM (GPU mode) automatically; the settings panel displays "Local AI: GPU mode (~2.2GB)"
   2. User on an Android device without WebGPU enables local AI and the app loads the WASM LLM (wllama + SmolLM2-360M-Q4) with a download progress indicator; model persists via Cache API and does not re-download on next launch
   3. User on iOS enables local AI and the app displays "Lightweight mode — using offline classifiers + cloud" with no WASM LLM download attempted
-  4. On a mobile device, Tier 2→3 confidence thresholds are raised so that fewer requests escalate to LLM inference, reducing latency on slower WASM execution
+  4. On a mobile device, Tier 2->3 confidence thresholds are raised so that fewer requests escalate to LLM inference, reducing latency on slower WASM execution
   5. Integrated GPU machine that fails the VRAM sentinel check falls back to WASM mode within 30 seconds rather than hanging in "loading" state indefinitely
 **Plans**: TBD
 
@@ -150,22 +150,30 @@ Note: Phase 15 is independent of 13-14 and may execute in parallel with Phase 14
 **Goal:** Four ONNX classifiers (GTD list routing, actionability, project detection, context tagging) trained and deployed in the embedding worker, enabling offline sub-second GTD intelligence on triage cards with confidence indicators and correction logging
 **Requirements**: GTD-01, GTD-02, GTD-03, GTD-04, GTD-05, GTD-06, GTD-07, GTD-08
 **Depends on:** Phase 16
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
-- [ ] 17-01-PLAN.md — Python training pipeline: Faker data generation, MLP+ONNX training, Node.js validation (GTD-01, GTD-02, GTD-03, GTD-04, GTD-05)
-- [ ] 17-02-PLAN.md — Browser integration: embedding worker multi-classifier, tier2 handler, triage cascade (GTD-05, GTD-06)
-- [ ] 17-03-PLAN.md — Triage card GTD display, classification-log extension, visual verification (GTD-07, GTD-08)
+- [x] 17-01-PLAN.md — Python training pipeline: Faker data generation, MLP+ONNX training, Node.js validation (GTD-01, GTD-02, GTD-03, GTD-04, GTD-05)
+- [x] 17-02-PLAN.md — Browser integration: embedding worker multi-classifier, tier2 handler, triage cascade (GTD-05, GTD-06)
+- [x] 17-03-PLAN.md — Triage card GTD display, classification-log extension, visual verification (GTD-07, GTD-08)
 
 ### Phase 18: Tier 2 next action decomposition model
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** User can decompose multi-step tasks and decisions into GTD next-action steps via an ONNX pattern classifier and slot-filled templates -- offline, sub-second, user-triggered via "Break this down" button on triage cards
+**Requirements**: DECOMP-01, DECOMP-02, DECOMP-03, DECOMP-04, DECOMP-05, DECOMP-06
 **Depends on:** Phase 17
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. Python training pipeline generates ~35 decomposition pattern categories and trains an ONNX MLP with >95% accuracy and >95% Python/Node parity
+  2. User taps "Break this down" on a task or decision triage card and sees personalized GTD next-action steps derived from ONNX classification + template slot-filling
+  3. User reviews steps one at a time with accept/edit/skip controls; accepted steps are created as new inbox items for triage
+  4. After decomposition, user is asked whether to mark the parent atom as a project
+  5. Decomposition works fully offline with sub-second latency (no LLM call required)
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 18 to break down)
+- [ ] 18-01-PLAN.md — Python training pipeline: Faker data generation, MLP+ONNX training, Node.js validation (DECOMP-01, DECOMP-02)
+- [ ] 18-02-PLAN.md — TypeScript runtime: categories, slot extractor, decomposer, worker + tier2 wiring (DECOMP-03, DECOMP-04)
+- [ ] 18-03-PLAN.md — DecompositionFlow UI: "Break this down" button, step presentation, atom creation (DECOMP-05, DECOMP-06)
 
 ### Phase 19: Tier 2 clarification wizard model
 

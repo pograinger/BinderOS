@@ -38,7 +38,16 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 
 - [ ] **ONNX-01**: Section routing uses trained ONNX classifier instead of centroid fallback
 - [ ] **ONNX-02**: Python training pipeline produces section routing ONNX model
-- [ ] **ONNX-03**: Tier 2→3 confidence thresholds adapt to device class (mobile: less escalation, desktop: current thresholds)
+- [ ] **ONNX-03**: Tier 2->3 confidence thresholds adapt to device class (mobile: less escalation, desktop: current thresholds)
+
+### Next Action Decomposition
+
+- [ ] **DECOMP-01**: Python training pipeline generates synthetic data and trains ONNX decomposition classifier with >95% accuracy
+- [ ] **DECOMP-02**: Node.js validation confirms >95% Python/Node prediction parity for the decomposition model
+- [ ] **DECOMP-03**: Embedding worker loads decomposition ONNX model lazily and classifies text into pattern categories
+- [ ] **DECOMP-04**: Decomposition runtime produces personalized GTD next-action steps from pattern templates with slot-filling
+- [ ] **DECOMP-05**: User sees "Break this down" button on task and decision triage cards; tapping triggers decomposition flow
+- [ ] **DECOMP-06**: DecompositionFlow presents steps one at a time with accept/edit/skip and offers to mark parent as project
 
 ## Future Requirements
 
@@ -96,12 +105,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ONNX-01 | Phase 16 | Pending |
 | ONNX-02 | Phase 16 | Pending |
 | ONNX-03 | Phase 15 | Pending |
+| DECOMP-01 | Phase 18 | Pending |
+| DECOMP-02 | Phase 18 | Pending |
+| DECOMP-03 | Phase 18 | Pending |
+| DECOMP-04 | Phase 18 | Pending |
+| DECOMP-05 | Phase 18 | Pending |
+| DECOMP-06 | Phase 18 | Pending |
 
 **Coverage:**
-- v4.0 requirements: 18 total
-- Mapped to phases: 18
+- v4.0 requirements: 24 total
+- Mapped to phases: 24
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-05*
-*Last updated: 2026-03-05 after roadmap creation — 18/18 requirements mapped*
+*Last updated: 2026-03-08 after Phase 18 planning — 24/24 requirements mapped*
