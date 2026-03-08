@@ -6879,3 +6879,188 @@ kbd {
   margin-top: 4px;
   margin-bottom: 8px;
 }
+
+/* ============================================
+   Phase 18: Decomposition Flow
+   Modal overlay for GTD next-action decomposition.
+   ============================================ */
+
+.inbox-break-down-btn {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background: transparent;
+  padding: 4px 12px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.inbox-break-down-btn:hover {
+  border-color: var(--border-secondary);
+  color: var(--text-primary);
+}
+
+.decomposition-flow-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.decomposition-flow {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  max-width: 400px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: decompFadeIn 0.2s ease-out;
+}
+
+@keyframes decompFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.decomp-step-header {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.decomp-category {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-tertiary);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.decomp-step-text {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 14px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.decomp-step-text:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.decomp-type-buttons {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.decomp-type-btn {
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: capitalize;
+}
+
+.decomp-type-btn:hover {
+  border-color: var(--border-secondary);
+  color: var(--text-primary);
+}
+
+.decomp-type-btn.selected {
+  border-color: var(--accent);
+  background: rgba(88, 166, 255, 0.15);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.decomp-type-btn[data-type="task"].selected { border-color: var(--atom-task); background: rgba(88, 166, 255, 0.15); }
+.decomp-type-btn[data-type="fact"].selected { border-color: var(--atom-fact); background: rgba(63, 185, 80, 0.15); }
+.decomp-type-btn[data-type="event"].selected { border-color: var(--atom-event); background: rgba(210, 153, 34, 0.15); }
+.decomp-type-btn[data-type="decision"].selected { border-color: var(--atom-decision); background: rgba(188, 140, 255, 0.15); }
+.decomp-type-btn[data-type="insight"].selected { border-color: var(--atom-insight); background: rgba(247, 120, 186, 0.15); }
+
+.decomp-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.decomp-accept-btn {
+  flex: 1;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  background: var(--status-success);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.decomp-accept-btn:hover {
+  opacity: 0.9;
+}
+
+.decomp-skip-btn {
+  flex: 1;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-primary);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.decomp-skip-btn:hover {
+  border-color: var(--border-secondary);
+  color: var(--text-primary);
+}
+
+.decomp-project-prompt {
+  text-align: center;
+}
+
+.decomp-project-question {
+  font-size: 14px;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.decomp-project-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.decomp-summary {
+  text-align: center;
+  font-size: 14px;
+  color: var(--status-success);
+  padding: 20px 0;
+}

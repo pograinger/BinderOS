@@ -21,6 +21,7 @@ import { createSignal, createMemo, createResource, For, Show, onCleanup } from '
 import { state, sendCommand, triageSuggestions, acceptAISuggestion, dismissAISuggestion, acceptAllAISuggestions, triageStatus, setSelectedAtomId } from '../signals/store';
 import { AtomTypeIcon } from '../components/AtomTypeIcon';
 import { InboxAISuggestion } from '../components/InboxAISuggestion';
+import { DecompositionFlow, showDecompositionFlow, startDecomposition } from '../components/DecompositionFlow';
 import { logClassification, suggestTypeFromPatterns } from '../../storage/classification-log';
 import type { AtomType } from '../../types/atoms';
 
@@ -410,6 +411,16 @@ export function InboxView() {
               />
             )}
           </Show>
+
+          {/* Break this down button — visible only on task/decision atoms, Phase 18 */}
+          <Show when={currentItem() && (suggestedType() === 'task' || suggestedType() === 'decision') && !showDecompositionFlow()}>
+            <button
+              class="inbox-break-down-btn"
+              onClick={() => startDecomposition(currentItem()!.id, currentItem()!.content, suggestedType() as 'task' | 'decision')}
+            >
+              Break this down
+            </button>
+          </Show>
         </div>
 
         {/* Classification panel */}
@@ -516,6 +527,9 @@ export function InboxView() {
           </div>
         </Show>
       </Show>
+
+      {/* Decomposition flow overlay — Phase 18 */}
+      <DecompositionFlow />
     </div>
   );
 }
