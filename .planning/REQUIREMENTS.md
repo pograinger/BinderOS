@@ -58,8 +58,8 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 - [ ] **CLAR-05**: Tier-adaptive option generation: template options offline, cloud-enhanced options with 2s timeout when available
 - [ ] **CLAR-06**: Self-learning from corrections: frequency-based option ranking, category skip pattern tracking, classification log extension
 - [ ] **CLAR-07**: After clarification, atom content enriched with structured key:value lines, entity graph seeded, and auto re-triage triggered
-- [ ] **CLAR-08**: Binder type config architecture (JSON at src/config/binder-types/) enables future non-GTD binder types; ships with GTD Personal default
-- [ ] **CLAR-09**: Entity graph Dexie table with compound index supports seeding from clarification (Phase 19), with schema broad enough for decomposition, similarity, and GTD context sources (future phases)
+- [x] **CLAR-08**: Binder type config architecture (JSON at src/config/binder-types/) enables future non-GTD binder types; ships with GTD Personal default
+- [x] **CLAR-09**: Entity graph Dexie table with compound index supports seeding from clarification (Phase 19), with schema broad enough for decomposition, similarity, and GTD context sources (future phases)
 
 ## Future Requirements
 
@@ -130,8 +130,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLAR-05 | Phase 19 | Pending |
 | CLAR-06 | Phase 19 | Pending |
 | CLAR-07 | Phase 19 | Pending |
-| CLAR-08 | Phase 19 | Pending |
-| CLAR-09 | Phase 19 | Pending |
+| CLAR-08 | Phase 19 | Complete |
+| CLAR-09 | Phase 19 | Complete |
 
 **Coverage:**
 - v4.0 requirements: 33 total

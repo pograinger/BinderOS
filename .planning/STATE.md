@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Device-Adaptive AI
-status: completed
-stopped_at: Phase 19 context gathered
-last_updated: "2026-03-09T01:40:34.848Z"
-last_activity: 2026-03-08 — Phase 18 Plan 03 complete (decomposition UX)
+status: in-progress
+stopped_at: Completed 19-02-PLAN.md
+last_updated: "2026-03-09T02:17:00.000Z"
+last_activity: 2026-03-09 — Phase 19 Plan 02 complete (foundations)
 progress:
   total_phases: 11
   completed_phases: 4
   total_plans: 14
-  completed_plans: 13
-  percent: 97
+  completed_plans: 14
+  percent: 100
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 ## Current Position
 
-Phase: 18 of 19 (Tier 2 Next Action Decomposition Model)
-Plan: 3 of 3
-Status: Phase Complete
-Last activity: 2026-03-08 — Phase 18 Plan 03 complete (decomposition UX)
+Phase: 19 of 19 (Tier 2 Clarification Wizard Model)
+Plan: 2 of 5
+Status: In Progress
+Last activity: 2026-03-09 — Phase 19 Plan 02 complete (foundations)
 
 Progress: [██████████] 97%
 
@@ -60,6 +60,8 @@ Progress: [██████████] 97%
 | Phase 18 P01 | 18 | 2 tasks | 6 files |
 | Phase 18 P02 | 10 | 2 tasks | 6 files |
 | Phase 18 P03 | 5 | 2 tasks (incl. human-verify) | 3 files |
+| Phase 19 P01 | -- | -- | -- |
+| Phase 19 P02 | 5 | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -98,6 +100,8 @@ Recent decisions affecting v4.0:
 - [Phase 18]: Decomposer uses classifyFn injection so tier2 handler provides pre-computed ONNX scores without double inference
 - [Phase 18]: Accepted decomposition steps created as CREATE_INBOX_ITEM (enter normal triage flow with AI classification)
 - [Phase 18]: Project marking is user-decided per instance (not auto-marked)
+- [Phase 19]: Single-direction entity graph storage with bidirectional query helpers (fewer records, simpler CRDT)
+- [Phase 19]: Binder type config as JSON at src/config/binder-types/, loaded at build time via Vite import
 
 ### Phase Ordering Note
 
@@ -120,6 +124,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-09T01:40:34.844Z
-Stopped at: Phase 19 context gathered
-Resume file: .planning/phases/19-tier-2-clarification-wizard-model/19-CONTEXT.md
+Last session: 2026-03-09T02:17:00.000Z
+Stopped at: Completed 19-02-PLAN.md
+Resume file: .planning/phases/19-tier-2-clarification-wizard-model/19-03-PLAN.md
