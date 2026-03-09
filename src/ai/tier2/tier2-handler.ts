@@ -26,6 +26,7 @@ import { GTD_CONFIDENCE_THRESHOLDS } from './types';
 import type { AtomType } from '../../types/atoms';
 import type { CentroidSet } from './centroid-builder';
 import { decomposeAtom } from '../decomposition/decomposer';
+import type { CompletenessGateResult, MissingInfoResult, MissingInfoCategory } from '../clarification/types';
 
 // --- Worker communication: centroid path ---
 
@@ -89,6 +90,99 @@ type DecomposeErrorMsg = {
   id: string;
   error: string;
 };
+
+// --- Worker communication: Completeness path ---
+
+type CompletenessResultMsg = {
+  type: 'COMPLETENESS_RESULT';
+  id: string;
+  isIncomplete: boolean;
+  confidence: number;
+  vector: number[];
+};
+
+type CompletenessErrorMsg = {
+  type: 'COMPLETENESS_ERROR';
+  id: string;
+  error: string;
+};
+
+// --- Worker communication: Missing info path ---
+
+type MissingInfoResultMsg = {
+  type: 'MISSING_INFO_RESULT';
+  id: string;
+  results: Array<{ category: string; isMissing: boolean; confidence: number }>;
+  vector: number[];
+};
+
+type MissingInfoErrorMsg = {
+  type: 'MISSING_INFO_ERROR';
+  id: string;
+  error: string;
+};
+
+/**
+ * Send a completeness gate request to the embedding worker and wait for the result.
+ * Worker embeds text once and runs the completeness binary classifier.
+ */
+function classifyCompletenessViaWorker(
+  worker: Worker,
+  content: string,
+  title?: string,
+): Promise<CompletenessGateResult> {
+  return new Promise((resolve, reject) => {
+    const id = crypto.randomUUID();
+    const text = (title ?? '') + ' ' + content;
+
+    const handler = (event: MessageEvent) => {
+      const msg = event.data as CompletenessResultMsg | CompletenessErrorMsg;
+      if (msg.id !== id) return;
+
+      worker.removeEventListener('message', handler);
+      if (msg.type === 'COMPLETENESS_RESULT') {
+        resolve({ isIncomplete: msg.isIncomplete, confidence: msg.confidence });
+      } else if (msg.type === 'COMPLETENESS_ERROR') {
+        reject(new Error(msg.error));
+      }
+    };
+
+    worker.addEventListener('message', handler);
+    worker.postMessage({ type: 'CHECK_COMPLETENESS', id, text });
+  });
+}
+
+/**
+ * Send a missing-info classification request to the embedding worker and wait for the result.
+ * Worker embeds text once and runs all 5 binary classifiers sequentially.
+ */
+function classifyMissingInfoViaWorker(
+  worker: Worker,
+  content: string,
+): Promise<MissingInfoResult[]> {
+  return new Promise((resolve, reject) => {
+    const id = crypto.randomUUID();
+
+    const handler = (event: MessageEvent) => {
+      const msg = event.data as MissingInfoResultMsg | MissingInfoErrorMsg;
+      if (msg.id !== id) return;
+
+      worker.removeEventListener('message', handler);
+      if (msg.type === 'MISSING_INFO_RESULT') {
+        resolve(msg.results.map(r => ({
+          category: r.category as MissingInfoCategory,
+          isMissing: r.isMissing,
+          confidence: r.confidence,
+        })));
+      } else if (msg.type === 'MISSING_INFO_ERROR') {
+        reject(new Error(msg.error));
+      }
+    };
+
+    worker.addEventListener('message', handler);
+    worker.postMessage({ type: 'CLASSIFY_MISSING_INFO', id, text: content });
+  });
+}
 
 /**
  * Send a GTD classification request to the embedding worker and wait for the result.
@@ -220,14 +314,16 @@ export function createTier2Handler(
     name: 'Compact Neural Models',
 
     canHandle(task: AITaskType): boolean {
-      if (task !== 'classify-type' && task !== 'route-section' && task !== 'classify-gtd' && task !== 'decompose') return false;
+      if (task !== 'classify-type' && task !== 'route-section' && task !== 'classify-gtd' && task !== 'decompose' && task !== 'check-completeness' && task !== 'classify-missing-info') return false;
 
       const worker = getWorker();
       if (!worker) return false;
 
-      // GTD and decompose models load lazily; worker just needs to exist
+      // GTD, decompose, completeness, and missing-info models load lazily; worker just needs to exist
       if (task === 'classify-gtd') return true;
       if (task === 'decompose') return true;
+      if (task === 'check-completeness') return true;
+      if (task === 'classify-missing-info') return true;
 
       if (task === 'classify-type') {
         // ONNX path: classifier ready means we can handle without centroids
@@ -440,6 +536,35 @@ export function createTier2Handler(
           confidence: topScore,
           decomposition: result.steps,
           reasoning: `Decomposition: ${result.category} (p=${topScore.toFixed(3)}, ${result.steps.length} steps)`,
+        };
+      }
+
+      if (task === 'check-completeness') {
+        const completeness = await classifyCompletenessViaWorker(worker, features.content, features.title);
+
+        return {
+          tier: 2 as const,
+          confidence: completeness.confidence,
+          completeness,
+          reasoning: `Completeness gate: ${completeness.isIncomplete ? 'incomplete' : 'complete'} (p=${completeness.confidence.toFixed(3)})`,
+        };
+      }
+
+      if (task === 'classify-missing-info') {
+        const missingInfo = await classifyMissingInfoViaWorker(worker, features.content);
+
+        // Overall confidence = average of all classifier confidences
+        const avgConfidence = missingInfo.length > 0
+          ? missingInfo.reduce((sum, r) => sum + r.confidence, 0) / missingInfo.length
+          : 0;
+
+        const missingCategories = missingInfo.filter(r => r.isMissing).map(r => r.category);
+
+        return {
+          tier: 2 as const,
+          confidence: avgConfidence,
+          missingInfo,
+          reasoning: `Missing info: ${missingCategories.length > 0 ? missingCategories.join(', ') : 'none detected'}`,
         };
       }
 

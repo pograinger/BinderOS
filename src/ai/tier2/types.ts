@@ -11,6 +11,7 @@
 
 import type { AtomType } from '../../types/atoms';
 import type { DecomposedStep } from '../decomposition/categories';
+import type { CompletenessGateResult, MissingInfoResult } from '../clarification/types';
 
 // --- AI task types ---
 
@@ -26,7 +27,9 @@ export type AITaskType =
   | 'assess-staleness'   // Interpret WASM staleness score
   | 'summarize'          // Always LLM (Tier 3 only)
   | 'analyze-gtd'        // Always LLM (Tier 3 only)
-  | 'decompose';         // Decompose task/decision into GTD next-action steps
+  | 'decompose'          // Decompose task/decision into GTD next-action steps
+  | 'check-completeness' // Binary gate: complete vs incomplete (completeness gate)
+  | 'classify-missing-info'; // 5 binary classifiers: which info categories are missing
 
 // --- Confidence thresholds per task ---
 
@@ -43,6 +46,8 @@ export const CONFIDENCE_THRESHOLDS: Record<AITaskType, number> = {
   'summarize':        1.0,   // Always escalates to Tier 3
   'analyze-gtd':      1.0,   // Always escalates to Tier 3
   'decompose':        0.60,  // Lower threshold due to ~35 classes; user-triggered so acceptable
+  'check-completeness': 0.75,  // Moderate gate — flags vague atoms for optional clarification
+  'classify-missing-info': 0.50,  // Low threshold — binary classifiers, start permissive and tune with P/R data
 };
 
 // --- Per-classifier GTD confidence thresholds ---
@@ -146,6 +151,10 @@ export interface TieredResult {
   gtd?: GtdClassification;
   /** Decomposed next-action steps (for decompose task) */
   decomposition?: DecomposedStep[];
+  /** Completeness gate result (for check-completeness task) */
+  completeness?: CompletenessGateResult;
+  /** Missing info classification results (for classify-missing-info task) */
+  missingInfo?: MissingInfoResult[];
 }
 
 /**

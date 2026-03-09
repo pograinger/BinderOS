@@ -191,6 +191,28 @@ const DECOMPOSITION_CLASSIFIER: ClassifierConfig = {
   session: null, classMap: null, loading: false,
 };
 
+// Completeness gate classifier loads lazily on first CHECK_COMPLETENESS message
+const COMPLETENESS_GATE: ClassifierConfig = {
+  name: 'completeness-gate',
+  modelPath: 'models/classifiers/completeness-gate.onnx',
+  classesPath: 'models/classifiers/completeness-gate-classes.json',
+  session: null, classMap: null, loading: false,
+};
+
+// Missing info classifiers load lazily on first CLASSIFY_MISSING_INFO message
+const MISSING_INFO_CLASSIFIERS: ClassifierConfig[] = [
+  { name: 'missing-outcome', modelPath: 'models/classifiers/missing-outcome.onnx',
+    classesPath: 'models/classifiers/missing-outcome-classes.json', session: null, classMap: null, loading: false },
+  { name: 'missing-next-action', modelPath: 'models/classifiers/missing-next-action.onnx',
+    classesPath: 'models/classifiers/missing-next-action-classes.json', session: null, classMap: null, loading: false },
+  { name: 'missing-timeframe', modelPath: 'models/classifiers/missing-timeframe.onnx',
+    classesPath: 'models/classifiers/missing-timeframe-classes.json', session: null, classMap: null, loading: false },
+  { name: 'missing-context', modelPath: 'models/classifiers/missing-context.onnx',
+    classesPath: 'models/classifiers/missing-context-classes.json', session: null, classMap: null, loading: false },
+  { name: 'missing-reference', modelPath: 'models/classifiers/missing-reference.onnx',
+    classesPath: 'models/classifiers/missing-reference-classes.json', session: null, classMap: null, loading: false },
+];
+
 // GTD classifiers load lazily on first CLASSIFY_GTD message
 const GTD_CLASSIFIERS: ClassifierConfig[] = [
   { name: 'gtd-routing', modelPath: 'models/classifiers/gtd-routing.onnx',
@@ -415,6 +437,55 @@ async function runClassifierInference(embedding: number[]): Promise<Record<strin
   return runClassifierOnEmbedding(TYPE_CLASSIFIER, embedding);
 }
 
+// --- Completeness gate lazy loading ---
+
+let completenessGateLoaded = false;
+
+/**
+ * Load the completeness gate classifier lazily on first CHECK_COMPLETENESS request.
+ */
+async function loadCompletenessGate(): Promise<void> {
+  if (completenessGateLoaded || COMPLETENESS_GATE.loading) return;
+  try {
+    await loadClassifierConfig(COMPLETENESS_GATE);
+    completenessGateLoaded = true;
+    self.postMessage({ type: 'COMPLETENESS_GATE_READY' });
+  } catch (err) {
+    console.error('[embedding-worker] Completeness gate load error:', err);
+  }
+}
+
+// --- Missing info classifiers lazy loading ---
+
+let missingInfoClassifiersLoaded = false;
+let missingInfoClassifiersLoading = false;
+
+/**
+ * Load all 5 missing-info binary classifiers lazily on first CLASSIFY_MISSING_INFO request.
+ * Individual load errors are caught — partially loaded classifiers still work.
+ */
+async function loadMissingInfoClassifiers(): Promise<void> {
+  if (missingInfoClassifiersLoaded || missingInfoClassifiersLoading) return;
+  missingInfoClassifiersLoading = true;
+  try {
+    // Load sequentially — single-threaded WASM backend
+    for (const config of MISSING_INFO_CLASSIFIERS) {
+      await loadClassifierConfig(config);
+    }
+    missingInfoClassifiersLoaded = true;
+    self.postMessage({ type: 'MISSING_INFO_CLASSIFIERS_READY' });
+  } catch (err) {
+    // Some classifiers may have loaded — mark loaded if any succeeded
+    const anyLoaded = MISSING_INFO_CLASSIFIERS.some(c => c.session !== null);
+    if (anyLoaded) {
+      missingInfoClassifiersLoaded = true;
+      self.postMessage({ type: 'MISSING_INFO_CLASSIFIERS_READY' });
+    }
+    missingInfoClassifiersLoading = false;
+    console.error('[embedding-worker] Missing info classifiers partial load error:', err);
+  }
+}
+
 // --- Message handler ---
 
 type WorkerIncoming =
@@ -425,6 +496,8 @@ type WorkerIncoming =
   | { type: 'CLASSIFY_ONNX'; id: string; text: string }
   | { type: 'CLASSIFY_GTD'; id: string; text: string }
   | { type: 'CLASSIFY_DECOMPOSE'; id: string; text: string }
+  | { type: 'CHECK_COMPLETENESS'; id: string; text: string }
+  | { type: 'CLASSIFY_MISSING_INFO'; id: string; text: string }
   | { type: 'LOAD_CLASSIFIER' };
 
 self.onmessage = async (event: MessageEvent) => {
@@ -534,6 +607,96 @@ self.onmessage = async (event: MessageEvent) => {
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       self.postMessage({ type: 'GTD_ERROR', id: msg.id, error });
+    }
+    return;
+  }
+
+  if (msg.type === 'CHECK_COMPLETENESS') {
+    try {
+      // Lazy-load completeness gate on first request
+      if (!completenessGateLoaded) {
+        await loadCompletenessGate();
+      }
+
+      if (!COMPLETENESS_GATE.session || !COMPLETENESS_GATE.classMap) {
+        self.postMessage({ type: 'COMPLETENESS_ERROR', id: msg.id, error: 'Completeness gate not loaded' });
+        return;
+      }
+
+      // Embed text once
+      const vectors = await embedTexts([msg.text]);
+      const vector = vectors[0] ?? [];
+
+      // Run ONNX inference — single binary classifier
+      const scores = await runClassifierOnEmbedding(COMPLETENESS_GATE, vector);
+
+      // Binary output: 'incomplete' class score determines isIncomplete
+      const incompleteScore = scores['incomplete'] ?? 0;
+      const completeScore = scores['complete'] ?? 0;
+      const isIncomplete = incompleteScore > completeScore;
+      const confidence = isIncomplete ? incompleteScore : completeScore;
+
+      self.postMessage({
+        type: 'COMPLETENESS_RESULT',
+        id: msg.id,
+        isIncomplete,
+        confidence,
+        vector,
+      });
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      self.postMessage({ type: 'COMPLETENESS_ERROR', id: msg.id, error });
+    }
+    return;
+  }
+
+  if (msg.type === 'CLASSIFY_MISSING_INFO') {
+    try {
+      // Lazy-load all 5 missing-info classifiers on first request
+      if (!missingInfoClassifiersLoaded) {
+        await loadMissingInfoClassifiers();
+      }
+
+      // Embed text once — reuse for all 5 classifiers
+      const vectors = await embedTexts([msg.text]);
+      const vector = vectors[0] ?? [];
+
+      // Run 5 binary classifiers SEQUENTIALLY (single-threaded WASM — Research Pitfall 1)
+      const categories = ['missing-outcome', 'missing-next-action', 'missing-timeframe', 'missing-context', 'missing-reference'] as const;
+      const results: Array<{ category: string; isMissing: boolean; confidence: number }> = [];
+
+      for (let i = 0; i < MISSING_INFO_CLASSIFIERS.length; i++) {
+        const config = MISSING_INFO_CLASSIFIERS[i]!;
+        const category = categories[i]!;
+
+        if (!config.session || !config.classMap) {
+          // Classifier failed to load — skip with zero confidence
+          results.push({ category, isMissing: false, confidence: 0 });
+          continue;
+        }
+
+        try {
+          const scores = await runClassifierOnEmbedding(config, vector);
+          const missingScore = scores['missing'] ?? 0;
+          const presentScore = scores['present'] ?? 0;
+          const isMissing = missingScore > presentScore;
+          const confidence = isMissing ? missingScore : presentScore;
+          results.push({ category, isMissing, confidence });
+        } catch (err) {
+          console.error(`[embedding-worker] Missing info classifier ${config.name} error:`, err);
+          results.push({ category, isMissing: false, confidence: 0 });
+        }
+      }
+
+      self.postMessage({
+        type: 'MISSING_INFO_RESULT',
+        id: msg.id,
+        results,
+        vector,
+      });
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      self.postMessage({ type: 'MISSING_INFO_ERROR', id: msg.id, error });
     }
     return;
   }
