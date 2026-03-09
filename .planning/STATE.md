@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 ## Current Position
 
-Phase: 19 of 19 (Tier 2 Clarification Wizard Model)
-Plan: 5 of 5
-Status: Complete
-Last activity: 2026-03-09 — Phase 19 Plan 05 complete (self-learning option ranking and end-to-end verification)
+Phase: 23 (Cloud-Tutored Local Model Reinforcement)
+Plan: 1 complete
+Status: In Progress
+Last activity: 2026-03-09 — Phase 23 Plan 01 complete (classifier registry and benchmark pipeline)
 
 Progress: [██████████] 98%
 
@@ -65,6 +65,7 @@ Progress: [██████████] 98%
 | Phase 19 P03 | 7 | 2 tasks | 6 files |
 | Phase 19 P04 | 6 | 3 tasks | 4 files |
 | Phase 19 P05 | 8 | 2 tasks | 3 files |
+| Phase 23 P01 | 12 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,8 @@ Recent decisions affecting v4.0:
 - [Phase 19]: Binder type config as JSON at src/config/binder-types/, loaded at build time via Vite import
 - [Phase 19]: handleClarificationComplete in store.ts: enrichment, entity graph seeding, classification log, and re-triage in one focused function
 - [Phase 19]: Cloud clarification options bypass self-learning ranking (already contextual); template options ranked by frequency with 70% skip threshold
+- [Phase 23-01]: Classifier registry lazy-loads class names from classes JSON for decomposition (35) and context-tagging (6)
+- [Phase 23-01]: Expert exam batch schema (array per API call) for efficiency; 57.5% accuracy on actionability validates genuine difficulty
 
 ### Phase Ordering Note
 
@@ -134,6 +137,6 @@ Phase 15 (Device-Adaptive LLM) is independent of Phases 13-14 and can execute on
 
 ## Session Continuity
 
-Last session: 2026-03-09T03:26:05.756Z
-Stopped at: Phase 23 context gathered
-Resume file: .planning/phases/23-cloud-tutored-local-model-reinforcement/23-CONTEXT.md
+Last session: 2026-03-09T03:55:00Z
+Stopped at: Completed 23-01-PLAN.md
+Resume file: .planning/phases/23-cloud-tutored-local-model-reinforcement/23-01-SUMMARY.md

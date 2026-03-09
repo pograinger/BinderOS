@@ -63,7 +63,7 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 
 ### Cloud-Tutored Model Reinforcement
 
-- [ ] **TUTOR-01**: Benchmark pipeline measures baseline accuracy for all 12 ONNX classifiers with per-class precision/recall/F1 and generates cloud "expert exam" test set via Anthropic API
+- [x] **TUTOR-01**: Benchmark pipeline measures baseline accuracy for all 12 ONNX classifiers with per-class precision/recall/F1 and generates cloud "expert exam" test set via Anthropic API
 - [ ] **TUTOR-02**: Adversarial data generator produces GTD boundary-testing examples per classifier via Anthropic API with configurable model (Haiku/Sonnet)
 - [ ] **TUTOR-03**: Gap analysis identifies systematic GTD methodology blind spots per classifier and produces actionable Markdown report
 - [ ] **TUTOR-04**: Teacher-student distillation relabels low-confidence predictions with expert reasoning via Sonnet
@@ -140,7 +140,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLAR-07 | Phase 19 | Complete |
 | CLAR-08 | Phase 19 | Complete |
 | CLAR-09 | Phase 19 | Complete |
-| TUTOR-01 | Phase 23 | Pending |
+| TUTOR-01 | Phase 23 | Complete |
 | TUTOR-02 | Phase 23 | Pending |
 | TUTOR-03 | Phase 23 | Pending |
 | TUTOR-04 | Phase 23 | Pending |

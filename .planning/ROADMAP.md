@@ -238,7 +238,7 @@ Plans:
   3. Gap analysis identifies systematic GTD methodology blind spots (not individual misclassifications) with actionable Markdown reports
   4. Teacher-student distillation feeds low-confidence predictions to Claude Sonnet and gets expert labels with GTD reasoning
   5. Retrained classifiers show no accuracy regression on original test sets, with before/after Markdown report showing per-classifier deltas
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 - [ ] 23-01-PLAN.md — Classifier registry + benchmark pipeline: baseline accuracy, cloud expert exam generation and scoring (TUTOR-01)
