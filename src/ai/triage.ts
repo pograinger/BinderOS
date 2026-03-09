@@ -18,6 +18,7 @@
  */
 
 import type { AtomType, InboxItem } from '../types/atoms';
+import type { MissingInfoCategory } from './clarification/types';
 import type { AtomScore, EntropyScore } from '../types/config';
 import type { SectionItem, Section } from '../types/sections';
 import { dispatchAI } from './router';
@@ -61,6 +62,14 @@ export interface TriageSuggestion {
   contextTag?: string;
   contextTagConfidence?: number;
   contextTagLowConfidence?: boolean;
+  /** Whether the completeness gate flagged this atom as needing clarification */
+  needsClarification?: boolean;
+  /** Completeness gate confidence score */
+  completenessScore?: number;
+  /** Missing info categories detected (populated after user taps Clarify, not during triage) */
+  missingCategories?: MissingInfoCategory[];
+  /** Whether this atom has been enriched via clarification */
+  wasClarified?: boolean;
 }
 
 // --- Module-level AbortController for cancellation ---
@@ -308,6 +317,23 @@ export async function triageInbox(
               // GTD classification failure is non-fatal — type classification still valid
               console.warn('[triage] GTD classification failed:', err);
             }
+          }
+
+          // Completeness gate: runs for ALL atom types (advisory, non-blocking)
+          try {
+            const completenessResponse = await dispatchTiered({
+              requestId: crypto.randomUUID(),
+              task: 'check-completeness',
+              features: { content: item.content, title: item.title },
+            });
+            if (completenessResponse.result.completeness?.isIncomplete &&
+                completenessResponse.result.completeness.confidence >= 0.75) {
+              suggestion.needsClarification = true;
+              suggestion.completenessScore = completenessResponse.result.completeness.confidence;
+            }
+          } catch (err) {
+            // Completeness gate failure is non-fatal — triage continues without clarification flag
+            console.warn('[triage] Completeness gate failed:', err);
           }
 
           onSuggestion(suggestion);

@@ -44,6 +44,18 @@ export interface ClassificationEvent {
   suggestedContextTag?: string;
   /** User's chosen context tag (if corrected) */
   chosenContextTag?: string;
+  /** Marks this as a clarification event */
+  clarificationType?: 'clarification';
+  /** Which missing-info category was detected */
+  detectedCategory?: string;
+  /** Options presented to the user */
+  optionsShown?: string[];
+  /** Which option the user selected (null if skipped) */
+  optionSelected?: string | null;
+  /** Whether the user used freeform input */
+  wasFreeform?: boolean;
+  /** Freeform text if applicable */
+  freeformText?: string | null;
 }
 
 const CONFIG_KEY = 'classification-events';
@@ -61,6 +73,44 @@ export function logClassification(event: ClassificationEvent): void {
       : [];
     events.push(event);
     await db.config.put({ key: CONFIG_KEY, value: events });
+  });
+}
+
+/** Input for logging a clarification event. */
+export interface ClarificationLogEvent {
+  inboxItemId: string;
+  content: string;
+  atomType: AtomType;
+  detectedCategory: string;
+  optionsShown: string[];
+  optionSelected: string | null;
+  wasFreeform: boolean;
+  freeformText: string | null;
+  tier?: 1 | 2 | 3;
+  confidence?: number;
+}
+
+/**
+ * Log a clarification event for future pattern learning.
+ * Convenience wrapper that calls logClassification with clarification fields populated.
+ */
+export function logClarification(event: ClarificationLogEvent): void {
+  logClassification({
+    inboxItemId: event.inboxItemId,
+    content: event.content,
+    suggestedType: event.atomType,
+    chosenType: event.atomType,
+    sectionItemId: null,
+    sectionItemName: null,
+    timestamp: Date.now(),
+    tier: event.tier,
+    confidence: event.confidence,
+    clarificationType: 'clarification',
+    detectedCategory: event.detectedCategory,
+    optionsShown: event.optionsShown,
+    optionSelected: event.optionSelected,
+    wasFreeform: event.wasFreeform,
+    freeformText: event.freeformText,
   });
 }
 
@@ -93,6 +143,12 @@ export async function exportClassificationJSONL(): Promise<string> {
       tier: event.tier ?? null,
       confidence: event.confidence ?? null,
       timestamp: event.timestamp,
+      clarification_type: event.clarificationType ?? null,
+      detected_category: event.detectedCategory ?? null,
+      options_shown: event.optionsShown ?? null,
+      option_selected: event.optionSelected ?? null,
+      was_freeform: event.wasFreeform ?? null,
+      freeform_text: event.freeformText ?? null,
     }))
     .join('\n');
 }
