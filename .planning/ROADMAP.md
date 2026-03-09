@@ -244,3 +244,13 @@ Plans:
 - [ ] 23-01-PLAN.md — Classifier registry + benchmark pipeline: baseline accuracy, cloud expert exam generation and scoring (TUTOR-01)
 - [ ] 23-02-PLAN.md — Adversarial generation + gap analysis: boundary-testing data, systematic GTD blind spot identification (TUTOR-02, TUTOR-03)
 - [ ] 23-03-PLAN.md — Teacher-student distillation + retrain orchestrator: expert relabeling, automated retrain cycle, before/after report (TUTOR-04, TUTOR-05)
+
+### Phase 24: Unified Enrichment Wizard
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 23
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 24 to break down)
