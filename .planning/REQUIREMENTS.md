@@ -51,8 +51,8 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 
 ### Clarification Wizard
 
-- [ ] **CLAR-01**: Python training pipeline generates synthetic data for 6 clarification classifiers (1 completeness gate + 5 missing-info) with balanced examples and ambiguous borderlines
-- [ ] **CLAR-02**: All 6 ONNX classifiers achieve >95% test accuracy and >95% Python/Node prediction parity
+- [x] **CLAR-01**: Python training pipeline generates synthetic data for 6 clarification classifiers (1 completeness gate + 5 missing-info) with balanced examples and ambiguous borderlines
+- [x] **CLAR-02**: All 6 ONNX classifiers achieve >95% test accuracy and >95% Python/Node prediction parity
 - [ ] **CLAR-03**: Completeness gate runs in triage cascade after type classification, flagging vague atoms with needsClarification flag (advisory, non-blocking)
 - [ ] **CLAR-04**: User taps "Clarify this" on triage cards and sees one question at a time with 3-4 options + freeform, following GTD importance ordering
 - [ ] **CLAR-05**: Tier-adaptive option generation: template options offline, cloud-enhanced options with 2s timeout when available
@@ -123,8 +123,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DECOMP-04 | Phase 18 | Complete |
 | DECOMP-05 | Phase 18 | Complete |
 | DECOMP-06 | Phase 18 | Complete |
-| CLAR-01 | Phase 19 | Pending |
-| CLAR-02 | Phase 19 | Pending |
+| CLAR-01 | Phase 19 | Complete |
+| CLAR-02 | Phase 19 | Complete |
 | CLAR-03 | Phase 19 | Pending |
 | CLAR-04 | Phase 19 | Pending |
 | CLAR-05 | Phase 19 | Pending |
