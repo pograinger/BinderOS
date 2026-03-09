@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 ## Current Position
 
 Phase: 23 (Cloud-Tutored Local Model Reinforcement)
-Plan: 1 complete
+Plan: 2 complete
 Status: In Progress
-Last activity: 2026-03-09 — Phase 23 Plan 01 complete (classifier registry and benchmark pipeline)
+Last activity: 2026-03-09 — Phase 23 Plan 02 complete (adversarial generator and gap analysis)
 
 Progress: [██████████] 98%
 
@@ -66,6 +66,7 @@ Progress: [██████████] 98%
 | Phase 19 P04 | 6 | 3 tasks | 4 files |
 | Phase 19 P05 | 8 | 2 tasks | 3 files |
 | Phase 23 P01 | 12 | 2 tasks | 4 files |
+| Phase 23 P02 | 6 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -113,6 +114,8 @@ Recent decisions affecting v4.0:
 - [Phase 19]: Cloud clarification options bypass self-learning ranking (already contextual); template options ranked by frequency with 70% skip threshold
 - [Phase 23-01]: Classifier registry lazy-loads class names from classes JSON for decomposition (35) and context-tagging (6)
 - [Phase 23-01]: Expert exam batch schema (array per API call) for efficiency; 57.5% accuracy on actionability validates genuine difficulty
+- [Phase 23-02]: Indirect adversarial prompts (scenarios, not labels) prevent label leakage; F1-weighted budget allocation (40%/35%/25%)
+- [Phase 23-02]: Gap analysis extracts suggested examples into training JSONL automatically (dual output: report + data)
 
 ### Phase Ordering Note
 
@@ -137,6 +140,6 @@ Phase 15 (Device-Adaptive LLM) is independent of Phases 13-14 and can execute on
 
 ## Session Continuity
 
-Last session: 2026-03-09T03:55:00Z
-Stopped at: Completed 23-01-PLAN.md
-Resume file: .planning/phases/23-cloud-tutored-local-model-reinforcement/23-01-SUMMARY.md
+Last session: 2026-03-09T04:00:00Z
+Stopped at: Completed 23-02-PLAN.md
+Resume file: .planning/phases/23-cloud-tutored-local-model-reinforcement/23-02-SUMMARY.md
