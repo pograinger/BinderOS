@@ -230,9 +230,17 @@ Plans:
 ### Phase 23: Cloud-tutored local model reinforcement
 
 **Goal:** Use Anthropic API as a GTD guru training oracle to maximize local ONNX classifier intelligence out of the box. The cloud brings deep GTD methodology expertise — contexts, next actions, someday/maybe boundaries, 2-minute rule, horizons of focus, natural planning model — to generate adversarial edge cases, identify model blind spots, and distill Tier 3 knowledge into Tier 2. All training data is synthetic (zero privacy concern). Covers: adversarial data generation, systematic gap analysis, knowledge distillation (Tier 3 → Tier 2), active learning loop for low-confidence predictions. Leverages phase 19 training infrastructure.
-**Requirements**: TBD
+**Requirements**: TUTOR-01, TUTOR-02, TUTOR-03, TUTOR-04, TUTOR-05
 **Depends on:** Phase 19
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. Benchmark pipeline measures baseline accuracy for all 12 ONNX classifiers with per-class precision/recall/F1 and generates a cloud "expert exam" test set that stress-tests GTD boundaries
+  2. Adversarial data generator produces deliberately hard examples near decision boundaries per classifier, targeting weakest classes
+  3. Gap analysis identifies systematic GTD methodology blind spots (not individual misclassifications) with actionable Markdown reports
+  4. Teacher-student distillation feeds low-confidence predictions to Claude Sonnet and gets expert labels with GTD reasoning
+  5. Retrained classifiers show no accuracy regression on original test sets, with before/after Markdown report showing per-classifier deltas
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 23 to break down)
+- [ ] 23-01-PLAN.md — Classifier registry + benchmark pipeline: baseline accuracy, cloud expert exam generation and scoring (TUTOR-01)
+- [ ] 23-02-PLAN.md — Adversarial generation + gap analysis: boundary-testing data, systematic GTD blind spot identification (TUTOR-02, TUTOR-03)
+- [ ] 23-03-PLAN.md — Teacher-student distillation + retrain orchestrator: expert relabeling, automated retrain cycle, before/after report (TUTOR-04, TUTOR-05)

@@ -61,6 +61,14 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 - [x] **CLAR-08**: Binder type config architecture (JSON at src/config/binder-types/) enables future non-GTD binder types; ships with GTD Personal default
 - [x] **CLAR-09**: Entity graph Dexie table with compound index supports seeding from clarification (Phase 19), with schema broad enough for decomposition, similarity, and GTD context sources (future phases)
 
+### Cloud-Tutored Model Reinforcement
+
+- [ ] **TUTOR-01**: Benchmark pipeline measures baseline accuracy for all 12 ONNX classifiers with per-class precision/recall/F1 and generates cloud "expert exam" test set via Anthropic API
+- [ ] **TUTOR-02**: Adversarial data generator produces GTD boundary-testing examples per classifier via Anthropic API with configurable model (Haiku/Sonnet)
+- [ ] **TUTOR-03**: Gap analysis identifies systematic GTD methodology blind spots per classifier and produces actionable Markdown report
+- [ ] **TUTOR-04**: Teacher-student distillation relabels low-confidence predictions with expert reasoning via Sonnet
+- [ ] **TUTOR-05**: Retrained classifiers show no accuracy regression on original test sets and improvement on cloud expert exam, with before/after Markdown report
+
 ## Future Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
@@ -132,12 +140,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLAR-07 | Phase 19 | Complete |
 | CLAR-08 | Phase 19 | Complete |
 | CLAR-09 | Phase 19 | Complete |
+| TUTOR-01 | Phase 23 | Pending |
+| TUTOR-02 | Phase 23 | Pending |
+| TUTOR-03 | Phase 23 | Pending |
+| TUTOR-04 | Phase 23 | Pending |
+| TUTOR-05 | Phase 23 | Pending |
 
 **Coverage:**
-- v4.0 requirements: 33 total
-- Mapped to phases: 33
+- v4.0 requirements: 38 total
+- Mapped to phases: 38
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-05*
-*Last updated: 2026-03-08 after Phase 19 planning — 33/33 requirements mapped*
+*Last updated: 2026-03-09 after Phase 23 planning — 38/38 requirements mapped*
