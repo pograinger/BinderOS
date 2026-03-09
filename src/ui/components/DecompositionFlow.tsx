@@ -15,6 +15,7 @@
 import { createSignal, createEffect, onCleanup, Show, For } from 'solid-js';
 import { sendCommand } from '../signals/store';
 import { dispatchTiered } from '../../ai/tier2/pipeline';
+import { decomposeAtom } from '../../ai/decomposition/decomposer';
 import type { DecomposedStep } from '../../ai/decomposition/decomposer';
 import type { AtomType } from '../../types/atoms';
 
@@ -66,9 +67,19 @@ export async function startDecomposition(
       features: { content: text, atomType },
     });
 
-    const steps = response.result.decomposition ?? [];
-    const category = response.result.reasoning ?? 'unknown';
-    const confidence = response.result.confidence;
+    let steps = response.result.decomposition ?? [];
+    let category = response.result.reasoning ?? 'unknown';
+    let confidence = response.result.confidence;
+
+    // Fallback: if tier 2 unavailable (e.g. ONNX not loaded on mobile),
+    // use heuristic classifier with fallback templates
+    if (steps.length === 0) {
+      const heuristicClassify = async () => ({ category: `fallback-${atomType}`, confidence: 0 });
+      const fallback = await decomposeAtom(text, atomType, heuristicClassify);
+      steps = fallback.steps;
+      category = fallback.category;
+      confidence = fallback.confidence;
+    }
 
     if (steps.length === 0) {
       // No steps returned -- nothing to show
