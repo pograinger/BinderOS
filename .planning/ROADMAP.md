@@ -188,14 +188,14 @@ Plans:
   5. Entity graph table seeded with clarification answers for future knowledge graph
   6. Self-learning: frequently selected options float to top, frequently skipped categories get deprioritized
   7. Binder type config architecture enables future non-GTD binder types via JSON config files
-**Plans:** 4/5 plans executed
+**Plans:** 5/5 plans complete
 
 Plans:
-- [ ] 19-01-PLAN.md — Python training pipeline: Faker data generation, 6 classifiers, Node.js validation (CLAR-01, CLAR-02)
-- [ ] 19-02-PLAN.md — Foundation: clarification types, binder config, entity graph table, enrichment (CLAR-08, CLAR-09)
-- [ ] 19-03-PLAN.md — Worker + tier2 integration: ONNX classifiers, triage cascade, cloud options, log extension (CLAR-03, CLAR-05, CLAR-06)
-- [ ] 19-04-PLAN.md — ClarificationFlow UX: modal, questions, enrichment wiring, re-triage (CLAR-04, CLAR-07)
-- [ ] 19-05-PLAN.md — Self-learning option ranking, skip patterns, end-to-end verification (CLAR-06)
+- [x] 19-01-PLAN.md — Python training pipeline: Faker data generation, 6 classifiers, Node.js validation (CLAR-01, CLAR-02)
+- [x] 19-02-PLAN.md — Foundation: clarification types, binder config, entity graph table, enrichment (CLAR-08, CLAR-09)
+- [x] 19-03-PLAN.md — Worker + tier2 integration: ONNX classifiers, triage cascade, cloud options, log extension (CLAR-03, CLAR-05, CLAR-06)
+- [x] 19-04-PLAN.md — ClarificationFlow UX: modal, questions, enrichment wiring, re-triage (CLAR-04, CLAR-07)
+- [x] 19-05-PLAN.md — Self-learning option ranking, skip patterns, end-to-end verification (CLAR-06)
 
 ### Phase 20: Multi-atom context engine
 
