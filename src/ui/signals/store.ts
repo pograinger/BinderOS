@@ -1803,22 +1803,21 @@ export function handleClarificationComplete(result: ClarificationResult): void {
     },
   });
 
-  // 3. Log clarification events -- one per answered category
+  // 3. Log clarification events -- one per category (including skips for pattern learning)
   const suggestion = triageSuggestions().get(atomId);
   const atomType = suggestion?.suggestedType ?? 'task';
   const content = result.enrichedContent;
 
   for (const answer of result.answers) {
-    if (answer.wasSkipped) continue;
     logClarification({
       inboxItemId: atomId,
       content,
       atomType,
       detectedCategory: answer.category,
       optionsShown: [], // options were displayed at question time; not tracked in answer
-      optionSelected: answer.selectedOption,
-      wasFreeform: answer.wasFreeform,
-      freeformText: answer.freeformText,
+      optionSelected: answer.wasSkipped ? null : answer.selectedOption,
+      wasFreeform: answer.wasSkipped ? false : answer.wasFreeform,
+      freeformText: answer.wasSkipped ? null : answer.freeformText,
       tier: 2,
     });
   }

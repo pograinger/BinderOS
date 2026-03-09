@@ -16,6 +16,8 @@ import { createSignal, createEffect, onCleanup, Show, For } from 'solid-js';
 import { generateTemplateOptions } from '../../ai/clarification/question-templates';
 import { appendEnrichment } from '../../ai/clarification/enrichment';
 import { prefetchCloudOptions } from '../../ai/clarification/cloud-options';
+import { rankOptions, getSkipPatterns, shouldDeprioritizeCategory } from '../../ai/clarification/option-ranking';
+import { getClassificationHistory } from '../../storage/classification-log';
 import { getBinderConfig } from '../../config/binder-types/index';
 import type {
   ClarificationQuestion,
@@ -86,6 +88,36 @@ export function startClarification(
   setShowSummary(false);
   setCloudOptions(new Map());
   onCompleteCallback = onComplete;
+
+  // Load classification history for self-learning (async, non-blocking)
+  getClassificationHistory().then((history) => {
+    if (!clarificationActive()) return;
+
+    // Apply option ranking to each question's template options
+    const rankedQuestions = questions.map((q) => ({
+      ...q,
+      options: rankOptions(q.category, q.options, history),
+    }));
+
+    // Apply skip-pattern deprioritization to question ordering
+    const clarificationEvents = history.filter((e) => e.clarificationType === 'clarification');
+    const totalClarifications = clarificationEvents.length;
+    const skipPatterns = getSkipPatterns(history);
+
+    const prioritized: typeof rankedQuestions = [];
+    const deprioritized: typeof rankedQuestions = [];
+    for (const q of rankedQuestions) {
+      if (shouldDeprioritizeCategory(q.category, skipPatterns, totalClarifications)) {
+        deprioritized.push(q);
+      } else {
+        prioritized.push(q);
+      }
+    }
+
+    setClarificationQuestions([...prioritized, ...deprioritized]);
+  }).catch(() => {
+    // History unavailable -- keep default ordering
+  });
 
   // Kick off cloud option prefetch (non-blocking)
   try {
