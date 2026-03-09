@@ -1,0 +1,114 @@
+{
+  "name": "GTD Personal",
+  "purpose": "Getting Things Done personal productivity",
+  "categoryOrdering": [
+    "missing-outcome",
+    "missing-next-action",
+    "missing-timeframe",
+    "missing-context",
+    "missing-reference"
+  ],
+  "supportedAtomTypes": ["task", "fact", "event", "decision", "insight"],
+  "questionTemplates": {
+    "missing-outcome": {
+      "question": "What's the desired outcome?",
+      "options": {
+        "task": [
+          "Complete {topic}",
+          "Resolve {topic} issue",
+          "Get {topic} approved",
+          "{freeform}"
+        ],
+        "decision": [
+          "Choose between options for {topic}",
+          "Finalize {topic} decision",
+          "Evaluate {topic} tradeoffs",
+          "{freeform}"
+        ],
+        "event": [
+          "Attend {topic}",
+          "Prepare for {topic}",
+          "Follow up after {topic}",
+          "{freeform}"
+        ],
+        "_default": [
+          "Complete {topic}",
+          "Resolve {topic}",
+          "Clarify {topic}",
+          "{freeform}"
+        ]
+      }
+    },
+    "missing-next-action": {
+      "question": "What's the very next physical action?",
+      "options": {
+        "task": [
+          "Call {person} about {topic}",
+          "Email {person} about {topic}",
+          "Research {topic} online",
+          "{freeform}"
+        ],
+        "decision": [
+          "List pros and cons for {topic}",
+          "Ask {person} for input on {topic}",
+          "Set a deadline to decide on {topic}",
+          "{freeform}"
+        ],
+        "_default": [
+          "Look up {topic}",
+          "Ask {person} about {topic}",
+          "Write down thoughts on {topic}",
+          "{freeform}"
+        ]
+      }
+    },
+    "missing-timeframe": {
+      "question": "By when does this need to happen?",
+      "options": {
+        "_default": [
+          "Today",
+          "This week",
+          "This month",
+          "No deadline",
+          "{freeform}"
+        ]
+      }
+    },
+    "missing-context": {
+      "question": "Where or when would you do this?",
+      "options": {
+        "task": [
+          "At home",
+          "At work",
+          "At computer",
+          "On the phone",
+          "{freeform}"
+        ],
+        "_default": [
+          "At home",
+          "At work",
+          "While commuting",
+          "{freeform}"
+        ]
+      }
+    },
+    "missing-reference": {
+      "question": "Is there a related person, project, or resource?",
+      "options": {
+        "task": [
+          "Related to {topic} project",
+          "Depends on {person}",
+          "See {topic} notes",
+          "{freeform}"
+        ],
+        "_default": [
+          "Related to {topic}",
+          "Involves {person}",
+          "See reference material",
+          "{freeform}"
+        ]
+      }
+    }
+  },
+  "backgroundCloudEnrichment": false
+}
