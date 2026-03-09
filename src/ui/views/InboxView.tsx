@@ -397,6 +397,16 @@ export function InboxView() {
             </span>
           </div>
 
+          {/* Break this down button — visible only on task/decision atoms, Phase 18 */}
+          <Show when={currentItem() && (suggestedType() === 'task' || suggestedType() === 'decision') && !showDecompositionFlow()}>
+            <button
+              class="inbox-break-down-btn"
+              onClick={() => startDecomposition(currentItem()!.id, currentItem()!.content, suggestedType() as 'task' | 'decision')}
+            >
+              Break this down
+            </button>
+          </Show>
+
           {/* AI suggestion strip — rendered when a suggestion exists for this card */}
           <Show when={triageSuggestions().get(currentItem()!.id)}>
             {(suggestion) => (
@@ -410,16 +420,6 @@ export function InboxView() {
                 sectionItems={state.sectionItems}
               />
             )}
-          </Show>
-
-          {/* Break this down button — visible only on task/decision atoms, Phase 18 */}
-          <Show when={currentItem() && (suggestedType() === 'task' || suggestedType() === 'decision') && !showDecompositionFlow()}>
-            <button
-              class="inbox-break-down-btn"
-              onClick={() => startDecomposition(currentItem()!.id, currentItem()!.content, suggestedType() as 'task' | 'decision')}
-            >
-              Break this down
-            </button>
           </Show>
         </div>
 
