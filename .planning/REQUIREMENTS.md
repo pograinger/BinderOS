@@ -49,6 +49,18 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 - [x] **DECOMP-05**: User sees "Break this down" button on task and decision triage cards; tapping triggers decomposition flow
 - [x] **DECOMP-06**: DecompositionFlow presents steps one at a time with accept/edit/skip and offers to mark parent as project
 
+### Clarification Wizard
+
+- [ ] **CLAR-01**: Python training pipeline generates synthetic data for 6 clarification classifiers (1 completeness gate + 5 missing-info) with balanced examples and ambiguous borderlines
+- [ ] **CLAR-02**: All 6 ONNX classifiers achieve >95% test accuracy and >95% Python/Node prediction parity
+- [ ] **CLAR-03**: Completeness gate runs in triage cascade after type classification, flagging vague atoms with needsClarification flag (advisory, non-blocking)
+- [ ] **CLAR-04**: User taps "Clarify this" on triage cards and sees one question at a time with 3-4 options + freeform, following GTD importance ordering
+- [ ] **CLAR-05**: Tier-adaptive option generation: template options offline, cloud-enhanced options with 2s timeout when available
+- [ ] **CLAR-06**: Self-learning from corrections: frequency-based option ranking, category skip pattern tracking, classification log extension
+- [ ] **CLAR-07**: After clarification, atom content enriched with structured key:value lines, entity graph seeded, and auto re-triage triggered
+- [ ] **CLAR-08**: Binder type config architecture (JSON at src/config/binder-types/) enables future non-GTD binder types; ships with GTD Personal default
+- [ ] **CLAR-09**: Entity graph Dexie table with compound index supports seeding from clarification (Phase 19), with schema broad enough for decomposition, similarity, and GTD context sources (future phases)
+
 ## Future Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
@@ -111,12 +123,21 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DECOMP-04 | Phase 18 | Complete |
 | DECOMP-05 | Phase 18 | Complete |
 | DECOMP-06 | Phase 18 | Complete |
+| CLAR-01 | Phase 19 | Pending |
+| CLAR-02 | Phase 19 | Pending |
+| CLAR-03 | Phase 19 | Pending |
+| CLAR-04 | Phase 19 | Pending |
+| CLAR-05 | Phase 19 | Pending |
+| CLAR-06 | Phase 19 | Pending |
+| CLAR-07 | Phase 19 | Pending |
+| CLAR-08 | Phase 19 | Pending |
+| CLAR-09 | Phase 19 | Pending |
 
 **Coverage:**
-- v4.0 requirements: 24 total
-- Mapped to phases: 24
+- v4.0 requirements: 33 total
+- Mapped to phases: 33
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-05*
-*Last updated: 2026-03-08 after Phase 18 planning — 24/24 requirements mapped*
+*Last updated: 2026-03-08 after Phase 19 planning — 33/33 requirements mapped*
