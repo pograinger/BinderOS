@@ -177,13 +177,25 @@ Plans:
 
 ### Phase 19: Tier 2 clarification wizard model
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** User taps "Clarify this" on vague triage cards to walk through targeted GTD questions (outcome, next-action, timeframe, context, reference) with pre-built options, enriching atom content and triggering re-triage — powered by 6 ONNX binary classifiers (completeness gate + 5 missing-info detectors), tier-adaptive option generation, self-learning from corrections, entity graph seeding, and extensible binder type config
+**Requirements**: CLAR-01, CLAR-02, CLAR-03, CLAR-04, CLAR-05, CLAR-06, CLAR-07, CLAR-08, CLAR-09
 **Depends on:** Phase 18
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. Python training pipeline trains 6 ONNX binary classifiers (1 completeness gate + 5 missing-info) each with >95% accuracy and >95% Python/Node parity
+  2. Completeness gate runs in triage cascade after type classification, flagging vague atoms with "Clarify this" button
+  3. User taps "Clarify this" and sees one question at a time with 3-4 options + freeform, following GTD importance ordering
+  4. After clarification, atom content is enriched with structured key:value lines and auto re-triaged
+  5. Entity graph table seeded with clarification answers for future knowledge graph
+  6. Self-learning: frequently selected options float to top, frequently skipped categories get deprioritized
+  7. Binder type config architecture enables future non-GTD binder types via JSON config files
+**Plans:** 5 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 19 to break down)
+- [ ] 19-01-PLAN.md — Python training pipeline: Faker data generation, 6 classifiers, Node.js validation (CLAR-01, CLAR-02)
+- [ ] 19-02-PLAN.md — Foundation: clarification types, binder config, entity graph table, enrichment (CLAR-08, CLAR-09)
+- [ ] 19-03-PLAN.md — Worker + tier2 integration: ONNX classifiers, triage cascade, cloud options, log extension (CLAR-03, CLAR-05, CLAR-06)
+- [ ] 19-04-PLAN.md — ClarificationFlow UX: modal, questions, enrichment wiring, re-triage (CLAR-04, CLAR-07)
+- [ ] 19-05-PLAN.md — Self-learning option ranking, skip patterns, end-to-end verification (CLAR-06)
 
 ### Phase 20: Multi-atom context engine
 
