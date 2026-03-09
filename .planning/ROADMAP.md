@@ -229,9 +229,9 @@ Plans:
 
 ### Phase 23: Cloud-tutored local model reinforcement
 
-**Goal:** [To be planned]
+**Goal:** Use Anthropic API as a GTD guru training oracle to maximize local ONNX classifier intelligence out of the box. The cloud brings deep GTD methodology expertise — contexts, next actions, someday/maybe boundaries, 2-minute rule, horizons of focus, natural planning model — to generate adversarial edge cases, identify model blind spots, and distill Tier 3 knowledge into Tier 2. All training data is synthetic (zero privacy concern). Covers: adversarial data generation, systematic gap analysis, knowledge distillation (Tier 3 → Tier 2), active learning loop for low-confidence predictions. Leverages phase 19 training infrastructure.
 **Requirements**: TBD
-**Depends on:** Phase 22
+**Depends on:** Phase 19
 **Plans:** 0 plans
 
 Plans:
