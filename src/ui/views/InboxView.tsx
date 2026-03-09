@@ -412,6 +412,8 @@ export function InboxView() {
           <Show when={canDecompose()}>
             <button
               class="inbox-break-down-btn"
+              onTouchStart={(e: TouchEvent) => e.stopPropagation()}
+              onTouchEnd={(e: TouchEvent) => e.stopPropagation()}
               onClick={() => {
                 const type = suggestedType() === 'task' || suggestedType() === 'decision' ? suggestedType() as 'task' | 'decision' : 'task';
                 startDecomposition(currentItem()!.id, currentItem()!.content, type);
