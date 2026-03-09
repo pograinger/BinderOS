@@ -223,3 +223,25 @@
   border-radius: 3px;
   font-weight: 500;
 }
+
+/* "Clarify this" button in triage action row */
+.ai-suggestion-clarify {
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border-primary);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.ai-suggestion-clarify:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ai-suggestion-clarify:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

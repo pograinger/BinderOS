@@ -20,6 +20,9 @@
  * Phase 10: Ambiguous two-button UX when ONNX model is uncertain (spread < 0.15).
  *   alternativeType present → two side-by-side type buttons with "could be either:" label.
  *   No pre-filled type — user must actively choose.
+ * Phase 19: "Clarify this" button when completeness gate flags incomplete.
+ *   Runs binary classifiers, opens ClarificationFlow modal.
+ *   Subtle "clarified" indicator post-enrichment.
  */
 
 import { createSignal, Show, For } from 'solid-js';
@@ -27,6 +30,11 @@ import type { TriageSuggestion } from '../../ai/triage';
 import type { Atom, AtomType } from '../../types/atoms';
 import type { SectionItem } from '../../types/sections';
 import { AtomTypeIcon } from './AtomTypeIcon';
+import { dispatchTiered } from '../../ai/tier2/pipeline';
+import { startClarification } from './ClarificationFlow';
+import { handleClarificationComplete } from '../signals/store';
+import type { MissingInfoCategory, MissingInfoResult } from '../../ai/clarification/types';
+import '../../ui/components/ClarificationFlow.css';
 
 // --- Props ---
 
@@ -39,12 +47,62 @@ interface InboxAISuggestionProps {
   onSelectType: (type: AtomType) => void;
   atoms: Atom[];
   sectionItems: SectionItem[];
+  /** The inbox item content and title (needed for clarification binary classifiers) */
+  inboxItemContent?: string;
+  inboxItemTitle?: string;
 }
 
 // --- Component ---
 
 export function InboxAISuggestion(props: InboxAISuggestionProps) {
   const [expanded, setExpanded] = createSignal(false);
+  const [clarifying, setClarifying] = createSignal(false);
+
+  /** Run binary classifiers and open ClarificationFlow modal. */
+  async function handleClarifyClick(): Promise<void> {
+    const content = props.inboxItemContent ?? '';
+    const title = props.inboxItemTitle ?? '';
+    if (clarifying()) return;
+    setClarifying(true);
+
+    try {
+      const response = await dispatchTiered({
+        requestId: `classify-missing-info-${props.suggestion.inboxItemId}-${Date.now()}`,
+        task: 'classify-missing-info',
+        features: { content, title },
+      });
+
+      const missingResults: MissingInfoResult[] = response.result.missingInfo ?? [];
+      const missingCategories = missingResults
+        .filter((r) => r.isMissing)
+        .map((r) => r.category);
+
+      if (missingCategories.length === 0) {
+        // Gate said incomplete but no binary agrees -- log disagreement
+        console.warn(
+          '[InboxAISuggestion] Completeness gate disagrees with binary classifiers for',
+          props.suggestion.inboxItemId,
+        );
+        setClarifying(false);
+        return;
+      }
+
+      startClarification(
+        {
+          id: props.suggestion.inboxItemId,
+          title: title,
+          content: content,
+          type: props.suggestion.suggestedType,
+        },
+        missingCategories,
+        handleClarificationComplete,
+      );
+    } catch (err) {
+      console.warn('[InboxAISuggestion] Clarification classify failed:', err);
+    } finally {
+      setClarifying(false);
+    }
+  }
 
   // Resolve related atoms from IDs
   const relatedAtoms = () =>
@@ -156,8 +214,20 @@ export function InboxAISuggestion(props: InboxAISuggestionProps) {
             </div>
           </Show>
 
-          {/* Dismiss only — clicking either type button accepts, so only dismiss needed */}
+          {/* Dismiss + Clarify for ambiguous path */}
           <div class="ai-suggestion-actions">
+            <Show when={props.suggestion.needsClarification && !props.suggestion.wasClarified}>
+              <button
+                class="ai-suggestion-clarify"
+                onClick={handleClarifyClick}
+                disabled={clarifying()}
+              >
+                {clarifying() ? 'Checking...' : 'Clarify this'}
+              </button>
+            </Show>
+            <Show when={props.suggestion.wasClarified}>
+              <span class="clarification-clarified-badge">clarified</span>
+            </Show>
             <button class="ai-suggestion-dismiss" onClick={() => props.onDismiss()}>Dismiss</button>
           </div>
         </Show>
@@ -233,9 +303,21 @@ export function InboxAISuggestion(props: InboxAISuggestionProps) {
             </div>
           </Show>
 
-          {/* Accept / Dismiss buttons (fallback for non-touch users) */}
+          {/* Accept / Dismiss / Clarify buttons */}
           <div class="ai-suggestion-actions">
             <button class="ai-suggestion-accept" onClick={() => props.onAccept()}>Accept</button>
+            <Show when={props.suggestion.needsClarification && !props.suggestion.wasClarified}>
+              <button
+                class="ai-suggestion-clarify"
+                onClick={handleClarifyClick}
+                disabled={clarifying()}
+              >
+                {clarifying() ? 'Checking...' : 'Clarify this'}
+              </button>
+            </Show>
+            <Show when={props.suggestion.wasClarified}>
+              <span class="clarification-clarified-badge">clarified</span>
+            </Show>
             <button class="ai-suggestion-dismiss" onClick={() => props.onDismiss()}>Dismiss</button>
           </div>
         </Show>
