@@ -386,6 +386,11 @@ export function InboxView() {
             {new Date(currentItem()!.created_at).toLocaleString()}
           </div>
 
+          {/* DEBUG: show heuristic type — remove after mobile debugging */}
+          <div style="font-size:10px;color:#f80;padding:2px 0">
+            heuristic: {suggestedType()} | show-btn: {String((suggestedType() === 'task' || suggestedType() === 'decision') && !showDecompositionFlow())}
+          </div>
+
           {/* Swipe hints — context-aware: show Accept/Dismiss when AI suggestion is active */}
           <div class="inbox-swipe-hints">
             <span class="swipe-hint left">
