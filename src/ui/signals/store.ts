@@ -60,6 +60,9 @@ import { dispatchAI } from '../../ai/router';
 import { BrowserAdapter, DEFAULT_MODEL_ID } from '../../ai/adapters/browser';
 import { triageInbox, cancelTriage } from '../../ai/triage';
 import type { TriageSuggestion } from '../../ai/triage';
+import type { ClarificationResult } from '../../ai/clarification/types';
+import { seedEntityRelationship } from '../../storage/entity-graph';
+import { logClarification } from '../../storage/classification-log';
 import type { BriefingResult } from '../../ai/analysis';
 import type { ReviewSession } from '../../storage/review-session';
 import { saveReviewSession, loadReviewSession, clearReviewSession, REVIEW_SESSION_STALE_MS } from '../../storage/review-session';
@@ -1764,4 +1767,115 @@ export function applyGTDRecommendation(atomId: string, changes: Record<string, u
     type: 'UPDATE_ATOM',
     payload: { id: atomId, changes: changes as Partial<import('../../types/atoms').Atom> },
   });
+}
+
+// --- Phase 19: Clarification completion handler ---
+
+/** Category-to-entity mappings for entity graph seeding. */
+const CATEGORY_ENTITY_MAP: Record<string, { entityType: string; relationship: string }> = {
+  'missing-outcome': { entityType: 'outcome', relationship: 'has-outcome' },
+  'missing-next-action': { entityType: 'next-action', relationship: 'has-next-action' },
+  'missing-timeframe': { entityType: 'deadline', relationship: 'has-deadline' },
+  'missing-context': { entityType: 'context', relationship: 'has-context' },
+  'missing-reference': { entityType: 'reference', relationship: 'has-reference' },
+};
+
+/**
+ * Handle completion of a clarification session.
+ *
+ * 1. Updates atom content with enriched text
+ * 2. Persists to Dexie via UPDATE_ATOM
+ * 3. Logs clarification events to classification log
+ * 4. Sets wasClarified on the TriageSuggestion
+ * 5. Seeds entity graph for each answered category
+ * 6. Triggers re-triage of the updated atom
+ */
+export function handleClarificationComplete(result: ClarificationResult): void {
+  const atomId = result.atomId;
+
+  // 1+2. Update atom content and persist via UPDATE_ATOM
+  sendCommand({
+    type: 'UPDATE_ATOM',
+    payload: {
+      id: atomId,
+      changes: { content: result.enrichedContent } as Partial<import('../../types/atoms').Atom>,
+      source: 'ai',
+    },
+  });
+
+  // 3. Log clarification events -- one per answered category
+  const suggestion = triageSuggestions().get(atomId);
+  const atomType = suggestion?.suggestedType ?? 'task';
+  const content = result.enrichedContent;
+
+  for (const answer of result.answers) {
+    if (answer.wasSkipped) continue;
+    logClarification({
+      inboxItemId: atomId,
+      content,
+      atomType,
+      detectedCategory: answer.category,
+      optionsShown: [], // options were displayed at question time; not tracked in answer
+      optionSelected: answer.selectedOption,
+      wasFreeform: answer.wasFreeform,
+      freeformText: answer.freeformText,
+      tier: 2,
+    });
+  }
+
+  // 4. Set wasClarified on the TriageSuggestion
+  if (suggestion) {
+    setTriageSuggestions((prev) => {
+      const next = new Map(prev);
+      next.set(atomId, { ...suggestion, wasClarified: true });
+      return next;
+    });
+  }
+
+  // 5. Seed entity graph for each answered category
+  for (const answer of result.answers) {
+    if (answer.wasSkipped) continue;
+    const mapping = CATEGORY_ENTITY_MAP[answer.category];
+    if (!mapping) continue;
+    const value = answer.wasFreeform ? answer.freeformText : answer.selectedOption;
+    if (!value) continue;
+
+    seedEntityRelationship({
+      sourceAtomId: atomId,
+      entityType: mapping.entityType,
+      entityValue: value,
+      relationship: mapping.relationship,
+      targetValue: '',
+    });
+  }
+
+  // 6. Trigger re-triage of the updated atom
+  // Find the inbox item and run single-item triage
+  const inboxItem = state.inboxItems.find((item) => item.id === atomId);
+  if (inboxItem && tieredEnabled()) {
+    const atoms = state.atoms.map((a) => ({ id: a.id, title: a.title, content: a.content }));
+    triageInbox(
+      [{ ...inboxItem, content: result.enrichedContent }],
+      state.scores,
+      state.entropyScore,
+      state.sectionItems,
+      state.sections,
+      atoms,
+      (retriageSuggestion) => {
+        if (retriageSuggestion.status === 'complete') {
+          // Preserve wasClarified flag on the new suggestion
+          retriageSuggestion.wasClarified = true;
+        }
+        setTriageSuggestions((prev) => {
+          const next = new Map(prev);
+          next.set(retriageSuggestion.inboxItemId, retriageSuggestion);
+          return next;
+        });
+      },
+      (itemId, error) => {
+        console.warn('[handleClarificationComplete] Re-triage failed for', itemId, error);
+      },
+      true, // useTiered
+    );
+  }
 }
