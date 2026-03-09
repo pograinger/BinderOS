@@ -114,6 +114,17 @@ export function InboxView() {
     return suggestTypeFromContent(item.content);
   });
 
+  // Whether this item can be decomposed — true if the content heuristic OR triage AI suggests task/decision.
+  // Uses the raw heuristic (not patternSuggestion) so classification history doesn't hide the button.
+  const canDecompose = createMemo(() => {
+    const item = currentItem();
+    if (!item || showDecompositionFlow()) return false;
+    const heuristic = suggestTypeFromContent(item.content);
+    const triageSuggestion = triageSuggestions().get(item.id);
+    const triageType = triageSuggestion?.status === 'complete' ? triageSuggestion.suggestedType : null;
+    return heuristic === 'task' || heuristic === 'decision' || triageType === 'task' || triageType === 'decision';
+  });
+
   // Reset classification panel when item changes
   const resetClassifyPanel = () => {
     setShowClassify(false);
@@ -386,11 +397,6 @@ export function InboxView() {
             {new Date(currentItem()!.created_at).toLocaleString()}
           </div>
 
-          {/* DEBUG: show heuristic type — remove after mobile debugging */}
-          <div style="font-size:10px;color:#f80;padding:2px 0">
-            heuristic: {suggestedType()} | show-btn: {String((suggestedType() === 'task' || suggestedType() === 'decision') && !showDecompositionFlow())}
-          </div>
-
           {/* Swipe hints — context-aware: show Accept/Dismiss when AI suggestion is active */}
           <div class="inbox-swipe-hints">
             <span class="swipe-hint left">
@@ -402,11 +408,14 @@ export function InboxView() {
             </span>
           </div>
 
-          {/* Break this down button — visible only on task/decision atoms, Phase 18 */}
-          <Show when={currentItem() && (suggestedType() === 'task' || suggestedType() === 'decision') && !showDecompositionFlow()}>
+          {/* Break this down button — visible when content heuristic or AI triage suggests task/decision */}
+          <Show when={canDecompose()}>
             <button
               class="inbox-break-down-btn"
-              onClick={() => startDecomposition(currentItem()!.id, currentItem()!.content, suggestedType() as 'task' | 'decision')}
+              onClick={() => {
+                const type = suggestedType() === 'task' || suggestedType() === 'decision' ? suggestedType() as 'task' | 'decision' : 'task';
+                startDecomposition(currentItem()!.id, currentItem()!.content, type);
+              }}
             >
               Break this down
             </button>
