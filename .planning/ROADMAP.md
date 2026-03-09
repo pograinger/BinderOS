@@ -226,3 +226,13 @@ Plans:
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 22 to break down)
+
+### Phase 23: Cloud-tutored local model reinforcement
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 22
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 23 to break down)

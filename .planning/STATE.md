@@ -123,10 +123,12 @@ Phase 15 (Device-Adaptive LLM) is independent of Phases 13-14 and can execute on
 - Phase 17 added: Tier 2 GTD classification models
 - Phase 18 added: Tier 2 next action decomposition model
 - Phase 19 added: Tier 2 clarification wizard model
+- Phase 23 added: Cloud-tutored local model reinforcement
 
 ### Pending Todos
 
-None.
+- Lightweight local computation validation sidecar (math.js + date-fns)
+- Wolfram computation engine integration (local + cloud)
 
 ## Session Continuity
 
