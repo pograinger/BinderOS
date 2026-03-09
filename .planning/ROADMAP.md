@@ -188,7 +188,7 @@ Plans:
   5. Entity graph table seeded with clarification answers for future knowledge graph
   6. Self-learning: frequently selected options float to top, frequently skipped categories get deprioritized
   7. Binder type config architecture enables future non-GTD binder types via JSON config files
-**Plans:** 2/5 plans executed
+**Plans:** 3/5 plans executed
 
 Plans:
 - [ ] 19-01-PLAN.md — Python training pipeline: Faker data generation, 6 classifiers, Node.js validation (CLAR-01, CLAR-02)

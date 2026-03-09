@@ -53,10 +53,10 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 
 - [x] **CLAR-01**: Python training pipeline generates synthetic data for 6 clarification classifiers (1 completeness gate + 5 missing-info) with balanced examples and ambiguous borderlines
 - [x] **CLAR-02**: All 6 ONNX classifiers achieve >95% test accuracy and >95% Python/Node prediction parity
-- [ ] **CLAR-03**: Completeness gate runs in triage cascade after type classification, flagging vague atoms with needsClarification flag (advisory, non-blocking)
+- [x] **CLAR-03**: Completeness gate runs in triage cascade after type classification, flagging vague atoms with needsClarification flag (advisory, non-blocking)
 - [ ] **CLAR-04**: User taps "Clarify this" on triage cards and sees one question at a time with 3-4 options + freeform, following GTD importance ordering
-- [ ] **CLAR-05**: Tier-adaptive option generation: template options offline, cloud-enhanced options with 2s timeout when available
-- [ ] **CLAR-06**: Self-learning from corrections: frequency-based option ranking, category skip pattern tracking, classification log extension
+- [x] **CLAR-05**: Tier-adaptive option generation: template options offline, cloud-enhanced options with 2s timeout when available
+- [x] **CLAR-06**: Self-learning from corrections: frequency-based option ranking, category skip pattern tracking, classification log extension
 - [ ] **CLAR-07**: After clarification, atom content enriched with structured key:value lines, entity graph seeded, and auto re-triage triggered
 - [x] **CLAR-08**: Binder type config architecture (JSON at src/config/binder-types/) enables future non-GTD binder types; ships with GTD Personal default
 - [x] **CLAR-09**: Entity graph Dexie table with compound index supports seeding from clarification (Phase 19), with schema broad enough for decomposition, similarity, and GTD context sources (future phases)
@@ -125,10 +125,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DECOMP-06 | Phase 18 | Complete |
 | CLAR-01 | Phase 19 | Complete |
 | CLAR-02 | Phase 19 | Complete |
-| CLAR-03 | Phase 19 | Pending |
+| CLAR-03 | Phase 19 | Complete |
 | CLAR-04 | Phase 19 | Pending |
-| CLAR-05 | Phase 19 | Pending |
-| CLAR-06 | Phase 19 | Pending |
+| CLAR-05 | Phase 19 | Complete |
+| CLAR-06 | Phase 19 | Complete |
 | CLAR-07 | Phase 19 | Pending |
 | CLAR-08 | Phase 19 | Complete |
 | CLAR-09 | Phase 19 | Complete |
