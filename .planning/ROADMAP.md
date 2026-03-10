@@ -270,3 +270,23 @@ Plans:
 - [ ] 24-05-PLAN.md — EnrichmentWizard UI, InboxView integration, Enrich button, indicators (ENRICH-01, ENRICH-02, ENRICH-03, ENRICH-04)
 - [ ] 24-06-PLAN.md — GraduationPreview UI, quality gate display, end-to-end lifecycle verification (ENRICH-05, ENRICH-06)
 - [ ] 24-07-PLAN.md — Gap closure: wire ThreeRingIndicator to real provenance.ts imports (ENRICH-08)
+
+### Phase 25: Iterative Enrichment Deepening
+
+**Goal:** Transform the enrichment wizard from single-pass to iterative deepening -- re-enrichment generates follow-up questions referencing prior answers, cognitive signals guide question priority, per-category depth tracking with depth-weighted maturity scoring, and "Ask more" / "Move to next area" navigation for user-directed exploration
+**Requirements**: ITER-01, ITER-02, ITER-03, ITER-04, ITER-05, ITER-06, ITER-07
+**Depends on:** Phase 24
+**Success Criteria** (what must be TRUE):
+  1. User re-enriches a fully-answered inbox item and sees follow-up questions (not zero questions), each referencing their prior answer
+  2. Follow-up question templates use {prior_answer} slot-filling from gtd-personal.json followUpTemplates
+  3. Per-category enrichment depth tracked on InboxItem and persisted to Dexie via v8 migration
+  4. Cognitive signal army influences question priority ordering when signals available; default GTD ordering when null
+  5. EnrichmentWizard shows "Previously: [answer]" above follow-up questions
+  6. User can tap "Ask more on this topic" to stay in current category or "Move to next area" to advance
+  7. Maturity scoring reflects enrichment depth (depth 1/3 contributes less than depth 3/3)
+**Plans:** 3 plans
+
+Plans:
+- [ ] 25-01-PLAN.md — Data model: depth tracking types, Dexie v8 migration, follow-up templates, depth-weighted maturity (ITER-01, ITER-02, ITER-03, ITER-07)
+- [ ] 25-02-PLAN.md — Engine: depth-aware session creation, signal-guided question priority, depth tracking in applyAnswer (ITER-01, ITER-04)
+- [ ] 25-03-PLAN.md — UI: prior-answer display, ask-more/move-next navigation, store depth persistence (ITER-05, ITER-06)
