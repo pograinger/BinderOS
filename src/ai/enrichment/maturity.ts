@@ -11,6 +11,7 @@
  */
 
 import type { MissingInfoCategory } from '../clarification/types';
+import { MAX_ENRICHMENT_DEPTH } from './types';
 
 /** The five enrichment categories, ordered by GTD importance. */
 export const MATURITY_CATEGORIES = [
@@ -72,4 +73,49 @@ export function computeMaturity(enrichments: Record<string, string>): number {
 
   if (filledCategories.size === 0) return 0;
   return filledCategories.size / total;
+}
+
+/** All MissingInfoCategory keys as an array for depth-weighted iteration. */
+const ALL_CATEGORY_KEYS: MissingInfoCategory[] = [
+  'missing-outcome',
+  'missing-next-action',
+  'missing-timeframe',
+  'missing-context',
+  'missing-reference',
+];
+
+/**
+ * Compute depth-weighted maturity score (0-1) from per-category depth map.
+ *
+ * Unlike computeMaturity (binary filled/unfilled), this function scores each
+ * category proportionally to its enrichment depth vs the maximum depth.
+ * Depth 1/3 contributes ~0.33 per category, depth 3/3 contributes 1.0.
+ *
+ * Recognizes both MissingInfoCategory keys (e.g. 'missing-outcome') and
+ * display keys (e.g. 'Outcome') in the depth map.
+ *
+ * @param depthMap - Per-category depth values
+ * @param maxDepth - Maximum enrichment depth (default MAX_ENRICHMENT_DEPTH = 3)
+ * @returns Weighted maturity score 0-1
+ */
+export function computeDepthWeightedMaturity(
+  depthMap: Record<string, number>,
+  maxDepth: number = MAX_ENRICHMENT_DEPTH,
+): number {
+  const keys = Object.keys(depthMap);
+  if (keys.length === 0) return 0;
+
+  const total = ALL_CATEGORY_KEYS.length; // 5
+  let sumScores = 0;
+
+  for (const cat of ALL_CATEGORY_KEYS) {
+    const displayKey = CATEGORY_KEY_MAP[cat];
+    // Check both raw category key and display key
+    const depth = depthMap[cat] ?? depthMap[displayKey] ?? 0;
+    if (depth > 0) {
+      sumScores += Math.min(depth, maxDepth) / maxDepth;
+    }
+  }
+
+  return sumScores / total;
 }

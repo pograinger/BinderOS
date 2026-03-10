@@ -48,6 +48,7 @@ export async function handleCreateInboxItem(
     provenance: 0,
     maturityScore: 0,
     maturityFilled: [],
+    enrichmentDepth: {},
   };
 
   // Validate

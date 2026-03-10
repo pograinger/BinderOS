@@ -26,7 +26,7 @@ describe('gtd-personal followUpTemplates', () => {
       expect(template.question).toContain('{prior_answer}');
       expect(template.options).toBeDefined();
       expect(template.options['_default']).toBeDefined();
-      expect(template.options['_default'].length).toBeGreaterThanOrEqual(2);
+      expect(template.options['_default']!.length).toBeGreaterThanOrEqual(2);
     }
   });
 });

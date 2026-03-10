@@ -135,6 +135,7 @@ export async function importBinderFromFile(file: File): Promise<ImportResult> {
       provenance: 0,
       maturityScore: 0,
       maturityFilled: [] as string[],
+      enrichmentDepth: {} as Record<string, number>,
       created_at: ts,
       updated_at: ts,
     };

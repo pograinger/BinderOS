@@ -141,6 +141,7 @@ export async function importTestBinder(): Promise<void> {
       provenance: 0,
       maturityScore: 0,
       maturityFilled: [] as string[],
+      enrichmentDepth: {} as Record<string, number>,
       created_at: ts,
       updated_at: ts,
     };

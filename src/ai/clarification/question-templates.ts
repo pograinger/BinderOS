@@ -81,3 +81,59 @@ export function generateTemplateOptions(
     categoryLabel: CATEGORY_LABELS[category] ?? category,
   };
 }
+
+/**
+ * Generate a follow-up ClarificationQuestion for iterative enrichment deepening.
+ *
+ * Uses followUpTemplates from binder config when available, otherwise falls back
+ * to a generic follow-up referencing the prior answer.
+ *
+ * @param category - Which missing-info category to deepen
+ * @param atomType - The atom's type for type-specific option selection
+ * @param priorAnswer - The user's previous answer for this category
+ * @param depth - Current enrichment depth for this category
+ * @param slots - Extracted slot values for placeholder filling
+ * @param binderType - Optional binder type slug (defaults to 'gtd-personal')
+ * @returns A ClarificationQuestion with prior-answer-aware text and options
+ */
+export function generateFollowUpOptions(
+  category: MissingInfoCategory,
+  atomType: string,
+  priorAnswer: string,
+  depth: number,
+  slots: Record<string, string>,
+  binderType?: string,
+): ClarificationQuestion {
+  const config = getBinderConfig(binderType);
+  const templateEntry = config.followUpTemplates?.[category];
+
+  const allSlots = { ...slots, prior_answer: priorAnswer };
+
+  if (!templateEntry) {
+    // Generic fallback when no followUpTemplates configured
+    return {
+      category,
+      questionText: `You said "${priorAnswer}" for ${CATEGORY_LABELS[category] ?? category}. Can you elaborate?`,
+      options: [
+        `More details about "${priorAnswer}"`,
+        `Actually, let me change this`,
+      ],
+      categoryLabel: CATEGORY_LABELS[category] ?? category,
+    };
+  }
+
+  // Select options: prefer atom-type-specific, fall back to _default
+  const rawOptions = templateEntry.options[atomType] ?? templateEntry.options['_default'] ?? [];
+
+  // Apply slot-filling and filter out {freeform} placeholder
+  const filledOptions = rawOptions
+    .filter((opt) => opt !== '{freeform}')
+    .map((opt) => fillSlots(opt, allSlots));
+
+  return {
+    category,
+    questionText: fillSlots(templateEntry.question, allSlots),
+    options: filledOptions,
+    categoryLabel: CATEGORY_LABELS[category] ?? category,
+  };
+}
