@@ -682,6 +682,19 @@ export async function handleEnrichmentAnswer(answer: ClarificationAnswer): Promi
       provenance: updated.provenance,
       enrichmentDepth: updated.categoryDepth,
     });
+
+    // Sync in-memory state so subsequent startEnrichment reads updated depth/content.
+    // Without this, re-enrichment reads stale data and generates first-pass questions again.
+    const idx = state.inboxItems.findIndex((i) => i.id === session.inboxItemId);
+    if (idx >= 0) {
+      setState('inboxItems', idx, {
+        content: enrichedContent,
+        maturityScore,
+        maturityFilled,
+        provenance: updated.provenance,
+        enrichmentDepth: updated.categoryDepth,
+      });
+    }
   } catch (err) {
     console.warn('[handleEnrichmentAnswer] Dexie update failed:', err);
   }
