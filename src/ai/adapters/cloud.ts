@@ -139,6 +139,18 @@ export class AnthropicCloudAdapter implements AIAdapter {
       sanitizationResult = await sanitizeForCloud(request.prompt, 'structured');
     }
 
+    // Log sanitization results for debugging
+    console.group('%c[Cloud Adapter] Sanitization Gate', 'color: #f59e0b; font-weight: bold');
+    console.log('Entities detected:', sanitizationResult.entities.length);
+    if (sanitizationResult.entities.length > 0) {
+      console.table(sanitizationResult.entities.map(e => ({
+        text: e.text, category: e.category, source: e.source, confidence: e.confidence,
+      })));
+      console.log('Entity map:', Object.fromEntries(sanitizationResult.entityMap));
+    }
+    console.log('Sanitized prompt preview:', String(sanitizationResult.prompt).slice(0, 300));
+    console.groupEnd();
+
     // Create log entry before sending — logged regardless of outcome
     const logEntry: CloudRequestLogEntry = {
       id: request.requestId,

@@ -525,6 +525,20 @@ export async function activateCloudAdapter(): Promise<void> {
     });
   }
 
+  // Wire pre-send approval handler BEFORE setting as active adapter.
+  // This ensures the sanitization gate + approval modal fires for every cloud request.
+  // Previously this was only in Shell.tsx createEffect, which has a race condition:
+  // the effect reads getActiveAdapter() (not reactive), so if the adapter is created
+  // after the effect runs, the handler never gets wired.
+  if ('setPreSendApprovalHandler' in adapter) {
+    (adapter as { setPreSendApprovalHandler: (h: (entry: import('../../ai/key-vault').CloudRequestLogEntry, entities?: import('../../ai/sanitization/types').DetectedEntity[], entityMap?: Map<string, string>) => Promise<boolean>) => void })
+      .setPreSendApprovalHandler((entry, entities, entityMap) => {
+        return new Promise<boolean>((resolve) => {
+          setPendingCloudRequest(entry, resolve, entities, entityMap);
+        });
+      });
+  }
+
   setActiveAdapter(adapter);
   setState('cloudStatus', adapter.status);
 }
