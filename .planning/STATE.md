@@ -152,6 +152,7 @@ Phase 15 (Device-Adaptive LLM) is independent of Phases 13-14 and can execute on
 - Phase 19 added: Tier 2 clarification wizard model
 - Phase 23 added: Cloud-tutored local model reinforcement
 - Phase 24 added: Unified Enrichment Wizard
+- Phase 25 added: Iterative Enrichment Deepening
 
 ### Pending Todos
 
