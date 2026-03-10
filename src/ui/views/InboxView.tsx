@@ -123,16 +123,16 @@ export function InboxView() {
     return suggestTypeFromContent(item.content);
   });
 
-  // Whether this item can be decomposed — true if the content heuristic OR triage AI suggests task/decision.
-  // Uses the raw heuristic (not patternSuggestion) so classification history doesn't hide the button.
-  const canDecompose = createMemo(() => {
+  // Whether enrichment is active for the current item
+  const isEnrichmentActive = createMemo(() => {
+    const session = enrichmentSession();
     const item = currentItem();
-    if (!item || showDecompositionFlow()) return false;
-    const heuristic = suggestTypeFromContent(item.content);
-    const triageSuggestion = triageSuggestions().get(item.id);
-    const triageType = triageSuggestion?.status === 'complete' ? triageSuggestion.suggestedType : null;
-    return heuristic === 'task' || heuristic === 'decision' || triageType === 'task' || triageType === 'decision';
+    return session !== null && item !== null && session.inboxItemId === item.id;
   });
+
+  // Low-maturity swipe warning toast state
+  const [lowMaturityWarning, setLowMaturityWarning] = createSignal(false);
+  let warningTimeout: ReturnType<typeof setTimeout> | undefined;
 
   // Reset classification panel when item changes
   const resetClassifyPanel = () => {
@@ -288,6 +288,18 @@ export function InboxView() {
     if (dx > 80 || (dx > 30 && velocityX > 0.5)) {
       setCardTranslateX(0);
       setCardTranslateY(0);
+
+      // Phase 24: Soft warning when swiping to classify a low-maturity item
+      const item = currentItem();
+      if (item && (item.maturityScore ?? 0) < 0.3) {
+        const ageMs = Date.now() - item.created_at;
+        if (ageMs > 5000) {
+          setLowMaturityWarning(true);
+          if (warningTimeout) clearTimeout(warningTimeout);
+          warningTimeout = setTimeout(() => setLowMaturityWarning(false), 2500);
+        }
+      }
+
       setShowClassify(true);
       // Phase 10: Don't pre-fill when suggestion is ambiguous — user must pick via two-button UX
       const activeSuggestion = currentItem() ? triageSuggestions().get(currentItem()!.id) : undefined;
@@ -398,12 +410,49 @@ export function InboxView() {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <Show when={currentItem()!.title}>
-            <div class="inbox-card-title">{currentItem()!.title}</div>
-          </Show>
+          {/* Card header with indicators */}
+          <div style={{ display: 'flex', 'align-items': 'center', gap: '6px', 'margin-bottom': '4px' }}>
+            <Show when={currentItem()!.title}>
+              <div class="inbox-card-title" style={{ flex: '1' }}>{currentItem()!.title}</div>
+            </Show>
+            {/* 3-Ring provenance indicator — always shown */}
+            <ThreeRingIndicator
+              provenance={currentItem()!.provenance ?? 0}
+              size={20}
+            />
+          </div>
           <div class="inbox-card-content">{currentItem()!.content}</div>
-          <div class="inbox-card-time">
-            {new Date(currentItem()!.created_at).toLocaleString()}
+          <div class="inbox-card-time" style={{ display: 'flex', 'align-items': 'center', 'justify-content': 'space-between' }}>
+            <span>{new Date(currentItem()!.created_at).toLocaleString()}</span>
+            <div style={{ display: 'flex', 'align-items': 'center', gap: '6px' }}>
+              {/* Maturity indicator — always shown */}
+              <MaturityIndicator
+                score={currentItem()!.maturityScore ?? 0}
+                size={20}
+                filled={currentItem()!.maturityFilled ?? []}
+              />
+              {/* Enrich button — always visible on all inbox cards */}
+              <button
+                class="inbox-enrich-btn"
+                onPointerDown={(e: PointerEvent) => e.stopPropagation()}
+                onTouchStart={(e: TouchEvent) => e.stopPropagation()}
+                onTouchEnd={(e: TouchEvent) => e.stopPropagation()}
+                onClick={() => startEnrichment(currentItem()!.id)}
+                style={{
+                  padding: '4px 10px',
+                  background: 'var(--accent, #58a6ff)',
+                  border: 'none',
+                  'border-radius': '12px',
+                  color: '#fff',
+                  'font-size': '12px',
+                  'font-weight': '500',
+                  cursor: 'pointer',
+                  'white-space': 'nowrap',
+                }}
+              >
+                Enrich
+              </button>
+            </div>
           </div>
 
           {/* Swipe hints — context-aware: show Accept/Dismiss when AI suggestion is active */}
@@ -417,23 +466,20 @@ export function InboxView() {
             </span>
           </div>
 
-          {/* Break this down button — visible when content heuristic or AI triage suggests task/decision */}
-          <Show when={canDecompose()}>
-            <button
-              class="inbox-break-down-btn"
-              onTouchStart={(e: TouchEvent) => e.stopPropagation()}
-              onTouchEnd={(e: TouchEvent) => e.stopPropagation()}
-              onClick={() => {
-                const type = suggestedType() === 'task' || suggestedType() === 'decision' ? suggestedType() as 'task' | 'decision' : 'task';
-                startDecomposition(currentItem()!.id, currentItem()!.content, type);
-              }}
-            >
-              Break this down
-            </button>
+          {/* Enrichment wizard inline — replaces suggestion strip when active */}
+          <Show when={isEnrichmentActive()}>
+            <EnrichmentWizard
+              session={enrichmentSession()!}
+              onAnswer={(answer) => handleEnrichmentAnswer(answer)}
+              onDecompositionStep={(idx, action, text) => handleDecompositionStep(idx, action, text)}
+              onAdvance={(choice) => advanceEnrichment(choice)}
+              onGraduate={() => advanceEnrichment('accept')}
+              onClose={() => closeEnrichment()}
+            />
           </Show>
 
-          {/* AI suggestion strip — rendered when a suggestion exists for this card */}
-          <Show when={triageSuggestions().get(currentItem()!.id)}>
+          {/* AI suggestion strip — shown only when enrichment is NOT active and a suggestion exists */}
+          <Show when={!isEnrichmentActive() && triageSuggestions().get(currentItem()!.id)}>
             {(suggestion) => (
               <InboxAISuggestion
                 suggestion={suggestion()}
@@ -445,6 +491,28 @@ export function InboxView() {
                 sectionItems={state.sectionItems}
               />
             )}
+          </Show>
+
+          {/* Low-maturity swipe warning toast */}
+          <Show when={lowMaturityWarning()}>
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '60px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(245, 158, 11, 0.9)',
+                color: '#fff',
+                padding: '6px 14px',
+                'border-radius': '8px',
+                'font-size': '12px',
+                'white-space': 'nowrap',
+                'z-index': '5',
+                'pointer-events': 'none',
+              }}
+            >
+              This item might need more context. Classify anyway?
+            </div>
           </Show>
         </div>
 
@@ -565,8 +633,7 @@ export function InboxView() {
         </div>
       </Show>
 
-      {/* Decomposition flow overlay — Phase 18 */}
-      <DecompositionFlow />
+      {/* DecompositionFlow removed — replaced by unified enrichment wizard */}
     </div>
   );
 }
