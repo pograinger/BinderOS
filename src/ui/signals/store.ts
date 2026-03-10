@@ -596,7 +596,7 @@ export { triageSuggestions, triageStatus, triageError };
 
 // --- Phase 24: Enrichment session state (ephemeral, main-thread only) ---
 
-import type { EnrichmentSession, ClarificationAnswer, GraduationProposal } from '../../ai/enrichment/types';
+import type { EnrichmentSession, ClarificationAnswer, GraduationProposal, MissingInfoCategory } from '../../ai/enrichment/types';
 import {
   createEnrichmentSession,
   applyAnswer as engineApplyAnswer,
@@ -616,6 +616,7 @@ export { enrichmentSession, graduationProposal };
 /**
  * Start enrichment for an inbox item.
  * Creates a session via the enrichment engine with the item's content and existing enrichments.
+ * Passes depthMap from the item's enrichmentDepth to enable iterative deepening.
  */
 export function startEnrichment(inboxItemId: string): void {
   const item = state.inboxItems.find((i) => i.id === inboxItemId);
@@ -627,6 +628,8 @@ export function startEnrichment(inboxItemId: string): void {
     content: item.content,
     atomType: item.type,
     existingEnrichments: parsed.enrichments,
+    depthMap: item.enrichmentDepth ?? {},
+    cognitiveSignals: null, // Future: pass cached cognitive signals when available
   });
   setEnrichmentSession(session);
 }
@@ -673,6 +676,7 @@ export async function handleEnrichmentAnswer(answer: ClarificationAnswer): Promi
       maturityScore,
       maturityFilled,
       provenance: updated.provenance,
+      enrichmentDepth: updated.categoryDepth,
     });
   } catch (err) {
     console.warn('[handleEnrichmentAnswer] Dexie update failed:', err);
@@ -723,6 +727,68 @@ export function advanceEnrichment(choice?: 'accept' | 'decline'): void {
  */
 export function closeEnrichment(): void {
   setEnrichmentSession(null);
+}
+
+/**
+ * Handle "Ask more on this topic": generate another follow-up for a category.
+ * Increments the depth for the category, creates a new session with updated depthMap,
+ * and replaces the current question set with the new follow-up.
+ */
+export function handleAskMore(category: MissingInfoCategory): void {
+  const session = enrichmentSession();
+  if (!session) return;
+
+  const item = state.inboxItems.find((i) => i.id === session.inboxItemId);
+  if (!item) return;
+
+  // Increment depth for the requested category
+  const updatedDepth = { ...session.categoryDepth };
+  updatedDepth[category] = (updatedDepth[category] ?? 0) + 1;
+
+  // Create a new session with updated depthMap to generate fresh follow-up questions
+  const parsed = parseEnrichment(item.content);
+  const newSession = createEnrichmentSession({
+    inboxItemId: session.inboxItemId,
+    content: item.content,
+    atomType: item.type,
+    existingEnrichments: parsed.enrichments,
+    depthMap: updatedDepth,
+    cognitiveSignals: session.cognitiveSignals,
+  });
+
+  // Preserve accumulated answers and provenance from the current session
+  setEnrichmentSession({
+    ...newSession,
+    answers: session.answers,
+    provenance: session.provenance,
+    activeDeepening: category,
+  });
+}
+
+/**
+ * Handle "Move to next area": advance to the next question in the session.
+ * Clears activeDeepening and moves the question index forward.
+ */
+export function handleMoveNext(): void {
+  const session = enrichmentSession();
+  if (!session) return;
+
+  setEnrichmentSession({
+    ...session,
+    activeDeepening: null,
+    currentQuestionIndex: session.currentQuestionIndex + 1,
+  });
+}
+
+/**
+ * Compute prior answers from an inbox item's content for display in the enrichment wizard.
+ * Returns a Record keyed by display name (e.g., "Outcome", "Next Action").
+ */
+export function computePriorAnswers(inboxItemId: string): Record<string, string> {
+  const item = state.inboxItems.find((i) => i.id === inboxItemId);
+  if (!item) return {};
+  const parsed = parseEnrichment(item.content);
+  return parsed.enrichments;
 }
 
 /**

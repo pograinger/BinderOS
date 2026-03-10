@@ -24,6 +24,7 @@ import {
   enrichmentSession, graduationProposal, advanceEnrichment,
   toggleGraduationChild, handleGraduationConfirm,
   startEnrichment, handleEnrichmentAnswer, handleDecompositionStep, closeEnrichment,
+  handleAskMore, handleMoveNext, computePriorAnswers,
 } from '../signals/store';
 import { AtomTypeIcon } from '../components/AtomTypeIcon';
 import { InboxAISuggestion } from '../components/InboxAISuggestion';
@@ -475,6 +476,9 @@ export function InboxView() {
               onAdvance={(choice) => advanceEnrichment(choice)}
               onGraduate={() => advanceEnrichment('accept')}
               onClose={() => closeEnrichment()}
+              onAskMore={(category) => handleAskMore(category)}
+              onMoveNext={() => handleMoveNext()}
+              priorAnswers={computePriorAnswers(enrichmentSession()!.inboxItemId)}
             />
           </Show>
 
