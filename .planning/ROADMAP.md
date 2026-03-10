@@ -247,10 +247,25 @@ Plans:
 
 ### Phase 24: Unified Enrichment Wizard
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Merge decomposition and clarification into one unified enrichment wizard with question-first flow, inline rendering on triage cards, inbox maturity model with visual indicators, graduation flow (inbox to atoms), model provenance annotations with 3-Ring SVG visualization, tier-aware quality gate, and Tier 2B handler infrastructure for WASM LLM enhancement on capable devices
+**Requirements**: ENRICH-01, ENRICH-02, ENRICH-03, ENRICH-04, ENRICH-05, ENRICH-06, ENRICH-07, ENRICH-08, ENRICH-09, ENRICH-10
 **Depends on:** Phase 23
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. Single "Enrich" button on all inbox cards replaces "Break this down" and "Clarify this" with unified question-first-then-decompose flow
+  2. Enrichment renders inline on triage card (not modal) with category chips for non-linear navigation and 4-option menus
+  3. Each answer persists immediately to Dexie — partial enrichment survives navigation and page refresh
+  4. Inbox maturity model tracks enrichment completeness with visual maturity indicator on every card
+  5. Graduation converts enriched items into parent atom + child atoms with quality spectrum visualization; children skip re-triage
+  6. Quality gate with soft warning below minimum threshold; user can always force-create
+  7. Model provenance 32-bit bitmask on every atom/inbox item tracks which AI models contributed
+  8. 3-Ring stacked ring SVG indicator on every item showing tier provenance; tap reveals model names
+  9. Tier 2B handler stub in pipeline for WASM LLM tasks; falls back to T2A templates on unsupported devices
+**Plans:** 6 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 24 to break down)
+- [ ] 24-01-PLAN.md — Data model foundation: enrichment types, provenance bitmask, maturity scoring, quality gate, Dexie v7 migration (ENRICH-03, ENRICH-04, ENRICH-06, ENRICH-07, ENRICH-10)
+- [ ] 24-02-PLAN.md — 3-Ring SVG indicator and MaturityIndicator components (ENRICH-08)
+- [ ] 24-03-PLAN.md — Enrichment engine state machine and graduation proposal generator (ENRICH-02, ENRICH-03, ENRICH-05, ENRICH-10)
+- [ ] 24-04-PLAN.md — Tier 2B handler stub and pipeline extension with enrichment task types (ENRICH-09)
+- [ ] 24-05-PLAN.md — EnrichmentWizard UI, InboxView integration, Enrich button, indicators (ENRICH-01, ENRICH-02, ENRICH-03, ENRICH-04)
+- [ ] 24-06-PLAN.md — GraduationPreview UI, quality gate display, end-to-end lifecycle verification (ENRICH-05, ENRICH-06)
