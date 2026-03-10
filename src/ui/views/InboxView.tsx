@@ -18,10 +18,19 @@
  */
 
 import { createSignal, createMemo, createResource, For, Show, onCleanup } from 'solid-js';
-import { state, sendCommand, triageSuggestions, acceptAISuggestion, dismissAISuggestion, acceptAllAISuggestions, triageStatus, setSelectedAtomId } from '../signals/store';
+import {
+  state, sendCommand, triageSuggestions, acceptAISuggestion, dismissAISuggestion,
+  acceptAllAISuggestions, triageStatus, setSelectedAtomId,
+  enrichmentSession, graduationProposal, advanceEnrichment,
+  toggleGraduationChild, handleGraduationConfirm,
+  startEnrichment, handleEnrichmentAnswer, handleDecompositionStep, closeEnrichment,
+} from '../signals/store';
 import { AtomTypeIcon } from '../components/AtomTypeIcon';
 import { InboxAISuggestion } from '../components/InboxAISuggestion';
-import { DecompositionFlow, showDecompositionFlow, startDecomposition } from '../components/DecompositionFlow';
+import { EnrichmentWizard } from '../components/EnrichmentWizard';
+import { ThreeRingIndicator } from '../components/ThreeRingIndicator';
+import { MaturityIndicator } from '../components/MaturityIndicator';
+import { GraduationPreview } from '../components/GraduationPreview';
 import { logClassification, suggestTypeFromPatterns } from '../../storage/classification-log';
 import type { AtomType } from '../../types/atoms';
 
@@ -542,6 +551,18 @@ export function InboxView() {
             </button>
           </div>
         </Show>
+      </Show>
+
+      {/* Graduation preview — Phase 24 */}
+      <Show when={enrichmentSession()?.phase === 'graduating' && graduationProposal()}>
+        <div class="inbox-graduation-overlay">
+          <GraduationPreview
+            proposal={graduationProposal()!}
+            onToggleChild={(index) => toggleGraduationChild(index)}
+            onConfirm={() => handleGraduationConfirm()}
+            onCancel={() => advanceEnrichment('decline')}
+          />
+        </div>
       </Show>
 
       {/* Decomposition flow overlay — Phase 18 */}

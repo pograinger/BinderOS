@@ -594,6 +594,206 @@ const [triageError, setTriageError] = createSignal<string | null>(null);
 
 export { triageSuggestions, triageStatus, triageError };
 
+// --- Phase 24: Enrichment session state (ephemeral, main-thread only) ---
+
+import type { EnrichmentSession, ClarificationAnswer, GraduationProposal } from '../../ai/enrichment/types';
+import {
+  createEnrichmentSession,
+  applyAnswer as engineApplyAnswer,
+  applyDecompositionStep as engineApplyDecompStep,
+  advanceSession as engineAdvanceSession,
+  computeGraduationReadiness,
+} from '../../ai/enrichment/enrichment-engine';
+import { buildGraduationProposal, toggleChildInclusion, getGraduationActions } from '../../ai/enrichment/graduation';
+import { parseEnrichment } from '../../ai/clarification/enrichment';
+import { computeMaturity } from '../../ai/enrichment/maturity';
+
+const [enrichmentSession, setEnrichmentSession] = createSignal<EnrichmentSession | null>(null);
+const [graduationProposal, setGraduationProposal] = createSignal<GraduationProposal | null>(null);
+
+export { enrichmentSession, graduationProposal };
+
+/**
+ * Start enrichment for an inbox item.
+ * Creates a session via the enrichment engine with the item's content and existing enrichments.
+ */
+export function startEnrichment(inboxItemId: string): void {
+  const item = state.inboxItems.find((i) => i.id === inboxItemId);
+  if (!item) return;
+
+  const parsed = parseEnrichment(item.content);
+  const session = createEnrichmentSession({
+    inboxItemId,
+    content: item.content,
+    atomType: item.type,
+    existingEnrichments: parsed.enrichments,
+  });
+  setEnrichmentSession(session);
+}
+
+/**
+ * Handle a clarification answer during enrichment.
+ * Applies the answer, updates maturity, and persists to Dexie immediately.
+ */
+export async function handleEnrichmentAnswer(answer: ClarificationAnswer): Promise<void> {
+  const session = enrichmentSession();
+  if (!session) return;
+
+  const updated = engineApplyAnswer(session, answer);
+  setEnrichmentSession(updated);
+
+  // Compute maturity from all answers so far
+  const enrichments: Record<string, string> = {};
+  for (const a of updated.answers) {
+    if (a.wasSkipped) continue;
+    const KEYS: Record<string, string> = {
+      'missing-outcome': 'Outcome',
+      'missing-next-action': 'Next Action',
+      'missing-timeframe': 'Deadline',
+      'missing-context': 'Context',
+      'missing-reference': 'Reference',
+    };
+    const key = KEYS[a.category] ?? a.category;
+    const val = a.wasFreeform ? a.freeformText : a.selectedOption;
+    if (key && val) enrichments[key] = val;
+  }
+
+  const maturityScore = computeMaturity(enrichments);
+  const maturityFilled = Object.keys(enrichments);
+
+  // Persist maturity + provenance to Dexie inbox record immediately
+  try {
+    const { db: dexie } = await import('../../storage/db');
+    await dexie.inbox.update(session.inboxItemId, {
+      maturityScore,
+      maturityFilled,
+      provenance: updated.provenance,
+    });
+  } catch (err) {
+    console.warn('[handleEnrichmentAnswer] Dexie update failed:', err);
+  }
+}
+
+/**
+ * Handle a decomposition step action during enrichment.
+ */
+export function handleDecompositionStep(
+  index: number,
+  action: 'accept' | 'edit' | 'skip',
+  text?: string,
+): void {
+  const session = enrichmentSession();
+  if (!session) return;
+  const updated = engineApplyDecompStep(session, index, action, text);
+  setEnrichmentSession(updated);
+}
+
+/**
+ * Advance the enrichment session to the next phase.
+ *
+ * When reaching 'graduating' phase, auto-builds the graduation proposal.
+ * When phase is 'done', cleans up session and proposal.
+ */
+export function advanceEnrichment(choice?: 'accept' | 'decline'): void {
+  const session = enrichmentSession();
+  if (!session) return;
+  const updated = engineAdvanceSession(session, choice);
+  setEnrichmentSession(updated);
+
+  // Build graduation proposal when entering graduating phase
+  if (updated.phase === 'graduating') {
+    const proposal = buildGraduationProposal(updated);
+    setGraduationProposal(proposal);
+  }
+
+  // Clean up when done
+  if (updated.phase === 'done') {
+    setEnrichmentSession(null);
+    setGraduationProposal(null);
+  }
+}
+
+/**
+ * Close/cancel enrichment session.
+ */
+export function closeEnrichment(): void {
+  setEnrichmentSession(null);
+}
+
+/**
+ * Toggle a child atom's inclusion in the graduation proposal.
+ */
+export function toggleGraduationChild(childIndex: number): void {
+  const proposal = graduationProposal();
+  if (!proposal) return;
+  setGraduationProposal(toggleChildInclusion(proposal, childIndex));
+}
+
+/**
+ * Handle graduation confirmation: create parent + child atoms.
+ *
+ * 1. Gets action descriptors from the graduation module
+ * 2. For classify-parent: classifies the existing inbox item
+ * 3. For create-child: creates new inbox item then immediately classifies
+ *    (children skip re-triage -- go directly to suggested sections)
+ * 4. Closes enrichment session
+ */
+export function handleGraduationConfirm(): void {
+  const proposal = graduationProposal();
+  const session = enrichmentSession();
+  if (!proposal || !session) return;
+
+  const actions = getGraduationActions(proposal);
+  let createdCount = 0;
+
+  for (const action of actions) {
+    if (action.action === 'classify-parent') {
+      // Classify the existing inbox item as the parent atom type
+      sendCommand({
+        type: 'CLASSIFY_INBOX_ITEM',
+        payload: {
+          id: session.inboxItemId,
+          type: action.type,
+          sectionItemId: action.sectionItemId ?? undefined,
+        },
+      });
+      createdCount++;
+    } else if (action.action === 'create-child') {
+      // Create child as new inbox item, then immediately classify
+      // (skipTriage: children go directly to their suggested section)
+      sendCommand({
+        type: 'CREATE_INBOX_ITEM',
+        payload: {
+          content: action.content,
+        },
+      });
+      // Deferred classify: wait for worker to sync the new item into state
+      const childAction = action;
+      setTimeout(() => {
+        const items = state.inboxItems;
+        const match = items.find((item) => item.content === childAction.content);
+        if (match) {
+          sendCommand({
+            type: 'CLASSIFY_INBOX_ITEM',
+            payload: {
+              id: match.id,
+              type: childAction.type,
+              sectionItemId: childAction.sectionItemId ?? undefined,
+            },
+          });
+        }
+      }, 200);
+      createdCount++;
+    }
+  }
+
+  // Close enrichment session
+  setEnrichmentSession(null);
+  setGraduationProposal(null);
+
+  console.log(`[Graduation] Created ${createdCount} atoms from enrichment`);
+}
+
 // --- Phase 5: Triage orchestration ---
 
 /**
@@ -1880,3 +2080,4 @@ export function handleClarificationComplete(result: ClarificationResult): void {
     );
   }
 }
+
