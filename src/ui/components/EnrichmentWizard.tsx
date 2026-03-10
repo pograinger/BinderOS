@@ -29,6 +29,12 @@ interface EnrichmentWizardProps {
   onAdvance: (choice?: 'accept' | 'decline') => void;
   onGraduate: () => void;
   onClose: () => void;
+  /** Signal to generate another follow-up for the given category */
+  onAskMore: (category: MissingInfoCategory) => void;
+  /** Advance to next category question */
+  onMoveNext: () => void;
+  /** Existing enrichment answers keyed by display key (e.g., { "Outcome": "Get project approved" }) */
+  priorAnswers: Record<string, string>;
 }
 
 // --- Category chip configuration ---
@@ -43,6 +49,24 @@ const CATEGORY_CHIPS: { category: MissingInfoCategory; label: string }[] = [
 
 // --- Component ---
 
+/** Map MissingInfoCategory to human-readable display key for prior answer lookup. */
+const CATEGORY_TO_DISPLAY_KEY: Record<MissingInfoCategory, string> = {
+  'missing-outcome': 'Outcome',
+  'missing-next-action': 'Next Action',
+  'missing-timeframe': 'Deadline',
+  'missing-context': 'Context',
+  'missing-reference': 'Reference',
+};
+
+/** Map MissingInfoCategory to human-readable label for navigation buttons. */
+const CATEGORY_LABELS: Record<MissingInfoCategory, string> = {
+  'missing-outcome': 'Outcome',
+  'missing-next-action': 'Next Action',
+  'missing-timeframe': 'Timeframe',
+  'missing-context': 'Context',
+  'missing-reference': 'Reference',
+};
+
 export function EnrichmentWizard(props: EnrichmentWizardProps) {
   const [freeformText, setFreeformText] = createSignal('');
   const [editText, setEditText] = createSignal('');
@@ -50,6 +74,29 @@ export function EnrichmentWizard(props: EnrichmentWizardProps) {
 
   // Prevent swipe interference on all pointer events
   const stopSwipe = (e: Event) => { e.stopPropagation(); };
+
+  // Get prior answer for the current question's category
+  const getPriorAnswer = (category: MissingInfoCategory | undefined): string | null => {
+    if (!category) return null;
+    const displayKey = CATEGORY_TO_DISPLAY_KEY[category];
+    if (!displayKey) return null;
+    const answer = props.priorAnswers[displayKey];
+    return answer ?? null;
+  };
+
+  // Whether the current question is a follow-up (depth >= 1 for its category)
+  const isFollowUpQuestion = (): boolean => {
+    const q = currentQuestion();
+    if (!q) return false;
+    return (props.session.categoryDepth[q.category] ?? 0) >= 1;
+  };
+
+  // Human-readable label for the current question's category
+  const currentCategoryLabel = (): string => {
+    const q = currentQuestion();
+    if (!q) return '';
+    return CATEGORY_LABELS[q.category] ?? q.category;
+  };
 
   // Check if a category has been answered
   const isCategoryFilled = (cat: MissingInfoCategory): boolean => {
@@ -227,7 +274,10 @@ export function EnrichmentWizard(props: EnrichmentWizardProps) {
                   transition: 'all 0.2s ease',
                 }}
               >
-                {filled() ? '\u2713 ' : ''}{chip.label}
+                {filled() ? '\u2713 ' : ''}{chip.label}{(() => {
+                  const depth = props.session.categoryDepth[chip.category] ?? 0;
+                  return depth > 1 ? ` (${depth})` : '';
+                })()}
               </button>
             );
           }}
@@ -240,6 +290,37 @@ export function EnrichmentWizard(props: EnrichmentWizardProps) {
           class="enrichment-wizard-question"
           style={{ transition: 'opacity 0.2s ease' }}
         >
+          {/* Prior answer display for follow-up questions */}
+          <Show when={getPriorAnswer(currentQuestion()?.category)}>
+            {(prior) => (
+              <div
+                class="enrichment-prior-answer"
+                onPointerDown={stopSwipe}
+                style={{
+                  background: 'rgba(59, 130, 246, 0.08)',
+                  'border-radius': '6px',
+                  padding: '8px 12px',
+                  'margin-bottom': '8px',
+                  'font-size': '0.85em',
+                  'font-style': 'italic',
+                }}
+              >
+                <span
+                  class="prior-label"
+                  style={{
+                    'font-weight': 'bold',
+                    'margin-right': '6px',
+                    color: '#6b7280',
+                    'font-style': 'normal',
+                  }}
+                >
+                  Previously:
+                </span>
+                <span class="prior-text">{prior()}</span>
+              </div>
+            )}
+          </Show>
+
           <div
             style={{
               'font-size': '12px',
@@ -343,6 +424,52 @@ export function EnrichmentWizard(props: EnrichmentWizardProps) {
               Skip
             </button>
           </div>
+
+          {/* Navigation buttons for follow-up questions */}
+          <Show when={isFollowUpQuestion()}>
+            <div
+              class="enrichment-nav"
+              onPointerDown={stopSwipe}
+              style={{
+                display: 'flex',
+                gap: '8px',
+                'margin-top': '8px',
+              }}
+            >
+              <button
+                class="enrichment-nav-btn ask-more"
+                onClick={(e) => { e.stopPropagation(); props.onAskMore(currentQuestion()!.category); }}
+                style={{
+                  flex: '1',
+                  padding: '8px 12px',
+                  'border-radius': '6px',
+                  'font-size': '0.85em',
+                  border: '1px solid #3b82f6',
+                  color: '#3b82f6',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                }}
+              >
+                Ask more about {currentCategoryLabel()}
+              </button>
+              <button
+                class="enrichment-nav-btn move-next"
+                onClick={(e) => { e.stopPropagation(); props.onMoveNext(); }}
+                style={{
+                  flex: '1',
+                  padding: '8px 12px',
+                  'border-radius': '6px',
+                  'font-size': '0.85em',
+                  border: '1px solid #6b7280',
+                  color: '#6b7280',
+                  background: 'transparent',
+                  cursor: 'pointer',
+                }}
+              >
+                Move to next area
+              </button>
+            </div>
+          </Show>
         </div>
       </Show>
 
