@@ -31,6 +31,7 @@ Thumbs.db
 # Note: public/models/classifiers/ is NOT ignored — trained classifier heads are committed.
 # Git cannot re-include a subdirectory of an excluded parent, so we exclude by subdirectory:
 public/models/Xenova/
+public/models/sanitization/
 public/models/*.json
 public/models/*.onnx
 public/models/.keep

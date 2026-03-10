@@ -35,7 +35,7 @@ REPO_ROOT = SCRIPT_DIR.parent.parent
 DATA_PATH = REPO_ROOT / "scripts" / "training-data" / "sanitization-ner.jsonl"
 LABEL_MAP_PATH = SCRIPT_DIR / "sanitization_label_map.json"
 
-OUTPUT_DIR = REPO_ROOT / "public" / "models" / "sanitization"
+OUTPUT_DIR = REPO_ROOT / "public" / "models" / "sanitization" / "sanitize-check"
 ONNX_SUBDIR = OUTPUT_DIR / "onnx"
 CLASSES_JSON_PATH = OUTPUT_DIR / "sanitize-check-classes.json"
 
