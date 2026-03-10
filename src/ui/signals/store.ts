@@ -764,6 +764,56 @@ export function handleAskMore(category: MissingInfoCategory): void {
   const newDepth = (updatedDepth[category] ?? 0) + 1;
   updatedDepth[category] = newDepth;
 
+  // --- Tier 3 (LLM) attempt: if an AI adapter is available, generate a
+  //     contextual follow-up question via the cloud/browser LLM before
+  //     falling back to template or semantic selection. The dispatchAI call
+  //     inside generateT3Question triggers the pre-send approval modal for
+  //     cloud adapters, so no extra gating is needed here.
+  if (isT3Available()) {
+    // Build prior Q&A pairs from session answers
+    const priorQA: T3EnrichmentContext['priorQA'] = session.answers
+      .filter(a => !a.wasSkipped)
+      .map(a => ({
+        category: a.category,
+        question: session.questions.find(q => q.category === a.category)?.questionText ?? '',
+        answer: a.wasFreeform ? (a.freeformText ?? '') : (a.selectedOption ?? ''),
+      }));
+
+    const t3Ctx: T3EnrichmentContext = {
+      itemContent: item.content,
+      atomType: item.type ?? 'task',
+      priorQA,
+      categoryDepth: updatedDepth,
+      cognitiveSignals: session.cognitiveSignals,
+      focusCategory: category,
+    };
+
+    void generateT3Question(t3Ctx).then(t3Question => {
+      if (t3Question) {
+        // T3 succeeded — use the LLM-generated question
+        const currentSession = enrichmentSession();
+        if (!currentSession || currentSession.inboxItemId !== session.inboxItemId) return;
+
+        setEnrichmentSession({
+          ...currentSession,
+          questions: [t3Question],
+          currentQuestionIndex: 0,
+          categoryDepth: updatedDepth,
+          activeDeepening: category,
+          phase: 'questions',
+        });
+      } else {
+        // T3 returned null (unavailable, cancelled, parse failure) — fall back
+        handleAskMoreFallback(session, item, category, updatedDepth, newDepth);
+      }
+    }).catch(() => {
+      // T3 threw — fall back to template/semantic
+      handleAskMoreFallback(session, item, category, updatedDepth, newDepth);
+    });
+    return;
+  }
+
+  // --- Fallback path: no AI adapter available, use template/semantic ---
   if (newDepth <= TEMPLATE_TIER_COUNT) {
     // Depths 1-2: use template tiers (sync, zero inference cost)
     const parsed = parseEnrichment(item.content);
@@ -824,6 +874,84 @@ export function handleAskMore(category: MissingInfoCategory): void {
       if (!currentSession || currentSession.inboxItemId !== session.inboxItemId) return;
 
       // Replace the current question with the semantically selected one
+      setEnrichmentSession({
+        ...currentSession,
+        questions: [question],
+        currentQuestionIndex: 0,
+        categoryDepth: updatedDepth,
+        activeDeepening: category,
+        phase: 'questions',
+      });
+    });
+  }
+}
+
+/**
+ * Internal fallback for handleAskMore when T3 is unavailable or fails.
+ * Replicates the template-tier / semantic-selection logic so the async T3
+ * path can invoke it without re-entering handleAskMore.
+ */
+function handleAskMoreFallback(
+  session: EnrichmentSession,
+  item: InboxItem,
+  category: MissingInfoCategory,
+  updatedDepth: Record<string, number>,
+  newDepth: number,
+): void {
+  if (newDepth <= TEMPLATE_TIER_COUNT) {
+    const parsed = parseEnrichment(item.content);
+    const newSession = createEnrichmentSession({
+      inboxItemId: session.inboxItemId,
+      content: item.content,
+      atomType: item.type,
+      existingEnrichments: parsed.enrichments,
+      depthMap: updatedDepth,
+      cognitiveSignals: session.cognitiveSignals,
+    });
+
+    setEnrichmentSession({
+      ...newSession,
+      answers: session.answers,
+      provenance: session.provenance,
+      activeDeepening: category,
+    });
+  } else {
+    // Depth 3+: semantic selection via MiniLM embeddings
+    const worker = getEmbeddingWorker();
+    if (!worker) {
+      const parsed = parseEnrichment(item.content);
+      const newSession = createEnrichmentSession({
+        inboxItemId: session.inboxItemId,
+        content: item.content,
+        atomType: item.type,
+        existingEnrichments: parsed.enrichments,
+        depthMap: updatedDepth,
+        cognitiveSignals: session.cognitiveSignals,
+      });
+      setEnrichmentSession({
+        ...newSession,
+        answers: session.answers,
+        provenance: session.provenance,
+        activeDeepening: category,
+      });
+      return;
+    }
+
+    const askedQuestions = session.questions
+      .filter(q => q.category === category)
+      .map(q => q.questionText);
+
+    const lastAnswer = session.answers
+      .filter(a => a.category === category && !a.wasSkipped)
+      .pop();
+    const priorAnswer = lastAnswer
+      ? (lastAnswer.wasFreeform ? lastAnswer.freeformText : lastAnswer.selectedOption) ?? ''
+      : '';
+
+    void selectSemanticFollowUp(worker, category, priorAnswer, askedQuestions).then(question => {
+      const currentSession = enrichmentSession();
+      if (!currentSession || currentSession.inboxItemId !== session.inboxItemId) return;
+
       setEnrichmentSession({
         ...currentSession,
         questions: [question],
