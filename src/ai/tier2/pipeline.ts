@@ -20,11 +20,14 @@ const handlers: TierHandler[] = [];
 
 /**
  * Register a tier handler. Handlers are tried in tier order (1, 2, 3).
- * Call this at init time for each tier.
+ * Multiple handlers for the same tier are supported (e.g., T2A + T2B)
+ * and are differentiated by name. Call this at init time for each handler.
  */
 export function registerHandler(handler: TierHandler): void {
-  // Remove any existing handler for this tier
-  const existingIdx = handlers.findIndex((h) => h.tier === handler.tier);
+  // Remove existing handler with same tier AND name (allows T2A + T2B coexistence)
+  const existingIdx = handlers.findIndex(
+    (h) => h.tier === handler.tier && h.name === handler.name
+  );
   if (existingIdx >= 0) {
     handlers.splice(existingIdx, 1);
   }
@@ -33,11 +36,20 @@ export function registerHandler(handler: TierHandler): void {
 }
 
 /**
- * Remove a tier handler by tier number.
+ * Remove a tier handler by tier number, or by tier + name for specific removal.
+ * When name is provided, only removes the matching handler (preserves others at same tier).
+ * When name is omitted, removes ALL handlers at that tier (backwards-compatible).
  */
-export function unregisterHandler(tier: 1 | 2 | 3): void {
-  const idx = handlers.findIndex((h) => h.tier === tier);
-  if (idx >= 0) handlers.splice(idx, 1);
+export function unregisterHandler(tier: 1 | 2 | 3, name?: string): void {
+  if (name) {
+    const idx = handlers.findIndex((h) => h.tier === tier && h.name === name);
+    if (idx >= 0) handlers.splice(idx, 1);
+  } else {
+    // Remove all handlers at this tier (backwards-compatible behavior)
+    for (let i = handlers.length - 1; i >= 0; i--) {
+      if (handlers[i]?.tier === tier) handlers.splice(i, 1);
+    }
+  }
 }
 
 /**
