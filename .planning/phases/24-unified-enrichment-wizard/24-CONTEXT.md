@@ -144,6 +144,8 @@ This phase replaces the current separate "Break this down" and "Clarify this" fl
 - Model annotations should be "subtle and unobtrusive, and yet immediately obvious which models engaged meaningfully"
 - Start with simple GSD-style questioning that is iterative; architecture supports power-user batch review in the future
 - "Be very graceful about interruptions — always capture whatever enrichment interactions happen and allow the user to pick back up in a painless way like GSD"
+- **Enrichment = atomization, not storage:** The binder is NOT a storage space for external content. When shared links/emails arrive in inbox, enrichment should atomize the content — summarize emails as text strings, create persistent reference links, retain enough intelligent signals that the atom serves its purpose in the binder. Enrichment transforms raw external content into binder-native intelligence, not just adds metadata.
+- Architecture should support future share-intent inbox items where the first enrichment step is content atomization (summarize, extract signals, create reference link)
 
 </specifics>
 
