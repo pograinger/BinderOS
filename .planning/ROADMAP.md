@@ -260,7 +260,7 @@ Plans:
   7. Model provenance 32-bit bitmask on every atom/inbox item tracks which AI models contributed
   8. 3-Ring stacked ring SVG indicator on every item showing tier provenance; tap reveals model names
   9. Tier 2B handler stub in pipeline for WASM LLM tasks; falls back to T2A templates on unsupported devices
-**Plans:** 6/6 plans complete
+**Plans:** 7 plans
 
 Plans:
 - [ ] 24-01-PLAN.md — Data model foundation: enrichment types, provenance bitmask, maturity scoring, quality gate, Dexie v7 migration (ENRICH-03, ENRICH-04, ENRICH-06, ENRICH-07, ENRICH-10)
@@ -269,3 +269,4 @@ Plans:
 - [ ] 24-04-PLAN.md — Tier 2B handler stub and pipeline extension with enrichment task types (ENRICH-09)
 - [ ] 24-05-PLAN.md — EnrichmentWizard UI, InboxView integration, Enrich button, indicators (ENRICH-01, ENRICH-02, ENRICH-03, ENRICH-04)
 - [ ] 24-06-PLAN.md — GraduationPreview UI, quality gate display, end-to-end lifecycle verification (ENRICH-05, ENRICH-06)
+- [ ] 24-07-PLAN.md — Gap closure: wire ThreeRingIndicator to real provenance.ts imports (ENRICH-08)
