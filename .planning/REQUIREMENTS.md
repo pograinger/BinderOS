@@ -71,7 +71,7 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 
 ### Unified Enrichment Wizard
 
-- [ ] **ENRICH-01**: Single "Enrich" button on all inbox cards replaces "Break this down" and "Clarify this" with unified entry point
+- [x] **ENRICH-01**: Single "Enrich" button on all inbox cards replaces "Break this down" and "Clarify this" with unified entry point
 - [x] **ENRICH-02**: Enrichment wizard renders inline on triage card (not modal), questions-first flow with 4-option menus and category chips for non-linear navigation
 - [x] **ENRICH-03**: Each enrichment answer persisted immediately to Dexie — partial enrichment survives navigation and page refresh
 - [x] **ENRICH-04**: Inbox maturity model: items track enrichment completeness (0-1 score) with visual maturity indicator on every card
@@ -158,7 +158,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TUTOR-03 | Phase 23 | Complete |
 | TUTOR-04 | Phase 23 | Complete |
 | TUTOR-05 | Phase 23 | Complete |
-| ENRICH-01 | Phase 24 | Pending |
+| ENRICH-01 | Phase 24 | Complete |
 | ENRICH-02 | Phase 24 | Complete |
 | ENRICH-03 | Phase 24 | Complete |
 | ENRICH-04 | Phase 24 | Complete |
