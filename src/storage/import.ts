@@ -113,6 +113,7 @@ export async function importBinderFromFile(file: File): Promise<ImportResult> {
       dueDate: a.dueDate ?? undefined,
       eventDate: a.eventDate ?? undefined,
       energy: a.energy ?? undefined,
+      provenance: 0,
       created_at: ts,
       updated_at: ts,
     };
@@ -131,6 +132,9 @@ export async function importBinderFromFile(file: File): Promise<ImportResult> {
       links: [] as never[],
       isInbox: true as const,
       tags: [] as string[],
+      provenance: 0,
+      maturityScore: 0,
+      maturityFilled: [] as string[],
       created_at: ts,
       updated_at: ts,
     };

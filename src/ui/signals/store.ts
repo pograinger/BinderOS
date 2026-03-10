@@ -1238,6 +1238,7 @@ export async function startReviewBriefing(): Promise<void> {
         status: 'open',
         links: [],
         tags: [],
+        provenance: 0,
         aiSourced: true,
         briefingData: result,
       },
@@ -1671,6 +1672,7 @@ export async function completeGuidedReview(): Promise<void> {
         status: 'open',
         links: [],
         tags: ['weekly-review'],
+        provenance: 0,
         aiSourced: true,
       },
     });

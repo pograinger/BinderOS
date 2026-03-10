@@ -45,6 +45,9 @@ export async function handleCreateInboxItem(
     created_at: now,
     updated_at: now,
     tags: [],
+    provenance: 0,
+    maturityScore: 0,
+    maturityFilled: [],
   };
 
   // Validate

@@ -72,6 +72,8 @@ const BaseAtomFields = {
   context: z.string().nullable().optional(),
   // Phase 5: true if this atom was classified by AI
   aiSourced: z.boolean().optional(),
+  // Phase 24: 32-bit bitmask tracking which AI models contributed to this atom
+  provenance: z.number().default(0),
 };
 
 // --- Type-specific atom schemas (discriminated union members) ---
@@ -155,6 +157,9 @@ export const InboxItemSchema = z.object({
   ...BaseAtomFields,
   type: AtomType.optional(),
   isInbox: z.literal(true),
+  // Phase 24: enrichment maturity tracking (inbox items only)
+  maturityScore: z.number().min(0).max(1).default(0),
+  maturityFilled: z.array(z.string()).default([]),
 });
 export type InboxItem = z.infer<typeof InboxItemSchema>;
 

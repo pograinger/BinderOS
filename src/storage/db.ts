@@ -28,6 +28,7 @@ import { applyV3Migration } from './migrations/v3';
 import { applyV4Migration } from './migrations/v4';
 import { applyV5Migration } from './migrations/v5';
 import { applyV6Migration } from './migrations/v6';
+import { applyV7Migration } from './migrations/v7';
 import type { EntityRegistryEntry } from '../ai/sanitization/types';
 import type { EntityGraphEntry } from './entity-graph';
 
@@ -115,6 +116,9 @@ export class BinderDB extends Dexie {
 
     // Phase 19: v6 migration — entityGraph table for entity relationships
     applyV6Migration(this);
+
+    // Phase 24: v7 migration — provenance bitmask + maturity fields on atoms/inbox
+    applyV7Migration(this);
 
     // Seed the four stable sections on first database creation
     this.on('populate', (tx) => {
