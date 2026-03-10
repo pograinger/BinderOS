@@ -17,6 +17,37 @@ import type { ClarificationQuestion, MissingInfoCategory, ClarificationAnswer } 
 import type { SignalVector, CognitiveSignal } from '../tier2/cognitive-signals';
 import { dispatchAI, getActiveAdapter } from '../router';
 
+/** Structured log entry for T3 enrichment exchanges. */
+export interface T3ExchangeLog {
+  timestamp: number;
+  adapterId: string;
+  adapterStatus: string;
+  focusCategory: string | null;
+  depth: Record<string, number>;
+  promptLength: number;
+  promptPreview: string;
+  responseRaw: string | null;
+  parsedQuestion: string | null;
+  parsedOptions: string[] | null;
+  durationMs: number;
+  success: boolean;
+  error: string | null;
+}
+
+/** Ring buffer of recent T3 exchanges for debugging. */
+const _exchangeLog: T3ExchangeLog[] = [];
+const MAX_LOG_SIZE = 20;
+
+/** Get all logged T3 exchanges (most recent last). */
+export function getT3ExchangeLog(): readonly T3ExchangeLog[] {
+  return _exchangeLog;
+}
+
+/** Clear the T3 exchange log. */
+export function clearT3ExchangeLog(): void {
+  _exchangeLog.length = 0;
+}
+
 /** Input context for T3 question generation. */
 export interface T3EnrichmentContext {
   /** The inbox item's raw content */
@@ -208,8 +239,39 @@ function parseResponse(text: string): { category: MissingInfoCategory; question:
 export async function generateT3Question(
   ctx: T3EnrichmentContext,
 ): Promise<ClarificationQuestion | null> {
+  const adapter = getActiveAdapter();
+  const adapterId = adapter?.id ?? 'none';
+  const adapterStatus = adapter?.status ?? 'unavailable';
+  const startMs = performance.now();
+
+  const logEntry: T3ExchangeLog = {
+    timestamp: Date.now(),
+    adapterId,
+    adapterStatus,
+    focusCategory: ctx.focusCategory,
+    depth: { ...ctx.categoryDepth },
+    promptLength: 0,
+    promptPreview: '',
+    responseRaw: null,
+    parsedQuestion: null,
+    parsedOptions: null,
+    durationMs: 0,
+    success: false,
+    error: null,
+  };
+
   try {
     const prompt = buildPrompt(ctx);
+    logEntry.promptLength = prompt.length;
+    logEntry.promptPreview = prompt.slice(0, 300) + (prompt.length > 300 ? '...' : '');
+
+    console.group(`%c[T3 Enrichment] → ${adapterId}`, 'color: #58a6ff; font-weight: bold');
+    console.log('Adapter:', adapterId, `(${adapterStatus})`);
+    console.log('Focus:', ctx.focusCategory ?? 'auto');
+    console.log('Depth:', ctx.categoryDepth);
+    console.log('Prior Q&A:', ctx.priorQA.length, 'pairs');
+    console.log('Prompt length:', prompt.length, 'chars');
+    console.log('Prompt preview:', prompt.slice(0, 500));
 
     const response = await dispatchAI({
       requestId: crypto.randomUUID(),
@@ -217,11 +279,33 @@ export async function generateT3Question(
       maxTokens: 256,
     });
 
+    logEntry.responseRaw = response.text;
+    logEntry.durationMs = Math.round(performance.now() - startMs);
+
+    console.log(`%c← Response (${logEntry.durationMs}ms) from ${response.provider}/${response.model ?? '?'}`, 'color: #22c55e');
+    console.log('Raw response:', response.text);
+
     const parsed = parseResponse(response.text);
     if (!parsed) {
-      console.warn('[t3-enrichment] Failed to parse LLM response:', response.text);
+      logEntry.error = 'parse_failure';
+      console.warn('Parse FAILED — could not extract JSON from response');
+      console.groupEnd();
+      _pushLog(logEntry);
       return null;
     }
+
+    logEntry.parsedQuestion = parsed.question;
+    logEntry.parsedOptions = parsed.options;
+    logEntry.success = true;
+
+    console.log('%cParsed:', 'color: #22c55e', {
+      category: parsed.category,
+      question: parsed.question,
+      options: parsed.options,
+    });
+    console.groupEnd();
+
+    _pushLog(logEntry);
 
     return {
       category: parsed.category,
@@ -230,10 +314,21 @@ export async function generateT3Question(
       categoryLabel: CATEGORY_LABELS[parsed.category] ?? parsed.category,
     };
   } catch (err) {
-    // Adapter not available, user cancelled, network error, etc.
-    console.warn('[t3-enrichment] T3 question generation failed:', err);
+    logEntry.durationMs = Math.round(performance.now() - startMs);
+    logEntry.error = err instanceof Error ? err.message : String(err);
+
+    console.warn(`%c[T3 Enrichment] FAILED (${logEntry.durationMs}ms)`, 'color: #ef4444', err);
+    console.groupEnd();
+
+    _pushLog(logEntry);
     return null;
   }
+}
+
+/** Push to ring buffer, evicting oldest if full. */
+function _pushLog(entry: T3ExchangeLog): void {
+  if (_exchangeLog.length >= MAX_LOG_SIZE) _exchangeLog.shift();
+  _exchangeLog.push(entry);
 }
 
 /**

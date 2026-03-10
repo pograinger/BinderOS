@@ -32,6 +32,7 @@ function makeSession(overrides: Partial<EnrichmentSession> = {}): EnrichmentSess
     categoryDepth: {},
     cognitiveSignals: null,
     activeDeepening: null,
+    isGenerating: false,
     ...overrides,
   };
 }

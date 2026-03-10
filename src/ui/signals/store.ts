@@ -609,8 +609,16 @@ import { parseEnrichment, appendEnrichment } from '../../ai/clarification/enrich
 import { computeMaturity } from '../../ai/enrichment/maturity';
 import { TEMPLATE_TIER_COUNT } from '../../ai/enrichment/types';
 import { selectSemanticFollowUp } from '../../ai/enrichment/semantic-selector';
-import { generateT3Question, isT3Available } from '../../ai/enrichment/t3-enrichment';
+import { generateT3Question, isT3Available, getT3ExchangeLog, clearT3ExchangeLog } from '../../ai/enrichment/t3-enrichment';
 import type { T3EnrichmentContext } from '../../ai/enrichment/t3-enrichment';
+
+// Expose T3 exchange log on window for devtools debugging:
+//   __t3log()  — returns array of recent T3 exchanges (adapter, prompt, response, timing)
+//   __t3clear() — clears the log
+if (typeof window !== 'undefined') {
+  (window as Record<string, unknown>).__t3log = getT3ExchangeLog;
+  (window as Record<string, unknown>).__t3clear = clearT3ExchangeLog;
+}
 
 const [enrichmentSession, setEnrichmentSession] = createSignal<EnrichmentSession | null>(null);
 const [graduationProposal, setGraduationProposal] = createSignal<GraduationProposal | null>(null);
