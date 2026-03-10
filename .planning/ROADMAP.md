@@ -284,7 +284,7 @@ Plans:
   5. EnrichmentWizard shows "Previously: [answer]" above follow-up questions
   6. User can tap "Ask more on this topic" to stay in current category or "Move to next area" to advance
   7. Maturity scoring reflects enrichment depth (depth 1/3 contributes less than depth 3/3)
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 25-01-PLAN.md — Data model: depth tracking types, Dexie v8 migration, follow-up templates, depth-weighted maturity (ITER-01, ITER-02, ITER-03, ITER-07)

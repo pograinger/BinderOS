@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Device-Adaptive AI
 status: executing
-stopped_at: Completed 25-01-PLAN.md
-last_updated: "2026-03-10T07:46:04Z"
-last_activity: 2026-03-10 — Phase 25 Plan 01 complete (data model and templates for iterative enrichment)
+stopped_at: Completed 25-02-PLAN.md
+last_updated: "2026-03-10T07:54:21.505Z"
+last_activity: 2026-03-10 — Phase 25 Plan 02 complete (engine wiring for iterative enrichment deepening)
 progress:
-  total_phases: 13
-  completed_phases: 7
-  total_plans: 28
-  completed_plans: 27
+  total_phases: 14
+  completed_phases: 6
+  total_plans: 32
+  completed_plans: 30
   percent: 98
 ---
 
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 ## Current Position
 
 Phase: 25 (Iterative Enrichment Deepening)
-Plan: 01 of 03
+Plan: 02 of 03
 Status: executing
-Last activity: 2026-03-10 — Phase 25 Plan 01 complete (data model and templates for iterative enrichment)
+Last activity: 2026-03-10 — Phase 25 Plan 02 complete (engine wiring for iterative enrichment deepening)
 
 Progress: [██████████] 98%
 
@@ -75,6 +75,7 @@ Progress: [██████████] 98%
 | Phase 24 P06 | 8 | 2 tasks | 3 files |
 | Phase 24 P05 | 12 | 3 tasks | 4 files |
 | Phase 25 P01 | 9 | 2 tasks | 16 files |
+| Phase 25 P02 | 3 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -139,6 +140,9 @@ Recent decisions affecting v4.0:
 - [Phase 25]: v8 migration backfills enrichmentDepth from maturityFilled (depth=1 for already-answered categories)
 - [Phase 25]: computeDepthWeightedMaturity separate from computeMaturity for backward compatibility
 - [Phase 25]: followUpTemplates use {prior_answer} + {freeform} sentinel pattern matching existing questionTemplates
+- [Phase 25]: Without depthMap, answered categories treated as MAX_DEPTH for backward compat
+- [Phase 25]: SIGNAL_CATEGORY_MAP maps 7 cognitive models to 5 enrichment categories; relevance = sum(1-confidence)
+- [Phase 25]: applyAnswer replaces existing answer for same category via findIndex (no duplicates)
 
 ### Phase Ordering Note
 
@@ -165,6 +169,6 @@ Phase 15 (Device-Adaptive LLM) is independent of Phases 13-14 and can execute on
 
 ## Session Continuity
 
-Last session: 2026-03-10T07:46:04Z
-Stopped at: Completed 25-01-PLAN.md
+Last session: 2026-03-10T07:54:21.502Z
+Stopped at: Completed 25-02-PLAN.md
 Resume file: None
