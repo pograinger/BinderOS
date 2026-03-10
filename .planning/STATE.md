@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v4.0
 milestone_name: Device-Adaptive AI
 status: executing
-stopped_at: Completed 24-05-PLAN.md
-last_updated: "2026-03-10T00:50:51.910Z"
-last_activity: 2026-03-10 — Phase 24 Plan 05 complete (Enrichment wizard UI + InboxView integration)
+stopped_at: Completed 25-01-PLAN.md
+last_updated: "2026-03-10T07:46:04Z"
+last_activity: 2026-03-10 — Phase 25 Plan 01 complete (data model and templates for iterative enrichment)
 progress:
   total_phases: 13
   completed_phases: 7
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 
 ## Current Position
 
-Phase: 24 (Unified Enrichment Wizard)
-Plan: 06 complete (all plans done)
-Status: Complete
-Last activity: 2026-03-10 — Phase 24 Plan 06 complete (graduation flow UI with quality gates)
+Phase: 25 (Iterative Enrichment Deepening)
+Plan: 01 of 03
+Status: executing
+Last activity: 2026-03-10 — Phase 25 Plan 01 complete (data model and templates for iterative enrichment)
 
 Progress: [██████████] 98%
 
@@ -74,6 +74,7 @@ Progress: [██████████] 98%
 | Phase 24 P03 | 5 | 2 tasks | 5 files |
 | Phase 24 P06 | 8 | 2 tasks | 3 files |
 | Phase 24 P05 | 12 | 3 tasks | 4 files |
+| Phase 25 P01 | 9 | 2 tasks | 16 files |
 
 ## Accumulated Context
 
@@ -135,6 +136,9 @@ Recent decisions affecting v4.0:
 - [Phase 24]: Graduation children skip re-triage via immediate CLASSIFY_INBOX_ITEM after CREATE_INBOX_ITEM
 - [Phase 24]: Soft quality gate warns but allows force-create; user always has final say on graduation
 - [Phase 24]: Inline wizard replaces suggestion strip area (not modal); Enrich button always visible on all cards; each answer persists immediately to Dexie
+- [Phase 25]: v8 migration backfills enrichmentDepth from maturityFilled (depth=1 for already-answered categories)
+- [Phase 25]: computeDepthWeightedMaturity separate from computeMaturity for backward compatibility
+- [Phase 25]: followUpTemplates use {prior_answer} + {freeform} sentinel pattern matching existing questionTemplates
 
 ### Phase Ordering Note
 
@@ -161,6 +165,6 @@ Phase 15 (Device-Adaptive LLM) is independent of Phases 13-14 and can execute on
 
 ## Session Continuity
 
-Last session: 2026-03-10T00:50:51.907Z
-Stopped at: Completed 24-05-PLAN.md
+Last session: 2026-03-10T07:46:04Z
+Stopped at: Completed 25-01-PLAN.md
 Resume file: None
