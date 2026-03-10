@@ -76,6 +76,8 @@ export interface MaturityState {
 export interface EnrichmentSession {
   /** ID of the inbox item being enriched */
   inboxItemId: string;
+  /** Original content at session creation (for re-evaluation comparison) */
+  originalContent: string;
   /** Current phase of the wizard */
   phase: EnrichmentPhase;
   /** Clarification questions generated for this item */
