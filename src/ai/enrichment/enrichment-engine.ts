@@ -21,7 +21,7 @@ import type {
   DecomposedStep,
   AcceptedStep,
 } from './types';
-import { MAX_ENRICHMENT_DEPTH } from './types';
+import { TEMPLATE_TIER_COUNT } from './types';
 import type { CognitiveModelId } from '../tier2/cognitive-signals';
 import { addProvenance, OPERATION_IDS, MODEL_IDS } from './provenance';
 import { computeMaturity } from './maturity';
@@ -88,12 +88,11 @@ const ALL_CATEGORIES: MissingInfoCategory[] = [
  *
  * Handles partial resume by detecting existing enrichments and skipping
  * already-answered categories. When depthMap is provided, generates follow-up
- * questions for answered categories that haven't reached MAX_ENRICHMENT_DEPTH.
+ * questions for answered categories at any depth (no cap).
  * When cognitiveSignals are provided, reorders questions by signal relevance.
  *
- * Backward-compatible: without depthMap, answered categories are skipped
- * (treated as maxed out). Only when depthMap is explicitly provided does
- * iterative deepening activate.
+ * Backward-compatible: without depthMap, answered categories are skipped.
+ * Only when depthMap is explicitly provided does iterative deepening activate.
  */
 export function createEnrichmentSession(params: {
   inboxItemId: string;
@@ -126,22 +125,24 @@ export function createEnrichmentSession(params: {
   const deepeningActive = depthMap !== undefined;
 
   // Generate questions: first-pass for unanswered, follow-ups for answered (if deepening active)
+  // No depth cap — depths beyond TEMPLATE_TIER_COUNT get template-based questions here,
+  // then the store replaces them with semantically-selected questions asynchronously.
   const questions: ClarificationQuestion[] = [];
 
   for (const cat of candidateCategories) {
     const displayKey = CATEGORY_DISPLAY_KEYS[cat];
     const hasAnswer = enrichedDisplayKeys.has(displayKey);
     const priorAnswer = hasAnswer ? allEnrichments[displayKey] : undefined;
-    const currentDepth = depthMap?.[cat] ?? (deepeningActive ? 0 : MAX_ENRICHMENT_DEPTH);
+    const currentDepth = depthMap?.[cat] ?? 0;
 
     if (!hasAnswer) {
       // First-pass question for unanswered category
       questions.push(generateTemplateOptions(cat, atomType ?? 'task', {}, undefined));
-    } else if (currentDepth < MAX_ENRICHMENT_DEPTH && priorAnswer) {
-      // Follow-up question for answered category that hasn't maxed out
+    } else if (deepeningActive && priorAnswer) {
+      // Follow-up question for answered category — no depth cap
       questions.push(generateFollowUpOptions(cat, atomType ?? 'task', priorAnswer, currentDepth + 1, {}));
     }
-    // else: maxed out or no depthMap — skip
+    // else: no depthMap (legacy) — skip answered categories
   }
 
   // Apply signal-guided priority ordering if cognitive signals provided

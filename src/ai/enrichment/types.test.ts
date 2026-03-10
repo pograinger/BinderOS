@@ -6,7 +6,7 @@
 
 import { describe, it, expect } from 'vitest';
 import type { EnrichmentSession } from './types';
-import { MAX_ENRICHMENT_DEPTH } from './types';
+import { TEMPLATE_TIER_COUNT } from './types';
 
 describe('EnrichmentSession iterative deepening fields', () => {
   it('accepts categoryDepth as Record<string, number>', () => {
@@ -74,7 +74,7 @@ describe('EnrichmentSession iterative deepening fields', () => {
     expect(session.activeDeepening).toBe('missing-outcome');
   });
 
-  it('exports MAX_ENRICHMENT_DEPTH as 3', () => {
-    expect(MAX_ENRICHMENT_DEPTH).toBe(3);
+  it('exports TEMPLATE_TIER_COUNT as 2', () => {
+    expect(TEMPLATE_TIER_COUNT).toBe(2);
   });
 });

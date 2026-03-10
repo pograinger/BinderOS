@@ -21,8 +21,11 @@ import type { SignalVector } from '../tier2/cognitive-signals';
 // Re-export for convenience -- downstream consumers import from here
 export type { ClarificationQuestion, ClarificationAnswer, MissingInfoCategory, DecomposedStep, SignalVector };
 
-/** Maximum enrichment depth per category before deepening stops. */
-export const MAX_ENRICHMENT_DEPTH = 3;
+/**
+ * Template tier count — depths beyond this use semantic question selection.
+ * No hard cap on enrichment depth; users can keep drilling indefinitely.
+ */
+export const TEMPLATE_TIER_COUNT = 2;
 
 // --- Enrichment session lifecycle ---
 

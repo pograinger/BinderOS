@@ -14,7 +14,7 @@ import {
   shouldReEvaluate,
 } from './enrichment-engine';
 import type { ClarificationAnswer, MissingInfoCategory, DecomposedStep, SignalVector } from './types';
-import { MAX_ENRICHMENT_DEPTH } from './types';
+import { TEMPLATE_TIER_COUNT } from './types';
 import type { CognitiveSignal } from '../tier2/cognitive-signals';
 import { OPERATION_IDS, MODEL_IDS } from './provenance';
 
@@ -506,13 +506,13 @@ describe('createEnrichmentSession (iterative deepening)', () => {
     expect(session.phase).toBe('questions');
   });
 
-  it('Test 2: generates 0 questions when all at maxDepth', () => {
+  it('Test 2: still generates follow-up questions at high depth (no cap)', () => {
     const depthMap: Record<string, number> = {
-      'missing-outcome': MAX_ENRICHMENT_DEPTH,
-      'missing-next-action': MAX_ENRICHMENT_DEPTH,
-      'missing-timeframe': MAX_ENRICHMENT_DEPTH,
-      'missing-context': MAX_ENRICHMENT_DEPTH,
-      'missing-reference': MAX_ENRICHMENT_DEPTH,
+      'missing-outcome': 10,
+      'missing-next-action': 10,
+      'missing-timeframe': 10,
+      'missing-context': 10,
+      'missing-reference': 10,
     };
 
     const session = createEnrichmentSession({
@@ -522,8 +522,9 @@ describe('createEnrichmentSession (iterative deepening)', () => {
       depthMap,
     });
 
-    expect(session.questions.length).toBe(0);
-    expect(session.phase).toBe('decompose-offer');
+    // No depth cap — should still generate 5 follow-up questions
+    expect(session.questions.length).toBe(5);
+    expect(session.phase).toBe('questions');
   });
 
   it('Test 3: mixes first-pass and follow-up questions for partially answered items', () => {

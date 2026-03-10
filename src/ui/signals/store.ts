@@ -607,6 +607,8 @@ import {
 import { buildGraduationProposal, toggleChildInclusion, getGraduationActions } from '../../ai/enrichment/graduation';
 import { parseEnrichment, appendEnrichment } from '../../ai/clarification/enrichment';
 import { computeMaturity } from '../../ai/enrichment/maturity';
+import { TEMPLATE_TIER_COUNT } from '../../ai/enrichment/types';
+import { selectSemanticFollowUp } from '../../ai/enrichment/semantic-selector';
 
 const [enrichmentSession, setEnrichmentSession] = createSignal<EnrichmentSession | null>(null);
 const [graduationProposal, setGraduationProposal] = createSignal<GraduationProposal | null>(null);
@@ -731,8 +733,9 @@ export function closeEnrichment(): void {
 
 /**
  * Handle "Ask more on this topic": generate another follow-up for a category.
- * Increments the depth for the category, creates a new session with updated depthMap,
- * and replaces the current question set with the new follow-up.
+ * Increments the depth for the category. At depths 1-2, uses template tiers.
+ * At depth 3+, uses MiniLM semantic selection to pick the most novel question
+ * from the question bank based on embedding distance from previously asked questions.
  */
 export function handleAskMore(category: MissingInfoCategory): void {
   const session = enrichmentSession();
@@ -743,26 +746,79 @@ export function handleAskMore(category: MissingInfoCategory): void {
 
   // Increment depth for the requested category
   const updatedDepth = { ...session.categoryDepth };
-  updatedDepth[category] = (updatedDepth[category] ?? 0) + 1;
+  const newDepth = (updatedDepth[category] ?? 0) + 1;
+  updatedDepth[category] = newDepth;
 
-  // Create a new session with updated depthMap to generate fresh follow-up questions
-  const parsed = parseEnrichment(item.content);
-  const newSession = createEnrichmentSession({
-    inboxItemId: session.inboxItemId,
-    content: item.content,
-    atomType: item.type,
-    existingEnrichments: parsed.enrichments,
-    depthMap: updatedDepth,
-    cognitiveSignals: session.cognitiveSignals,
-  });
+  if (newDepth <= TEMPLATE_TIER_COUNT) {
+    // Depths 1-2: use template tiers (sync, zero inference cost)
+    const parsed = parseEnrichment(item.content);
+    const newSession = createEnrichmentSession({
+      inboxItemId: session.inboxItemId,
+      content: item.content,
+      atomType: item.type,
+      existingEnrichments: parsed.enrichments,
+      depthMap: updatedDepth,
+      cognitiveSignals: session.cognitiveSignals,
+    });
 
-  // Preserve accumulated answers and provenance from the current session
-  setEnrichmentSession({
-    ...newSession,
-    answers: session.answers,
-    provenance: session.provenance,
-    activeDeepening: category,
-  });
+    setEnrichmentSession({
+      ...newSession,
+      answers: session.answers,
+      provenance: session.provenance,
+      activeDeepening: category,
+    });
+  } else {
+    // Depth 3+: semantic selection via MiniLM embeddings
+    const worker = getEmbeddingWorker();
+    if (!worker) {
+      // No worker available — fall back to template cycling
+      const parsed = parseEnrichment(item.content);
+      const newSession = createEnrichmentSession({
+        inboxItemId: session.inboxItemId,
+        content: item.content,
+        atomType: item.type,
+        existingEnrichments: parsed.enrichments,
+        depthMap: updatedDepth,
+        cognitiveSignals: session.cognitiveSignals,
+      });
+      setEnrichmentSession({
+        ...newSession,
+        answers: session.answers,
+        provenance: session.provenance,
+        activeDeepening: category,
+      });
+      return;
+    }
+
+    // Collect previously asked question texts for this category
+    const askedQuestions = session.questions
+      .filter(q => q.category === category)
+      .map(q => q.questionText);
+
+    // Get the user's latest answer for slot-filling
+    const lastAnswer = session.answers
+      .filter(a => a.category === category && !a.wasSkipped)
+      .pop();
+    const priorAnswer = lastAnswer
+      ? (lastAnswer.wasFreeform ? lastAnswer.freeformText : lastAnswer.selectedOption) ?? ''
+      : '';
+
+    // Async: select the most semantically novel question
+    void selectSemanticFollowUp(worker, category, priorAnswer, askedQuestions).then(question => {
+      const currentSession = enrichmentSession();
+      if (!currentSession || currentSession.inboxItemId !== session.inboxItemId) return;
+
+      // Replace the current question with the semantically selected one
+      setEnrichmentSession({
+        ...currentSession,
+        questions: [question],
+        currentQuestionIndex: 0,
+        categoryDepth: updatedDepth,
+        activeDeepening: category,
+        phase: 'questions',
+      });
+    });
+  }
 }
 
 /**

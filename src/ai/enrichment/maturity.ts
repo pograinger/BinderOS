@@ -11,7 +11,11 @@
  */
 
 import type { MissingInfoCategory } from '../clarification/types';
-import { MAX_ENRICHMENT_DEPTH } from './types';
+/**
+ * Depth at which a category is considered fully mature for scoring purposes.
+ * Users can go deeper, but maturity score maxes out at this depth per category.
+ */
+const MATURITY_DEPTH_CEILING = 3;
 
 /** The five enrichment categories, ordered by GTD importance. */
 export const MATURITY_CATEGORIES = [
@@ -95,12 +99,12 @@ const ALL_CATEGORY_KEYS: MissingInfoCategory[] = [
  * display keys (e.g. 'Outcome') in the depth map.
  *
  * @param depthMap - Per-category depth values
- * @param maxDepth - Maximum enrichment depth (default MAX_ENRICHMENT_DEPTH = 3)
+ * @param maxDepth - Depth ceiling for full maturity credit (default 3)
  * @returns Weighted maturity score 0-1
  */
 export function computeDepthWeightedMaturity(
   depthMap: Record<string, number>,
-  maxDepth: number = MAX_ENRICHMENT_DEPTH,
+  maxDepth: number = MATURITY_DEPTH_CEILING,
 ): number {
   const keys = Object.keys(depthMap);
   if (keys.length === 0) return 0;
