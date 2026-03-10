@@ -605,7 +605,7 @@ import {
   computeGraduationReadiness,
 } from '../../ai/enrichment/enrichment-engine';
 import { buildGraduationProposal, toggleChildInclusion, getGraduationActions } from '../../ai/enrichment/graduation';
-import { parseEnrichment } from '../../ai/clarification/enrichment';
+import { parseEnrichment, appendEnrichment } from '../../ai/clarification/enrichment';
 import { computeMaturity } from '../../ai/enrichment/maturity';
 
 const [enrichmentSession, setEnrichmentSession] = createSignal<EnrichmentSession | null>(null);
@@ -661,10 +661,15 @@ export async function handleEnrichmentAnswer(answer: ClarificationAnswer): Promi
   const maturityScore = computeMaturity(enrichments);
   const maturityFilled = Object.keys(enrichments);
 
-  // Persist maturity + provenance to Dexie inbox record immediately
+  // Persist maturity + provenance + enriched content to Dexie immediately.
+  // Rebuild content from original + all answers so partial enrichment survives close.
+  const { original } = parseEnrichment(session.originalContent);
+  const enrichedContent = appendEnrichment(original, updated.answers);
+
   try {
     const { db: dexie } = await import('../../storage/db');
     await dexie.inbox.update(session.inboxItemId, {
+      content: enrichedContent,
       maturityScore,
       maturityFilled,
       provenance: updated.provenance,
