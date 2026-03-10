@@ -29,7 +29,11 @@ export type AITaskType =
   | 'analyze-gtd'        // Always LLM (Tier 3 only)
   | 'decompose'          // Decompose task/decision into GTD next-action steps
   | 'check-completeness' // Binary gate: complete vs incomplete (completeness gate)
-  | 'classify-missing-info'; // 5 binary classifiers: which info categories are missing
+  | 'classify-missing-info' // 5 binary classifiers: which info categories are missing
+  | 'enrich-questions'      // Generate contextual clarification questions (T2B)
+  | 'enrich-options'        // Generate contextual answer options (T2B)
+  | 'decompose-contextual'  // Content-aware decomposition steps (T2B, better than template)
+  | 'synthesize-enrichment'; // Post-enrichment summary for graduation (T2B)
 
 // --- Confidence thresholds per task ---
 
@@ -48,6 +52,10 @@ export const CONFIDENCE_THRESHOLDS: Record<AITaskType, number> = {
   'decompose':        0.60,  // Lower threshold due to ~35 classes; user-triggered so acceptable
   'check-completeness': 0.75,  // Moderate gate — flags vague atoms for optional clarification
   'classify-missing-info': 0.50,  // Low threshold — binary classifiers, start permissive and tune with P/R data
+  'enrich-questions': 0.50,       // Low — T2B enhancement, falls back to templates
+  'enrich-options': 0.50,         // Low — T2B enhancement, falls back to templates
+  'decompose-contextual': 0.60,  // Same as regular decompose
+  'synthesize-enrichment': 0.70, // Moderate — synthesis quality matters
 };
 
 // --- Per-classifier GTD confidence thresholds ---
@@ -107,6 +115,10 @@ export interface TieredFeatures {
   atomType?: 'task' | 'decision';
   /** AbortSignal for cancellation */
   signal?: AbortSignal;
+  /** Existing enrichment answers for context in synthesis/graduation */
+  enrichmentAnswers?: Record<string, string>;
+  /** Current maturity score for graduation readiness assessment */
+  maturityScore?: number;
 }
 
 /**
@@ -155,6 +167,12 @@ export interface TieredResult {
   completeness?: CompletenessGateResult;
   /** Missing info classification results (for classify-missing-info task) */
   missingInfo?: MissingInfoResult[];
+  /** Generated questions for enrichment (enrich-questions task) */
+  enrichmentQuestions?: Array<{ questionText: string; options: string[]; category: string }>;
+  /** Generated options for a specific category (enrich-options task) */
+  enrichmentOptions?: string[];
+  /** Synthesis text for graduation summary (synthesize-enrichment task) */
+  synthesisText?: string;
 }
 
 /**
