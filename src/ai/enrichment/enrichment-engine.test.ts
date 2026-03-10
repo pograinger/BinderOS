@@ -13,7 +13,9 @@ import {
   computeGraduationReadiness,
   shouldReEvaluate,
 } from './enrichment-engine';
-import type { ClarificationAnswer, MissingInfoCategory, DecomposedStep } from './types';
+import type { ClarificationAnswer, MissingInfoCategory, DecomposedStep, SignalVector } from './types';
+import { MAX_ENRICHMENT_DEPTH } from './types';
+import type { CognitiveSignal } from '../tier2/cognitive-signals';
 import { OPERATION_IDS, MODEL_IDS } from './provenance';
 
 // --- Helpers ---
@@ -454,5 +456,227 @@ describe('shouldReEvaluate', () => {
     const result = shouldReEvaluate(session, '');
 
     expect(result).toBe(true);
+  });
+});
+
+// --- Iterative deepening (Phase 25) ---
+
+function makeCognitiveSignal(
+  modelId: string,
+  confidence: number,
+): CognitiveSignal {
+  return {
+    modelId: modelId as CognitiveSignal['modelId'],
+    dimension: 'priority' as CognitiveSignal['dimension'],
+    signalType: 'categorical',
+    scores: { a: confidence },
+    topLabel: 'a',
+    confidence,
+    accepted: true,
+  };
+}
+
+describe('createEnrichmentSession (iterative deepening)', () => {
+  const allEnrichments = {
+    Outcome: 'Done',
+    'Next Action': 'Do it',
+    Deadline: 'Tomorrow',
+    Context: 'Home',
+    Reference: 'None',
+  };
+
+  it('Test 1: generates follow-up questions for fully-answered item with depthMap at depth 1', () => {
+    const depthMap: Record<string, number> = {
+      'missing-outcome': 1,
+      'missing-next-action': 1,
+      'missing-timeframe': 1,
+      'missing-context': 1,
+      'missing-reference': 1,
+    };
+
+    const session = createEnrichmentSession({
+      inboxItemId: 'item-deep-1',
+      content: 'Some content\n---\nOutcome: Done\nNext Action: Do it\nDeadline: Tomorrow\nContext: Home\nReference: None',
+      existingEnrichments: allEnrichments,
+      depthMap,
+    });
+
+    // Should generate 5 follow-up questions (one per answered category)
+    expect(session.questions.length).toBe(5);
+    expect(session.phase).toBe('questions');
+  });
+
+  it('Test 2: generates 0 questions when all at maxDepth', () => {
+    const depthMap: Record<string, number> = {
+      'missing-outcome': MAX_ENRICHMENT_DEPTH,
+      'missing-next-action': MAX_ENRICHMENT_DEPTH,
+      'missing-timeframe': MAX_ENRICHMENT_DEPTH,
+      'missing-context': MAX_ENRICHMENT_DEPTH,
+      'missing-reference': MAX_ENRICHMENT_DEPTH,
+    };
+
+    const session = createEnrichmentSession({
+      inboxItemId: 'item-deep-2',
+      content: 'Some content\n---\nOutcome: Done\nNext Action: Do it\nDeadline: Tomorrow\nContext: Home\nReference: None',
+      existingEnrichments: allEnrichments,
+      depthMap,
+    });
+
+    expect(session.questions.length).toBe(0);
+    expect(session.phase).toBe('decompose-offer');
+  });
+
+  it('Test 3: mixes first-pass and follow-up questions for partially answered items', () => {
+    // 3 categories answered at depth 1, 2 not answered
+    const depthMap: Record<string, number> = {
+      'missing-outcome': 1,
+      'missing-next-action': 1,
+      'missing-timeframe': 1,
+    };
+    const partialEnrichments = {
+      Outcome: 'Done',
+      'Next Action': 'Do it',
+      Deadline: 'Tomorrow',
+    };
+
+    const session = createEnrichmentSession({
+      inboxItemId: 'item-deep-3',
+      content: 'Some content\n---\nOutcome: Done\nNext Action: Do it\nDeadline: Tomorrow',
+      existingEnrichments: partialEnrichments,
+      depthMap,
+    });
+
+    // 2 first-pass (context, reference) + 3 follow-up (outcome, next-action, timeframe)
+    expect(session.questions.length).toBe(5);
+  });
+
+  it('Test 4: follow-up questions contain prior answer text', () => {
+    const depthMap: Record<string, number> = {
+      'missing-outcome': 1,
+    };
+
+    const session = createEnrichmentSession({
+      inboxItemId: 'item-deep-4',
+      content: 'Test\n---\nOutcome: Leak-free roof',
+      existingEnrichments: { Outcome: 'Leak-free roof' },
+      missingCategories: ['missing-outcome'],
+      depthMap,
+    });
+
+    // The follow-up question should reference "Leak-free roof"
+    const outcomeQ = session.questions.find((q) => q.category === 'missing-outcome');
+    expect(outcomeQ).toBeDefined();
+    const fullText = outcomeQ!.questionText + ' ' + outcomeQ!.options.join(' ');
+    expect(fullText).toContain('Leak-free roof');
+  });
+
+  it('Test 5: categoryDepth initialized from depthMap parameter', () => {
+    const depthMap = { 'missing-outcome': 2, 'missing-context': 1 };
+
+    const session = createEnrichmentSession({
+      inboxItemId: 'item-deep-5',
+      content: 'Test',
+      depthMap,
+    });
+
+    expect(session.categoryDepth).toEqual(depthMap);
+  });
+
+  it('Test 6: cognitiveSignals stored in session when provided', () => {
+    const signals: SignalVector = {
+      signals: { 'priority-matrix': makeCognitiveSignal('priority-matrix', 0.8) },
+      composites: [],
+      totalMs: 10,
+      protocolVersion: 1,
+    };
+
+    const session = createEnrichmentSession({
+      inboxItemId: 'item-deep-6',
+      content: 'Test',
+      cognitiveSignals: signals,
+    });
+
+    expect(session.cognitiveSignals).toEqual(signals);
+  });
+
+  it('Test 7: signal-guided reordering puts low-confidence relevant categories first', () => {
+    // priority-matrix maps to missing-outcome, missing-timeframe
+    // cognitive-load maps to missing-next-action
+    // Make priority-matrix LOW confidence (0.3) -> high relevance for outcome/timeframe
+    // Make cognitive-load HIGH confidence (0.95) -> low relevance for next-action
+    const signals: SignalVector = {
+      signals: {
+        'priority-matrix': makeCognitiveSignal('priority-matrix', 0.3),
+        'cognitive-load': makeCognitiveSignal('cognitive-load', 0.95),
+      },
+      composites: [],
+      totalMs: 10,
+      protocolVersion: 1,
+    };
+
+    const session = createEnrichmentSession({
+      inboxItemId: 'item-deep-7',
+      content: 'Test',
+      missingCategories: ['missing-outcome', 'missing-next-action', 'missing-timeframe'],
+      cognitiveSignals: signals,
+    });
+
+    // outcome and timeframe should come before next-action
+    const categories = session.questions.map((q) => q.category);
+    const outcomeIdx = categories.indexOf('missing-outcome');
+    const timeframeIdx = categories.indexOf('missing-timeframe');
+    const nextActionIdx = categories.indexOf('missing-next-action');
+    expect(outcomeIdx).toBeLessThan(nextActionIdx);
+    expect(timeframeIdx).toBeLessThan(nextActionIdx);
+  });
+
+  it('Test 8: null cognitive signals preserves default GTD ordering', () => {
+    const session = createEnrichmentSession({
+      inboxItemId: 'item-deep-8',
+      content: 'Test',
+      cognitiveSignals: null,
+    });
+
+    // Default order: outcome, next-action, timeframe, context, reference
+    const categories = session.questions.map((q) => q.category);
+    expect(categories).toEqual([
+      'missing-outcome',
+      'missing-next-action',
+      'missing-timeframe',
+      'missing-context',
+      'missing-reference',
+    ]);
+  });
+});
+
+describe('applyAnswer (iterative deepening)', () => {
+  it('Test 9: increments categoryDepth for the answered category', () => {
+    let session = createEnrichmentSession({
+      inboxItemId: 'item-1',
+      content: 'Test',
+      missingCategories: ['missing-outcome'],
+    });
+
+    session = applyAnswer(session, makeAnswer('missing-outcome', 'Done'));
+
+    expect(session.categoryDepth['missing-outcome']).toBe(1);
+  });
+
+  it('Test 10: replaces existing answer for same category (no duplicates)', () => {
+    let session = createEnrichmentSession({
+      inboxItemId: 'item-1',
+      content: 'Test',
+      missingCategories: ['missing-outcome', 'missing-outcome'],
+    });
+
+    // First answer
+    session = applyAnswer(session, makeAnswer('missing-outcome', 'First answer'));
+    // Second answer for same category (follow-up)
+    session = applyAnswer(session, makeAnswer('missing-outcome', 'Deeper answer'));
+
+    // Should have only 1 answer for missing-outcome, not 2
+    const outcomeAnswers = session.answers.filter((a) => a.category === 'missing-outcome');
+    expect(outcomeAnswers.length).toBe(1);
+    expect(outcomeAnswers[0].selectedOption).toBe('Deeper answer');
   });
 });
