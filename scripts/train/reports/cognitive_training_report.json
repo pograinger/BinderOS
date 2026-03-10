@@ -1,0 +1,160 @@
+{
+  "models": [
+    {
+      "model_id": "cognitive-load",
+      "dimension": "complexity",
+      "labels": [
+        "trivial",
+        "routine",
+        "complex",
+        "deep"
+      ],
+      "accuracy": 98.70466321243524,
+      "onnx_size_kb": 1145.408203125,
+      "elapsed_seconds": 54.66279363632202,
+      "train_samples": 1541,
+      "test_samples": 386
+    },
+    {
+      "model_id": "collaboration-type",
+      "dimension": "collaboration",
+      "labels": [
+        "solo",
+        "delegation",
+        "collaboration"
+      ],
+      "accuracy": 95.8477508650519,
+      "onnx_size_kb": 1142.11328125,
+      "elapsed_seconds": 10.951590299606323,
+      "train_samples": 1156,
+      "test_samples": 289
+    },
+    {
+      "model_id": "emotional-valence",
+      "dimension": "emotion",
+      "labels": [
+        "positive",
+        "neutral",
+        "negative",
+        "anxious"
+      ],
+      "accuracy": 99.22279792746113,
+      "onnx_size_kb": 1145.408203125,
+      "elapsed_seconds": 11.864684343338013,
+      "train_samples": 1541,
+      "test_samples": 386
+    },
+    {
+      "model_id": "energy-level",
+      "dimension": "energy",
+      "labels": [
+        "high-focus",
+        "medium-focus",
+        "low-energy"
+      ],
+      "accuracy": 99.30795847750865,
+      "onnx_size_kb": 1142.11328125,
+      "elapsed_seconds": 9.46217679977417,
+      "train_samples": 1156,
+      "test_samples": 289
+    },
+    {
+      "model_id": "gtd-horizon",
+      "dimension": "horizon",
+      "labels": [
+        "runway",
+        "10k-projects",
+        "20k-areas",
+        "30k-goals",
+        "40k-vision"
+      ],
+      "accuracy": 99.79253112033194,
+      "onnx_size_kb": 2598.7001953125,
+      "elapsed_seconds": 14.159737586975098,
+      "train_samples": 1927,
+      "test_samples": 482
+    },
+    {
+      "model_id": "information-lifecycle",
+      "dimension": "lifecycle",
+      "labels": [
+        "ephemeral",
+        "short-lived",
+        "stable",
+        "permanent"
+      ],
+      "accuracy": 99.22279792746113,
+      "onnx_size_kb": 1145.408203125,
+      "elapsed_seconds": 11.282140016555786,
+      "train_samples": 1541,
+      "test_samples": 386
+    },
+    {
+      "model_id": "knowledge-domain",
+      "dimension": "domain",
+      "labels": [
+        "work",
+        "personal",
+        "health",
+        "finance",
+        "creative",
+        "tech",
+        "social",
+        "admin"
+      ],
+      "accuracy": 99.48119325551232,
+      "onnx_size_kb": 2612.3466796875,
+      "elapsed_seconds": 20.28223705291748,
+      "train_samples": 3084,
+      "test_samples": 771
+    },
+    {
+      "model_id": "priority-matrix",
+      "dimension": "priority",
+      "labels": [
+        "urgent-important",
+        "urgent-not-important",
+        "not-urgent-important",
+        "not-urgent-not-important"
+      ],
+      "accuracy": 99.74093264248705,
+      "onnx_size_kb": 1145.408203125,
+      "elapsed_seconds": 11.660252571105957,
+      "train_samples": 1541,
+      "test_samples": 386
+    },
+    {
+      "model_id": "review-cadence",
+      "dimension": "review",
+      "labels": [
+        "daily",
+        "weekly",
+        "monthly",
+        "quarterly"
+      ],
+      "accuracy": 99.22279792746113,
+      "onnx_size_kb": 1145.408203125,
+      "elapsed_seconds": 11.07600474357605,
+      "train_samples": 1541,
+      "test_samples": 386
+    },
+    {
+      "model_id": "time-estimate",
+      "dimension": "duration",
+      "labels": [
+        "quick",
+        "short",
+        "medium",
+        "long"
+      ],
+      "accuracy": 96.89119170984456,
+      "onnx_size_kb": 1145.408203125,
+      "elapsed_seconds": 12.16992449760437,
+      "train_samples": 1541,
+      "test_samples": 386
+    }
+  ],
+  "total_elapsed_seconds": 167.57969069480896,
+  "average_accuracy": 98.7434615065555,
+  "total_onnx_size_kb": 14367.72265625
+}

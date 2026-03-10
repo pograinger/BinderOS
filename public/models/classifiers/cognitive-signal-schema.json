@@ -1,0 +1,203 @@
+{
+  "version": 1,
+  "dimensions": {
+    "priority-matrix": {
+      "dimension": "priority",
+      "signal_type": "categorical",
+      "labels": [
+        "urgent-important",
+        "urgent-not-important",
+        "not-urgent-important",
+        "not-urgent-not-important"
+      ],
+      "confidence_threshold": 0.65
+    },
+    "energy-level": {
+      "dimension": "energy",
+      "signal_type": "ordinal",
+      "labels": [
+        "high-focus",
+        "medium-focus",
+        "low-energy"
+      ],
+      "confidence_threshold": 0.6
+    },
+    "time-estimate": {
+      "dimension": "duration",
+      "signal_type": "ordinal",
+      "labels": [
+        "quick",
+        "short",
+        "medium",
+        "long"
+      ],
+      "confidence_threshold": 0.55
+    },
+    "gtd-horizon": {
+      "dimension": "horizon",
+      "signal_type": "ordinal",
+      "labels": [
+        "runway",
+        "10k-projects",
+        "20k-areas",
+        "30k-goals",
+        "40k-vision"
+      ],
+      "confidence_threshold": 0.55
+    },
+    "knowledge-domain": {
+      "dimension": "domain",
+      "signal_type": "categorical",
+      "labels": [
+        "work",
+        "personal",
+        "health",
+        "finance",
+        "creative",
+        "tech",
+        "social",
+        "admin"
+      ],
+      "confidence_threshold": 0.6
+    },
+    "emotional-valence": {
+      "dimension": "emotion",
+      "signal_type": "categorical",
+      "labels": [
+        "positive",
+        "neutral",
+        "negative",
+        "anxious"
+      ],
+      "confidence_threshold": 0.55
+    },
+    "collaboration-type": {
+      "dimension": "collaboration",
+      "signal_type": "categorical",
+      "labels": [
+        "solo",
+        "delegation",
+        "collaboration"
+      ],
+      "confidence_threshold": 0.65
+    },
+    "information-lifecycle": {
+      "dimension": "lifecycle",
+      "signal_type": "ordinal",
+      "labels": [
+        "ephemeral",
+        "short-lived",
+        "stable",
+        "permanent"
+      ],
+      "confidence_threshold": 0.55
+    },
+    "review-cadence": {
+      "dimension": "review",
+      "signal_type": "ordinal",
+      "labels": [
+        "daily",
+        "weekly",
+        "monthly",
+        "quarterly"
+      ],
+      "confidence_threshold": 0.5
+    },
+    "cognitive-load": {
+      "dimension": "complexity",
+      "signal_type": "ordinal",
+      "labels": [
+        "trivial",
+        "routine",
+        "complex",
+        "deep"
+      ],
+      "confidence_threshold": 0.55
+    }
+  },
+  "compositor_rules": [
+    {
+      "name": "quick-win-detector",
+      "inputs": [
+        "priority-matrix",
+        "time-estimate"
+      ],
+      "output_signal": "quick-win"
+    },
+    {
+      "name": "delegation-candidate",
+      "inputs": [
+        "collaboration-type",
+        "priority-matrix"
+      ],
+      "output_signal": "delegate-now"
+    },
+    {
+      "name": "deep-work-batch",
+      "inputs": [
+        "energy-level",
+        "cognitive-load",
+        "time-estimate"
+      ],
+      "output_signal": "deep-work-block"
+    },
+    {
+      "name": "stress-flag",
+      "inputs": [
+        "emotional-valence",
+        "priority-matrix",
+        "time-estimate"
+      ],
+      "output_signal": "stress-risk"
+    },
+    {
+      "name": "stale-item-alert",
+      "inputs": [
+        "information-lifecycle",
+        "review-cadence"
+      ],
+      "output_signal": "stale-risk"
+    },
+    {
+      "name": "strategic-review",
+      "inputs": [
+        "gtd-horizon",
+        "review-cadence"
+      ],
+      "output_signal": "review-cadence-mismatch"
+    },
+    {
+      "name": "low-energy-batch",
+      "inputs": [
+        "energy-level",
+        "cognitive-load"
+      ],
+      "output_signal": "low-energy-batch"
+    },
+    {
+      "name": "context-switch-cost",
+      "inputs": [
+        "knowledge-domain",
+        "cognitive-load"
+      ],
+      "output_signal": "context-switch-cost"
+    },
+    {
+      "name": "project-promotion",
+      "inputs": [
+        "gtd-horizon",
+        "time-estimate",
+        "cognitive-load"
+      ],
+      "output_signal": "promote-to-project"
+    },
+    {
+      "name": "meeting-prep",
+      "inputs": [
+        "collaboration-type",
+        "knowledge-domain"
+      ],
+      "output_signal": "meeting-prep-domain"
+    }
+  ]
+}

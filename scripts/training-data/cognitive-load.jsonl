@@ -1,0 +1,1927 @@
+{"text": "Design the data migration strategy for the server", "label": "complex"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Organize attic", "label": "trivial"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Write the PhD thesis chapter on the hiring plan", "label": "deep"}
+{"text": "Review the invoice", "label": "routine"}
+{"text": "Order coffee filters from Staples", "label": "routine"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Fill out the standard form for the spreadsheet", "label": "routine"}
+{"text": "Send the standard onboarding email to Jessica Holmes", "label": "routine"}
+{"text": "Run the daily report from the website", "label": "routine"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Evaluate the build-vs-buy decision for Obsidian", "label": "complex"}
+{"text": "Design a language for expressing performance reviews concepts", "label": "deep"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Think about the marketing strategy", "label": "complex"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Follow the standard checklist for a client meeting", "label": "routine"}
+{"text": "Write the technical specification for the migration", "label": "complex"}
+{"text": "Design a curriculum that teaches photography from scratch", "label": "deep"}
+{"text": "Create the hiring rubric for Engineer, materials", "label": "complex"}
+{"text": "Update the spreadsheet with this week's the latest figures", "label": "routine"}
+{"text": "Print the summary", "label": "trivial"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Write about the hiring plan", "label": "complex"}
+{"text": "Think about the product launch", "label": "complex"}
+{"text": "Restock the paper towels", "label": "routine"}
+{"text": "Debug the intermittent display glitch in the backend", "label": "complex"}
+{"text": "Organize guest room", "label": "trivial"}
+{"text": "Update the API with the latest the Q3 numbers", "label": "routine"}
+{"text": "Create an original piece of music for piano", "label": "deep"}
+{"text": "Review the memo", "label": "routine"}
+{"text": "Review the brief", "label": "routine"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Think about the budget", "label": "complex"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Fill out the standard form for the summary", "label": "routine"}
+{"text": "Plan the multi-phase rollout of the hiring initiative", "label": "complex"}
+{"text": "Print the presentation", "label": "trivial"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Follow the standard checklist for a client meeting", "label": "routine"}
+{"text": "Think about the project timeline", "label": "complex"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Plan a birthday party", "label": "complex"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Fill out the standard form for the report", "label": "routine"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Order notebooks from the hardware store", "label": "routine"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Schedule a meeting with Cristian Santos", "label": "routine"}
+{"text": "Think about the project timeline", "label": "complex"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Design a curriculum that teaches Spanish from scratch", "label": "deep"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Organize bedroom", "label": "trivial"}
+{"text": "Update the spreadsheet with this week's the latest figures", "label": "routine"}
+{"text": "Write the technical specification for the hiring initiative", "label": "complex"}
+{"text": "Update the app with the latest user analytics", "label": "routine"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Follow the standard checklist for a workshop", "label": "routine"}
+{"text": "Fix routing issue", "label": "routine"}
+{"text": "Review the memo", "label": "routine"}
+{"text": "Research compliance requirements", "label": "complex"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Debug the intermittent leaky faucet in the database", "label": "complex"}
+{"text": "Create the hiring rubric for Garment/textile technologist", "label": "complex"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Design an experiment to validate the the redesign hypothesis", "label": "deep"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Review the design doc", "label": "routine"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Organize bathroom", "label": "trivial"}
+{"text": "Evaluate three competing Obsidian options", "label": "complex"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Solve the fundamental design tension in the API", "label": "deep"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Fill out the standard form for the proposal", "label": "routine"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Update the database with the latest the sales data", "label": "routine"}
+{"text": "Organize basement", "label": "trivial"}
+{"text": "Design a language for expressing the vendor agreement concepts", "label": "deep"}
+{"text": "Design the data migration strategy for the API", "label": "complex"}
+{"text": "Design the new onboarding flow for dark mode", "label": "complex"}
+{"text": "Fix typo", "label": "routine"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Organize garage", "label": "trivial"}
+{"text": "Write the technical specification for the hiring initiative", "label": "complex"}
+{"text": "Send the standard onboarding email to Tommy Walter", "label": "routine"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Fix formatting issue", "label": "routine"}
+{"text": "Design the API architecture for the settings page", "label": "complex"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Organize garage", "label": "trivial"}
+{"text": "Send the standard onboarding email to Margaret Hawkins DDS", "label": "routine"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Think about the budget", "label": "complex"}
+{"text": "Fix permission error", "label": "routine"}
+{"text": "Review the invoice", "label": "routine"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Design the data migration strategy for the API", "label": "complex"}
+{"text": "Create the hiring rubric for Animal technologist", "label": "complex"}
+{"text": "Think about the marketing strategy", "label": "complex"}
+{"text": "Schedule a meeting with Holly Wood", "label": "routine"}
+{"text": "Run the daily report from the app", "label": "routine"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Evaluate the build-vs-buy decision for 1Password", "label": "complex"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Follow the standard checklist for the annual picnic", "label": "routine"}
+{"text": "Organize attic", "label": "trivial"}
+{"text": "Evaluate the build-vs-buy decision for Notion", "label": "complex"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Run the daily report from the server", "label": "routine"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Plan the annual picnic", "label": "complex"}
+{"text": "Plan the multi-phase rollout of the website redesign", "label": "complex"}
+{"text": "Evaluate three competing Jira options", "label": "complex"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Plan a training session", "label": "complex"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Plan a team lunch", "label": "complex"}
+{"text": "Plan the multi-phase rollout of the annual report", "label": "complex"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Print the spec", "label": "trivial"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Design a language for expressing the marketing strategy concepts", "label": "deep"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Fix routing issue", "label": "routine"}
+{"text": "Fill out the standard form for the memo", "label": "routine"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Fix broken link", "label": "routine"}
+{"text": "Organize office", "label": "trivial"}
+{"text": "Write the PhD thesis chapter on the vendor agreement", "label": "deep"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Review the spreadsheet", "label": "routine"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Design a language for expressing the quarterly report concepts", "label": "deep"}
+{"text": "Design a curriculum that teaches piano from scratch", "label": "deep"}
+{"text": "Review the analysis", "label": "routine"}
+{"text": "Create the hiring rubric for Editor, film/video", "label": "complex"}
+{"text": "Think about performance reviews", "label": "complex"}
+{"text": "Fill out the standard form for the spec", "label": "routine"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Create the project plan for the migration", "label": "complex"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Update the spreadsheet with this week's pricing information", "label": "routine"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Create the hiring rubric for Solicitor", "label": "complex"}
+{"text": "Fix leaky faucet", "label": "routine"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Organize office", "label": "trivial"}
+{"text": "Design an experiment to validate the the contract renewal hypothesis", "label": "deep"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Create the hiring rubric for Primary school teacher", "label": "complex"}
+{"text": "Create an original piece of music for guitar", "label": "deep"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Research the project timeline", "label": "complex"}
+{"text": "Restock the whiteboard markers", "label": "routine"}
+{"text": "Plan a client meeting", "label": "complex"}
+{"text": "Think about the vendor agreement", "label": "complex"}
+{"text": "Write about the project timeline", "label": "complex"}
+{"text": "Fix missing label", "label": "routine"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Review the proposal", "label": "routine"}
+{"text": "Design the data migration strategy for the API", "label": "complex"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Print the analysis", "label": "trivial"}
+{"text": "Reply to Philip Cannon's email about performance reviews", "label": "routine"}
+{"text": "Evaluate the build-vs-buy decision for Figma", "label": "complex"}
+{"text": "Resolve the conflict between Jennifer Oliver and Timothy Hancock", "label": "complex"}
+{"text": "Resolve the conflict between Elizabeth Stewart and Angel Ellis", "label": "complex"}
+{"text": "Follow the standard checklist for the quarterly review", "label": "routine"}
+{"text": "Create the project plan for the migration", "label": "complex"}
+{"text": "Schedule a meeting with Crystal Robinson", "label": "routine"}
+{"text": "Design the new onboarding flow for user profiles", "label": "complex"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Resolve the conflict between Victor Baker and Jeffrey Chandler", "label": "complex"}
+{"text": "Plan the multi-phase rollout of the office move", "label": "complex"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Evaluate the build-vs-buy decision for Trello", "label": "complex"}
+{"text": "Debug the intermittent display glitch in the app", "label": "complex"}
+{"text": "Update the backend with the latest user analytics", "label": "routine"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Debug the intermittent broken link in the API", "label": "complex"}
+{"text": "Research the proposal", "label": "complex"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Design the new onboarding flow for the settings page", "label": "complex"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Plan the multi-phase rollout of the product launch", "label": "complex"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Evaluate the build-vs-buy decision for Trello", "label": "complex"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Resolve the conflict between Eric Nolan and Shannon Nolan", "label": "complex"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Update the app", "label": "routine"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Organize living room", "label": "trivial"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Design the API architecture for the search feature", "label": "complex"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Fix login bug", "label": "routine"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Organize garage", "label": "trivial"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Review the spec", "label": "routine"}
+{"text": "Fix formatting issue", "label": "routine"}
+{"text": "Write about the contract renewal", "label": "complex"}
+{"text": "Update the website", "label": "routine"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Plan a training session", "label": "complex"}
+{"text": "Create the hiring rubric for Interior and spatial designer", "label": "complex"}
+{"text": "Research the redesign", "label": "complex"}
+{"text": "Design an experiment to validate the the proposal hypothesis", "label": "deep"}
+{"text": "Design the API architecture for notifications", "label": "complex"}
+{"text": "Print the spreadsheet", "label": "trivial"}
+{"text": "Create the project plan for the migration", "label": "complex"}
+{"text": "Plan the multi-phase rollout of the hiring initiative", "label": "complex"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Restock the coffee pods", "label": "routine"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Draft the contract terms with Figueroa PLC", "label": "complex"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Update the API", "label": "routine"}
+{"text": "Fix routing issue", "label": "routine"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Design a language for expressing the hiring plan concepts", "label": "deep"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Create an original framework for evaluating the redesign", "label": "deep"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Print the summary", "label": "trivial"}
+{"text": "Evaluate three competing Obsidian options", "label": "complex"}
+{"text": "Create an original framework for evaluating the product launch", "label": "deep"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Plan the multi-phase rollout of the product launch", "label": "complex"}
+{"text": "Plan the annual picnic", "label": "complex"}
+{"text": "Organize living room", "label": "trivial"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Create the hiring rubric for Aeronautical engineer", "label": "complex"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Write a research paper on the redesign", "label": "deep"}
+{"text": "Update the app", "label": "routine"}
+{"text": "Design the data migration strategy for the CRM", "label": "complex"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Fix missing label", "label": "routine"}
+{"text": "Design an experiment to validate the the contract renewal hypothesis", "label": "deep"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Update the spreadsheet with this week's the latest figures", "label": "routine"}
+{"text": "Solve the fundamental design tension in the API", "label": "deep"}
+{"text": "Evaluate three competing Figma options", "label": "complex"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Review the design doc", "label": "routine"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Organize living room", "label": "trivial"}
+{"text": "Solve the fundamental design tension in the backend", "label": "deep"}
+{"text": "Think about the hiring plan", "label": "complex"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Run the daily report from the app", "label": "routine"}
+{"text": "Review the summary", "label": "routine"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Update the spreadsheet with this week's the sales data", "label": "routine"}
+{"text": "Organize living room", "label": "trivial"}
+{"text": "Process the standard return for stamps", "label": "routine"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Create an original framework for evaluating the migration", "label": "deep"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Run the daily report from the API", "label": "routine"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Update the database", "label": "routine"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Write a research paper on the proposal", "label": "deep"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Write the PhD thesis chapter on the quarterly report", "label": "deep"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Think about the contract renewal", "label": "complex"}
+{"text": "Update the website with the latest user analytics", "label": "routine"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Create an original piece of music for drums", "label": "deep"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Develop a new mental model for thinking about compliance requirements", "label": "deep"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Write a research paper on the contract renewal", "label": "deep"}
+{"text": "Design the data migration strategy for the backend", "label": "complex"}
+{"text": "Update the dashboard with the latest the Q3 numbers", "label": "routine"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Update the spreadsheet with this week's the latest figures", "label": "routine"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Fix routing issue", "label": "routine"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Draft the contract terms with Lee, Murphy and Lin", "label": "complex"}
+{"text": "Run the daily report from the dashboard", "label": "routine"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Organize kitchen", "label": "trivial"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Fix typo", "label": "routine"}
+{"text": "Write the PhD thesis chapter on the rollout plan", "label": "deep"}
+{"text": "Organize basement", "label": "trivial"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Create an original framework for evaluating the project timeline", "label": "deep"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Design the API architecture for the export function", "label": "complex"}
+{"text": "Update the spreadsheet with this week's the sales data", "label": "routine"}
+{"text": "Fix display glitch", "label": "routine"}
+{"text": "Design the new onboarding flow for the search feature", "label": "complex"}
+{"text": "Process the standard return for groceries", "label": "routine"}
+{"text": "Create the test plan for the export function", "label": "complex"}
+{"text": "Write the technical specification for the hiring initiative", "label": "complex"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Create the project plan for the annual report", "label": "complex"}
+{"text": "Order printer paper from Costco", "label": "routine"}
+{"text": "Write about the quarterly report", "label": "complex"}
+{"text": "Research the hiring plan", "label": "complex"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Design a curriculum that teaches cooking from scratch", "label": "deep"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Develop a new mental model for thinking about the proposal", "label": "deep"}
+{"text": "Design a language for expressing the product launch concepts", "label": "deep"}
+{"text": "Reply to Matthew Foster's email about the redesign", "label": "routine"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Research the product launch", "label": "complex"}
+{"text": "Think about inventory counts", "label": "complex"}
+{"text": "Design a curriculum that teaches public speaking from scratch", "label": "deep"}
+{"text": "Research inventory counts", "label": "complex"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Fix login bug", "label": "routine"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Evaluate the build-vs-buy decision for Slack", "label": "complex"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Create the test plan for dark mode", "label": "complex"}
+{"text": "Plan the multi-phase rollout of the annual report", "label": "complex"}
+{"text": "Organize attic", "label": "trivial"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Solve the fundamental design tension in the dashboard", "label": "deep"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Send the standard onboarding email to Jamie Arnold", "label": "routine"}
+{"text": "Update the CRM", "label": "routine"}
+{"text": "Write the technical specification for the annual report", "label": "complex"}
+{"text": "Design the new onboarding flow for notifications", "label": "complex"}
+{"text": "Restock the printer toner", "label": "routine"}
+{"text": "Fill out the standard form for the brief", "label": "routine"}
+{"text": "Design the new onboarding flow for notifications", "label": "complex"}
+{"text": "Write a research paper on inventory counts", "label": "deep"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Follow the standard checklist for a workshop", "label": "routine"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Send the standard onboarding email to Gabrielle Davis", "label": "routine"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Schedule a meeting with Eric Carney", "label": "routine"}
+{"text": "Create the test plan for notifications", "label": "complex"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Follow the standard checklist for the offsite retreat", "label": "routine"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Update the website with the latest pricing information", "label": "routine"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Plan the multi-phase rollout of the website redesign", "label": "complex"}
+{"text": "Reply to Allison Hill's email about the product launch", "label": "routine"}
+{"text": "Design the new onboarding flow for dark mode", "label": "complex"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Review the presentation", "label": "routine"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Write the PhD thesis chapter on the hiring plan", "label": "deep"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Follow the standard checklist for the quarterly review", "label": "routine"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Run the daily report from the dashboard", "label": "routine"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Update the database", "label": "routine"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Create an original piece of music for drums", "label": "deep"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Create the hiring rubric for Interior and spatial designer", "label": "complex"}
+{"text": "Fix typo", "label": "routine"}
+{"text": "Review the spreadsheet", "label": "routine"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Evaluate the build-vs-buy decision for 1Password", "label": "complex"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Plan the multi-phase rollout of the office move", "label": "complex"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Design the data migration strategy for the website", "label": "complex"}
+{"text": "Restock the whiteboard markers", "label": "routine"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Evaluate three competing Google Docs options", "label": "complex"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Fix leaky faucet", "label": "routine"}
+{"text": "Update the server with the latest customer feedback", "label": "routine"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Create an original framework for evaluating the hiring plan", "label": "deep"}
+{"text": "Print the summary", "label": "trivial"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Plan a client meeting", "label": "complex"}
+{"text": "Design the API architecture for the search feature", "label": "complex"}
+{"text": "Plan the multi-phase rollout of the website redesign", "label": "complex"}
+{"text": "Design the new onboarding flow for the search feature", "label": "complex"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Process the standard return for envelopes", "label": "routine"}
+{"text": "Organize guest room", "label": "trivial"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Process the standard return for cleaning supplies", "label": "routine"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Update the backend", "label": "routine"}
+{"text": "Organize office", "label": "trivial"}
+{"text": "Plan the product demo", "label": "complex"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Schedule a meeting with Noah Rhodes", "label": "routine"}
+{"text": "Run the daily report from the backend", "label": "routine"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Write the PhD thesis chapter on the vendor agreement", "label": "deep"}
+{"text": "Write about the redesign", "label": "complex"}
+{"text": "Evaluate three competing 1Password options", "label": "complex"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Create an original piece of music for guitar", "label": "deep"}
+{"text": "Create an original piece of music for piano", "label": "deep"}
+{"text": "Solve the fundamental design tension in the app", "label": "deep"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Create the project plan for the migration", "label": "complex"}
+{"text": "Create the hiring rubric for Energy manager", "label": "complex"}
+{"text": "Send the standard onboarding email to Angie Henderson", "label": "routine"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Design a language for expressing inventory counts concepts", "label": "deep"}
+{"text": "Write the PhD thesis chapter on the migration", "label": "deep"}
+{"text": "Create an original piece of music for drums", "label": "deep"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Research the hiring plan", "label": "complex"}
+{"text": "Create the test plan for the settings page", "label": "complex"}
+{"text": "Follow the standard checklist for the annual picnic", "label": "routine"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Fill out the standard form for the summary", "label": "routine"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Debug the intermittent leaky faucet in the dashboard", "label": "complex"}
+{"text": "Think about the budget", "label": "complex"}
+{"text": "Organize attic", "label": "trivial"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Update the spreadsheet with this week's pricing information", "label": "routine"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Resolve the conflict between Kristina Rodriguez and Melissa Hernandez", "label": "complex"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Think about the marketing strategy", "label": "complex"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Write a research paper on inventory counts", "label": "deep"}
+{"text": "Plan a training session", "label": "complex"}
+{"text": "Send the standard onboarding email to John Daniel", "label": "routine"}
+{"text": "Order batteries from Target", "label": "routine"}
+{"text": "Organize bedroom", "label": "trivial"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Debug the intermittent typo in the backend", "label": "complex"}
+{"text": "Review the proposal", "label": "routine"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Create an original framework for evaluating the proposal", "label": "deep"}
+{"text": "Design a language for expressing the proposal concepts", "label": "deep"}
+{"text": "Design an experiment to validate the performance reviews hypothesis", "label": "deep"}
+{"text": "Fill out the standard form for the analysis", "label": "routine"}
+{"text": "Evaluate three competing Slack options", "label": "complex"}
+{"text": "Create the hiring rubric for Teacher, early years/pre", "label": "complex"}
+{"text": "Evaluate three competing Slack options", "label": "complex"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Design the API architecture for the search feature", "label": "complex"}
+{"text": "Solve the fundamental design tension in the API", "label": "deep"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Plan a client meeting", "label": "complex"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Think about inventory counts", "label": "complex"}
+{"text": "Write about the product launch", "label": "complex"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Design the API architecture for notifications", "label": "complex"}
+{"text": "Process the standard return for a gift card", "label": "routine"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Think about the budget", "label": "complex"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Order batteries from Trader Joe's", "label": "routine"}
+{"text": "Organize bedroom", "label": "trivial"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Run the daily report from the backend", "label": "routine"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Plan the multi-phase rollout of the hiring initiative", "label": "complex"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Print the proposal", "label": "trivial"}
+{"text": "Review the report", "label": "routine"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Debug the intermittent slow query in the website", "label": "complex"}
+{"text": "Research the hiring plan", "label": "complex"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Research the quarterly report", "label": "complex"}
+{"text": "Run the daily report from the database", "label": "routine"}
+{"text": "Follow the standard checklist for a training session", "label": "routine"}
+{"text": "Update the backend", "label": "routine"}
+{"text": "Update the database with the latest the latest figures", "label": "routine"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Write about inventory counts", "label": "complex"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Create the test plan for dark mode", "label": "complex"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Think about the budget", "label": "complex"}
+{"text": "Create the project plan for the annual report", "label": "complex"}
+{"text": "Create the project plan for the product launch", "label": "complex"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Organize garage", "label": "trivial"}
+{"text": "Research inventory counts", "label": "complex"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Create the test plan for notifications", "label": "complex"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Design the new onboarding flow for the search feature", "label": "complex"}
+{"text": "Schedule a meeting with Gina Moore", "label": "routine"}
+{"text": "Plan the quarterly review", "label": "complex"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Process the standard return for cleaning supplies", "label": "routine"}
+{"text": "Research the project timeline", "label": "complex"}
+{"text": "Print the spreadsheet", "label": "trivial"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Update the server with the latest the sales data", "label": "routine"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Plan a team lunch", "label": "complex"}
+{"text": "Think about the project timeline", "label": "complex"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Restock the sticky notes", "label": "routine"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Plan a team lunch", "label": "complex"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Create an original piece of music for piano", "label": "deep"}
+{"text": "Design a language for expressing the redesign concepts", "label": "deep"}
+{"text": "Create an original framework for evaluating the rollout plan", "label": "deep"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Order paint from CVS", "label": "routine"}
+{"text": "Design a language for expressing performance reviews concepts", "label": "deep"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Update the website", "label": "routine"}
+{"text": "Design the API architecture for user profiles", "label": "complex"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Review the presentation", "label": "routine"}
+{"text": "Design the data migration strategy for the website", "label": "complex"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Fill out the standard form for the spec", "label": "routine"}
+{"text": "Plan the multi-phase rollout of the migration", "label": "complex"}
+{"text": "Write the technical specification for the hiring initiative", "label": "complex"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Process the standard return for a new keyboard", "label": "routine"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Develop a new mental model for thinking about the budget", "label": "deep"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Create an original piece of music for ukulele", "label": "deep"}
+{"text": "Design the new onboarding flow for user profiles", "label": "complex"}
+{"text": "Process the standard return for a phone charger", "label": "routine"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Write about the product launch", "label": "complex"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Write about the rollout plan", "label": "complex"}
+{"text": "Update the spreadsheet with this week's the Q3 numbers", "label": "routine"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Update the database", "label": "routine"}
+{"text": "Follow the standard checklist for a workshop", "label": "routine"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Design the API architecture for user profiles", "label": "complex"}
+{"text": "Solve the fundamental design tension in the backend", "label": "deep"}
+{"text": "Create the test plan for the settings page", "label": "complex"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Process the standard return for a phone charger", "label": "routine"}
+{"text": "Draft the contract terms with Robinson-Brown", "label": "complex"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Design the new onboarding flow for user profiles", "label": "complex"}
+{"text": "Design a language for expressing the contract renewal concepts", "label": "deep"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Draft the contract terms with Brennan-Garrison", "label": "complex"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Create the test plan for notifications", "label": "complex"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Think about the migration", "label": "complex"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Update the CRM", "label": "routine"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Evaluate three competing Obsidian options", "label": "complex"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Create the hiring rubric for Geneticist, molecular", "label": "complex"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Research the contract renewal", "label": "complex"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Think about the contract renewal", "label": "complex"}
+{"text": "Create the project plan for the website redesign", "label": "complex"}
+{"text": "Create an original framework for evaluating compliance requirements", "label": "deep"}
+{"text": "Design a curriculum that teaches public speaking from scratch", "label": "deep"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Write the PhD thesis chapter on the redesign", "label": "deep"}
+{"text": "Write about the quarterly report", "label": "complex"}
+{"text": "Research inventory counts", "label": "complex"}
+{"text": "Research performance reviews", "label": "complex"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Design the data migration strategy for the server", "label": "complex"}
+{"text": "Debug the intermittent formatting issue in the dashboard", "label": "complex"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Process the standard return for a new keyboard", "label": "routine"}
+{"text": "Send the standard onboarding email to Elizabeth Fowler", "label": "routine"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Update the app", "label": "routine"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Create the test plan for dark mode", "label": "complex"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Create an original framework for evaluating performance reviews", "label": "deep"}
+{"text": "Review the design doc", "label": "routine"}
+{"text": "Design the new onboarding flow for the export function", "label": "complex"}
+{"text": "Design a curriculum that teaches photography from scratch", "label": "deep"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Update the website", "label": "routine"}
+{"text": "Run the daily report from the CRM", "label": "routine"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Think about the hiring plan", "label": "complex"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Evaluate three competing Obsidian options", "label": "complex"}
+{"text": "Fix typo", "label": "routine"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Organize garage", "label": "trivial"}
+{"text": "Research the product launch", "label": "complex"}
+{"text": "Design the new onboarding flow for the search feature", "label": "complex"}
+{"text": "Think about the migration", "label": "complex"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Restock the whiteboard markers", "label": "routine"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Update the app with the latest user analytics", "label": "routine"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Create the test plan for user profiles", "label": "complex"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Create an original framework for evaluating performance reviews", "label": "deep"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Update the app with the latest user analytics", "label": "routine"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Design the new onboarding flow for dark mode", "label": "complex"}
+{"text": "Write the technical specification for the hiring initiative", "label": "complex"}
+{"text": "Design an experiment to validate the the budget hypothesis", "label": "deep"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Fix slow query", "label": "routine"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Fix missing label", "label": "routine"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Plan the quarterly review", "label": "complex"}
+{"text": "Evaluate three competing Figma options", "label": "complex"}
+{"text": "Order cleaning supplies from Walmart", "label": "routine"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Design the API architecture for the export function", "label": "complex"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Organize guest room", "label": "trivial"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Fix slow query", "label": "routine"}
+{"text": "Write the technical specification for the annual report", "label": "complex"}
+{"text": "Think about the vendor agreement", "label": "complex"}
+{"text": "Write about the vendor agreement", "label": "complex"}
+{"text": "Design the data migration strategy for the API", "label": "complex"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Solve the fundamental design tension in the server", "label": "deep"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Write about the migration", "label": "complex"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Create the test plan for dark mode", "label": "complex"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Follow the standard checklist for a workshop", "label": "routine"}
+{"text": "Review the spreadsheet", "label": "routine"}
+{"text": "Draft the contract terms with Johnson-Doyle", "label": "complex"}
+{"text": "Plan a training session", "label": "complex"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Create the hiring rubric for Clinical cytogeneticist", "label": "complex"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Fix routing issue", "label": "routine"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Review the proposal", "label": "routine"}
+{"text": "Run the daily report from the app", "label": "routine"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Process the standard return for notebooks", "label": "routine"}
+{"text": "Write about the product launch", "label": "complex"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Schedule a meeting with Cassandra Gaines", "label": "routine"}
+{"text": "Create the project plan for the product launch", "label": "complex"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Research the product launch", "label": "complex"}
+{"text": "Design a curriculum that teaches photography from scratch", "label": "deep"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Draft the contract terms with Valdez, Lucas and Brown", "label": "complex"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Debug the intermittent routing issue in the server", "label": "complex"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Design an experiment to validate the the project timeline hypothesis", "label": "deep"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Write a research paper on the product launch", "label": "deep"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Evaluate the build-vs-buy decision for Figma", "label": "complex"}
+{"text": "Create the project plan for the annual report", "label": "complex"}
+{"text": "Evaluate three competing Google Docs options", "label": "complex"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Write the technical specification for the annual report", "label": "complex"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Order light bulbs from Best Buy", "label": "routine"}
+{"text": "Update the API", "label": "routine"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Follow the standard checklist for a client meeting", "label": "routine"}
+{"text": "Order envelopes from Trader Joe's", "label": "routine"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Organize kitchen", "label": "trivial"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Write about the redesign", "label": "complex"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Design a curriculum that teaches cooking from scratch", "label": "deep"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Research performance reviews", "label": "complex"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Design the new onboarding flow for the export function", "label": "complex"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Fix permission error", "label": "routine"}
+{"text": "Restock the whiteboard markers", "label": "routine"}
+{"text": "Create the hiring rubric for Newspaper journalist", "label": "complex"}
+{"text": "Plan a team lunch", "label": "complex"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Plan the product demo", "label": "complex"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Plan the multi-phase rollout of the annual report", "label": "complex"}
+{"text": "Run the daily report from the backend", "label": "routine"}
+{"text": "Update the API with the latest the Q3 numbers", "label": "routine"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Fix typo", "label": "routine"}
+{"text": "Run the daily report from the app", "label": "routine"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Fill out the standard form for the contract", "label": "routine"}
+{"text": "Reply to Patty Perez's email about the migration", "label": "routine"}
+{"text": "Design a language for expressing the quarterly report concepts", "label": "deep"}
+{"text": "Order a gift card from Costco", "label": "routine"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Write about the marketing strategy", "label": "complex"}
+{"text": "Resolve the conflict between Kenneth Scott and April Frost", "label": "complex"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Write about compliance requirements", "label": "complex"}
+{"text": "Update the database", "label": "routine"}
+{"text": "Create the project plan for the website redesign", "label": "complex"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Fix alignment problem", "label": "routine"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Update the spreadsheet with this week's pricing information", "label": "routine"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Review the report", "label": "routine"}
+{"text": "Plan a training session", "label": "complex"}
+{"text": "Write about performance reviews", "label": "complex"}
+{"text": "Write a research paper on the quarterly report", "label": "deep"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Develop a new mental model for thinking about the budget", "label": "deep"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Create an original framework for evaluating the rollout plan", "label": "deep"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Write about performance reviews", "label": "complex"}
+{"text": "Restock the whiteboard markers", "label": "routine"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Write a research paper on the migration", "label": "deep"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Design an experiment to validate the the marketing strategy hypothesis", "label": "deep"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Run the daily report from the database", "label": "routine"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Update the backend", "label": "routine"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Plan a training session", "label": "complex"}
+{"text": "Develop a new mental model for thinking about the project timeline", "label": "deep"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Create an original framework for evaluating the marketing strategy", "label": "deep"}
+{"text": "Fix alignment problem", "label": "routine"}
+{"text": "Design the data migration strategy for the app", "label": "complex"}
+{"text": "Research the vendor agreement", "label": "complex"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Write the PhD thesis chapter on compliance requirements", "label": "deep"}
+{"text": "Write a research paper on the product launch", "label": "deep"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Draft the contract terms with Riley Inc", "label": "complex"}
+{"text": "Organize guest room", "label": "trivial"}
+{"text": "Write about performance reviews", "label": "complex"}
+{"text": "Write about the project timeline", "label": "complex"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Write about compliance requirements", "label": "complex"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Write a research paper on the redesign", "label": "deep"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Develop a new mental model for thinking about the redesign", "label": "deep"}
+{"text": "Create the hiring rubric for Surveyor, quantity", "label": "complex"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Evaluate the build-vs-buy decision for Google Docs", "label": "complex"}
+{"text": "Send the standard onboarding email to Dylan Miller", "label": "routine"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Organize kitchen", "label": "trivial"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Organize garage", "label": "trivial"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Print the report", "label": "trivial"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Update the spreadsheet with this week's the sales data", "label": "routine"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Plan the quarterly review", "label": "complex"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Fill out the standard form for the report", "label": "routine"}
+{"text": "Debug the intermittent missing label in the website", "label": "complex"}
+{"text": "Design a curriculum that teaches watercolor painting from scratch", "label": "deep"}
+{"text": "Fill out the standard form for the proposal", "label": "routine"}
+{"text": "Plan the annual picnic", "label": "complex"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Evaluate three competing Trello options", "label": "complex"}
+{"text": "Schedule a meeting with Zachary Hicks", "label": "routine"}
+{"text": "Design the data migration strategy for the CRM", "label": "complex"}
+{"text": "Follow the standard checklist for a birthday party", "label": "routine"}
+{"text": "Follow the standard checklist for the offsite retreat", "label": "routine"}
+{"text": "Organize kitchen", "label": "trivial"}
+{"text": "Research the vendor agreement", "label": "complex"}
+{"text": "Fix typo", "label": "routine"}
+{"text": "Plan a birthday party", "label": "complex"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Review the analysis", "label": "routine"}
+{"text": "Design the API architecture for notifications", "label": "complex"}
+{"text": "Update the dashboard", "label": "routine"}
+{"text": "Update the CRM with the latest customer feedback", "label": "routine"}
+{"text": "Research compliance requirements", "label": "complex"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Develop a new mental model for thinking about the migration", "label": "deep"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Write a research paper on inventory counts", "label": "deep"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Evaluate the build-vs-buy decision for Figma", "label": "complex"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Think about the hiring plan", "label": "complex"}
+{"text": "Create the project plan for the product launch", "label": "complex"}
+{"text": "Draft the contract terms with House-Glover", "label": "complex"}
+{"text": "Print the proposal", "label": "trivial"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Restock the whiteboard markers", "label": "routine"}
+{"text": "Run the daily report from the backend", "label": "routine"}
+{"text": "Plan a workshop", "label": "complex"}
+{"text": "Develop a new mental model for thinking about the redesign", "label": "deep"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Update the server", "label": "routine"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Draft the contract terms with Wiley LLC", "label": "complex"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Think about the product launch", "label": "complex"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Restock the sticky notes", "label": "routine"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Organize basement", "label": "trivial"}
+{"text": "Research inventory counts", "label": "complex"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Send the standard onboarding email to Angelica Tucker", "label": "routine"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Fill out the standard form for the invoice", "label": "routine"}
+{"text": "Organize attic", "label": "trivial"}
+{"text": "Create an original piece of music for synthesizer", "label": "deep"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Create the test plan for the search feature", "label": "complex"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Review the report", "label": "routine"}
+{"text": "Fix display glitch", "label": "routine"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Design an experiment to validate the the redesign hypothesis", "label": "deep"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Schedule a meeting with John Pierce", "label": "routine"}
+{"text": "Print the spec", "label": "trivial"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Design the API architecture for dark mode", "label": "complex"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Create the project plan for the office move", "label": "complex"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Draft the contract terms with Baker and Sons", "label": "complex"}
+{"text": "Create an original piece of music for guitar", "label": "deep"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Create an original piece of music for drums", "label": "deep"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Process the standard return for envelopes", "label": "routine"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Review the brief", "label": "routine"}
+{"text": "Write about the product launch", "label": "complex"}
+{"text": "Create the test plan for dark mode", "label": "complex"}
+{"text": "Write about the contract renewal", "label": "complex"}
+{"text": "Create an original piece of music for guitar", "label": "deep"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Write the PhD thesis chapter on the hiring plan", "label": "deep"}
+{"text": "Reply to Nathan Maldonado's email about the hiring plan", "label": "routine"}
+{"text": "Design a language for expressing inventory counts concepts", "label": "deep"}
+{"text": "Debug the intermittent alignment problem in the backend", "label": "complex"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Debug the intermittent formatting issue in the app", "label": "complex"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Develop a new mental model for thinking about the budget", "label": "deep"}
+{"text": "Think about the product launch", "label": "complex"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Write a research paper on performance reviews", "label": "deep"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Order envelopes from Target", "label": "routine"}
+{"text": "Order stamps from Walmart", "label": "routine"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Design a curriculum that teaches watercolor painting from scratch", "label": "deep"}
+{"text": "Create an original piece of music for piano", "label": "deep"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Process the standard return for groceries", "label": "routine"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Write the technical specification for the migration", "label": "complex"}
+{"text": "Design a language for expressing the quarterly report concepts", "label": "deep"}
+{"text": "Design an experiment to validate the the contract renewal hypothesis", "label": "deep"}
+{"text": "Evaluate three competing Linear options", "label": "complex"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Update the backend", "label": "routine"}
+{"text": "Review the invoice", "label": "routine"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Process the standard return for paint", "label": "routine"}
+{"text": "Think about compliance requirements", "label": "complex"}
+{"text": "Update the app", "label": "routine"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Update the server", "label": "routine"}
+{"text": "Think about inventory counts", "label": "complex"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Design the API architecture for user profiles", "label": "complex"}
+{"text": "Review the contract", "label": "routine"}
+{"text": "Solve the fundamental design tension in the server", "label": "deep"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Print the report", "label": "trivial"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Research the marketing strategy", "label": "complex"}
+{"text": "Design the data migration strategy for the app", "label": "complex"}
+{"text": "Develop a new mental model for thinking about the migration", "label": "deep"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Evaluate the build-vs-buy decision for 1Password", "label": "complex"}
+{"text": "Resolve the conflict between Robert Chase and Matthew Fernandez", "label": "complex"}
+{"text": "Design the API architecture for the export function", "label": "complex"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Fix slow query", "label": "routine"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Design a language for expressing the vendor agreement concepts", "label": "deep"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Write the technical specification for the website redesign", "label": "complex"}
+{"text": "Review the spec", "label": "routine"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Create the test plan for user profiles", "label": "complex"}
+{"text": "Review the report", "label": "routine"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Write a research paper on inventory counts", "label": "deep"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Design an experiment to validate the the rollout plan hypothesis", "label": "deep"}
+{"text": "Send the standard onboarding email to Anthony Rodriguez", "label": "routine"}
+{"text": "Schedule a meeting with Carla Gray", "label": "routine"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Send the standard onboarding email to Connie Lawrence", "label": "routine"}
+{"text": "Create an original piece of music for violin", "label": "deep"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Design the data migration strategy for the CRM", "label": "complex"}
+{"text": "Restock the printer toner", "label": "routine"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Restock the whiteboard markers", "label": "routine"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Create the hiring rubric for Contractor", "label": "complex"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Reply to Stephanie Ross's email about the marketing strategy", "label": "routine"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Research the migration", "label": "complex"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Design the data migration strategy for the app", "label": "complex"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Write the PhD thesis chapter on inventory counts", "label": "deep"}
+{"text": "Resolve the conflict between John Lewis and Anthony Gray", "label": "complex"}
+{"text": "Review the summary", "label": "routine"}
+{"text": "Design the API architecture for user profiles", "label": "complex"}
+{"text": "Think about the product launch", "label": "complex"}
+{"text": "Draft the contract terms with Brown PLC", "label": "complex"}
+{"text": "Plan the quarterly review", "label": "complex"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Write the PhD thesis chapter on the hiring plan", "label": "deep"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Research the rollout plan", "label": "complex"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Develop a new mental model for thinking about the marketing strategy", "label": "deep"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Design a language for expressing the contract renewal concepts", "label": "deep"}
+{"text": "Develop a new mental model for thinking about the redesign", "label": "deep"}
+{"text": "Think about the vendor agreement", "label": "complex"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Research the vendor agreement", "label": "complex"}
+{"text": "Think about the hiring plan", "label": "complex"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Update the server", "label": "routine"}
+{"text": "Write about compliance requirements", "label": "complex"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Process the standard return for a phone charger", "label": "routine"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Update the dashboard", "label": "routine"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Fix routing issue", "label": "routine"}
+{"text": "Organize bathroom", "label": "trivial"}
+{"text": "Develop a new mental model for thinking about the marketing strategy", "label": "deep"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Debug the intermittent login bug in the website", "label": "complex"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Design an experiment to validate the the vendor agreement hypothesis", "label": "deep"}
+{"text": "Resolve the conflict between Diana May and William Herrera", "label": "complex"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Schedule a meeting with Monica Herrera", "label": "routine"}
+{"text": "Evaluate the build-vs-buy decision for Linear", "label": "complex"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Design an experiment to validate the the hiring plan hypothesis", "label": "deep"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Develop a new mental model for thinking about the vendor agreement", "label": "deep"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Draft the contract terms with Warner, Carr and Archer", "label": "complex"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Process the standard return for notebooks", "label": "routine"}
+{"text": "Research the migration", "label": "complex"}
+{"text": "Design the new onboarding flow for the search feature", "label": "complex"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Reply to Joshua Blair's email about the proposal", "label": "routine"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Design a curriculum that teaches Spanish from scratch", "label": "deep"}
+{"text": "Review the brief", "label": "routine"}
+{"text": "Think about the migration", "label": "complex"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Order paint from Walmart", "label": "routine"}
+{"text": "Write about the marketing strategy", "label": "complex"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Write about the quarterly report", "label": "complex"}
+{"text": "Create an original framework for evaluating the proposal", "label": "deep"}
+{"text": "Create the test plan for the export function", "label": "complex"}
+{"text": "Write the PhD thesis chapter on the migration", "label": "deep"}
+{"text": "Update the backend", "label": "routine"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Fix permission error", "label": "routine"}
+{"text": "Schedule a meeting with Michael Lewis", "label": "routine"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Review the design doc", "label": "routine"}
+{"text": "Review the spreadsheet", "label": "routine"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Think about the migration", "label": "complex"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Follow the standard checklist for the offsite retreat", "label": "routine"}
+{"text": "Write about compliance requirements", "label": "complex"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Design the API architecture for the search feature", "label": "complex"}
+{"text": "Reply to Sherri Baker's email about the quarterly report", "label": "routine"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Create the hiring rubric for Education officer, museum", "label": "complex"}
+{"text": "Resolve the conflict between Jennifer Silva and Taylor Harris", "label": "complex"}
+{"text": "Run the daily report from the database", "label": "routine"}
+{"text": "Draft the contract terms with House and Sons", "label": "complex"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Write the technical specification for the migration", "label": "complex"}
+{"text": "Debug the intermittent slow query in the CRM", "label": "complex"}
+{"text": "Reply to Abigail Shaffer's email about the migration", "label": "routine"}
+{"text": "Design the data migration strategy for the dashboard", "label": "complex"}
+{"text": "Design an experiment to validate the the contract renewal hypothesis", "label": "deep"}
+{"text": "Organize attic", "label": "trivial"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Develop a new mental model for thinking about inventory counts", "label": "deep"}
+{"text": "Create the project plan for the hiring initiative", "label": "complex"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Evaluate the build-vs-buy decision for 1Password", "label": "complex"}
+{"text": "Create an original framework for evaluating the vendor agreement", "label": "deep"}
+{"text": "Schedule a meeting with James Ferrell", "label": "routine"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Design the new onboarding flow for the settings page", "label": "complex"}
+{"text": "Research the project timeline", "label": "complex"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Design a language for expressing the redesign concepts", "label": "deep"}
+{"text": "Schedule a meeting with Judy Baker", "label": "routine"}
+{"text": "Write about the project timeline", "label": "complex"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Write about the redesign", "label": "complex"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Write the technical specification for the product launch", "label": "complex"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Debug the intermittent typo in the dashboard", "label": "complex"}
+{"text": "Research compliance requirements", "label": "complex"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Draft the contract terms with Aguilar-Hernandez", "label": "complex"}
+{"text": "Design a curriculum that teaches calligraphy from scratch", "label": "deep"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Evaluate three competing Notion options", "label": "complex"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Create an original piece of music for guitar", "label": "deep"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Evaluate the build-vs-buy decision for Figma", "label": "complex"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Fix slow query", "label": "routine"}
+{"text": "Fix missing label", "label": "routine"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Schedule a meeting with Ethan Adams", "label": "routine"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Schedule a meeting with Paula Moreno", "label": "routine"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Fill out the standard form for the invoice", "label": "routine"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Solve the fundamental design tension in the server", "label": "deep"}
+{"text": "Update the server", "label": "routine"}
+{"text": "Design an experiment to validate the the proposal hypothesis", "label": "deep"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Write a research paper on the proposal", "label": "deep"}
+{"text": "Solve the fundamental design tension in the CRM", "label": "deep"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Update the server", "label": "routine"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Review the brief", "label": "routine"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Research the redesign", "label": "complex"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Update the spreadsheet with this week's the latest figures", "label": "routine"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Order groceries from Target", "label": "routine"}
+{"text": "Evaluate the build-vs-buy decision for Trello", "label": "complex"}
+{"text": "Fix formatting issue", "label": "routine"}
+{"text": "Reply to Daniel Wagner's email about performance reviews", "label": "routine"}
+{"text": "Create the hiring rubric for Air broker", "label": "complex"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Schedule a meeting with Anthony Humphrey", "label": "routine"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Design a curriculum that teaches calligraphy from scratch", "label": "deep"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Run the daily report from the app", "label": "routine"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Update the server", "label": "routine"}
+{"text": "Design a curriculum that teaches public speaking from scratch", "label": "deep"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Update the app", "label": "routine"}
+{"text": "Evaluate the build-vs-buy decision for Obsidian", "label": "complex"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Organize bedroom", "label": "trivial"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Research the project timeline", "label": "complex"}
+{"text": "Send the standard onboarding email to Mark Perez", "label": "routine"}
+{"text": "Design a language for expressing inventory counts concepts", "label": "deep"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Update the spreadsheet with this week's pricing information", "label": "routine"}
+{"text": "Schedule a meeting with Michele Williams", "label": "routine"}
+{"text": "Create the test plan for the settings page", "label": "complex"}
+{"text": "Plan a training session", "label": "complex"}
+{"text": "Order batteries from Trader Joe's", "label": "routine"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Research the marketing strategy", "label": "complex"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "Send the standard onboarding email to Justin Baker", "label": "routine"}
+{"text": "Plan the product demo", "label": "complex"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Review the invoice", "label": "routine"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Write the PhD thesis chapter on the redesign", "label": "deep"}
+{"text": "Think about compliance requirements", "label": "complex"}
+{"text": "Organize guest room", "label": "trivial"}
+{"text": "Research the marketing strategy", "label": "complex"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Solve the fundamental design tension in the CRM", "label": "deep"}
+{"text": "Design an experiment to validate the performance reviews hypothesis", "label": "deep"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Design the data migration strategy for the database", "label": "complex"}
+{"text": "Process the standard return for batteries", "label": "routine"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Debug the intermittent formatting issue in the CRM", "label": "complex"}
+{"text": "Think about the vendor agreement", "label": "complex"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Write about the product launch", "label": "complex"}
+{"text": "Resolve the conflict between Denise Jacobs and Christina Walters", "label": "complex"}
+{"text": "Schedule a meeting with Debra Davidson", "label": "routine"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Research performance reviews", "label": "complex"}
+{"text": "Design a curriculum that teaches piano from scratch", "label": "deep"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Create an original piece of music for guitar", "label": "deep"}
+{"text": "Create the test plan for user profiles", "label": "complex"}
+{"text": "Write the PhD thesis chapter on the migration", "label": "deep"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Update the app", "label": "routine"}
+{"text": "Fill out the standard form for the presentation", "label": "routine"}
+{"text": "Design a curriculum that teaches public speaking from scratch", "label": "deep"}
+{"text": "Restock the printer toner", "label": "routine"}
+{"text": "Design the data migration strategy for the dashboard", "label": "complex"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Print the report", "label": "trivial"}
+{"text": "Evaluate three competing Linear options", "label": "complex"}
+{"text": "Think about the migration", "label": "complex"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Reply to Shannon Jones's email about the product launch", "label": "routine"}
+{"text": "Develop a new mental model for thinking about inventory counts", "label": "deep"}
+{"text": "Organize guest room", "label": "trivial"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Plan the quarterly review", "label": "complex"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Run the daily report from the app", "label": "routine"}
+{"text": "Plan a birthday party", "label": "complex"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Research performance reviews", "label": "complex"}
+{"text": "Resolve the conflict between Rebecca Rodriguez and Joshua Taylor", "label": "complex"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Create the project plan for the migration", "label": "complex"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Update the app", "label": "routine"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Update the spreadsheet with this week's pricing information", "label": "routine"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Think about the project timeline", "label": "complex"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Plan the offsite retreat", "label": "complex"}
+{"text": "Fix routing issue", "label": "routine"}
+{"text": "Write a research paper on performance reviews", "label": "deep"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Follow the standard checklist for a client meeting", "label": "routine"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Draft the contract terms with Freeman, Whitehead and Mathis", "label": "complex"}
+{"text": "Update the dashboard", "label": "routine"}
+{"text": "Update the app with the latest the latest figures", "label": "routine"}
+{"text": "Write the technical specification for the office move", "label": "complex"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Restock the hand sanitizer", "label": "routine"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Plan a birthday party", "label": "complex"}
+{"text": "Create an original framework for evaluating performance reviews", "label": "deep"}
+{"text": "Update the website with the latest pricing information", "label": "routine"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Send the standard onboarding email to Jeffrey Chavez", "label": "routine"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Solve the fundamental design tension in the app", "label": "deep"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Create an original framework for evaluating the contract renewal", "label": "deep"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Develop a new mental model for thinking about the hiring plan", "label": "deep"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Fill out the standard form for the summary", "label": "routine"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Restock the printer toner", "label": "routine"}
+{"text": "Follow the standard checklist for the annual picnic", "label": "routine"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Solve the fundamental design tension in the API", "label": "deep"}
+{"text": "Write the PhD thesis chapter on the vendor agreement", "label": "deep"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Plan a birthday party", "label": "complex"}
+{"text": "Write a research paper on the redesign", "label": "deep"}
+{"text": "Review the report", "label": "routine"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Update the spreadsheet with this week's the sales data", "label": "routine"}
+{"text": "Create the test plan for the settings page", "label": "complex"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Order coffee filters from Home Depot", "label": "routine"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Process the standard return for a gift card", "label": "routine"}
+{"text": "Think about performance reviews", "label": "complex"}
+{"text": "File the expense report", "label": "routine"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Design the data migration strategy for the database", "label": "complex"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Write about inventory counts", "label": "complex"}
+{"text": "Write about compliance requirements", "label": "complex"}
+{"text": "Design an experiment to validate the the hiring plan hypothesis", "label": "deep"}
+{"text": "Resolve the conflict between Michael Cross and Mary Tucker", "label": "complex"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Send the standard onboarding email to Tricia Valencia", "label": "routine"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Write the technical specification for the website redesign", "label": "complex"}
+{"text": "Print the contract", "label": "trivial"}
+{"text": "Turn off the lights", "label": "trivial"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Develop a new mental model for thinking about the vendor agreement", "label": "deep"}
+{"text": "Plan a workshop", "label": "complex"}
+{"text": "Plan the multi-phase rollout of the website redesign", "label": "complex"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Update the spreadsheet with this week's customer feedback", "label": "routine"}
+{"text": "Create the project plan for the hiring initiative", "label": "complex"}
+{"text": "Reply to Lisa Jackson's email about the redesign", "label": "routine"}
+{"text": "Solve the fundamental design tension in the database", "label": "deep"}
+{"text": "Write the technical specification for the office move", "label": "complex"}
+{"text": "Process the standard return for a phone charger", "label": "routine"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Design the API architecture for the search feature", "label": "complex"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Fill out the standard form for the invoice", "label": "routine"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Design a curriculum that teaches public speaking from scratch", "label": "deep"}
+{"text": "Schedule a meeting with Brent Jordan", "label": "routine"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Update the website", "label": "routine"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Review the spreadsheet", "label": "routine"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Research inventory counts", "label": "complex"}
+{"text": "Draft the contract terms with Wright, Garcia and Deleon", "label": "complex"}
+{"text": "Reply to Brian Ramirez's email about the redesign", "label": "routine"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Run the daily report from the dashboard", "label": "routine"}
+{"text": "Reply to Rebecca Henderson's email about the budget", "label": "routine"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Research performance reviews", "label": "complex"}
+{"text": "Order a new keyboard from Home Depot", "label": "routine"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Write about the redesign", "label": "complex"}
+{"text": "Fill out the standard form for the design doc", "label": "routine"}
+{"text": "Write the PhD thesis chapter on the product launch", "label": "deep"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Resolve the conflict between Cody Larson and Cynthia Wilson", "label": "complex"}
+{"text": "Review the contract", "label": "routine"}
+{"text": "Write the PhD thesis chapter on the contract renewal", "label": "deep"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Write about the proposal", "label": "complex"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Resolve the conflict between Amy Edwards and John Calhoun", "label": "complex"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Design a curriculum that teaches public speaking from scratch", "label": "deep"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Write the PhD thesis chapter on the redesign", "label": "deep"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Reply to Lisa Hensley's email about the project timeline", "label": "routine"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Write a research paper on the budget", "label": "deep"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Resolve the conflict between Timothy Pham and Rita Adams", "label": "complex"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Create an original piece of music for drums", "label": "deep"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Develop the company's 5-year strategic vision", "label": "deep"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Plan the multi-phase rollout of the website redesign", "label": "complex"}
+{"text": "Write the PhD thesis chapter on the product launch", "label": "deep"}
+{"text": "Send the standard onboarding email to Fred Smith", "label": "routine"}
+{"text": "Write about the product launch", "label": "complex"}
+{"text": "Create an original framework for evaluating the product launch", "label": "deep"}
+{"text": "Design the API architecture for the settings page", "label": "complex"}
+{"text": "Design a language for expressing the vendor agreement concepts", "label": "deep"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Fill out the standard form for the proposal", "label": "routine"}
+{"text": "Update the spreadsheet with this week's the latest figures", "label": "routine"}
+{"text": "Fix formatting issue", "label": "routine"}
+{"text": "Create the project plan for the migration", "label": "complex"}
+{"text": "Throw away the junk mail", "label": "trivial"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Print the proposal", "label": "trivial"}
+{"text": "Write about the migration", "label": "complex"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Create the project plan for the product launch", "label": "complex"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Resolve the conflict between Jeff Hill and Ray Walsh", "label": "complex"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Update the CRM", "label": "routine"}
+{"text": "Plan a workshop", "label": "complex"}
+{"text": "Print the invoice", "label": "trivial"}
+{"text": "Create an original piece of music for synthesizer", "label": "deep"}
+{"text": "Plan a training session", "label": "complex"}
+{"text": "Research the budget", "label": "complex"}
+{"text": "Formulate the research question and methodology", "label": "deep"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Reply to Richard Aguirre's email about the redesign", "label": "routine"}
+{"text": "Update the app", "label": "routine"}
+{"text": "Research the hiring plan", "label": "complex"}
+{"text": "Resolve the conflict between Brandi Bailey and David Mitchell", "label": "complex"}
+{"text": "Architect a system that handles 10x current scale", "label": "deep"}
+{"text": "Restock the paper towels", "label": "routine"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Create the project plan for the product launch", "label": "complex"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Send the monthly newsletter", "label": "routine"}
+{"text": "Order a new keyboard from the hardware store", "label": "routine"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Update the database with the latest customer feedback", "label": "routine"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Plan the multi-phase rollout of the website redesign", "label": "complex"}
+{"text": "Send the standard onboarding email to Timothy Duncan", "label": "routine"}
+{"text": "Plan the multi-phase rollout of the website redesign", "label": "complex"}
+{"text": "Write about the vendor agreement", "label": "complex"}
+{"text": "Create the test plan for user profiles", "label": "complex"}
+{"text": "Reply to Sherry Decker's email about the budget", "label": "routine"}
+{"text": "Follow the standard checklist for a client meeting", "label": "routine"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Design the new onboarding flow for user profiles", "label": "complex"}
+{"text": "Design the API architecture for the search feature", "label": "complex"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Develop the proof of concept for a new technology", "label": "deep"}
+{"text": "Draft the contract terms with Obrien-Dixon", "label": "complex"}
+{"text": "Write about the marketing strategy", "label": "complex"}
+{"text": "Review the proposal", "label": "routine"}
+{"text": "Restock the sticky notes", "label": "routine"}
+{"text": "Solve the fundamental design tension in the server", "label": "deep"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Fix display glitch", "label": "routine"}
+{"text": "Submit the weekly timesheet", "label": "routine"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Update the CRM", "label": "routine"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Design the data migration strategy for the server", "label": "complex"}
+{"text": "Update the backend", "label": "routine"}
+{"text": "Think about the contract renewal", "label": "complex"}
+{"text": "Research compliance requirements", "label": "complex"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Debug the intermittent formatting issue in the backend", "label": "complex"}
+{"text": "Develop a new mental model for thinking about the budget", "label": "deep"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Process the incoming mail", "label": "routine"}
+{"text": "Press the start button on the dishwasher", "label": "trivial"}
+{"text": "Write about the vendor agreement", "label": "complex"}
+{"text": "Evaluate the build-vs-buy decision for Obsidian", "label": "complex"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Draft the contract terms with Jones and Sons", "label": "complex"}
+{"text": "Resolve the conflict between Aimee Montoya and Matthew Mcmillan", "label": "complex"}
+{"text": "Update the API", "label": "routine"}
+{"text": "Create the test plan for user profiles", "label": "complex"}
+{"text": "Post the weekly social media update", "label": "routine"}
+{"text": "Write a research paper on the rollout plan", "label": "deep"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Develop a new mental model for thinking about the rollout plan", "label": "deep"}
+{"text": "Update the backend", "label": "routine"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Fix routing issue", "label": "routine"}
+{"text": "Plan the offsite retreat", "label": "complex"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Evaluate three competing Slack options", "label": "complex"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Review the invoice", "label": "routine"}
+{"text": "Update the API", "label": "routine"}
+{"text": "Wipe the counter", "label": "trivial"}
+{"text": "Evaluate the build-vs-buy decision for Trello", "label": "complex"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Resolve the conflict between Robert Stevens and Robert Perez", "label": "complex"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Design an experiment to validate the the contract renewal hypothesis", "label": "deep"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Plan a training session", "label": "complex"}
+{"text": "Solve the fundamental design tension in the API", "label": "deep"}
+{"text": "Create an original framework for evaluating the project timeline", "label": "deep"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Plan the multi-phase rollout of the migration", "label": "complex"}
+{"text": "Create an original framework for evaluating performance reviews", "label": "deep"}
+{"text": "Plan the disaster recovery procedure", "label": "complex"}
+{"text": "Update the app with the latest customer feedback", "label": "routine"}
+{"text": "Hang up the coat", "label": "trivial"}
+{"text": "Write the technical specification for the migration", "label": "complex"}
+{"text": "Follow the standard checklist for the annual picnic", "label": "routine"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Think about the contract renewal", "label": "complex"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Debug the intermittent routing issue in the CRM", "label": "complex"}
+{"text": "Design a curriculum that teaches photography from scratch", "label": "deep"}
+{"text": "Create an original piece of music for ukulele", "label": "deep"}
+{"text": "Reply to Danny Morgan's email about the rollout plan", "label": "routine"}
+{"text": "Create the project plan for the website redesign", "label": "complex"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Print the spreadsheet", "label": "trivial"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Plan a team lunch", "label": "complex"}
+{"text": "Solve the fundamental design tension in the website", "label": "deep"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Think about the quarterly report", "label": "complex"}
+{"text": "Write the incident response playbook", "label": "complex"}
+{"text": "Review the memo", "label": "routine"}
+{"text": "Draft the contract terms with Ford-Baxter", "label": "complex"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Switch the laundry to the dryer", "label": "trivial"}
+{"text": "Update the spreadsheet with this week's pricing information", "label": "routine"}
+{"text": "Check the routine maintenance schedule", "label": "routine"}
+{"text": "Order printer paper from Best Buy", "label": "routine"}
+{"text": "Take out the trash", "label": "trivial"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Move the chair back to the desk", "label": "trivial"}
+{"text": "Plan the team reorganization", "label": "complex"}
+{"text": "Write the patent application for the novel approach", "label": "deep"}
+{"text": "Organize basement", "label": "trivial"}
+{"text": "Debug the intermittent leaky faucet in the API", "label": "complex"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Follow up on outstanding invoices", "label": "routine"}
+{"text": "Design the API architecture for the settings page", "label": "complex"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Design the new onboarding flow for the export function", "label": "complex"}
+{"text": "Process the standard return for a gift card", "label": "routine"}
+{"text": "Close the windows", "label": "trivial"}
+{"text": "Plan the product demo", "label": "complex"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Write the founding document for the new initiative", "label": "deep"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Update the spreadsheet with this week's the latest figures", "label": "routine"}
+{"text": "Create the hiring rubric for Administrator, local government", "label": "complex"}
+{"text": "Send the standard onboarding email to Shane Henderson", "label": "routine"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Draft the contract terms with Wilson-Rodriguez", "label": "complex"}
+{"text": "Review the presentation", "label": "routine"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Plan the multi-phase rollout of the annual report", "label": "complex"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Print the proposal", "label": "trivial"}
+{"text": "Update the backend with the latest customer feedback", "label": "routine"}
+{"text": "Evaluate three competing 1Password options", "label": "complex"}
+{"text": "Build a mathematical model of the business dynamics", "label": "deep"}
+{"text": "Analyze the quarterly financial trends", "label": "complex"}
+{"text": "Design the new onboarding flow for the settings page", "label": "complex"}
+{"text": "Put the book back on the shelf", "label": "trivial"}
+{"text": "Write a book chapter synthesizing diverse perspectives", "label": "deep"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Debug the intermittent missing label in the app", "label": "complex"}
+{"text": "Restock the paper towels", "label": "routine"}
+{"text": "Organize kitchen", "label": "trivial"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Solve the fundamental design tension in the server", "label": "deep"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Design a novel algorithm for the optimization problem", "label": "deep"}
+{"text": "Map the stakeholder communication plan", "label": "complex"}
+{"text": "Organize basement", "label": "trivial"}
+{"text": "Fix broken link", "label": "routine"}
+{"text": "Rethink the entire product strategy from first principles", "label": "deep"}
+{"text": "Run the regular backup procedure", "label": "routine"}
+{"text": "Plug in the charger", "label": "trivial"}
+{"text": "File the paper in the folder", "label": "trivial"}
+{"text": "Send the standard onboarding email to Derek Zuniga", "label": "routine"}
+{"text": "Develop the ethical framework for AI decision-making", "label": "deep"}
+{"text": "Reply to Brittany Farmer's email about the proposal", "label": "routine"}
+{"text": "Write a research paper on the vendor agreement", "label": "deep"}
+{"text": "Write the technical specification for the hiring initiative", "label": "complex"}
+{"text": "Update the website", "label": "routine"}
+{"text": "Water the plants", "label": "trivial"}
+{"text": "Write a research paper on the quarterly report", "label": "deep"}
+{"text": "Sharpen pencils", "label": "trivial"}
+{"text": "Create the hiring rubric for Set designer", "label": "complex"}
+{"text": "Analyze customer churn patterns in the data", "label": "complex"}
+{"text": "Evaluate three competing Trello options", "label": "complex"}
+{"text": "Write the technical specification for the product launch", "label": "complex"}
+{"text": "Update the recurring meeting agenda", "label": "routine"}
+{"text": "Write the technical specification for the website redesign", "label": "complex"}
+{"text": "Design an experiment to validate the the marketing strategy hypothesis", "label": "deep"}
+{"text": "Update the spreadsheet with this week's pricing information", "label": "routine"}
+{"text": "Create an original framework for evaluating the redesign", "label": "deep"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Put the cap on the pen", "label": "trivial"}
+{"text": "Design the performance monitoring system", "label": "complex"}
+{"text": "Restock the printer toner", "label": "routine"}
+{"text": "Research the hiring plan", "label": "complex"}
+{"text": "Evaluate three competing Notion options", "label": "complex"}
+{"text": "Fix login bug", "label": "routine"}
+{"text": "Design an experiment to validate the the rollout plan hypothesis", "label": "deep"}
+{"text": "Design a language for expressing the rollout plan concepts", "label": "deep"}
+{"text": "Update the backend with the latest user analytics", "label": "routine"}
+{"text": "Write about the migration", "label": "complex"}
+{"text": "Recycle the empty bottles", "label": "trivial"}
+{"text": "Lock the door", "label": "trivial"}
+{"text": "Put dishes in the dishwasher", "label": "trivial"}
+{"text": "Print the design doc", "label": "trivial"}
+{"text": "Plan the quarterly review", "label": "complex"}
+{"text": "Order a new keyboard from Target", "label": "routine"}
+{"text": "Plan a birthday party", "label": "complex"}
+{"text": "Refill the stapler", "label": "trivial"}
+{"text": "Solve the fundamental design tension in the backend", "label": "deep"}
+{"text": "Reply to Ryan Munoz's email about performance reviews", "label": "routine"}
+{"text": "Evaluate the build-vs-buy decision for Linear", "label": "complex"}

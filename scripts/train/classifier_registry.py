@@ -133,6 +133,15 @@ GTD_DEFINITIONS = {
     ),
 }
 
+# Merge cognitive model descriptions into GTD_DEFINITIONS for consistency
+try:
+    from signal_protocol import COGNITIVE_MODELS as _CM
+
+    for _mid, _minfo in _CM.items():
+        GTD_DEFINITIONS[_mid] = _minfo["description"]
+except ImportError:
+    pass
+
 # ---------------------------------------------------------------------------
 # Classifier registry
 # ---------------------------------------------------------------------------
@@ -271,6 +280,31 @@ CLASSIFIER_REGISTRY: dict[str, dict] = {
         "class_names": ["missing", "not-missing"],
     },
 }
+
+# ---------------------------------------------------------------------------
+# Cognitive dimension classifiers (signal army)
+# See signal_protocol.py for full definitions.
+# ---------------------------------------------------------------------------
+
+try:
+    from signal_protocol import COGNITIVE_MODELS
+
+    for _model_id, _model_info in COGNITIVE_MODELS.items():
+        CLASSIFIER_REGISTRY[_model_id] = {
+            "jsonl": f"{_model_id}.jsonl",
+            "train_script": f"61_train_cognitive_models.py --model {_model_id}",
+            "validate_script": "62_signal_compositor.py --validate",
+            "onnx_model": f"{_model_id}.onnx",
+            "classes_json": f"{_model_id}-classes.json",
+            "label_field": "label",
+            "hidden_layers": _model_info["hidden_layers"],
+            "is_multi_class": len(_model_info["labels"]) > 2,
+            "class_names": sorted(_model_info["labels"]),
+            "signal_dimension": _model_info["dimension"],
+            "signal_type": _model_info["signal_type"],
+        }
+except ImportError:
+    pass  # signal_protocol not available outside scripts/train/
 
 # ---------------------------------------------------------------------------
 # Lazy-load class names for high-class-count classifiers

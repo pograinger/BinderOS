@@ -1,0 +1,6 @@
+{
+  "0": "ephemeral",
+  "1": "permanent",
+  "2": "short-lived",
+  "3": "stable"
+}
