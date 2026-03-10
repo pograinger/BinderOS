@@ -16,9 +16,13 @@ import type {
   MissingInfoCategory,
 } from '../clarification/types';
 import type { DecomposedStep } from '../decomposition/categories';
+import type { SignalVector } from '../tier2/cognitive-signals';
 
 // Re-export for convenience -- downstream consumers import from here
-export type { ClarificationQuestion, ClarificationAnswer, MissingInfoCategory, DecomposedStep };
+export type { ClarificationQuestion, ClarificationAnswer, MissingInfoCategory, DecomposedStep, SignalVector };
+
+/** Maximum enrichment depth per category before deepening stops. */
+export const MAX_ENRICHMENT_DEPTH = 3;
 
 // --- Enrichment session lifecycle ---
 
@@ -96,4 +100,10 @@ export interface EnrichmentSession {
   graduationProposal: GraduationProposal | null;
   /** Accumulated provenance bitmask tracking all AI models used */
   provenance: number;
+  /** Per-category enrichment depth tracking (key = MissingInfoCategory, value = current depth) */
+  categoryDepth: Record<string, number>;
+  /** Cached cognitive signals for question prioritization */
+  cognitiveSignals: SignalVector | null;
+  /** Whether "ask more" mode is active for a specific category */
+  activeDeepening: MissingInfoCategory | null;
 }

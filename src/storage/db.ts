@@ -29,6 +29,7 @@ import { applyV4Migration } from './migrations/v4';
 import { applyV5Migration } from './migrations/v5';
 import { applyV6Migration } from './migrations/v6';
 import { applyV7Migration } from './migrations/v7';
+import { applyV8Migration } from './migrations/v8';
 import type { EntityRegistryEntry } from '../ai/sanitization/types';
 import type { EntityGraphEntry } from './entity-graph';
 
@@ -119,6 +120,9 @@ export class BinderDB extends Dexie {
 
     // Phase 24: v7 migration — provenance bitmask + maturity fields on atoms/inbox
     applyV7Migration(this);
+
+    // Phase 25: v8 migration — enrichmentDepth for iterative enrichment deepening
+    applyV8Migration(this);
 
     // Seed the four stable sections on first database creation
     this.on('populate', (tx) => {

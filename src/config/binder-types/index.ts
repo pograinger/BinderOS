@@ -16,6 +16,8 @@ export interface BinderTypeConfig {
   supportedAtomTypes: string[];
   questionTemplates: Record<string, { question: string; options: Record<string, string[]> }>;
   backgroundCloudEnrichment: boolean;
+  /** Follow-up question templates for iterative enrichment deepening (Phase 25). */
+  followUpTemplates?: Record<string, { question: string; options: Record<string, string[]> }>;
 }
 
 /** Registry of all binder type configs, keyed by slug. */

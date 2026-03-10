@@ -103,6 +103,9 @@ export function createEnrichmentSession(params: {
     acceptedSteps: [],
     graduationProposal: null,
     provenance,
+    categoryDepth: {},
+    cognitiveSignals: null,
+    activeDeepening: null,
   };
 }
 

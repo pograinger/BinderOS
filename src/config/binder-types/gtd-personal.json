@@ -110,5 +110,92 @@
       }
     }
   },
-  "backgroundCloudEnrichment": false
+  "backgroundCloudEnrichment": false,
+  "followUpTemplates": {
+    "missing-outcome": {
+      "question": "You said the outcome is \"{prior_answer}\". Can you be more specific?",
+      "options": {
+        "task": [
+          "What does done look like for {prior_answer}?",
+          "Who needs to approve {prior_answer}?",
+          "How will you know {prior_answer} succeeded?",
+          "{freeform}"
+        ],
+        "decision": [
+          "What criteria will confirm {prior_answer} was the right call?",
+          "What risks exist if {prior_answer} fails?",
+          "Who is affected by {prior_answer}?",
+          "{freeform}"
+        ],
+        "_default": [
+          "What does done look like for {prior_answer}?",
+          "How will you measure success of {prior_answer}?",
+          "What would make {prior_answer} fail?",
+          "{freeform}"
+        ]
+      }
+    },
+    "missing-next-action": {
+      "question": "You said the next action is \"{prior_answer}\". What comes right after that?",
+      "options": {
+        "task": [
+          "After {prior_answer}, what is the following step?",
+          "Do you need anything before you can do {prior_answer}?",
+          "Who else needs to act after {prior_answer}?",
+          "{freeform}"
+        ],
+        "_default": [
+          "What happens right after {prior_answer}?",
+          "Is there a prerequisite for {prior_answer}?",
+          "Who else is involved in {prior_answer}?",
+          "{freeform}"
+        ]
+      }
+    },
+    "missing-timeframe": {
+      "question": "You said the timeframe is \"{prior_answer}\". Can you narrow that down?",
+      "options": {
+        "_default": [
+          "What specific date or week for {prior_answer}?",
+          "Is {prior_answer} a hard deadline or flexible?",
+          "What happens if {prior_answer} slips?",
+          "{freeform}"
+        ]
+      }
+    },
+    "missing-context": {
+      "question": "You said the context is \"{prior_answer}\". Anything more specific?",
+      "options": {
+        "task": [
+          "What tools or resources do you need at {prior_answer}?",
+          "Is {prior_answer} the only place you can do this?",
+          "What time of day works best at {prior_answer}?",
+          "{freeform}"
+        ],
+        "_default": [
+          "What tools do you need at {prior_answer}?",
+          "Is {prior_answer} the only option?",
+          "What conditions are needed at {prior_answer}?",
+          "{freeform}"
+        ]
+      }
+    },
+    "missing-reference": {
+      "question": "You mentioned \"{prior_answer}\" as a reference. Any related resources?",
+      "options": {
+        "task": [
+          "Are there other documents related to {prior_answer}?",
+          "Who else is connected to {prior_answer}?",
+          "Is {prior_answer} part of a larger project?",
+          "{freeform}"
+        ],
+        "_default": [
+          "What else is related to {prior_answer}?",
+          "Who else should know about {prior_answer}?",
+          "Is there a follow-up for {prior_answer}?",
+          "{freeform}"
+        ]
+      }
+    }
+  }
 }

@@ -160,6 +160,8 @@ export const InboxItemSchema = z.object({
   // Phase 24: enrichment maturity tracking (inbox items only)
   maturityScore: z.number().min(0).max(1).default(0),
   maturityFilled: z.array(z.string()).default([]),
+  // Phase 25: per-category enrichment depth for iterative deepening
+  enrichmentDepth: z.record(z.string(), z.number()).default({}),
 });
 export type InboxItem = z.infer<typeof InboxItemSchema>;
 

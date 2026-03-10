@@ -29,6 +29,9 @@ function makeSession(overrides: Partial<EnrichmentSession> = {}): EnrichmentSess
     acceptedSteps: [],
     graduationProposal: null,
     provenance: OPERATION_IDS.ENRICH,
+    categoryDepth: {},
+    cognitiveSignals: null,
+    activeDeepening: null,
     ...overrides,
   };
 }
