@@ -17,13 +17,49 @@ import type {
   ClarificationQuestion,
   ClarificationAnswer,
   MissingInfoCategory,
+  SignalVector,
   DecomposedStep,
   AcceptedStep,
 } from './types';
+import { MAX_ENRICHMENT_DEPTH } from './types';
+import type { CognitiveModelId } from '../tier2/cognitive-signals';
 import { addProvenance, OPERATION_IDS, MODEL_IDS } from './provenance';
 import { computeMaturity } from './maturity';
 import { parseEnrichment } from '../clarification/enrichment';
-import { generateTemplateOptions } from '../clarification/question-templates';
+import { generateTemplateOptions, generateFollowUpOptions } from '../clarification/question-templates';
+
+// --- Signal-to-category mapping for cognitive priority ordering ---
+
+/** Maps cognitive model IDs to the enrichment categories they inform. */
+const SIGNAL_CATEGORY_MAP: Partial<Record<CognitiveModelId, MissingInfoCategory[]>> = {
+  'priority-matrix': ['missing-outcome', 'missing-timeframe'],
+  'collaboration-type': ['missing-context', 'missing-reference'],
+  'cognitive-load': ['missing-next-action'],
+  'gtd-horizon': ['missing-outcome'],
+  'time-estimate': ['missing-timeframe'],
+  'energy-level': ['missing-context'],
+  'knowledge-domain': ['missing-reference'],
+};
+
+/**
+ * Compute signal-based relevance score for a category.
+ * Higher score = more uncertain signals = more valuable to ask about.
+ */
+function computeSignalRelevance(
+  category: MissingInfoCategory,
+  signals: SignalVector,
+): number {
+  let relevance = 0;
+  for (const [modelId, categories] of Object.entries(SIGNAL_CATEGORY_MAP)) {
+    if (categories.includes(category)) {
+      const signal = signals.signals[modelId as CognitiveModelId];
+      if (signal) {
+        relevance += 1 - signal.confidence;
+      }
+    }
+  }
+  return relevance;
+}
 
 // --- Category key mappings ---
 
@@ -51,8 +87,13 @@ const ALL_CATEGORIES: MissingInfoCategory[] = [
  * Create a new enrichment session for an inbox item.
  *
  * Handles partial resume by detecting existing enrichments and skipping
- * already-answered categories. Starts in 'decompose-offer' if no questions
- * are needed.
+ * already-answered categories. When depthMap is provided, generates follow-up
+ * questions for answered categories that haven't reached MAX_ENRICHMENT_DEPTH.
+ * When cognitiveSignals are provided, reorders questions by signal relevance.
+ *
+ * Backward-compatible: without depthMap, answered categories are skipped
+ * (treated as maxed out). Only when depthMap is explicitly provided does
+ * iterative deepening activate.
  */
 export function createEnrichmentSession(params: {
   inboxItemId: string;
@@ -60,6 +101,8 @@ export function createEnrichmentSession(params: {
   atomType?: AtomType;
   existingEnrichments?: Record<string, string>;
   missingCategories?: MissingInfoCategory[];
+  depthMap?: Record<string, number>;
+  cognitiveSignals?: SignalVector | null;
 }): EnrichmentSession {
   const {
     inboxItemId,
@@ -67,24 +110,50 @@ export function createEnrichmentSession(params: {
     atomType,
     existingEnrichments,
     missingCategories,
+    depthMap,
+    cognitiveSignals,
   } = params;
 
   // Parse content to detect any inline enrichments
   const parsed = parseEnrichment(content);
   const allEnrichments = { ...parsed.enrichments, ...existingEnrichments };
-
-  // Determine which categories are truly missing (not already enriched)
   const enrichedDisplayKeys = new Set(Object.keys(allEnrichments));
-  const categoriesToAsk = (missingCategories ?? deriveMissingCategories(allEnrichments))
-    .filter((cat) => {
-      const displayKey = CATEGORY_DISPLAY_KEYS[cat];
-      return !enrichedDisplayKeys.has(displayKey);
-    });
 
-  // Generate questions for unanswered categories
-  const questions: ClarificationQuestion[] = categoriesToAsk.map((cat) =>
-    generateTemplateOptions(cat, atomType ?? 'task', {}, undefined),
-  );
+  // Determine the full list of categories to consider
+  const candidateCategories = missingCategories ?? ALL_CATEGORIES;
+
+  // Whether iterative deepening is active (depthMap explicitly provided)
+  const deepeningActive = depthMap !== undefined;
+
+  // Generate questions: first-pass for unanswered, follow-ups for answered (if deepening active)
+  const questions: ClarificationQuestion[] = [];
+
+  for (const cat of candidateCategories) {
+    const displayKey = CATEGORY_DISPLAY_KEYS[cat];
+    const hasAnswer = enrichedDisplayKeys.has(displayKey);
+    const priorAnswer = hasAnswer ? allEnrichments[displayKey] : undefined;
+    const currentDepth = depthMap?.[cat] ?? (deepeningActive ? 0 : MAX_ENRICHMENT_DEPTH);
+
+    if (!hasAnswer) {
+      // First-pass question for unanswered category
+      questions.push(generateTemplateOptions(cat, atomType ?? 'task', {}, undefined));
+    } else if (currentDepth < MAX_ENRICHMENT_DEPTH && priorAnswer) {
+      // Follow-up question for answered category that hasn't maxed out
+      questions.push(generateFollowUpOptions(cat, atomType ?? 'task', priorAnswer, currentDepth + 1, {}));
+    }
+    // else: maxed out or no depthMap — skip
+  }
+
+  // Apply signal-guided priority ordering if cognitive signals provided
+  if (cognitiveSignals) {
+    questions.sort((a, b) => {
+      const relevanceA = computeSignalRelevance(a.category, cognitiveSignals);
+      const relevanceB = computeSignalRelevance(b.category, cognitiveSignals);
+      if (relevanceA !== relevanceB) return relevanceB - relevanceA; // Higher relevance first
+      // Tie-breaker: first-pass before follow-ups (first-pass have no prior answer reference)
+      return 0;
+    });
+  }
 
   // If no questions needed, start at decompose-offer
   const phase: EnrichmentPhase = questions.length === 0 ? 'decompose-offer' : 'questions';
@@ -103,8 +172,8 @@ export function createEnrichmentSession(params: {
     acceptedSteps: [],
     graduationProposal: null,
     provenance,
-    categoryDepth: {},
-    cognitiveSignals: null,
+    categoryDepth: depthMap ? { ...depthMap } : {},
+    cognitiveSignals: cognitiveSignals ?? null,
     activeDeepening: null,
   };
 }
@@ -190,7 +259,9 @@ export function advanceSession(
 /**
  * Apply a clarification answer to the session (immutable update).
  *
- * Records the answer, updates provenance, and advances the question index.
+ * Records the answer, updates provenance, advances the question index,
+ * increments categoryDepth, and replaces any existing answer for the same
+ * category (follow-up answers replace, not duplicate).
  */
 export function applyAnswer(
   session: EnrichmentSession,
@@ -203,11 +274,26 @@ export function applyAnswer(
     provenance = addProvenance(provenance, MODEL_IDS.MISSING_INFO);
   }
 
+  // Replace existing answer for same category, or append if new
+  const existingIdx = session.answers.findIndex((a) => a.category === answer.category);
+  let updatedAnswers: ClarificationAnswer[];
+  if (existingIdx >= 0) {
+    updatedAnswers = [...session.answers];
+    updatedAnswers[existingIdx] = answer;
+  } else {
+    updatedAnswers = [...session.answers, answer];
+  }
+
+  // Increment categoryDepth for the answered category
+  const updatedDepth = { ...session.categoryDepth };
+  updatedDepth[answer.category] = (updatedDepth[answer.category] ?? 0) + 1;
+
   return {
     ...session,
-    answers: [...session.answers, answer],
+    answers: updatedAnswers,
     currentQuestionIndex: session.currentQuestionIndex + 1,
     provenance,
+    categoryDepth: updatedDepth,
   };
 }
 
