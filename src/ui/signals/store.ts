@@ -618,9 +618,86 @@ const [graduationProposal, setGraduationProposal] = createSignal<GraduationPropo
 export { enrichmentSession, graduationProposal };
 
 /**
+ * Build a T3EnrichmentContext from the current session and inbox item.
+ * Pure helper — extracts prior Q&A, depth, and signals from session state.
+ */
+function buildT3Context(
+  session: EnrichmentSession,
+  item: { content: string; type?: string },
+  focusCategory: MissingInfoCategory | null = null,
+): T3EnrichmentContext {
+  const priorQA: T3EnrichmentContext['priorQA'] = session.answers
+    .filter(a => !a.wasSkipped)
+    .map(a => ({
+      category: a.category,
+      question: session.questions.find(q => q.category === a.category)?.questionText ?? '',
+      answer: a.wasFreeform ? (a.freeformText ?? '') : (a.selectedOption ?? ''),
+    }));
+
+  return {
+    itemContent: item.content,
+    atomType: item.type ?? 'task',
+    priorQA,
+    categoryDepth: session.categoryDepth,
+    cognitiveSignals: session.cognitiveSignals,
+    focusCategory,
+  };
+}
+
+/**
+ * Attempt T3 question generation and replace the current question in the session.
+ * If T3 succeeds, swaps the question at the given index. If it fails, clears isGenerating.
+ * Returns immediately — the replacement happens asynchronously.
+ */
+function attemptT3Replace(
+  session: EnrichmentSession,
+  item: { content: string; type?: string },
+  questionIndex: number,
+  focusCategory: MissingInfoCategory | null = null,
+): void {
+  if (!isT3Available()) {
+    // No adapter — clear generating flag immediately
+    setEnrichmentSession({ ...session, isGenerating: false });
+    return;
+  }
+
+  const ctx = buildT3Context(session, item, focusCategory);
+
+  void generateT3Question(ctx).then(t3Question => {
+    const current = enrichmentSession();
+    if (!current || current.inboxItemId !== session.inboxItemId) return;
+
+    if (t3Question) {
+      // T3 succeeded — replace the question at the target index
+      const updatedQuestions = [...current.questions];
+      if (questionIndex < updatedQuestions.length) {
+        updatedQuestions[questionIndex] = t3Question;
+      } else {
+        updatedQuestions.push(t3Question);
+      }
+      setEnrichmentSession({
+        ...current,
+        questions: updatedQuestions,
+        isGenerating: false,
+      });
+    } else {
+      // T3 returned null — keep template question, clear loading
+      setEnrichmentSession({ ...current, isGenerating: false });
+    }
+  }).catch(() => {
+    const current = enrichmentSession();
+    if (current) {
+      setEnrichmentSession({ ...current, isGenerating: false });
+    }
+  });
+}
+
+/**
  * Start enrichment for an inbox item.
  * Creates a session via the enrichment engine with the item's content and existing enrichments.
  * Passes depthMap from the item's enrichmentDepth to enable iterative deepening.
+ * When T3 is available, immediately attempts to replace the first template question
+ * with a contextual LLM-generated question.
  */
 export function startEnrichment(inboxItemId: string): void {
   const item = state.inboxItems.find((i) => i.id === inboxItemId);
@@ -635,19 +712,41 @@ export function startEnrichment(inboxItemId: string): void {
     depthMap: item.enrichmentDepth ?? {},
     cognitiveSignals: null, // Future: pass cached cognitive signals when available
   });
-  setEnrichmentSession(session);
+
+  // If T3 is available and there are questions, attempt to replace the first one
+  if (isT3Available() && session.questions.length > 0) {
+    const withGenerating = { ...session, isGenerating: true };
+    setEnrichmentSession(withGenerating);
+    attemptT3Replace(withGenerating, item, 0);
+  } else {
+    setEnrichmentSession(session);
+  }
 }
 
 /**
  * Handle a clarification answer during enrichment.
- * Applies the answer, updates maturity, and persists to Dexie immediately.
+ * Applies the answer, updates maturity, persists to Dexie immediately,
+ * and attempts T3 generation for the next question when available.
  */
 export async function handleEnrichmentAnswer(answer: ClarificationAnswer): Promise<void> {
   const session = enrichmentSession();
   if (!session) return;
 
   const updated = engineApplyAnswer(session, answer);
-  setEnrichmentSession(updated);
+
+  // If there's a next template question and T3 is available, attempt to replace it
+  const nextIdx = updated.currentQuestionIndex;
+  const hasMoreQuestions = nextIdx < updated.questions.length;
+  if (hasMoreQuestions && isT3Available()) {
+    const withGenerating = { ...updated, isGenerating: true };
+    setEnrichmentSession(withGenerating);
+    const item = state.inboxItems.find((i) => i.id === session.inboxItemId);
+    if (item) {
+      attemptT3Replace(withGenerating, item, nextIdx);
+    }
+  } else {
+    setEnrichmentSession(updated);
+  }
 
   // Compute maturity from all answers so far
   const enrichments: Record<string, string> = {};

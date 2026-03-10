@@ -186,6 +186,9 @@ export function EnrichmentWizard(props: EnrichmentWizardProps) {
   };
 
   return (
+    <>
+    {/* Inject spinner keyframes once */}
+    <style>{`@keyframes enrichment-spin { to { transform: rotate(360deg); } }`}</style>
     <div
       class="enrichment-wizard"
       onPointerDown={stopSwipe}
@@ -284,8 +287,37 @@ export function EnrichmentWizard(props: EnrichmentWizardProps) {
         </For>
       </div>
 
+      {/* Loading indicator while T3 generates a contextual question */}
+      <Show when={props.session.phase === 'questions' && props.session.isGenerating}>
+        <div
+          class="enrichment-wizard-generating"
+          style={{
+            display: 'flex',
+            'align-items': 'center',
+            gap: '8px',
+            padding: '12px 0',
+            color: 'var(--text-2, #999)',
+            'font-size': '13px',
+            'font-style': 'italic',
+          }}
+        >
+          <span
+            style={{
+              display: 'inline-block',
+              width: '14px',
+              height: '14px',
+              border: '2px solid var(--surface-3, #444)',
+              'border-top-color': 'var(--accent, #58a6ff)',
+              'border-radius': '50%',
+              animation: 'enrichment-spin 0.8s linear infinite',
+            }}
+          />
+          Thinking of the right question...
+        </div>
+      </Show>
+
       {/* Questions phase */}
-      <Show when={props.session.phase === 'questions' && currentQuestion()}>
+      <Show when={props.session.phase === 'questions' && currentQuestion() && !props.session.isGenerating}>
         <div
           class="enrichment-wizard-question"
           style={{ transition: 'opacity 0.2s ease' }}
@@ -724,5 +756,6 @@ export function EnrichmentWizard(props: EnrichmentWizardProps) {
         </div>
       </Show>
     </div>
+    </>
   );
 }

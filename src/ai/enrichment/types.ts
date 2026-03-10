@@ -109,4 +109,6 @@ export interface EnrichmentSession {
   cognitiveSignals: SignalVector | null;
   /** Whether "ask more" mode is active for a specific category */
   activeDeepening: MissingInfoCategory | null;
+  /** Whether T3 (LLM) is currently generating the next question */
+  isGenerating: boolean;
 }

@@ -176,6 +176,7 @@ export function createEnrichmentSession(params: {
     categoryDepth: depthMap ? { ...depthMap } : {},
     cognitiveSignals: cognitiveSignals ?? null,
     activeDeepening: null,
+    isGenerating: false,
   };
 }
 
