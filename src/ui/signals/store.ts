@@ -609,6 +609,8 @@ import { parseEnrichment, appendEnrichment } from '../../ai/clarification/enrich
 import { computeMaturity } from '../../ai/enrichment/maturity';
 import { TEMPLATE_TIER_COUNT } from '../../ai/enrichment/types';
 import { selectSemanticFollowUp } from '../../ai/enrichment/semantic-selector';
+import { generateT3Question, isT3Available } from '../../ai/enrichment/t3-enrichment';
+import type { T3EnrichmentContext } from '../../ai/enrichment/t3-enrichment';
 
 const [enrichmentSession, setEnrichmentSession] = createSignal<EnrichmentSession | null>(null);
 const [graduationProposal, setGraduationProposal] = createSignal<GraduationProposal | null>(null);
