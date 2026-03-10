@@ -260,7 +260,7 @@ Plans:
   7. Model provenance 32-bit bitmask on every atom/inbox item tracks which AI models contributed
   8. 3-Ring stacked ring SVG indicator on every item showing tier provenance; tap reveals model names
   9. Tier 2B handler stub in pipeline for WASM LLM tasks; falls back to T2A templates on unsupported devices
-**Plans:** 6 plans
+**Plans:** 1/6 plans executed
 
 Plans:
 - [ ] 24-01-PLAN.md — Data model foundation: enrichment types, provenance bitmask, maturity scoring, quality gate, Dexie v7 migration (ENRICH-03, ENRICH-04, ENRICH-06, ENRICH-07, ENRICH-10)
