@@ -79,7 +79,7 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 - [x] **ENRICH-06**: Quality gate for atom creation: composite score from tier source + completeness + user content; soft gate with warning below minimum
 - [x] **ENRICH-07**: Model provenance bitmask (32-bit) stored per atom/inbox item tracking which AI models contributed
 - [x] **ENRICH-08**: 3-Ring stacked ring SVG indicator on every item: inner=T1, middle=T2 (ONNX+WASM segments), outer=T3; tap reveals model names
-- [ ] **ENRICH-09**: Tier 2B handler stub registered in pipeline for WASM LLM tasks (enrich-questions, enrich-options, decompose-contextual, synthesize-enrichment); falls back to T2A on unsupported devices
+- [x] **ENRICH-09**: Tier 2B handler stub registered in pipeline for WASM LLM tasks (enrich-questions, enrich-options, decompose-contextual, synthesize-enrichment); falls back to T2A on unsupported devices
 - [x] **ENRICH-10**: Dexie v7 migration adds provenance and maturity fields; enrichment state machine orchestrates unified clarification+decomposition flow
 
 ## Future Requirements
@@ -166,7 +166,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENRICH-06 | Phase 24 | Complete |
 | ENRICH-07 | Phase 24 | Complete |
 | ENRICH-08 | Phase 24 | Complete |
-| ENRICH-09 | Phase 24 | Pending |
+| ENRICH-09 | Phase 24 | Complete |
 | ENRICH-10 | Phase 24 | Complete |
 
 **Coverage:**

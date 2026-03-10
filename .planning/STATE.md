@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 ## Current Position
 
 Phase: 24 (Unified Enrichment Wizard)
-Plan: 02 complete
+Plan: 04 complete
 Status: In Progress
-Last activity: 2026-03-10 — Phase 24 Plan 02 complete (visual indicator components)
+Last activity: 2026-03-10 — Phase 24 Plan 04 complete (Tier 2B handler + enrichment task types)
 
 Progress: [█████████░] 89%
 
@@ -70,6 +70,7 @@ Progress: [█████████░] 89%
 | Phase 23 P03 | 5 | 2 tasks | 2 files |
 | Phase 24 P02 | 2 | 2 tasks | 2 files |
 | Phase 24 P01 | 6 | 2 tasks | 14 files |
+| Phase 24 P04 | 2 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -125,6 +126,8 @@ Recent decisions affecting v4.0:
 - [Phase 24]: SVG numeric attributes passed as String() for SolidJS JSX type compatibility
 - [Phase 24]: Provenance uses 32-bit bitmask: bits 0-7 for 8 model IDs, bits 8-14 for 7 operation types
 - [Phase 24]: Quality gate weights: tier source 0.4, maturity 0.4, user content 0.2; level thresholds at 0.7/0.5/0.3
+- [Phase 24]: Pipeline dedup by tier+name (not tier alone) to support T2A+T2B coexistence at tier 2
+- [Phase 24]: T2B returns confidence:0 when no WASM worker — natural fallback, no special error path
 
 ### Phase Ordering Note
 
@@ -150,6 +153,6 @@ Phase 15 (Device-Adaptive LLM) is independent of Phases 13-14 and can execute on
 
 ## Session Continuity
 
-Last session: 2026-03-10T00:20:04.660Z
-Stopped at: Completed 24-01-PLAN.md
+Last session: 2026-03-10T00:23:32Z
+Stopped at: Completed 24-04-PLAN.md
 Resume file: None
