@@ -105,11 +105,11 @@ export function generateFollowUpOptions(
   binderType?: string,
 ): ClarificationQuestion {
   const config = getBinderConfig(binderType);
-  const templateEntry = config.followUpTemplates?.[category];
+  const followUp = config.followUpTemplates?.[category];
 
   const allSlots = { ...slots, prior_answer: priorAnswer };
 
-  if (!templateEntry) {
+  if (!followUp) {
     // Generic fallback when no followUpTemplates configured
     return {
       category,
@@ -120,6 +120,18 @@ export function generateFollowUpOptions(
       ],
       categoryLabel: CATEGORY_LABELS[category] ?? category,
     };
+  }
+
+  // Support depth-tiered templates: if `tiers` array exists, pick by depth index.
+  // depth=1 → tiers[0], depth=2 → tiers[1], etc. Falls back to last tier if depth exceeds array.
+  // Legacy format (single question/options) used when no tiers array present.
+  let templateEntry: { question: string; options: Record<string, string[]> };
+
+  if (Array.isArray(followUp.tiers) && followUp.tiers.length > 0) {
+    const tierIndex = Math.min(depth - 1, followUp.tiers.length - 1);
+    templateEntry = followUp.tiers[tierIndex];
+  } else {
+    templateEntry = followUp as { question: string; options: Record<string, string[]> };
   }
 
   // Select options: prefer atom-type-specific, fall back to _default
