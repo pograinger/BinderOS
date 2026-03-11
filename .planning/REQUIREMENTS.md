@@ -231,12 +231,32 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENRICH-08 | Phase 24 | Complete |
 | ENRICH-09 | Phase 24 | Complete |
 | ENRICH-10 | Phase 24 | Complete |
+| SIDE-01 | Phase 26 | Pending |
+| SIDE-02 | Phase 26 | Pending |
+| SIDE-03 | Phase 26 | Pending |
+| SIDE-04 | Phase 26 | Pending |
+| ENTR-01 | Phase 26 | Pending |
+| ENTR-02 | Phase 26 | Pending |
+| ENTD-01 | Phase 27 | Pending |
+| ENTD-02 | Phase 27 | Pending |
+| ENTD-03 | Phase 27 | Pending |
+| ENTR-03 | Phase 27 | Pending |
+| ENTR-04 | Phase 27 | Pending |
+| ENTR-05 | Phase 27 | Pending |
+| RELI-01 | Phase 28 | Pending |
+| RELI-02 | Phase 28 | Pending |
+| RELI-03 | Phase 28 | Pending |
+| ENTC-01 | Phase 29 | Pending |
+| ENTC-02 | Phase 29 | Pending |
+| ENTC-03 | Phase 29 | Pending |
+| ENTC-04 | Phase 29 | Pending |
+| ENTC-05 | Phase 29 | Pending |
 
 **Coverage:**
-- v4.0 requirements: 48 total
-- Mapped to phases: 48
+- v4.0 requirements: 48 total, 48 mapped
+- v5.0 requirements: 20 total, 20 mapped
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-05*
-*Last updated: 2026-03-09 after Phase 24 planning — 48/48 requirements mapped*
+*Last updated: 2026-03-11 — v5.0 roadmap created, 20/20 requirements mapped to Phases 26-29*

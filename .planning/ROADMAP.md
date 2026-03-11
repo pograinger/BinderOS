@@ -5,7 +5,8 @@
 - [x] **v1.0** — Foundation + Compute Engine + Pages/Navigation/Search (45/45 requirements, 11 plans, shipped 2026-02-22) → [Archive](.planning/milestones/v1.0-ROADMAP.md)
 - [x] **v2.0 AI Orchestration** — Phases 4-7 (30/30 requirements, 14 plans, shipped 2026-03-03) → [Archive](.planning/milestones/v2.0-ROADMAP.md)
 - [x] **v3.0 Local AI + Polish** — Phases 9-11 (18/18 requirements, 8 plans, shipped 2026-03-05) → [Archive](.planning/milestones/v3.0-ROADMAP.md)
-- 🚧 **v4.0 Device-Adaptive AI** — Phases 12-16 (18 requirements, in progress)
+- [x] **v4.0 Device-Adaptive AI** — Phases 12-25 (48/48 requirements, 32 plans, shipped 2026-03-10) → [Archive](.planning/milestones/v4.0-ROADMAP.md)
+- 🚧 **v5.0 Entity Intelligence & Knowledge Graph** — Phases 26-29 (20 requirements, in progress)
 
 ## Phases
 
@@ -43,89 +44,87 @@ See [Archive](.planning/milestones/v3.0-ROADMAP.md) for full detail.
 
 </details>
 
-### v4.0 Device-Adaptive AI (In Progress)
+<details>
+<summary>v4.0 Device-Adaptive AI (Phases 12-25) — SHIPPED 2026-03-10</summary>
 
-**Milestone Goal:** Restructure AI tiers for device-adaptive inference — local LLMs on every device, expanded ONNX classifiers, multi-provider cloud, and a privacy gate — so the app is fully functional offline on any device.
+See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 
-- [x] **Phase 12: Template Engine** - Offline structured text generation for reviews, compression explanations, and GTD flow prompts without any LLM call (completed 2026-03-06)
-- [x] **Phase 13: Multi-Provider Cloud** - Refactor CloudAdapter to provider-agnostic shell; add OpenAI, Grok, and corporate endpoints via openai SDK (completed 2026-03-06)
-- [ ] **Phase 14: Sanitization Classifier** - ONNX NER privacy gate in dedicated sanitization worker; Python training pipeline; branded SanitizedPrompt type enforcing execution order
-- [ ] **Phase 15: Device-Adaptive Local LLM** - DeviceAdapter selects WebLLM (desktop) or WASM LLM (mobile); wllama integration; iOS explicitly excluded; adaptive confidence thresholds
-- [ ] **Phase 16: ONNX Section Routing** - ONNX classifier replaces centroid fallback for section routing; Python training pipeline; classifier-worker.ts for memory isolation
+- [x] **Phase 12: Template Engine** - Offline structured text generation for reviews, compression, GTD prompts (3/3 plans, 2026-03-06)
+- [x] **Phase 13: Multi-Provider Cloud** - OpenAI, Grok, custom endpoints via provider registry (2/2 plans, 2026-03-06)
+- [x] **Phase 14: Sanitization Classifier** - ONNX NER privacy gate, Python training pipeline, pre-send approval (3/3 plans)
+- [x] **Phase 15: Device-Adaptive Local LLM** - WebLLM/WASM auto-selection, download progress, adaptive thresholds
+- [x] **Phase 16: ONNX Section Routing** - ONNX classifier replaces centroid fallback for section routing
+- [x] **Phase 17: Tier 2 GTD classification models** - 4 GTD ONNX classifiers (3/3 plans)
+- [x] **Phase 18: Tier 2 next action decomposition** - ONNX pattern classifier + slot-filled templates (3/3 plans)
+- [x] **Phase 19: Tier 2 clarification wizard** - 6 ONNX binary classifiers, completeness gate, entity graph seeding (5/5 plans)
+- [x] **Phase 20: Multi-atom context engine** - Context gathering for sanitization and prompt assembly
+- [x] **Phase 21: Cloud packet sanitization pipeline** - Structured sanitized cloud packets
+- [x] **Phase 22: Cloud reasoning integration** - Cloud response validation, entity re-injection, GTD rules
+- [x] **Phase 23: Cloud-tutored model reinforcement** - Adversarial training, gap analysis, distillation (3/3 plans)
+- [x] **Phase 24: Unified Enrichment Wizard** - Question-first flow, maturity model, graduation, provenance (7 plans)
+- [x] **Phase 25: Iterative Enrichment Deepening** - Follow-up questions, cognitive signal priority, depth tracking (3/3 plans)
+
+</details>
+
+### v5.0 Entity Intelligence & Knowledge Graph (In Progress)
+
+**Milestone Goal:** Local AI agents that detect entities (people, places, orgs) from raw content, build a persistent entity registry with relationship inference, and feed entity context into enrichment and GTD processing — so the system "knows" the user's world through privacy-safe local-only intelligence.
+
+- [ ] **Phase 26: Intelligence Sidecar + Schema** - Dexie migration with atomIntelligence sidecar, entity/relation tables, enrichment refactor to structured records, smart links field
+- [ ] **Phase 27: Entity Detection + Registry** - Sanitization worker extended for entity detection, detection lifecycle, entity-atom linking, dedup/normalization, entity badges
+- [ ] **Phase 28: Relationship Inference** - T1 keyword pattern engine, cross-item co-occurrence accumulation, evidence-based confidence scoring
+- [ ] **Phase 29: Entity Intelligence Consumers** - Entity-aware enrichment, user correction UX, GTD context suggestions, recency decay, entity timeline
 
 ## Phase Details
 
-### Phase 12: Template Engine
-**Goal**: Users receive review briefings, compression explanations, and GTD flow prompts generated from entropy signals without triggering any LLM call
-**Depends on**: Nothing (first v4.0 phase)
-**Requirements**: TMPL-01, TMPL-02, TMPL-03
+### Phase 26: Intelligence Sidecar + Schema
+**Goal**: All AI-generated knowledge lives in a structured sidecar table separate from atom content, with entity and relationship tables ready for the knowledge graph, and enrichment answers rendered from structured records instead of parsed content text
+**Depends on**: Phase 25 (v4.0 enrichment architecture)
+**Requirements**: SIDE-01, SIDE-02, SIDE-03, SIDE-04, ENTR-01, ENTR-02
 **Success Criteria** (what must be TRUE):
-  1. User opens weekly review on a device with no AI enabled and receives a structured briefing populated with real stale task counts, section names, and entropy scores — not a blank state
-  2. User views a compression candidate and sees an explanation citing the atom's staleness age and last-accessed date, generated with zero network requests
-  3. User enters GTD Get Clear flow and all prompt cards render with context-aware questions derived from their inbox count and section load — without an LLM call
-  4. App running fully offline on mobile produces identical review briefing output to online mode (no degraded fallback message for structural content)
-**Plans**: 3 plans
-Plans:
-- [x] 12-01-PLAN.md — Template engine module + briefing integration (TMPL-01)
-- [x] 12-02-PLAN.md — Compression + GTD flow template wiring (TMPL-02, TMPL-03)
-- [ ] 12-03-PLAN.md — Gap closure: fix derivePatternSteps per-section empty detection (TMPL-03)
-
-### Phase 13: Multi-Provider Cloud
-**Goal**: Users can send AI requests to OpenAI, Grok, or a custom corporate endpoint using their own API keys, with all safety gates preserved in one place and provider identity shown in the communication log
-**Depends on**: Phase 12
-**Requirements**: CLOUD-01, CLOUD-02, CLOUD-03, CLOUD-04
-**Success Criteria** (what must be TRUE):
-  1. User enters an OpenAI API key in settings and AI requests route to gpt-4o-mini; pre-send approval modal displays "OpenAI" as the provider before dispatch
-  2. User configures Grok via xAI API key and receives responses from Grok; communication log entry shows "Grok" as the provider
-  3. User enters a custom base URL (Ollama, LM Studio, Azure) with a Bearer token and AI requests route to that endpoint without code changes
-  4. Communication log shows which provider handled each request; switching providers does not require app restart
-  5. Anthropic adapter continues working identically — refactor is non-breaking for existing users
-**Plans**: 2 plans
-Plans:
-- [ ] 13-01-PLAN.md — Provider registry, adapters, key vault, and store factory (CLOUD-01, CLOUD-02, CLOUD-03)
-- [ ] 13-02-PLAN.md — Multi-provider UI, settings panel, status bar, and communication log (CLOUD-01, CLOUD-02, CLOUD-03, CLOUD-04)
-
-### Phase 14: Sanitization Classifier
-**Goal**: All atom content is checked for sensitive entities by an ONNX NER classifier before the pre-send approval modal appears, and users can see exactly what was redacted before approving cloud dispatch
-**Depends on**: Phase 13 (refactored CloudAdapter safety shell)
-**Requirements**: SNTZ-01, SNTZ-02, SNTZ-03
-**Success Criteria** (what must be TRUE):
-  1. User initiates a cloud AI request containing a name and a financial reference; the pre-send modal shows a diff with those entities redacted before the user can approve
-  2. Python training pipeline at scripts/train/train-sanitizer.py runs end-to-end and produces a sanitize-check.onnx model that passes the recall >= 0.85 gate on the soft-PII test set
-  3. Sanitization runs in under 50ms for a typical atom (no perceptible delay between tapping the AI action and the pre-send modal appearing)
-  4. Cloud API never receives unsanitized content — the TypeScript compiler rejects any code path that constructs a log entry before SanitizedPrompt is produced
-**Plans**: 3 plans
-Plans:
-- [ ] 14-01-PLAN.md — Python NER training pipeline: synthetic data, DistilBERT fine-tuning, ONNX export (SNTZ-02)
-- [ ] 14-02-PLAN.md — TypeScript sanitization core: branded types, NER worker, regex, entity registry, cloud adapter wiring (SNTZ-01)
-- [ ] 14-03-PLAN.md — Pre-send modal entity map UI, restore toggles, and end-to-end verification (SNTZ-03)
-
-### Phase 15: Device-Adaptive Local LLM
-**Goal**: Users on any device (desktop with WebGPU, mobile without WebGPU, iOS) get the appropriate local AI mode selected automatically, with a visible indication of which mode is active and a download-with-progress flow for the mobile WASM model
-**Depends on**: Phase 12 (independent of 13-14; can run in parallel with Phase 14 on separate branch)
-**Requirements**: DLLM-01, DLLM-02, DLLM-03, DLLM-04, DLLM-05
-**Success Criteria** (what must be TRUE):
-  1. User on a desktop with WebGPU enables local AI and the app loads WebLLM (GPU mode) automatically; the settings panel displays "Local AI: GPU mode (~2.2GB)"
-  2. User on an Android device without WebGPU enables local AI and the app loads the WASM LLM (wllama + SmolLM2-360M-Q4) with a download progress indicator; model persists via Cache API and does not re-download on next launch
-  3. User on iOS enables local AI and the app displays "Lightweight mode — using offline classifiers + cloud" with no WASM LLM download attempted
-  4. On a mobile device, Tier 2->3 confidence thresholds are raised so that fewer requests escalate to LLM inference, reducing latency on slower WASM execution
-  5. Integrated GPU machine that fails the VRAM sentinel check falls back to WASM mode within 30 seconds rather than hanging in "loading" state indefinitely
+  1. Enrichment Q&A pairs for an atom are stored in `atomIntelligence.enrichment[]` as structured records, not appended to atom.content as text lines
+  2. User opens an atom that was enriched before v5.0 and sees their prior enrichment answers rendered correctly from the migrated sidecar data
+  3. User pastes a URL into an atom and sees it stored as a structured smart link with title, summary, and resolution metadata in `atom.links[]`
+  4. Dexie schema includes `entities` table with normalization, alias tracking, mention counts, and CRDT-ready version fields
+  5. Dexie schema includes `entityRelations` table with typed edges, source attribution, and confidence scores
 **Plans**: TBD
 
-### Phase 16: ONNX Section Routing
-**Goal**: Section routing uses a trained ONNX classifier instead of the centroid fallback, working reliably for new users who have no atom history, with the new model loaded in a dedicated classifier worker to preserve memory budget on mobile
-**Depends on**: Phase 14 (worker architecture from sanitization phase establishes classifier-worker.ts pattern)
-**Requirements**: ONNX-01, ONNX-02, ONNX-03
+### Phase 27: Entity Detection + Registry
+**Goal**: The system detects people, places, and organizations in atom content using the existing NER model, accumulates them into a deduplicated entity registry, and shows entity badges on atom detail views
+**Depends on**: Phase 26 (sidecar and entity tables must exist)
+**Requirements**: ENTD-01, ENTD-02, ENTD-03, ENTR-03, ENTR-04, ENTR-05
 **Success Criteria** (what must be TRUE):
-  1. New user with zero atoms triages their first inbox item and receives a section suggestion from the ONNX classifier (not a centroid fallback or blank); section suggestions match PARA semantics with accuracy comparable to the v3.0 type classifier
-  2. Python training pipeline at scripts/train/train-section-router.py runs end-to-end and produces a section-router.onnx model following the same pattern as the v3.0 type classifier pipeline
-  3. On a mobile device, the section routing ONNX model loads in classifier-worker.ts (not embedding-worker.ts); embedding worker heap stays under its v3.0 baseline
+  1. User creates or updates an atom mentioning "Sarah Chen" and the system detects it as a PER entity within the existing triage lifecycle — no new worker, no perceptible delay
+  2. NER results are stored in `atomIntelligence.entityMentions` as structured records with entity text, type, span positions, and confidence
+  3. "Sarah Chen" and "Dr. Chen" appearing in different atoms resolve to the same entity in the registry via normalized text matching and alias resolution
+  4. User opens atom detail view and sees entity badges/chips for detected people, places, and organizations
+  5. Entity-atom links exist in the entity graph so that looking up an entity returns all atoms that mention it
 **Plans**: TBD
+
+### Phase 28: Relationship Inference
+**Goal**: The system infers relationships between entities using keyword patterns and co-occurrence evidence, building a relationship graph that grows more confident as more atoms are processed
+**Depends on**: Phase 27 (entities must be accumulated before relationships can be inferred)
+**Requirements**: RELI-01, RELI-02, RELI-03
+**Success Criteria** (what must be TRUE):
+  1. User creates an atom "Pam's anniversary is next month" and the system infers a spouse relationship between "Pam" and the user via the "anniversary" keyword pattern at confidence 0.3
+  2. After 3+ atoms mention "Pam" alongside family-related keywords, the spouse relationship confidence increases based on accumulated evidence
+  3. Co-occurrence counts for entity pairs are tracked in memory and periodically flushed to Dexie, with sentence-level proximity checks preventing false positives from unrelated entities in the same atom
+**Plans**: TBD
+
+### Phase 29: Entity Intelligence Consumers
+**Goal**: Entity knowledge feeds into enrichment questions, GTD context suggestions, and user correction UX — making the system visibly smarter about the user's world while keeping the user in control of entity relationships
+**Depends on**: Phase 28 (relationship inference provides the entity context that consumers display)
+**Requirements**: ENTC-01, ENTC-02, ENTC-03, ENTC-04, ENTC-05
+**Success Criteria** (what must be TRUE):
+  1. User enriches an atom mentioning "Sarah" and the enrichment question references her known relationship — "You mentioned Sarah (your wife) — is this related to your anniversary planning?"
+  2. User sees an inline entity card for "Dr. Chen" showing the inferred "healthcare-provider" relationship, taps "wrong", selects "dentist", and the correction is stored as ground truth (confidence 1.0) overriding all inference
+  3. User triages an atom "Meeting with Dr. Chen" and sees @health suggested as a GTD context tag, derived from the entity's healthcare-provider relationship
+  4. Entity relevance scores decay over time with ~30 day half-life — entities not mentioned recently rank lower in context injection
+  5. User taps an entity badge and sees a timeline view of all atoms mentioning that entity, ordered chronologically
 
 ## Progress
 
-**Execution Order:** 12 → 13 → 14 → 15 → 16
-Note: Phase 15 is independent of 13-14 and may execute in parallel with Phase 14 on a separate branch.
+**Execution Order:** 26 → 27 → 28 → 29
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -139,154 +138,21 @@ Note: Phase 15 is independent of 13-14 and may execute in parallel with Phase 14
 | 9. Python Training Infrastructure | v3.0 | 2/2 | Complete | 2026-03-04 |
 | 10. Browser Inference Integration | v3.0 | 3/3 | Complete | 2026-03-04 |
 | 11. Tech Debt, Settings + Correction Utility | v3.0 | 3/3 | Complete | 2026-03-05 |
-| 12. Template Engine | 3/3 | Complete    | 2026-03-06 | 2026-03-06 |
-| 13. Multi-Provider Cloud | 2/2 | Complete    | 2026-03-06 | - |
-| 14. Sanitization Classifier | 2/3 | In Progress|  | - |
-| 15. Device-Adaptive Local LLM | v4.0 | 0/TBD | Not started | - |
-| 16. ONNX Section Routing | v4.0 | 0/TBD | Not started | - |
-
-### Phase 17: Tier 2 GTD classification models
-
-**Goal:** Four ONNX classifiers (GTD list routing, actionability, project detection, context tagging) trained and deployed in the embedding worker, enabling offline sub-second GTD intelligence on triage cards with confidence indicators and correction logging
-**Requirements**: GTD-01, GTD-02, GTD-03, GTD-04, GTD-05, GTD-06, GTD-07, GTD-08
-**Depends on:** Phase 16
-**Plans:** 3/3 plans complete
-
-Plans:
-- [x] 17-01-PLAN.md — Python training pipeline: Faker data generation, MLP+ONNX training, Node.js validation (GTD-01, GTD-02, GTD-03, GTD-04, GTD-05)
-- [x] 17-02-PLAN.md — Browser integration: embedding worker multi-classifier, tier2 handler, triage cascade (GTD-05, GTD-06)
-- [x] 17-03-PLAN.md — Triage card GTD display, classification-log extension, visual verification (GTD-07, GTD-08)
-
-### Phase 18: Tier 2 next action decomposition model
-
-**Goal:** User can decompose multi-step tasks and decisions into GTD next-action steps via an ONNX pattern classifier and slot-filled templates -- offline, sub-second, user-triggered via "Break this down" button on triage cards
-**Requirements**: DECOMP-01, DECOMP-02, DECOMP-03, DECOMP-04, DECOMP-05, DECOMP-06
-**Depends on:** Phase 17
-**Success Criteria** (what must be TRUE):
-  1. Python training pipeline generates ~35 decomposition pattern categories and trains an ONNX MLP with >95% accuracy and >95% Python/Node parity
-  2. User taps "Break this down" on a task or decision triage card and sees personalized GTD next-action steps derived from ONNX classification + template slot-filling
-  3. User reviews steps one at a time with accept/edit/skip controls; accepted steps are created as new inbox items for triage
-  4. After decomposition, user is asked whether to mark the parent atom as a project
-  5. Decomposition works fully offline with sub-second latency (no LLM call required)
-**Plans:** 3/3 plans complete
-
-Plans:
-- [ ] 18-01-PLAN.md — Python training pipeline: Faker data generation, MLP+ONNX training, Node.js validation (DECOMP-01, DECOMP-02)
-- [ ] 18-02-PLAN.md — TypeScript runtime: categories, slot extractor, decomposer, worker + tier2 wiring (DECOMP-03, DECOMP-04)
-- [ ] 18-03-PLAN.md — DecompositionFlow UI: "Break this down" button, step presentation, atom creation (DECOMP-05, DECOMP-06)
-
-### Phase 19: Tier 2 clarification wizard model
-
-**Goal:** User taps "Clarify this" on vague triage cards to walk through targeted GTD questions (outcome, next-action, timeframe, context, reference) with pre-built options, enriching atom content and triggering re-triage — powered by 6 ONNX binary classifiers (completeness gate + 5 missing-info detectors), tier-adaptive option generation, self-learning from corrections, entity graph seeding, and extensible binder type config
-**Requirements**: CLAR-01, CLAR-02, CLAR-03, CLAR-04, CLAR-05, CLAR-06, CLAR-07, CLAR-08, CLAR-09
-**Depends on:** Phase 18
-**Success Criteria** (what must be TRUE):
-  1. Python training pipeline trains 6 ONNX binary classifiers (1 completeness gate + 5 missing-info) each with >95% accuracy and >95% Python/Node parity
-  2. Completeness gate runs in triage cascade after type classification, flagging vague atoms with "Clarify this" button
-  3. User taps "Clarify this" and sees one question at a time with 3-4 options + freeform, following GTD importance ordering
-  4. After clarification, atom content is enriched with structured key:value lines and auto re-triaged
-  5. Entity graph table seeded with clarification answers for future knowledge graph
-  6. Self-learning: frequently selected options float to top, frequently skipped categories get deprioritized
-  7. Binder type config architecture enables future non-GTD binder types via JSON config files
-**Plans:** 5/5 plans complete
-
-Plans:
-- [x] 19-01-PLAN.md — Python training pipeline: Faker data generation, 6 classifiers, Node.js validation (CLAR-01, CLAR-02)
-- [x] 19-02-PLAN.md — Foundation: clarification types, binder config, entity graph table, enrichment (CLAR-08, CLAR-09)
-- [x] 19-03-PLAN.md — Worker + tier2 integration: ONNX classifiers, triage cascade, cloud options, log extension (CLAR-03, CLAR-05, CLAR-06)
-- [x] 19-04-PLAN.md — ClarificationFlow UX: modal, questions, enrichment wiring, re-triage (CLAR-04, CLAR-07)
-- [x] 19-05-PLAN.md — Self-learning option ranking, skip patterns, end-to-end verification (CLAR-06)
-
-### Phase 20: Multi-atom context engine
-
-**Goal:** ONNX models can gather multi-atom context (parent project, sibling tasks, linked entities, related atoms, metadata) to reconstruct meaningful intent before any cloud interaction — enabling context-aware sanitization and structured prompt assembly
-**Requirements**: TBD
-**Depends on:** Phase 19
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 20 to break down)
-
-### Phase 21: Cloud packet sanitization pipeline
-
-**Goal:** Local ONNX models produce structured, sanitized "cloud packets" — entity-masked text with stable IDs, context bundles (summaries not raw text), graph structure, and intent classification — ensuring the cloud never sees raw personal data while preserving reasoning ability
-**Requirements**: TBD
-**Depends on:** Phase 20
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 21 to break down)
-
-### Phase 22: Cloud reasoning integration and response re-merge
-
-**Goal:** Cloud model receives only sanitized structured packets and returns structured reasoning; local ONNX models validate cloud output, re-inject masked entities, enforce GTD rules, and update the atom graph — keeping the cloud stateless and blind to personal data
-**Requirements**: TBD
-**Depends on:** Phase 21
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 22 to break down)
-
-### Phase 23: Cloud-tutored local model reinforcement
-
-**Goal:** Use Anthropic API as a GTD guru training oracle to maximize local ONNX classifier intelligence out of the box. The cloud brings deep GTD methodology expertise — contexts, next actions, someday/maybe boundaries, 2-minute rule, horizons of focus, natural planning model — to generate adversarial edge cases, identify model blind spots, and distill Tier 3 knowledge into Tier 2. All training data is synthetic (zero privacy concern). Covers: adversarial data generation, systematic gap analysis, knowledge distillation (Tier 3 → Tier 2), active learning loop for low-confidence predictions. Leverages phase 19 training infrastructure.
-**Requirements**: TUTOR-01, TUTOR-02, TUTOR-03, TUTOR-04, TUTOR-05
-**Depends on:** Phase 19
-**Success Criteria** (what must be TRUE):
-  1. Benchmark pipeline measures baseline accuracy for all 12 ONNX classifiers with per-class precision/recall/F1 and generates a cloud "expert exam" test set that stress-tests GTD boundaries
-  2. Adversarial data generator produces deliberately hard examples near decision boundaries per classifier, targeting weakest classes
-  3. Gap analysis identifies systematic GTD methodology blind spots (not individual misclassifications) with actionable Markdown reports
-  4. Teacher-student distillation feeds low-confidence predictions to Claude Sonnet and gets expert labels with GTD reasoning
-  5. Retrained classifiers show no accuracy regression on original test sets, with before/after Markdown report showing per-classifier deltas
-**Plans:** 3/3 plans complete
-
-Plans:
-- [ ] 23-01-PLAN.md — Classifier registry + benchmark pipeline: baseline accuracy, cloud expert exam generation and scoring (TUTOR-01)
-- [ ] 23-02-PLAN.md — Adversarial generation + gap analysis: boundary-testing data, systematic GTD blind spot identification (TUTOR-02, TUTOR-03)
-- [ ] 23-03-PLAN.md — Teacher-student distillation + retrain orchestrator: expert relabeling, automated retrain cycle, before/after report (TUTOR-04, TUTOR-05)
-
-### Phase 24: Unified Enrichment Wizard
-
-**Goal:** Merge decomposition and clarification into one unified enrichment wizard with question-first flow, inline rendering on triage cards, inbox maturity model with visual indicators, graduation flow (inbox to atoms), model provenance annotations with 3-Ring SVG visualization, tier-aware quality gate, and Tier 2B handler infrastructure for WASM LLM enhancement on capable devices
-**Requirements**: ENRICH-01, ENRICH-02, ENRICH-03, ENRICH-04, ENRICH-05, ENRICH-06, ENRICH-07, ENRICH-08, ENRICH-09, ENRICH-10
-**Depends on:** Phase 23
-**Success Criteria** (what must be TRUE):
-  1. Single "Enrich" button on all inbox cards replaces "Break this down" and "Clarify this" with unified question-first-then-decompose flow
-  2. Enrichment renders inline on triage card (not modal) with category chips for non-linear navigation and 4-option menus
-  3. Each answer persists immediately to Dexie — partial enrichment survives navigation and page refresh
-  4. Inbox maturity model tracks enrichment completeness with visual maturity indicator on every card
-  5. Graduation converts enriched items into parent atom + child atoms with quality spectrum visualization; children skip re-triage
-  6. Quality gate with soft warning below minimum threshold; user can always force-create
-  7. Model provenance 32-bit bitmask on every atom/inbox item tracks which AI models contributed
-  8. 3-Ring stacked ring SVG indicator on every item showing tier provenance; tap reveals model names
-  9. Tier 2B handler stub in pipeline for WASM LLM tasks; falls back to T2A templates on unsupported devices
-**Plans:** 7 plans
-
-Plans:
-- [ ] 24-01-PLAN.md — Data model foundation: enrichment types, provenance bitmask, maturity scoring, quality gate, Dexie v7 migration (ENRICH-03, ENRICH-04, ENRICH-06, ENRICH-07, ENRICH-10)
-- [ ] 24-02-PLAN.md — 3-Ring SVG indicator and MaturityIndicator components (ENRICH-08)
-- [ ] 24-03-PLAN.md — Enrichment engine state machine and graduation proposal generator (ENRICH-02, ENRICH-03, ENRICH-05, ENRICH-10)
-- [ ] 24-04-PLAN.md — Tier 2B handler stub and pipeline extension with enrichment task types (ENRICH-09)
-- [ ] 24-05-PLAN.md — EnrichmentWizard UI, InboxView integration, Enrich button, indicators (ENRICH-01, ENRICH-02, ENRICH-03, ENRICH-04)
-- [ ] 24-06-PLAN.md — GraduationPreview UI, quality gate display, end-to-end lifecycle verification (ENRICH-05, ENRICH-06)
-- [ ] 24-07-PLAN.md — Gap closure: wire ThreeRingIndicator to real provenance.ts imports (ENRICH-08)
-
-### Phase 25: Iterative Enrichment Deepening
-
-**Goal:** Transform the enrichment wizard from single-pass to iterative deepening -- re-enrichment generates follow-up questions referencing prior answers, cognitive signals guide question priority, per-category depth tracking with depth-weighted maturity scoring, and "Ask more" / "Move to next area" navigation for user-directed exploration
-**Requirements**: ITER-01, ITER-02, ITER-03, ITER-04, ITER-05, ITER-06, ITER-07
-**Depends on:** Phase 24
-**Success Criteria** (what must be TRUE):
-  1. User re-enriches a fully-answered inbox item and sees follow-up questions (not zero questions), each referencing their prior answer
-  2. Follow-up question templates use {prior_answer} slot-filling from gtd-personal.json followUpTemplates
-  3. Per-category enrichment depth tracked on InboxItem and persisted to Dexie via v8 migration
-  4. Cognitive signal army influences question priority ordering when signals available; default GTD ordering when null
-  5. EnrichmentWizard shows "Previously: [answer]" above follow-up questions
-  6. User can tap "Ask more on this topic" to stay in current category or "Move to next area" to advance
-  7. Maturity scoring reflects enrichment depth (depth 1/3 contributes less than depth 3/3)
-**Plans:** 3/3 plans complete
-
-Plans:
-- [ ] 25-01-PLAN.md — Data model: depth tracking types, Dexie v8 migration, follow-up templates, depth-weighted maturity (ITER-01, ITER-02, ITER-03, ITER-07)
-- [ ] 25-02-PLAN.md — Engine: depth-aware session creation, signal-guided question priority, depth tracking in applyAnswer (ITER-01, ITER-04)
-- [ ] 25-03-PLAN.md — UI: prior-answer display, ask-more/move-next navigation, store depth persistence (ITER-05, ITER-06)
+| 12. Template Engine | v4.0 | 3/3 | Complete | 2026-03-06 |
+| 13. Multi-Provider Cloud | v4.0 | 2/2 | Complete | 2026-03-06 |
+| 14. Sanitization Classifier | v4.0 | 3/3 | Complete | 2026-03-07 |
+| 15. Device-Adaptive Local LLM | v4.0 | - | Complete | 2026-03-07 |
+| 16. ONNX Section Routing | v4.0 | - | Complete | 2026-03-07 |
+| 17. Tier 2 GTD classification | v4.0 | 3/3 | Complete | 2026-03-08 |
+| 18. Next action decomposition | v4.0 | 3/3 | Complete | 2026-03-08 |
+| 19. Clarification wizard | v4.0 | 5/5 | Complete | 2026-03-08 |
+| 20. Multi-atom context engine | v4.0 | - | Complete | 2026-03-09 |
+| 21. Cloud packet sanitization | v4.0 | - | Complete | 2026-03-09 |
+| 22. Cloud reasoning integration | v4.0 | - | Complete | 2026-03-09 |
+| 23. Cloud-tutored reinforcement | v4.0 | 3/3 | Complete | 2026-03-09 |
+| 24. Unified Enrichment Wizard | v4.0 | 7/7 | Complete | 2026-03-10 |
+| 25. Iterative Enrichment Deepening | v4.0 | 3/3 | Complete | 2026-03-10 |
+| 26. Intelligence Sidecar + Schema | v5.0 | 0/TBD | Not started | - |
+| 27. Entity Detection + Registry | v5.0 | 0/TBD | Not started | - |
+| 28. Relationship Inference | v5.0 | 0/TBD | Not started | - |
+| 29. Entity Intelligence Consumers | v5.0 | 0/TBD | Not started | - |
