@@ -20,7 +20,6 @@ import type {
 import { addProvenance, OPERATION_IDS } from './provenance';
 import { computeMaturity } from './maturity';
 import { computeQuality } from './quality-gate';
-import { appendEnrichment } from '../clarification/enrichment';
 
 // --- Category display key mapping (mirrors enrichment-engine.ts) ---
 
@@ -75,8 +74,8 @@ export function buildGraduationProposal(
   const parentType = classificationContext?.parentType
     ?? inferParentType(enrichments, hasDecomposition);
 
-  // Parent content: original + enrichment answers
-  const parentContent = appendEnrichment(session.originalContent, session.answers);
+  // Parent content: clean original content (enrichment intelligence persists in sidecar)
+  const parentContent = session.originalContent;
 
   // Parent quality
   const maturityScore = computeMaturity(enrichments);

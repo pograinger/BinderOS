@@ -59,8 +59,8 @@ describe('createEnrichmentSession', () => {
   it('pre-fills answers from existing enrichments, skipping answered categories', () => {
     const session = createEnrichmentSession({
       inboxItemId: 'item-2',
-      content: 'Fix the roof\n---\nOutcome: Leak-free roof',
-      existingEnrichments: { Outcome: 'Leak-free roof' },
+      content: 'Fix the roof',
+      sidecarEnrichment: [{ category: 'missing-outcome', question: '', answer: 'Leak-free roof', depth: 0, timestamp: 0, tier: 'T1' }],
       missingCategories: ['missing-outcome', 'missing-next-action', 'missing-timeframe'],
     });
 
@@ -85,14 +85,14 @@ describe('createEnrichmentSession', () => {
   it('skips questions phase when all categories already enriched', () => {
     const session = createEnrichmentSession({
       inboxItemId: 'item-4',
-      content: 'Some content\n---\nOutcome: Done\nNext Action: Do it\nDeadline: Tomorrow\nContext: Home\nReference: None',
-      existingEnrichments: {
-        Outcome: 'Done',
-        'Next Action': 'Do it',
-        Deadline: 'Tomorrow',
-        Context: 'Home',
-        Reference: 'None',
-      },
+      content: 'Some content',
+      sidecarEnrichment: [
+        { category: 'missing-outcome', question: '', answer: 'Done', depth: 0, timestamp: 0, tier: 'T1' },
+        { category: 'missing-next-action', question: '', answer: 'Do it', depth: 0, timestamp: 0, tier: 'T1' },
+        { category: 'missing-timeframe', question: '', answer: 'Tomorrow', depth: 0, timestamp: 0, tier: 'T1' },
+        { category: 'missing-context', question: '', answer: 'Home', depth: 0, timestamp: 0, tier: 'T1' },
+        { category: 'missing-reference', question: '', answer: 'None', depth: 0, timestamp: 0, tier: 'T1' },
+      ],
       missingCategories: ['missing-outcome', 'missing-next-action', 'missing-timeframe', 'missing-context', 'missing-reference'],
     });
 
@@ -485,6 +485,14 @@ describe('createEnrichmentSession (iterative deepening)', () => {
     Reference: 'None',
   };
 
+  const allSidecarEnrichment = [
+    { category: 'missing-outcome', question: '', answer: 'Done', depth: 0, timestamp: 0, tier: 'T1' },
+    { category: 'missing-next-action', question: '', answer: 'Do it', depth: 0, timestamp: 0, tier: 'T1' },
+    { category: 'missing-timeframe', question: '', answer: 'Tomorrow', depth: 0, timestamp: 0, tier: 'T1' },
+    { category: 'missing-context', question: '', answer: 'Home', depth: 0, timestamp: 0, tier: 'T1' },
+    { category: 'missing-reference', question: '', answer: 'None', depth: 0, timestamp: 0, tier: 'T1' },
+  ];
+
   it('Test 1: generates follow-up questions for fully-answered item with depthMap at depth 1', () => {
     const depthMap: Record<string, number> = {
       'missing-outcome': 1,
@@ -496,8 +504,8 @@ describe('createEnrichmentSession (iterative deepening)', () => {
 
     const session = createEnrichmentSession({
       inboxItemId: 'item-deep-1',
-      content: 'Some content\n---\nOutcome: Done\nNext Action: Do it\nDeadline: Tomorrow\nContext: Home\nReference: None',
-      existingEnrichments: allEnrichments,
+      content: 'Some content',
+      sidecarEnrichment: allSidecarEnrichment,
       depthMap,
     });
 
@@ -517,8 +525,8 @@ describe('createEnrichmentSession (iterative deepening)', () => {
 
     const session = createEnrichmentSession({
       inboxItemId: 'item-deep-2',
-      content: 'Some content\n---\nOutcome: Done\nNext Action: Do it\nDeadline: Tomorrow\nContext: Home\nReference: None',
-      existingEnrichments: allEnrichments,
+      content: 'Some content',
+      sidecarEnrichment: allSidecarEnrichment,
       depthMap,
     });
 
@@ -540,10 +548,16 @@ describe('createEnrichmentSession (iterative deepening)', () => {
       Deadline: 'Tomorrow',
     };
 
+    const partialSidecarEnrichment = [
+      { category: 'missing-outcome', question: '', answer: 'Done', depth: 0, timestamp: 0, tier: 'T1' },
+      { category: 'missing-next-action', question: '', answer: 'Do it', depth: 0, timestamp: 0, tier: 'T1' },
+      { category: 'missing-timeframe', question: '', answer: 'Tomorrow', depth: 0, timestamp: 0, tier: 'T1' },
+    ];
+
     const session = createEnrichmentSession({
       inboxItemId: 'item-deep-3',
-      content: 'Some content\n---\nOutcome: Done\nNext Action: Do it\nDeadline: Tomorrow',
-      existingEnrichments: partialEnrichments,
+      content: 'Some content',
+      sidecarEnrichment: partialSidecarEnrichment,
       depthMap,
     });
 
@@ -558,8 +572,8 @@ describe('createEnrichmentSession (iterative deepening)', () => {
 
     const session = createEnrichmentSession({
       inboxItemId: 'item-deep-4',
-      content: 'Test\n---\nOutcome: Leak-free roof',
-      existingEnrichments: { Outcome: 'Leak-free roof' },
+      content: 'Test',
+      sidecarEnrichment: [{ category: 'missing-outcome', question: '', answer: 'Leak-free roof', depth: 0, timestamp: 0, tier: 'T1' }],
       missingCategories: ['missing-outcome'],
       depthMap,
     });

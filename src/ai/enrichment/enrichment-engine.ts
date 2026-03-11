@@ -25,7 +25,7 @@ import { TEMPLATE_TIER_COUNT } from './types';
 import type { CognitiveModelId } from '../tier2/cognitive-signals';
 import { addProvenance, OPERATION_IDS, MODEL_IDS } from './provenance';
 import { computeMaturity } from './maturity';
-import { parseEnrichment } from '../clarification/enrichment';
+import type { EnrichmentRecord } from '../../types/intelligence';
 import { generateTemplateOptions, generateFollowUpOptions } from '../clarification/question-templates';
 
 // --- Signal-to-category mapping for cognitive priority ordering ---
@@ -98,7 +98,7 @@ export function createEnrichmentSession(params: {
   inboxItemId: string;
   content: string;
   atomType?: AtomType;
-  existingEnrichments?: Record<string, string>;
+  sidecarEnrichment?: EnrichmentRecord[];
   missingCategories?: MissingInfoCategory[];
   depthMap?: Record<string, number>;
   cognitiveSignals?: SignalVector | null;
@@ -107,15 +107,22 @@ export function createEnrichmentSession(params: {
     inboxItemId,
     content,
     atomType,
-    existingEnrichments,
+    sidecarEnrichment,
     missingCategories,
     depthMap,
     cognitiveSignals,
   } = params;
 
-  // Parse content to detect any inline enrichments
-  const parsed = parseEnrichment(content);
-  const allEnrichments = { ...parsed.enrichments, ...existingEnrichments };
+  // Build enrichments lookup from sidecar records (replaces parseEnrichment)
+  const allEnrichments: Record<string, string> = {};
+  if (sidecarEnrichment) {
+    for (const rec of sidecarEnrichment) {
+      const displayKey = CATEGORY_DISPLAY_KEYS[rec.category as MissingInfoCategory];
+      if (displayKey && rec.answer) {
+        allEnrichments[displayKey] = rec.answer;
+      }
+    }
+  }
   const enrichedDisplayKeys = new Set(Object.keys(allEnrichments));
 
   // Determine the full list of categories to consider
