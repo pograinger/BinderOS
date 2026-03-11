@@ -70,7 +70,7 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 
 **Milestone Goal:** Local AI agents that detect entities (people, places, orgs) from raw content, build a persistent entity registry with relationship inference, and feed entity context into enrichment and GTD processing — so the system "knows" the user's world through privacy-safe local-only intelligence.
 
-- [ ] **Phase 26: Intelligence Sidecar + Schema** - Dexie migration with atomIntelligence sidecar, entity/relation tables, enrichment refactor to structured records, smart links field
+- [x] **Phase 26: Intelligence Sidecar + Schema** - Dexie migration with atomIntelligence sidecar, entity/relation tables, enrichment refactor to structured records, smart links field (completed 2026-03-11)
 - [ ] **Phase 27: Entity Detection + Registry** - Sanitization worker extended for entity detection, detection lifecycle, entity-atom linking, dedup/normalization, entity badges
 - [ ] **Phase 28: Relationship Inference** - T1 keyword pattern engine, cross-item co-occurrence accumulation, evidence-based confidence scoring
 - [ ] **Phase 29: Entity Intelligence Consumers** - Entity-aware enrichment, user correction UX, GTD context suggestions, recency decay, entity timeline
@@ -161,7 +161,7 @@ Plans:
 | 23. Cloud-tutored reinforcement | v4.0 | 3/3 | Complete | 2026-03-09 |
 | 24. Unified Enrichment Wizard | v4.0 | 7/7 | Complete | 2026-03-10 |
 | 25. Iterative Enrichment Deepening | v4.0 | 3/3 | Complete | 2026-03-10 |
-| 26. Intelligence Sidecar + Schema | 1/2 | In Progress|  | - |
+| 26. Intelligence Sidecar + Schema | 2/2 | Complete   | 2026-03-11 | - |
 | 27. Entity Detection + Registry | v5.0 | 0/TBD | Not started | - |
 | 28. Relationship Inference | v5.0 | 0/TBD | Not started | - |
 | 29. Entity Intelligence Consumers | v5.0 | 0/TBD | Not started | - |

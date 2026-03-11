@@ -90,7 +90,7 @@ Requirements for v5.0 Entity Intelligence & Knowledge Graph. Each maps to roadma
 
 - [x] **SIDE-01**: `atomIntelligence` Dexie table stores all AI-generated knowledge per atom (entity mentions, cognitive signals, enrichment Q&A) separately from atom.content
 - [x] **SIDE-02**: Existing enrichment answers migrated from atom.content text appending to structured `atomIntelligence.enrichment[]` records
-- [ ] **SIDE-03**: Enrichment engine writes structured Q&A pairs to atomIntelligence sidecar; UI renders intelligence from sidecar, not content parsing
+- [x] **SIDE-03**: Enrichment engine writes structured Q&A pairs to atomIntelligence sidecar; UI renders intelligence from sidecar, not content parsing
 - [x] **SIDE-04**: Atom schema gains structured `links[]` field for user-provided smart links (URL, title, summary, thumbnail cache key, resolution metadata)
 
 ### Entity Detection
@@ -233,7 +233,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENRICH-10 | Phase 24 | Complete |
 | SIDE-01 | Phase 26 | Complete |
 | SIDE-02 | Phase 26 | Complete |
-| SIDE-03 | Phase 26 | Pending |
+| SIDE-03 | Phase 26 | Complete |
 | SIDE-04 | Phase 26 | Complete |
 | ENTR-01 | Phase 26 | Complete |
 | ENTR-02 | Phase 26 | Complete |

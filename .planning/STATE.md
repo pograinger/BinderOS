@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Entity Intelligence & Knowledge Graph
 status: executing
-stopped_at: Completed 26-01-PLAN.md
-last_updated: "2026-03-11T05:20:26Z"
-last_activity: 2026-03-11 — Phase 26 Plan 01 complete
+stopped_at: Completed 26-02-PLAN.md
+last_updated: "2026-03-11T05:30:04Z"
+last_activity: 2026-03-11 — Phase 26 Plan 02 complete
 progress:
   total_phases: 4
-  completed_phases: 0
-  total_plans: 20
-  completed_plans: 1
+  completed_phases: 1
+  total_plans: 2
+  completed_plans: 2
   percent: 85
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 ## Current Position
 
 Phase: 26 — first of 4 v5.0 phases (26-29)
-Plan: 1 of 5 in current phase (complete)
+Plan: 2 of 5 in current phase (complete)
 Status: Executing Phase 26
-Last activity: 2026-03-11 — Phase 26 Plan 01 complete
+Last activity: 2026-03-11 — Phase 26 Plan 02 complete
 
-Progress: [█████████████████████░░░] 85% (v5.0 Phase 26: 1/5 plans)
+Progress: [██████████████████████░░] 90% (v5.0 Phase 26: 2/5 plans)
 
 ## Performance Metrics
 
@@ -53,6 +53,9 @@ Progress: [█████████████████████░░
 ### Decisions
 
 Recent decisions affecting v5.0:
+- [26-02]: enrichment-engine stays pure (sidecarEnrichment[] param, no db imports) -- caller reads sidecar
+- [26-02]: Graduated atoms get clean originalContent -- enrichment persists only in sidecar
+- [26-02]: computePriorAnswers replaced with enrichmentPriorAnswers reactive signal for sync UI
 - [26-01]: Sidecar CRUD uses direct db.put() not WriteQueue -- independent of atom content pipeline
 - [26-01]: Entity graph seeding removed from clarification handler -- rewired in Phase 27
 - [26-01]: CRDT fields initialized with deviceId='' and schemaVersion=1 -- real CRDT in v7.0
@@ -76,6 +79,6 @@ Recent decisions affecting v5.0:
 
 ## Session Continuity
 
-Last session: 2026-03-11T05:20:26Z
-Stopped at: Completed 26-01-PLAN.md
-Resume file: .planning/phases/26-intelligence-sidecar-schema/26-01-SUMMARY.md
+Last session: 2026-03-11T05:30:04Z
+Stopped at: Completed 26-02-PLAN.md
+Resume file: .planning/phases/26-intelligence-sidecar-schema/26-02-SUMMARY.md
