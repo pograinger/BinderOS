@@ -1,5 +1,26 @@
 # Milestones
 
+## v4.0 Device-Adaptive AI (Shipped: 2026-03-10)
+
+**Phases completed:** 14 phases (12-25), 32 plans
+**Timeline:** 5 days (2026-03-05 → 2026-03-10)
+**Requirements:** 18 core + 6 added phases
+**Git range:** 3183117..702ec49
+
+**Delivered:** Device-adaptive AI with template engine, multi-provider cloud (Anthropic/OpenAI/Grok/custom), sanitization NER classifier, 10 cognitive ONNX models, unified enrichment wizard with iterative deepening, T3 LLM enrichment, and cloud-tutored model reinforcement.
+
+**Key accomplishments:**
+- Template engine for offline review briefings, compression explanations, GTD prompts
+- Multi-provider cloud adapters (Anthropic, OpenAI-compatible, custom endpoints)
+- NER sanitization classifier (DistilBERT fine-tuned, ONNX quantized) with entity registry
+- 4 GTD classifiers + decomposition + 6 clarification classifiers (all ONNX, offline)
+- 10 cognitive signal ONNX models with shared signal protocol
+- Unified enrichment wizard with inline rendering, maturity scoring, graduation flow
+- Iterative enrichment deepening with T3 LLM question generation
+- Cloud-tutored local model reinforcement pipeline
+
+---
+
 ## v3.0 Local AI + Polish (Shipped: 2026-03-05)
 
 **Phases completed:** 3 phases (9-11), 8 plans

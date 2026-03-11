@@ -1,34 +1,34 @@
 ---
 gsd_state_version: 1.0
-milestone: v4.0
-milestone_name: Device-Adaptive AI
-status: executing
-stopped_at: Completed 25-03-PLAN.md
-last_updated: "2026-03-10T09:00:51.028Z"
-last_activity: 2026-03-10 — Phase 25 Plan 03 complete (iterative enrichment deepening UI + bug fix)
+milestone: v5.0
+milestone_name: Entity Intelligence & Knowledge Graph
+status: defining_requirements
+stopped_at: Milestone started, awaiting research/requirements/roadmap
+last_updated: "2026-03-10T16:30:00.000Z"
+last_activity: 2026-03-10 — Milestone v5.0 started (Entity Intelligence & Knowledge Graph)
 progress:
-  total_phases: 14
-  completed_phases: 7
-  total_plans: 32
-  completed_plans: 31
-  percent: 96
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-05)
+See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 14 — Prompt Sanitization (Plans 01+02 complete, Plan 03 next)
+**Current focus:** Defining requirements for v5.0 Entity Intelligence & Knowledge Graph
 
 ## Current Position
 
-Phase: 25 (Iterative Enrichment Deepening)
-Plan: 03 of 03 (COMPLETE)
-Status: executing
-Last activity: 2026-03-10 — Phase 25 Plan 03 complete (iterative enrichment deepening UI + bug fix)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-10 — Milestone v5.0 started
 
 Progress: [██████████] 96%
 

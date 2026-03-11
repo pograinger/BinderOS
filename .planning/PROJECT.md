@@ -38,21 +38,24 @@ Every piece of stored information must encode predictive value about your future
 
 ### Active
 
-<!-- v4.0 Device-Adaptive AI -->
+<!-- v5.0 Entity Intelligence & Knowledge Graph -->
 
-- Tier 1 device-adaptive local LLMs (WebLLM on desktop, WASM-based small LLM on mobile)
-- Tier 2 ONNX expansion: section routing, compression candidate detection, priority prediction, sanitization classifier
-- Tier 2 template engine for review briefings, compression explanations, GTD flow prompts from entropy signals
-- Tier 2 sanitization model: ONNX classifier to detect/flag sensitive data before cloud transmission
-- New Python training pipeline for sanitization model
-- Tier 3 multi-provider cloud: Anthropic, OpenAI, Grok, corporate LLM support
-- Fully functional offline mobile experience (Tier 1 + Tier 2 only, no cloud dependency)
+- T1 universal entity detection: pre-trained NER (Xenova/bert-base-NER via Transformers.js) for spotting people, places, orgs in raw content
+- Entity registry in Dexie: two tables (Entity + Relation) with typed edges, CRDT-friendly schema
+- T1 deterministic relationship inference: keyword patterns ("anniversary", "wife", "boss") for high-confidence relationship classification
+- T2 ONNX methodology-specific entity reasoning: GTD context inference from entity relationships
+- Cross-item entity accumulation: co-occurrence counting, evidence gathering across inbox items
+- User correction UX: inline entity cards with editable relationships, easy "Pam is my wife not coworker" fixes
+- Entity context fed into enrichment prompts and GTD processing
+- Privacy architecture: T1/T2 see raw unsanitized content (local-only), T3 cloud sees sanitized
 
 ### Deferred
 
 - Section routing offline via embedding nearest-neighbor (deferred from v3.0)
 - PARA section views — full section-specific experiences
-- CRDT sync — multi-device P2P sync (planned for future milestone)
+- CRDT sync — multi-device P2P sync with cross-device agent collaboration (planned for v7.0)
+- Methodology modules — pluggable GTD/Zettelkasten/PARA frameworks (planned for v5.0+)
+- Dual embeddings — domain-specific + general purpose (planned for v5.0+)
 
 ### Out of Scope
 
@@ -108,16 +111,21 @@ Every piece of stored information must encode predictive value about your future
 | 0.78 confidence threshold for ONNX | Platt-calibrated; balances Tier 2 accuracy vs Tier 3 escalation rate | Validated v3.0 |
 | Cache API for model persistence | Browser-native, survives IndexedDB clears, one-time download UX | Validated v3.0 |
 
-## Current Milestone: v4.0 Device-Adaptive AI
+## Current Milestone: v5.0 Entity Intelligence & Knowledge Graph
 
-**Goal:** Restructure AI tiers for device-adaptive inference — local LLMs on every device, ONNX sanitization/classification expansion, multi-provider cloud support — so the app is fully functional offline on any device.
+**Goal:** Local AI agents that detect entities (people, places, orgs) from raw content, build a persistent entity registry with relationship inference, and feed entity context into enrichment and GTD processing — so the system "knows" the user's world through privacy-safe local-only intelligence.
 
 **Target features:**
-- Device-adaptive Tier 1 local LLMs (WebLLM desktop, WASM small LLM mobile)
-- Expanded Tier 2 ONNX classifiers (section routing, sanitization, compression, priority)
-- Template-based generation for reviews/coaching from entropy signals
-- Tier 3 multi-provider cloud (Anthropic, OpenAI, Grok, corporate)
-- Privacy gate: Tier 2 sanitization model scrubs data before cloud transmission
+- Pre-trained NER entity detection running locally on all devices (Xenova/bert-base-NER via Transformers.js)
+- Dexie-backed entity registry with typed relationship edges and CRDT-friendly schema
+- T1 deterministic relationship inference from keyword patterns across inbox items
+- T2 ONNX methodology-specific entity reasoning (GTD context from entity relationships)
+- Cross-item evidence accumulation for entity relationship confidence
+- User correction UX for entity relationships with immediate feedback into entity graph
+- Entity context integration into enrichment prompts and GTD processing
+- Privacy architecture: T1/T2 agents see raw content (local-only), T3 cloud sees sanitized
+
+**Vision:** T1 agents are universal — entity detection works across all Binder types. T2 agents are methodology-specific — GTD reasoning about entities. Together they form a local intelligence layer that "knows" the user because they see raw unsanitized content. Future CRDT sync (v7.0) will enable these agents to collaborate across devices.
 
 ---
 *Last updated: 2026-03-05 — after v4.0 milestone start*
