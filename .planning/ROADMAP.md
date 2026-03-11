@@ -72,8 +72,8 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 
 - [x] **Phase 26: Intelligence Sidecar + Schema** - Dexie migration with atomIntelligence sidecar, entity/relation tables, enrichment refactor to structured records, smart links field (completed 2026-03-11)
 - [x] **Phase 27: Entity Detection + Registry** - Sanitization worker extended for entity detection, detection lifecycle, entity-atom linking, dedup/normalization, entity badges (completed 2026-03-11)
-- [ ] **Phase 28: Relationship Inference** - T1 keyword pattern engine, cross-item co-occurrence accumulation, evidence-based confidence scoring
-- [ ] **Phase 29: Entity Intelligence Consumers** - Entity-aware enrichment, user correction UX, GTD context suggestions, recency decay, entity timeline
+- [ ] **Phase 28: Relationship Inference + Cognitive Harness** - T1 keyword pattern engine, co-occurrence accumulation, evidence scoring, headless testing harness, synthetic user profile, cloud adversarial scoring
+- [ ] **Phase 29: Entity Consumers + Trained Agent Validation** - Entity-aware enrichment, user correction UX, GTD context suggestions, cloud-as-user training loop, local stack benchmark proving emergent user learning
 
 ## Phase Details
 
@@ -107,29 +107,34 @@ Plans:
 - [ ] 27-01-PLAN.md — NER model swap, detection pipeline, entity matcher, registry dedup, lifecycle hooks
 - [ ] 27-02-PLAN.md — Entity badge UI on atom detail views
 
-### Phase 28: Relationship Inference
-**Goal**: The system infers relationships between entities using keyword patterns and co-occurrence evidence, building a relationship graph that grows more confident as more atoms are processed
+### Phase 28: Relationship Inference + Cognitive Harness
+**Goal**: The system infers relationships between entities using keyword patterns and co-occurrence evidence, AND a headless testing harness enables cloud-adversarial validation where a sealed synthetic user profile scores how well the local cognitive stack learns the user
 **Depends on**: Phase 27 (entities must be accumulated before relationships can be inferred)
-**Requirements**: RELI-01, RELI-02, RELI-03
+**Requirements**: RELI-01, RELI-02, RELI-03, HARN-01, HARN-02, HARN-03
 **Success Criteria** (what must be TRUE):
   1. User creates an atom "Pam's anniversary is next month" and the system infers a spouse relationship between "Pam" and the user via the "anniversary" keyword pattern at confidence 0.3
   2. After 3+ atoms mention "Pam" alongside family-related keywords, the spouse relationship confidence increases based on accumulated evidence
   3. Co-occurrence counts for entity pairs are tracked in memory and periodically flushed to Dexie, with sentence-level proximity checks preventing false positives from unrelated entities in the same atom
+  4. Headless testing harness exercises the full local pipeline (triage → enrichment → entity detection → relationship inference) without UI, driven by a sealed synthetic user profile
+  5. Cloud generates coherent inbox items matching the synthetic user and scores the resulting entity graph against ground truth — reporting precision/recall on entities, relationships, and user facts
+  6. The harness simulates user interactions (triage acceptance, enrichment Q&A answers, entity corrections) as the synthetic user would, producing a realistic GTD binder graph
 **Plans**: 2 plans
 Plans:
-- [ ] 28-01-PLAN.md — [To be planned]
-- [ ] 28-02-PLAN.md — [To be planned]
+- [ ] 28-01-PLAN.md — Keyword pattern engine, co-occurrence tracker, relationship inference orchestrator
+- [ ] 28-02-PLAN.md — Headless cognitive harness with synthetic user profile and scoring
 
-### Phase 29: Entity Intelligence Consumers
-**Goal**: Entity knowledge feeds into enrichment questions, GTD context suggestions, and user correction UX — making the system visibly smarter about the user's world while keeping the user in control of entity relationships
-**Depends on**: Phase 28 (relationship inference provides the entity context that consumers display)
-**Requirements**: ENTC-01, ENTC-02, ENTC-03, ENTC-04, ENTC-05
+### Phase 29: Entity Consumers + Trained Agent Validation
+**Goal**: Entity knowledge feeds into enrichment questions, GTD context suggestions, and user correction UX — AND the cloud-adversarial training loop proves the local cognitive stack achieves emergent user learning on a single device, with the local stack's knowledge used to protect the user in cloud interactions
+**Depends on**: Phase 28 (relationship inference + harness infrastructure)
+**Requirements**: ENTC-01, ENTC-02, ENTC-03, ENTC-04, ENTC-05, TVAL-01, TVAL-02
 **Success Criteria** (what must be TRUE):
   1. User enriches an atom mentioning "Sarah" and the enrichment question references her known relationship — "You mentioned Sarah (your wife) — is this related to your anniversary planning?"
   2. User sees an inline entity card for "Dr. Chen" showing the inferred "healthcare-provider" relationship, taps "wrong", selects "dentist", and the correction is stored as ground truth (confidence 1.0) overriding all inference
   3. User triages an atom "Meeting with Dr. Chen" and sees @health suggested as a GTD context tag, derived from the entity's healthcare-provider relationship
   4. Entity relevance scores decay over time with ~30 day half-life — entities not mentioned recently rank lower in context injection
   5. User taps an entity badge and sees a timeline view of all atoms mentioning that entity, ordered chronologically
+  6. After processing 30+ synthetic inbox items through the harness training loop, the local stack correctly identifies >80% of the synthetic user's key relationships (family, work colleagues, medical providers) without cloud assistance
+  7. T2 sanitization uses entity knowledge to produce semantically-rich cloud packets — "Pam" → "[SPOUSE]", "Dr. Chen" → "[CPA]" — preserving meaning while protecting identity
 
 ## Progress
 
@@ -163,5 +168,5 @@ Plans:
 | 25. Iterative Enrichment Deepening | v4.0 | 3/3 | Complete | 2026-03-10 |
 | 26. Intelligence Sidecar + Schema | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 27. Entity Detection + Registry | 2/2 | Complete   | 2026-03-11 | - |
-| 28. Relationship Inference | v5.0 | 0/TBD | Not started | - |
+| 28. Relationship Inference | v5.0 | 0/2 | Not started | - |
 | 29. Entity Intelligence Consumers | v5.0 | 0/TBD | Not started | - |
