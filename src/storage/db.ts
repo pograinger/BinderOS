@@ -30,8 +30,9 @@ import { applyV5Migration } from './migrations/v5';
 import { applyV6Migration } from './migrations/v6';
 import { applyV7Migration } from './migrations/v7';
 import { applyV8Migration } from './migrations/v8';
+import { applyV9Migration } from './migrations/v9';
 import type { EntityRegistryEntry } from '../ai/sanitization/types';
-import type { EntityGraphEntry } from './entity-graph';
+import type { AtomIntelligence, Entity, EntityRelation } from '../types/intelligence';
 
 export interface ConfigEntry {
   key: string;
@@ -88,8 +89,10 @@ export class BinderDB extends Dexie {
   interactions!: Table<InteractionEvent, string>;
   // Phase 14: entity-to-pseudonym registry for sanitization
   entityRegistry!: Table<EntityRegistryEntry, string>;
-  // Phase 19: entity-relationship graph for clarification + future sources
-  entityGraph!: Table<EntityGraphEntry, string>;
+  // Phase 26: intelligence sidecar, entity registry, entity relations
+  atomIntelligence!: Table<AtomIntelligence, string>;
+  entities!: Table<Entity, string>;
+  entityRelations!: Table<EntityRelation, string>;
 
   constructor() {
     super('BinderOS');
@@ -123,6 +126,9 @@ export class BinderDB extends Dexie {
 
     // Phase 25: v8 migration — enrichmentDepth for iterative enrichment deepening
     applyV8Migration(this);
+
+    // Phase 26: v9 migration — intelligence sidecar, entity tables, drop entityGraph
+    applyV9Migration(this);
 
     // Seed the four stable sections on first database creation
     this.on('populate', (tx) => {

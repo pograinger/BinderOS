@@ -1,0 +1,92 @@
+/**
+ * Intelligence sidecar CRUD helpers.
+ *
+ * Direct Dexie access (not through WriteQueue) per research recommendation --
+ * sidecar writes are independent of atom content and don't need batching.
+ *
+ * Pure module: imports db only.
+ *
+ * Phase 26: SIDE-01, ENTR-01, ENTR-02
+ */
+
+import { db } from './db';
+import type { AtomIntelligence, EnrichmentRecord, CachedCognitiveSignal } from '../types/intelligence';
+
+/**
+ * Create an empty intelligence sidecar row for an atom.
+ */
+function createEmptyIntelligence(atomId: string): AtomIntelligence {
+  return {
+    atomId,
+    enrichment: [],
+    entityMentions: [],
+    cognitiveSignals: [],
+    records: [],
+    version: 1,
+    deviceId: '',
+    lastUpdated: Date.now(),
+    schemaVersion: 1,
+  };
+}
+
+/**
+ * Get the intelligence sidecar for an atom (may be undefined).
+ */
+export async function getIntelligence(atomId: string): Promise<AtomIntelligence | undefined> {
+  return db.atomIntelligence.get(atomId);
+}
+
+/**
+ * Get or create the intelligence sidecar for an atom.
+ * If no row exists, creates an empty one and persists it.
+ */
+export async function getOrCreateIntelligence(atomId: string): Promise<AtomIntelligence> {
+  const existing = await db.atomIntelligence.get(atomId);
+  if (existing) return existing;
+
+  const fresh = createEmptyIntelligence(atomId);
+  await db.atomIntelligence.put(fresh);
+  return fresh;
+}
+
+/**
+ * Append or replace an enrichment record for an atom.
+ *
+ * If a record with the same category + depth already exists, it is replaced.
+ * Otherwise the new record is appended. Bumps version and lastUpdated.
+ */
+export async function writeEnrichmentRecord(
+  atomId: string,
+  record: EnrichmentRecord,
+): Promise<void> {
+  const intel = await getOrCreateIntelligence(atomId);
+
+  // Replace existing record at same category+depth, or append
+  const idx = intel.enrichment.findIndex(
+    (r) => r.category === record.category && r.depth === record.depth,
+  );
+  if (idx >= 0) {
+    intel.enrichment[idx] = record;
+  } else {
+    intel.enrichment.push(record);
+  }
+
+  intel.version++;
+  intel.lastUpdated = Date.now();
+  await db.atomIntelligence.put(intel);
+}
+
+/**
+ * Replace all cached cognitive signals for an atom.
+ * Bumps version and lastUpdated.
+ */
+export async function writeCognitiveSignals(
+  atomId: string,
+  signals: CachedCognitiveSignal[],
+): Promise<void> {
+  const intel = await getOrCreateIntelligence(atomId);
+  intel.cognitiveSignals = signals;
+  intel.version++;
+  intel.lastUpdated = Date.now();
+  await db.atomIntelligence.put(intel);
+}

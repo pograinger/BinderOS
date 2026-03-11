@@ -61,7 +61,8 @@ import { BrowserAdapter, DEFAULT_MODEL_ID } from '../../ai/adapters/browser';
 import { triageInbox, cancelTriage } from '../../ai/triage';
 import type { TriageSuggestion } from '../../ai/triage';
 import type { ClarificationResult } from '../../ai/clarification/types';
-import { seedEntityRelationship } from '../../storage/entity-graph';
+// entity-graph.ts removed in Phase 26 (v9 migration). Entity seeding will be
+// rewired to the new entities/entityRelations tables in Phase 27.
 import { logClarification } from '../../storage/classification-log';
 import type { BriefingResult } from '../../ai/analysis';
 import type { ReviewSession } from '../../storage/review-session';
@@ -2376,15 +2377,6 @@ export function applyGTDRecommendation(atomId: string, changes: Record<string, u
 
 // --- Phase 19: Clarification completion handler ---
 
-/** Category-to-entity mappings for entity graph seeding. */
-const CATEGORY_ENTITY_MAP: Record<string, { entityType: string; relationship: string }> = {
-  'missing-outcome': { entityType: 'outcome', relationship: 'has-outcome' },
-  'missing-next-action': { entityType: 'next-action', relationship: 'has-next-action' },
-  'missing-timeframe': { entityType: 'deadline', relationship: 'has-deadline' },
-  'missing-context': { entityType: 'context', relationship: 'has-context' },
-  'missing-reference': { entityType: 'reference', relationship: 'has-reference' },
-};
-
 /**
  * Handle completion of a clarification session.
  *
@@ -2392,7 +2384,7 @@ const CATEGORY_ENTITY_MAP: Record<string, { entityType: string; relationship: st
  * 2. Persists to Dexie via UPDATE_ATOM
  * 3. Logs clarification events to classification log
  * 4. Sets wasClarified on the TriageSuggestion
- * 5. Seeds entity graph for each answered category
+ * 5. Entity seeding deferred to Phase 27 (new entity registry)
  * 6. Triggers re-triage of the updated atom
  */
 export function handleClarificationComplete(result: ClarificationResult): void {
@@ -2436,22 +2428,7 @@ export function handleClarificationComplete(result: ClarificationResult): void {
     });
   }
 
-  // 5. Seed entity graph for each answered category
-  for (const answer of result.answers) {
-    if (answer.wasSkipped) continue;
-    const mapping = CATEGORY_ENTITY_MAP[answer.category];
-    if (!mapping) continue;
-    const value = answer.wasFreeform ? answer.freeformText : answer.selectedOption;
-    if (!value) continue;
-
-    seedEntityRelationship({
-      sourceAtomId: atomId,
-      entityType: mapping.entityType,
-      entityValue: value,
-      relationship: mapping.relationship,
-      targetValue: '',
-    });
-  }
+  // 5. Entity seeding deferred to Phase 27 (new entity registry tables)
 
   // 6. Trigger re-triage of the updated atom
   // Find the inbox item and run single-item triage
