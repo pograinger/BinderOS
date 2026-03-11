@@ -41,6 +41,7 @@ export async function handleCreateInboxItem(
     content: payload.content,
     status: 'open',
     links: [],
+    smartLinks: [],
     isInbox: true,
     created_at: now,
     updated_at: now,
