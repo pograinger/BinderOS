@@ -88,10 +88,10 @@ Requirements for v5.0 Entity Intelligence & Knowledge Graph. Each maps to roadma
 
 ### Intelligence Sidecar Architecture
 
-- [ ] **SIDE-01**: `atomIntelligence` Dexie table stores all AI-generated knowledge per atom (entity mentions, cognitive signals, enrichment Q&A) separately from atom.content
-- [ ] **SIDE-02**: Existing enrichment answers migrated from atom.content text appending to structured `atomIntelligence.enrichment[]` records
+- [x] **SIDE-01**: `atomIntelligence` Dexie table stores all AI-generated knowledge per atom (entity mentions, cognitive signals, enrichment Q&A) separately from atom.content
+- [x] **SIDE-02**: Existing enrichment answers migrated from atom.content text appending to structured `atomIntelligence.enrichment[]` records
 - [ ] **SIDE-03**: Enrichment engine writes structured Q&A pairs to atomIntelligence sidecar; UI renders intelligence from sidecar, not content parsing
-- [ ] **SIDE-04**: Atom schema gains structured `links[]` field for user-provided smart links (URL, title, summary, thumbnail cache key, resolution metadata)
+- [x] **SIDE-04**: Atom schema gains structured `links[]` field for user-provided smart links (URL, title, summary, thumbnail cache key, resolution metadata)
 
 ### Entity Detection
 
@@ -101,8 +101,8 @@ Requirements for v5.0 Entity Intelligence & Knowledge Graph. Each maps to roadma
 
 ### Entity Registry
 
-- [ ] **ENTR-01**: New `entities` Dexie table with deduplication, normalization, alias tracking, mention count, first/last seen timestamps, CRDT-ready version fields
-- [ ] **ENTR-02**: New `entityRelations` Dexie table for entity-to-entity typed edges with source attribution (keyword, co-occurrence, user-correction) and confidence scores
+- [x] **ENTR-01**: New `entities` Dexie table with deduplication, normalization, alias tracking, mention count, first/last seen timestamps, CRDT-ready version fields
+- [x] **ENTR-02**: New `entityRelations` Dexie table for entity-to-entity typed edges with source attribution (keyword, co-occurrence, user-correction) and confidence scores
 - [ ] **ENTR-03**: Entity-atom linking via `mentions-entity` edges connecting atoms to their detected entities
 - [ ] **ENTR-04**: Entity deduplication via normalized text matching with alias resolution ("Sarah Chen" = "Dr. Chen" = "Sarah")
 - [ ] **ENTR-05**: Entity badges/chips visible in atom detail view showing detected people, places, organizations
@@ -231,12 +231,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENRICH-08 | Phase 24 | Complete |
 | ENRICH-09 | Phase 24 | Complete |
 | ENRICH-10 | Phase 24 | Complete |
-| SIDE-01 | Phase 26 | Pending |
-| SIDE-02 | Phase 26 | Pending |
+| SIDE-01 | Phase 26 | Complete |
+| SIDE-02 | Phase 26 | Complete |
 | SIDE-03 | Phase 26 | Pending |
-| SIDE-04 | Phase 26 | Pending |
-| ENTR-01 | Phase 26 | Pending |
-| ENTR-02 | Phase 26 | Pending |
+| SIDE-04 | Phase 26 | Complete |
+| ENTR-01 | Phase 26 | Complete |
+| ENTR-02 | Phase 26 | Complete |
 | ENTD-01 | Phase 27 | Pending |
 | ENTD-02 | Phase 27 | Pending |
 | ENTD-03 | Phase 27 | Pending |

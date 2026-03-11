@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Entity Intelligence & Knowledge Graph
-status: planning
-stopped_at: Phase 26 context gathered
-last_updated: "2026-03-11T05:00:02.901Z"
-last_activity: 2026-03-11 — v5.0 roadmap created
+status: executing
+stopped_at: Completed 26-01-PLAN.md
+last_updated: "2026-03-11T05:20:26Z"
+last_activity: 2026-03-11 — Phase 26 Plan 01 complete
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 84
+  total_plans: 20
+  completed_plans: 1
+  percent: 85
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 ## Current Position
 
 Phase: 26 — first of 4 v5.0 phases (26-29)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-11 — v5.0 roadmap created
+Plan: 1 of 5 in current phase (complete)
+Status: Executing Phase 26
+Last activity: 2026-03-11 — Phase 26 Plan 01 complete
 
-Progress: [████████████████████░░░░] 84% (v1-v4 complete, v5.0 starting)
+Progress: [█████████████████████░░░] 85% (v5.0 Phase 26: 1/5 plans)
 
 ## Performance Metrics
 
@@ -53,6 +53,9 @@ Progress: [████████████████████░░░
 ### Decisions
 
 Recent decisions affecting v5.0:
+- [26-01]: Sidecar CRUD uses direct db.put() not WriteQueue -- independent of atom content pipeline
+- [26-01]: Entity graph seeding removed from clarification handler -- rewired in Phase 27
+- [26-01]: CRDT fields initialized with deviceId='' and schemaVersion=1 -- real CRDT in v7.0
 - [v4.0]: SolidJS store proxy breaks function callbacks — store functions in module-level variables
 - [v4.0]: Dedicated sanitization worker for NER — reuse for entity detection (no new worker)
 - [v5.0]: atomIntelligence sidecar separates AI knowledge from atom.content
@@ -73,6 +76,6 @@ Recent decisions affecting v5.0:
 
 ## Session Continuity
 
-Last session: 2026-03-11T05:00:02.870Z
-Stopped at: Phase 26 context gathered
-Resume file: .planning/phases/26-intelligence-sidecar-schema/26-CONTEXT.md
+Last session: 2026-03-11T05:20:26Z
+Stopped at: Completed 26-01-PLAN.md
+Resume file: .planning/phases/26-intelligence-sidecar-schema/26-01-SUMMARY.md
