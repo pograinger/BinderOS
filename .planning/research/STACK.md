@@ -1,313 +1,318 @@
-# Stack Research
+# Technology Stack: v5.0 Entity Intelligence & Knowledge Graph
 
-**Domain:** BinderOS v4.0 — Device-Adaptive AI (WASM LLM + ONNX Sanitization + Multi-Provider Cloud)
-**Researched:** 2026-03-05 (v4.0 update — appended to existing v1.0/v2.0/v3.0 research)
-**Confidence:** HIGH (all new library choices verified against official docs/npm/GitHub releases)
+**Project:** BinderOS v5.0
+**Researched:** 2026-03-10
+**Scope:** Additions/changes needed for entity intelligence features only
 
----
+## Executive Summary
 
-## v4.0 Additions — New Stack Only
+v5.0 requires NO new package dependencies. The existing stack -- `@huggingface/transformers` (3.8.1), `dexie` (4.3.0), and `onnxruntime-web` (1.24.2) -- already provides everything needed. The primary work is:
 
-This section covers **only net-new dependencies** for v4.0. The existing stack (SolidJS, Vite, Dexie, WebLLM, ONNX Runtime Web, Anthropic SDK, HuggingFace Transformers, Python training pipeline) is validated through v3.0 and not re-researched.
+1. **A new NER model** (Xenova/bert-base-NER) loaded in a new worker for entity extraction (distinct from the sanitization NER which uses a custom fine-tuned model)
+2. **Two new Dexie tables** (Entity + Relation) via a v9 migration
+3. **Co-occurrence counting** via in-memory accumulation with Dexie-backed persistence
+4. **No new workers required** -- the entity NER pipeline can share the sanitization worker or use a dedicated one
 
----
+## Recommended Stack Additions
 
-## New Dependency 1: Mobile WASM LLM (`@wllama/wllama`)
+### NER Model for Entity Extraction
 
-**Recommendation: `@wllama/wllama@^2.3.7`**
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| Xenova/bert-base-NER | q8 quantized | Extract PER, LOC, ORG, MISC entities from raw content | Pre-trained on CoNLL-2003, 343K+ monthly downloads, already compatible with `@huggingface/transformers` v3. Quantized ONNX available. Well-tested with `pipeline('token-classification')`. |
 
-### Why wllama
+**Confidence:** HIGH -- verified on HuggingFace, same `pipeline()` API as existing MiniLM and sanitization models.
 
-WebLLM (already in use for desktop) requires WebGPU — hard-unavailable on iOS Safari and many Android browsers. For device-adaptive Tier 1, a second local LLM runtime is needed that works without GPU.
+**Critical distinction from sanitization NER:**
 
-| Runtime | Mechanism | WebGPU Required | Mobile Works | Production Signal |
-|---------|-----------|----------------|--------------|------------------|
-| `@mlc-ai/web-llm` (existing) | WebGPU kernels | YES (hard) | No (iOS Safari) | Validated v2.0 |
-| `@wllama/wllama` | llama.cpp→WASM, SIMD | No | Yes | Firefox uses it for Link Preview (FF 142+) |
-| `llama-cpp-wasm` | llama.cpp→WASM | No | Yes | Unmaintained, no npm typed API |
-| Transformers.js ONNX generation | ONNX Runtime Web | No | Yes | Slow for generation — designed for classification |
+| Aspect | Sanitization NER (Phase 14) | Entity Intelligence NER (v5.0) |
+|--------|----------------------------|-------------------------------|
+| Model | `sanitization/sanitize-check` (custom fine-tuned DistilBERT) | `Xenova/bert-base-NER` (pre-trained dslim/bert-base-NER) |
+| Purpose | Detect PII to redact before cloud sends | Detect people/places/orgs to build knowledge graph |
+| Entity categories | PERSON, LOCATION, FINANCIAL, CONTACT, CREDENTIAL | PER, LOC, ORG, MISC |
+| Sees raw content | Yes (local worker) | Yes (local worker, T1 agent) |
+| Output destination | Pseudonym maps for sanitization | Entity registry for knowledge accumulation |
+| When it runs | Before every cloud AI request | On every new inbox item / atom creation |
 
-**Why wllama wins over Transformers.js for generation:**
-Transformers.js routes text generation through ONNX Runtime which is optimized for classification inference, not autoregressive generation. wllama uses llama.cpp's native GGUF kernels — 2-5x faster tokens/sec for the same model size. v2.2.0 (Feb 2025) added 2x speed improvement for Q4/Q5 quantization; v2.3.x syncs with latest llama.cpp upstream.
+**Model download:** Add to existing `scripts/download-model.cjs` script. Files go to `public/models/Xenova/bert-base-NER/`. Quantized q8 variant is ~110MB uncompressed (similar to MiniLM). Cache API persistence follows the established pattern.
 
-### Version Details
+**Why NOT a smaller model like NeuroBERT-NER:** NeuroBERT is designed for edge/IoT with reduced accuracy. bert-base-NER is the standard choice -- well-tested, well-documented, and the size (~110MB q8) is comparable to models already loaded (MiniLM is ~90MB). The accuracy difference matters for entity intelligence where false positives/negatives directly degrade the knowledge graph.
 
-- **Latest stable:** 2.3.7 (November 27, 2025)
-- **Install:** `pnpm add @wllama/wllama`
-- **Worker support:** Inference runs inside a Web Worker — does not block UI thread
-- **Multi-thread requirement:** SharedArrayBuffer → requires COOP/COEP headers. Already configured in `vite.config.ts`:
-  ```
-  Cross-Origin-Embedder-Policy: require-corp
-  Cross-Origin-Opener-Policy: same-origin
-  ```
-  No Vite config changes needed.
+### Database Schema: Entity + Relation Tables
 
-### Model Recommendations for Mobile
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| Dexie v9 migration | Dexie 4.3.0 (existing) | Two new tables: `entities` and `entityRelations` | Follows established migration pattern (v1-v8 already exist). No new dependencies. CRDT-friendly schema with Lamport timestamps. |
 
-| Model | Size | Quantization | Mobile Fit |
-|-------|------|-------------|-----------|
-| `SmolLM2-360M-Instruct-Q8_0.gguf` | ~386MB | 8-bit | Comfortable for most phones (2GB+ RAM tabs) |
-| `Qwen2.5-0.5B-Instruct-Q4_K_M.gguf` | ~280MB | 4-bit | Best for low-memory devices |
-
-**Hard constraint:** wllama 2GB ArrayBuffer limit per file — use split-model chunks for any model approaching that size. SmolLM2-360M and Qwen2.5-0.5B are well under the limit and do not need splitting.
-
-### Integration Pattern
+**v9 Migration schema:**
 
 ```typescript
-// src/ai/adapters/wasm.ts — new WasmAdapter alongside existing BrowserAdapter
-import { Wllama } from '@wllama/wllama';
+// New table: entities -- canonical entity registry for knowledge graph
+// Distinct from entityRegistry (Phase 14) which is for sanitization pseudonyms
+entities: '&id, normalizedName, type, *atomIds, updatedAt'
 
-// Detection: use WebGPU probe to decide which local adapter to use
-export async function supportsWebGPU(): Promise<boolean> {
-  if (!('gpu' in navigator)) return false;
-  try {
-    const adapter = await navigator.gpu.requestAdapter();
-    return adapter !== null;
-  } catch {
-    return false;
+// New table: entityRelations -- typed edges between entities
+entityRelations: '&id, [sourceEntityId+targetEntityId], sourceEntityId, targetEntityId, type, confidence, updatedAt'
+```
+
+**Entity table design:**
+
+```typescript
+export interface KnowledgeEntity {
+  /** UUID */
+  id: string;
+  /** Display name (original casing, e.g., "Pam") */
+  displayName: string;
+  /** Lowercase trimmed for dedup (e.g., "pam") */
+  normalizedName: string;
+  /** Entity type from NER: 'person' | 'location' | 'organization' | 'misc' */
+  type: 'person' | 'location' | 'organization' | 'misc';
+  /** All atom IDs where this entity has been detected -- multi-entry index */
+  atomIds: string[];
+  /** Total mention count across all atoms */
+  mentionCount: number;
+  /** User-provided corrections (e.g., { role: 'wife', displayName: 'Pamela' }) */
+  userMetadata: Record<string, string>;
+  /** Whether user has verified/corrected this entity */
+  userVerified: boolean;
+  /** For CRDT: Lamport timestamp */
+  lamportClock: number;
+  createdAt: number;
+  updatedAt: number;
+}
+```
+
+**EntityRelation table design:**
+
+```typescript
+export interface EntityRelation {
+  /** UUID */
+  id: string;
+  /** Source entity ID */
+  sourceEntityId: string;
+  /** Target entity ID (or empty for self-referential metadata like "role: wife") */
+  targetEntityId: string;
+  /** Relationship type: 'spouse' | 'colleague' | 'family' | 'friend' | 'employer' | 'located-in' | 'member-of' | 'co-occurs' | 'custom' */
+  type: string;
+  /** User-readable label (e.g., "wife", "boss at Acme Corp") */
+  label: string;
+  /** Confidence 0-1: keyword inference starts ~0.7, user correction sets to 1.0 */
+  confidence: number;
+  /** Evidence sources that support this relationship */
+  evidence: RelationEvidence[];
+  /** 'inferred' | 'user-corrected' | 'co-occurrence' */
+  source: 'inferred' | 'user-corrected' | 'co-occurrence';
+  /** For CRDT */
+  lamportClock: number;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface RelationEvidence {
+  atomId: string;
+  /** The text snippet that triggered this inference */
+  snippet: string;
+  /** Timestamp of detection */
+  detectedAt: number;
+}
+```
+
+**Why separate from existing `entityRegistry` and `entityGraph`:**
+
+| Existing Table | Purpose | v5.0 Table | Purpose |
+|---------------|---------|------------|---------|
+| `entityRegistry` (v5 migration) | Sanitization pseudonym mappings (realText -> `<Person 1>`) | `entities` (v9 migration) | Knowledge graph nodes (canonical entity profiles) |
+| `entityGraph` (v6 migration) | Atom-to-metadata edges (has-outcome, has-deadline) | `entityRelations` (v9 migration) | Entity-to-entity edges (Pam is-spouse-of User, Pam works-at Acme) |
+
+The existing tables serve atom-centric purposes (sanitization, clarification metadata). The new tables are entity-centric -- they model the user's world (people, places, organizations and their relationships). Different cardinality, different query patterns, different lifecycle.
+
+**Bridge between systems:** When the entity NER detects "Pam" in raw content, it:
+1. Creates/updates a `KnowledgeEntity` in the `entities` table (v5.0 new)
+2. The sanitization pipeline independently creates/updates an `EntityRegistryEntry` in `entityRegistry` (Phase 14 existing) if "Pam" matches a PII category
+3. A linking field (`sanitizationRegistryId?: string`) on `KnowledgeEntity` can cross-reference the two systems
+
+### Co-occurrence Counting
+
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| In-memory Map + Dexie persistence | N/A (pure TypeScript) | Track entity co-occurrence for relationship inference | IndexedDB is too slow for real-time co-occurrence matrix updates. Accumulate in memory, flush to Dexie on idle/interval. |
+
+**Approach:**
+
+```typescript
+// In-memory co-occurrence accumulator
+// Key: sorted entity ID pair "entityA|entityB", Value: count + atom evidence
+type CoOccurrenceMap = Map<string, {
+  count: number;
+  atomIds: Set<string>;
+  lastSeen: number;
+}>;
+```
+
+**Why NOT store co-occurrence directly in IndexedDB:** Each atom could mention 3-5 entities, creating O(n^2) pairs per atom. Writing each pair as a separate Dexie transaction on every atom process would be slow. Instead:
+- Accumulate in a module-level Map
+- Flush to `entityRelations` with `source: 'co-occurrence'` when count crosses a threshold (e.g., >= 3 co-occurrences)
+- Flush on `requestIdleCallback` or every 30 seconds
+
+**Why NOT a separate co-occurrence table:** The `entityRelations` table already models this -- a co-occurrence IS a relationship (type: 'co-occurs'). When co-occurrence count is high enough AND keyword patterns match, it gets upgraded to a typed relationship (e.g., 'spouse').
+
+### Keyword Pattern Engine for Relationship Inference
+
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| Pure TypeScript regex/keyword matching | N/A | T1 deterministic relationship classification | No ML model needed. Keyword patterns like "wife", "anniversary", "boss", "works at" are deterministic and high-precision. Fits the T1 tier (deterministic, no model). |
+
+**Pattern structure:**
+
+```typescript
+interface RelationshipPattern {
+  type: string;           // 'spouse' | 'colleague' | 'family' | etc.
+  keywords: string[];     // ['wife', 'husband', 'married', 'anniversary']
+  contextWindow: number;  // characters around entity to search for keywords
+  confidence: number;     // base confidence for this pattern (e.g., 0.8)
+}
+```
+
+This is NOT a new dependency -- it's a pure TypeScript module in `src/ai/entity/` using the existing T1 deterministic tier pattern.
+
+### Worker Architecture
+
+| Decision | Recommendation | Rationale |
+|----------|---------------|-----------|
+| Reuse sanitization worker? | **No** -- create a dedicated entity worker | The sanitization worker uses a different model (`sanitize-check`). Loading two NER models in one worker doubles memory. Better: one worker per model. |
+| New dedicated entity worker? | **Yes** -- `entity-worker.ts` in `src/workers/` | Follows established pattern (embedding-worker, sanitization-worker). Lazy-loads Xenova/bert-base-NER on first entity detection request. |
+| Run on every atom? | **Yes, but debounced** | Entity detection should run on new inbox items and atom content updates. Debounce to avoid re-running on rapid edits. |
+
+**Worker message protocol (follows existing patterns):**
+
+```typescript
+// Incoming
+{ type: 'DETECT_ENTITIES'; id: string; text: string }
+{ type: 'LOAD_NER' }
+
+// Outgoing
+{ type: 'ENTITY_RESULT'; id: string; entities: Array<{
+  text: string; type: string; start: number; end: number; score: number
+}> }
+{ type: 'ENTITY_ERROR'; id: string; error: string }
+{ type: 'ENTITY_NER_READY' }
+{ type: 'ENTITY_NER_LOADING' }
+{ type: 'ENTITY_NER_ERROR'; error: string }
+```
+
+## Graph Query Patterns in IndexedDB (Dexie)
+
+IndexedDB is not a graph database. DO NOT attempt to implement graph traversal in Dexie. Instead, use these proven patterns:
+
+### Pattern 1: Direct Lookup (O(1) via index)
+```typescript
+// "Who is Pam?" -- get entity by normalized name
+db.entities.where('normalizedName').equals('pam').first()
+
+// "What entities are in this atom?" -- multi-entry index
+db.entities.where('atomIds').equals(atomId).toArray()
+```
+
+### Pattern 2: One-Hop Relationships (O(1) via compound index)
+```typescript
+// "What are Pam's relationships?"
+db.entityRelations.where('sourceEntityId').equals(pamId).toArray()
+// Plus reverse direction:
+db.entityRelations.where('targetEntityId').equals(pamId).toArray()
+```
+
+### Pattern 3: Materialized Neighbors (denormalized for speed)
+For "friends of friends" or multi-hop queries, DO NOT recursively query IndexedDB. Instead:
+- Store a `relatedEntityIds: string[]` field on `KnowledgeEntity`
+- Update it when relationships change
+- One indexed lookup gets the full neighborhood
+
+### Anti-Pattern: Recursive Graph Traversal
+```typescript
+// NEVER DO THIS in IndexedDB:
+async function findConnected(entityId: string, depth: number): Promise<...> {
+  const rels = await db.entityRelations.where('sourceEntityId').equals(entityId).toArray();
+  for (const rel of rels) {
+    await findConnected(rel.targetEntityId, depth - 1); // N+1 queries, kills perf
   }
 }
-// If supportsWebGPU() → use existing BrowserAdapter (WebLLM)
-// Otherwise         → use new WasmAdapter (wllama)
 ```
 
----
+**Why this works for BinderOS:** The knowledge graph is shallow. A personal information manager typically has:
+- 50-500 entities (people, places, orgs in someone's life)
+- 1-3 hops of relationships that matter
+- One-hop queries cover 95% of use cases (enrichment context, GTD processing)
 
-## New Dependency 2: Multi-Provider Cloud (`openai@^6.27.0`)
+## What NOT to Add
 
-**Recommendation: `openai@^6.27.0`** — covers OpenAI AND Grok/xAI with base URL override, and corporate LLMs via OpenAI-compatible endpoints.
+| Technology | Why Not |
+|------------|---------|
+| Neo4j / any graph DB | User requirement: Dexie only, no server-side databases |
+| vis.js / d3-force for graph viz | Deferred to v6.0 (Programmable Pages). v5.0 focuses on data layer. |
+| Additional NPM packages | Everything needed is already installed |
+| Custom ONNX model for entity linking | Pre-trained bert-base-NER + keyword patterns is sufficient for T1/T2. Entity linking (resolving "Pam" to a canonical entity) is string matching, not ML. |
+| spaCy / compromise.js | Server-side (spaCy) or too basic (compromise). Transformers.js + bert-base-NER is the right tool. |
+| Wikidata entity linking | v5.0 is about PERSONAL entities (user's people/places), not Wikipedia disambiguation |
 
-### Current Version
+## Alternatives Considered
 
-- **Latest:** v6.27.0 (released 2026-03-05, confirmed from GitHub releases)
-- **Install:** `pnpm add openai`
-- **Browser compatibility:** `dangerouslyAllowBrowser: true` — same pattern as existing Anthropic SDK. Safe for user-supplied keys stored in memory vault.
+| Category | Recommended | Alternative | Why Not |
+|----------|-------------|-------------|---------|
+| NER model | Xenova/bert-base-NER (q8) | onnx-community/NeuroBERT-NER-ONNX | NeuroBERT is smaller (~30MB) but lower accuracy. For knowledge graph, accuracy matters more than model size -- a missed entity is lost forever. |
+| NER model | Xenova/bert-base-NER (q8) | Xenova/bert-base-NER-uncased | Cased version preserves proper noun casing, important for entity dedup ("Pam" vs "pam" normalized separately). |
+| Entity storage | Two new Dexie tables | Extend existing entityRegistry + entityGraph | Different concerns: sanitization pseudonyms vs knowledge entities. Mixing them creates coupling between privacy pipeline and intelligence pipeline. |
+| Co-occurrence | In-memory Map + flush | Direct Dexie writes per co-occurrence | O(n^2) entity pairs per atom. Dexie transactions are async and have overhead -- batching via in-memory Map is 10-100x faster. |
+| Relationship inference | Keyword patterns (T1) | ONNX classifier (T2) | Keyword patterns for relationship types are high-precision and deterministic. ML adds complexity without clear accuracy gain for patterns like "wife", "boss", "works at". T2 ONNX is better for GTD-specific entity reasoning (already planned). |
+| Worker architecture | New entity-worker.ts | Share sanitization worker | Different models (sanitize-check vs bert-base-NER). Loading both in one worker would double memory (~220MB). Separate workers allow independent lazy loading. |
+| Graph queries | Flat Dexie queries + denormalization | Recursive traversal | IndexedDB has no join operator. Recursive queries cause N+1 performance problems. Denormalize instead. |
 
-### Why One Package Covers Three Providers
+## Integration Points with Existing Code
 
-xAI Grok exposes an OpenAI-compatible API. The OpenAI JS SDK accepts a `baseURL` constructor option:
+### Embedding Worker (embedding-worker.ts)
+- **No changes needed.** Entity worker is separate.
+- Embeddings from MiniLM can optionally be used for entity similarity (e.g., "is 'Pam' the same as 'Pamela'?") but this is a stretch goal, not core.
 
-```typescript
-// OpenAI
-const openai = new OpenAI({ apiKey, dangerouslyAllowBrowser: true });
+### Sanitization Pipeline (sanitizer.ts)
+- **Read-only integration.** When the sanitization pipeline detects a PERSON entity, it can optionally cross-reference the `entities` table to use the knowledge graph's canonical name.
+- The sanitization pipeline's `EntityRegistryEntry` and the knowledge graph's `KnowledgeEntity` can share a linking ID, but the two systems remain independent.
+- Privacy boundary is preserved: sanitization gates cloud access, entity intelligence enriches local processing.
 
-// Grok/xAI — same SDK, different base URL
-const grok = new OpenAI({
-  apiKey: xaiKey,
-  baseURL: 'https://api.x.ai/v1',
-  dangerouslyAllowBrowser: true,
-});
+### Tiered Pipeline (src/ai/tier2/)
+- **T1 addition:** Entity detection + keyword relationship inference runs deterministically on raw content.
+- **T2 addition:** A new ONNX model for methodology-specific entity reasoning (GTD context from entity relationships). This would be trained via the existing Python pipeline.
+- **T3 unchanged:** Cloud LLM still sees sanitized content. Entity context is injected into prompts as structured metadata, not raw names.
 
-// Corporate LLM (OpenAI-compatible endpoint)
-const corp = new OpenAI({
-  apiKey: corpKey,
-  baseURL: corpEndpointUrl,  // user-configurable
-  dangerouslyAllowBrowser: true,
-});
-```
+### Entity Graph (entity-graph.ts)
+- **Coexists.** The existing `entityGraph` table stores atom-to-metadata edges (has-outcome, has-deadline). The new `entityRelations` table stores entity-to-entity edges (is-spouse-of, works-at). Different tables, different purposes, no conflicts.
 
-**xAI base URL:** `https://api.x.ai/v1` (verified from official xAI developer docs).
+### Store (store.ts)
+- New signals for entity state: `entityCount`, `recentEntities`, `entityForAtom(atomId)`.
+- Entity corrections flow through the existing SolidJS store pattern.
 
-### Why Not `@ai-sdk/xai` or Vercel AI SDK
+## Installation
 
-`@ai-sdk/xai` is a provider abstraction for the Vercel AI SDK (`ai` package). The Vercel AI SDK has its own streaming interface (`streamText`, `generateText`) that differs from BinderOS's `AIAdapter` pattern. Adopting it would require rewriting the existing adapter abstraction. The `openai` package alone covers all three provider use cases.
-
-### Adapter Architecture
-
-```
-AIAdapter (interface)
-├── NoOpAdapter          (existing — v1.0)
-├── BrowserAdapter       (existing — WebLLM/WebGPU, v2.0)
-├── WasmAdapter          (NEW — wllama/mobile)
-├── CloudAdapter         (existing — Anthropic, v2.0)
-├── OpenAICloudAdapter   (NEW — openai package, default baseURL)
-├── GrokCloudAdapter     (NEW — openai package, xAI baseURL)
-└── CompatibleCloudAdapter (NEW — openai package, user-configured baseURL)
-```
-
-All new cloud adapters extend the same pre-send approval flow, communication log, session consent, and privacy proxy pattern from the existing `CloudAdapter`.
-
----
-
-## New Python Dependency: ONNX NER Export (`optimum-onnx`)
-
-**Recommendation: `optimum-onnx[onnxruntime]>=0.1.0,<0.2.0`** for the sanitization model training pipeline.
-
-### Why a New Approach vs. Existing Pipeline
-
-The v3.0 pipeline uses `skl2onnx` to export a scikit-learn MLP classifier. That works for binary classification (atom type). Sanitization is a **token classification (NER) task** — different model architecture (transformer with token-level heads), different export path.
-
-| Task | Model Type | Export Tool | Output |
-|------|-----------|-------------|--------|
-| Atom type classification (v3.0) | scikit-learn MLP | `skl2onnx` | ONNX MLP |
-| Sanitization/PII detection (v4.0) | Transformer NER | `optimum-onnx` | ONNX token classifier |
-
-### optimum-onnx Details
-
-- **Package:** `optimum-onnx[onnxruntime]`
-- **Version:** 0.1.0 (December 23, 2025 — first stable release from HuggingFace)
-- **Transformer compatibility:** 4.56/4.57 (pinned by optimum-onnx compatibility matrix)
-- **Key class:** `ORTModelForTokenClassification` — loads pre-trained NER model, optionally fine-tunes, exports to ONNX with INT8 dynamic quantization in one call
-
-### Sanitization Model Design
-
-```
-Architecture: Token Classification NER
-Base model:   dslim/bert-base-NER (HuggingFace)
-Labels:       [O, B-NAME, I-NAME, B-EMAIL, I-EMAIL, B-PHONE, I-PHONE,
-               B-LOCATION, I-LOCATION, B-ORG, I-ORG]
-Training:     Synthetic labeled text (same approach as v3.0 type classifier)
-Export:       ONNX INT8 quantized via ORTQuantizer
-Runtime:      Existing onnxruntime-web in embedding worker
-```
-
-**Why `dslim/bert-base-NER` as base:**
-- Widely used, well-maintained HuggingFace model for NER
-- 108M parameters — exportable and runnable (ONNX INT8 ~110MB)
-- Covers all PII categories relevant to GTD atom content (names, emails, phone, location, org)
-- Fine-tuning from this checkpoint requires ~200-500 curated examples vs. thousands from scratch
-
-**Inference integration:** Sanitization model loads as a second `InferenceSession` in the existing embedding worker alongside the MiniLM model. Output token spans map to redaction replacements in `privacy-proxy.ts`.
-
-### Updated `requirements.txt` additions
-
-```txt
-# Add to scripts/train/requirements.txt for v4.0 sanitization pipeline
-optimum-onnx[onnxruntime]>=0.1.0,<0.2.0
-transformers>=4.56,<4.58
-# Note: onnxruntime constraint already present (>=1.20,<1.22) — compatible with optimum-onnx
-```
-
----
-
-## New Feature: Template Engine Decision
-
-**Recommendation: Native TypeScript template literals — no new package.**
-
-### Rationale
-
-BinderOS's template use case is bounded and developer-controlled:
-- ~10 review briefing templates
-- ~5 compression coaching templates
-- ~8 GTD flow prompt templates
-- All slots are strongly typed (entropy score, section name, atom count, etc.)
-
-External template engines (Handlebars ~35KB, Eta ~12KB, Mustache ~17KB, Nunjucks ~50KB) are designed for dynamic rendering from user-provided or database-driven templates. BinderOS templates are compiled into the app by the developer.
-
-TypeScript template literals provide:
-- Full type safety on all slot parameters (catches schema drift at compile time)
-- Zero runtime overhead
-- No parsing/security surface (XSS not a concern for developer-controlled templates)
-- IDE autocomplete for slots
-
-```typescript
-// src/ai/templates/review-briefing.ts — pattern for all templates
-export interface ReviewSignals {
-  staleCandidateCount: number;
-  entropyScore: number;
-  topSection: string;
-  overdueCount: number;
-}
-
-export function buildWeeklyBriefing(signals: ReviewSignals): string {
-  const urgencyNote = signals.overdueCount > 0
-    ? ` You have ${signals.overdueCount} overdue items.`
-    : '';
-  return (
-    `Weekly review: ${signals.staleCandidateCount} stale candidates detected. ` +
-    `Entropy score ${signals.entropyScore.toFixed(2)}.` +
-    urgencyNote +
-    ` Primary focus: ${signals.topSection}.`
-  );
-}
-```
-
----
-
-## Installation Summary
+No new packages to install. Model download only:
 
 ```bash
-# Browser runtime — WASM mobile LLM
-pnpm add @wllama/wllama
-
-# Browser runtime — multi-provider cloud (OpenAI + Grok + corporate)
-pnpm add openai
+# Add to scripts/download-model.cjs
+# Downloads Xenova/bert-base-NER q8 quantized to public/models/Xenova/bert-base-NER/
+node scripts/download-model.cjs
 ```
 
-```diff
-# scripts/train/requirements.txt — additions for v4.0 sanitization pipeline
-+ optimum-onnx[onnxruntime]>=0.1.0,<0.2.0
-+ transformers>=4.56,<4.58
-  # Existing: onnxruntime>=1.20,<1.22 — already compatible, no change needed
+## Existing Index Gap (Pre-existing Bug)
+
+The `entityGraph` table queries `targetValue` in `getRelationships()` (line 70 of entity-graph.ts) but has NO index on `targetValue` in the v6 migration. This causes a full table scan on every bidirectional relationship lookup. The v9 migration should add `targetValue` to the entityGraph indexes:
+
+```typescript
+// Fix in v9 migration:
+entityGraph: '&id, sourceAtomId, [sourceAtomId+entityType], entityType, relationship, targetValue'
 ```
-
-No `devDependencies` changes — `onnxruntime-web` already present.
-
----
-
-## What NOT to Use
-
-| Avoid | Why | Use Instead |
-|-------|-----|-------------|
-| `@ai-sdk/xai` or `ai` (Vercel AI SDK) | Streaming API incompatible with BinderOS adapter pattern; adds abstraction over an already-abstracted system | `openai` package with `baseURL: 'https://api.x.ai/v1'` |
-| AWS Bedrock SDK, Azure OpenAI SDK | 200KB+ cloud SDKs for browser; all expose OpenAI-compatible REST anyway | `openai` package with `baseURL` pointing to corporate endpoint |
-| `presidio` (Microsoft) | Python server library for server-side scrubbing; cannot run in browser | Custom ONNX NER model via optimum-onnx running in embedding worker |
-| `spaCy` for NER training | Does not export to ONNX natively; requires Thinc integration | HuggingFace transformers + optimum-onnx |
-| `llama-cpp-wasm` | Unmaintained; no typed npm API; no split-model parallel download | `@wllama/wllama` |
-| WASM models > 500MB for mobile | Mobile browser tab memory ceiling; model load crashes tabs above ~500MB reliably | SmolLM2-360M Q8_0 (~386MB) or Qwen2.5-0.5B Q4_K_M (~280MB) |
-| WebLLM on mobile without detection guard | WebGPU unavailable on iOS Safari; throws hard error on init | wllama WasmAdapter via `supportsWebGPU()` detection probe |
-| Handlebars/Eta/Mustache for templates | 12-50KB for a bounded set of developer-controlled templates with typed slots | TypeScript template literal functions |
-
----
-
-## Version Compatibility
-
-| Package | Compatible With | Notes |
-|---------|-----------------|-------|
-| `@wllama/wllama@2.3.7` | `vite@7.x` + `vite-plugin-wasm` | WASM loading via existing plugin; no new config needed |
-| `@wllama/wllama@2.3.7` | `onnxruntime-web@1.24.x` | No conflict; separate WASM modules in separate workers |
-| `openai@6.27.0` | `@anthropic-ai/sdk@0.78.0` | No conflict; separate SDK instances per cloud adapter |
-| `openai@6.27.0` | TypeScript 5.9 | TypeScript >= 4.9 required — satisfied |
-| `optimum-onnx@0.1.0` | `transformers>=4.56,<4.58` | Version constraint from optimum-onnx compatibility matrix |
-| `optimum-onnx@0.1.0` | `onnxruntime>=1.20,<1.22` | Same constraint as existing v3.0 pipeline — no conflict |
-| wllama GGUF model files | Vite PWA service worker | Must add GGUF to `globIgnores` in workbox config — same pattern as existing ONNX WASM exclusion |
-
----
 
 ## Sources
 
-- [ngxson/wllama GitHub](https://github.com/ngxson/wllama) — version 2.3.7, API, multi-threading constraints, 2GB model limit (HIGH confidence — official repo)
-- [wllama releases](https://github.com/ngxson/wllama/releases) — v2.3.7 Nov 2025, v2.2.0 speed improvement, Firefox 142 adoption (HIGH confidence)
-- [SmolLM2-360M-Instruct-GGUF](https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct-GGUF) — Q8_0 at 386MB, llama architecture (HIGH confidence — official HF model card)
-- [Qwen2.5-0.5B-Instruct-GGUF](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF) — Q4_K_M at ~280MB (MEDIUM confidence — community measurement)
-- [openai/openai-node releases](https://github.com/openai/openai-node/releases) — v6.27.0 current as of 2026-03-05 (HIGH confidence — verified from releases page)
-- [xAI Developer Quickstart](https://docs.x.ai/developers/quickstart) — base URL `https://api.x.ai/v1`, OpenAI SDK compatibility (HIGH confidence — official xAI docs)
-- [huggingface/optimum-onnx](https://github.com/huggingface/optimum-onnx) — v0.1.0 Dec 2025, transformers 4.56/4.57 support (HIGH confidence — official HF repo)
-- [MDN: Navigator.gpu](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/gpu) — WebGPU detection pattern (HIGH confidence)
-- [ONNX NER local-first PII scrubber](https://dev.to/tjruesch/a-local-first-reversible-pii-scrubber-for-ai-workflows-using-onnx-and-regex-53fb) — hybrid regex + NER pattern, INT8 XLM-RoBERTa (MEDIUM confidence — community verified against optimum docs)
-
----
-
-## Prior Version Stack Sections
-
-The full v1.0, v2.0, and v3.0 stack research has been superseded by this file's v4.0 additions section. Validated existing stack:
-
-| Layer | Package | Version | Status |
-|-------|---------|---------|--------|
-| UI framework | `solid-js` | `^1.9.11` | Validated v1.0 |
-| Router | `@solidjs/router` | `^0.15.4` | Validated v1.0 |
-| Database | `dexie` | `^4.3.0` | Validated v1.0 |
-| Search | `minisearch` | `^7.2.0` | Validated v1.0 |
-| Validation | `zod` | `^4.3.6` | Validated v1.0 |
-| WebGPU LLM | `@mlc-ai/web-llm` | `0.2.81` | Validated v2.0 |
-| Cloud AI | `@anthropic-ai/sdk` | `^0.78.0` | Validated v2.0 |
-| Embeddings | `@huggingface/transformers` | `^3.8.1` | Validated v3.0 |
-| ONNX inference | `onnxruntime-web` | `^1.24.2` (dev) | Validated v3.0 |
-| Build | `vite` | `^7.3.1` | Validated v1.0 |
-| PWA | `vite-plugin-pwa` | `^1.2.0` | Validated v1.0 |
-| WASM | `vite-plugin-wasm` | `^3.5.0` | Validated v1.0 |
-
----
-
-*Stack research for: BinderOS v4.0 Device-Adaptive AI*
-*Researched: 2026-03-05*
+- [Xenova/bert-base-NER on HuggingFace](https://huggingface.co/Xenova/bert-base-NER) -- HIGH confidence (official model card)
+- [onnx-community/bert-base-NER-ONNX](https://huggingface.co/onnx-community/bert-base-NER-ONNX) -- HIGH confidence (entity categories: PER, LOC, ORG, MISC confirmed)
+- [onnx-community/NeuroBERT-NER-ONNX](https://huggingface.co/onnx-community/NeuroBERT-NER-ONNX) -- MEDIUM confidence (alternative considered)
+- [Dexie.js Compound Index documentation](https://dexie.org/docs/Compound-Index) -- HIGH confidence (official docs)
+- [Dexie.js MultiEntry Index documentation](https://dexie.org/docs/MultiEntry-Index) -- HIGH confidence (official docs)
+- Existing codebase: `src/workers/sanitization-worker.ts`, `src/search/embedding-worker.ts`, `src/storage/db.ts`, `src/storage/entity-graph.ts` -- HIGH confidence (direct code review)

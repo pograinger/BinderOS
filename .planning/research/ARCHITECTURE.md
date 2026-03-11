@@ -1,802 +1,582 @@
-# Architecture Research
+# Architecture Patterns: v5.0 Entity Intelligence & Knowledge Graph
 
-**Domain:** Device-adaptive AI tiers, ONNX sanitization classifiers, multi-provider cloud — BinderOS v4.0
-**Researched:** 2026-03-05
-**Confidence:** HIGH (existing codebase read directly; new integrations verified via official docs, npm packages, and GitHub repositories)
+**Domain:** Entity detection, registry, relationship inference for local-first PWA
+**Researched:** 2026-03-10
+**Overall confidence:** HIGH (building on well-understood existing architecture)
 
----
+## Recommended Architecture
 
-## What This Document Covers
+### High-Level Overview
 
-This is a v4.0-specific architecture document. It assumes the v3.0 architecture (tiered pipeline, MiniLM embedding worker, ONNX type classifier, WebLLM BrowserAdapter, Anthropic CloudAdapter) is already in place and operational. It answers exactly four questions:
-
-1. How does a WASM-based mobile LLM integrate alongside WebLLM?
-2. Where does the sanitization classifier sit in the pipeline?
-3. How does multi-provider cloud fit into the adapter pattern?
-4. Where does the template engine live — worker or main thread?
-
----
-
-## System Overview (v4.0 Target State)
+v5.0 adds an **Entity Intelligence Layer** between the existing NER/sanitization pipeline and the enrichment/triage consumers. The key insight: the sanitization worker already detects PERSON, LOCATION, ORG entities via DistilBERT NER -- v5.0 repurposes those detections (plus expanded label mapping) to build a persistent entity registry with relationship inference.
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                            Main Thread (SolidJS)                              │
-│                                                                              │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────────────────────────┐  │
-│  │ InboxView│  │  AIOrb   │  │ Reviews  │  │     Compression Coach       │  │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────────────┬────────────────┘  │
-│       └─────────────┴─────────────┴──────────────────────┘                  │
-│                              │                                               │
-│                    dispatchTiered(request)                                    │
-│                     src/ai/tier2/pipeline.ts                                 │
-│                              │                                               │
-│              ┌───────────────┼─────────────────┐                             │
-│              ▼               ▼                 ▼                             │
-│          Tier 1          Tier 2            Tier 3                            │
-│       deterministic    ONNX ML         LLM (local or cloud)                  │
-│       heuristics     classifiers                                             │
-│                                             │                                │
-│                                  ┌──────────┴───────────┐                    │
-│                                  ▼                       ▼                   │
-│                          DeviceAdapter             CloudAdapter              │
-│                    (new v4.0: wraps either)    (multi-provider v4.0)        │
-│                          │         │                     │                   │
-│              ┌───────────┘         └──────────┐          └───────────┐       │
-│              ▼                                ▼                       ▼       │
-│        WebLLM Worker              WllamaAdapter            Provider Router   │
-│       (GPU/WebGPU)               (WASM/CPU)              (Anthropic/OpenAI   │
-│                                                            /Grok/Corporate)  │
-│                                                                              │
-│  ┌───────────────────────────────────────────────────────────────────────┐   │
-│  │                    Embedding Worker (unchanged)                        │   │
-│  │  MiniLM Embeddings │ ONNX type classifier │ NEW: sanitization model   │   │
-│  └───────────────────────────────────────────────────────────────────────┘   │
-│                                                                              │
-│  ┌────────────────────────────────────────────────────────┐                  │
-│  │        Template Engine (main thread, pure functions)   │                  │
-│  │  Slot-fill templates for reviews, coaching, GTD flows  │                  │
-│  └────────────────────────────────────────────────────────┘                  │
-└──────────────────────────────────────────────────────────────────────────────┘
+                        Raw Content
+                            |
+                    +-------v--------+
+                    | Entity Detection|  (T1: expanded NER via existing sanitization worker)
+                    | Worker          |  (reuse sanitization-worker.ts, add DETECT_ENTITIES message type)
+                    +-------+--------+
+                            |
+                   DetectedEntity[]
+                            |
+              +-------------v--------------+
+              | Entity Accumulator (T1)     |  NEW: src/ai/entity/accumulator.ts
+              | - Dedup, normalize, merge   |
+              | - Write to entityRegistry   |
+              | - Co-occurrence counting    |
+              +-------------+--------------+
+                            |
+              +-------------v--------------+
+              | Relationship Inference (T1) |  NEW: src/ai/entity/relationship-inference.ts
+              | - Keyword patterns          |
+              | - Co-occurrence evidence    |
+              | - Write to entityGraph      |
+              +-------------+--------------+
+                            |
+              +-------------v--------------+
+              | Entity Context Provider     |  NEW: src/ai/entity/context-provider.ts
+              | - Query entityRegistry      |
+              | - Query entityGraph         |
+              | - Build context summaries   |
+              +----+--------+--------+-----+
+                   |        |        |
+          +--------v--+ +---v----+ +-v-----------+
+          | Enrichment| | Triage | | GTD Reviews |  (existing consumers, modified)
+          | Engine    | | Flow   | | & Orb       |
+          +-----------+ +--------+ +-------------+
 ```
 
----
+### Component Boundaries
 
-## Integration Point 1: Device-Adaptive Local LLM
+| Component | Responsibility | Location | Status | Communicates With |
+|-----------|---------------|----------|--------|-------------------|
+| **Sanitization Worker** | NER inference (DistilBERT) for PII detection AND entity detection | `src/workers/sanitization-worker.ts` | EXISTS -- extend message protocol | Main thread via postMessage |
+| **Entity Detector** | Orchestrate NER calls, merge NER+regex results, map to entity types | `src/ai/entity/detector.ts` | NEW | Sanitization worker, Entity Accumulator |
+| **Entity Accumulator** | Dedup entities, persist to entityRegistry, track co-occurrence | `src/ai/entity/accumulator.ts` | NEW | Dexie entityRegistry table, Relationship Inference |
+| **Relationship Inference** | Keyword pattern matching, co-occurrence rules, write edges | `src/ai/entity/relationship-inference.ts` | NEW | Entity Accumulator, Dexie entityGraph table |
+| **Entity Context Provider** | Query registry + graph, build context summaries for consumers | `src/ai/entity/context-provider.ts` | NEW | Dexie tables, Enrichment Engine, Triage, GTD |
+| **Entity Registry** (Dexie) | Persistent entity storage with pseudonym mapping | `src/storage/db.ts` (entityRegistry table) | EXISTS -- extend schema | Entity Accumulator, Context Provider |
+| **Entity Graph** (Dexie) | Relationship edges between entities and atoms | `src/storage/db.ts` (entityGraph table) | EXISTS -- extend schema | Relationship Inference, Context Provider |
+| **User Correction UI** | Inline entity cards, relationship editing | `src/ui/components/EntityCard.tsx` | NEW | Store, Entity Accumulator |
 
-### The Core Problem
+## Detailed Component Design
 
-WebLLM (`@mlc-ai/web-llm`) is WebGPU-only. It has no WASM fallback when WebGPU is unavailable. Mobile browsers — particularly iOS Safari before version 26 and Firefox on Android — either lack WebGPU or have incomplete implementations. The app currently fails silently to `NoOpAdapter` on these devices.
+### 1. Sanitization Worker Extension (MODIFY EXISTING)
 
-### Solution: DeviceAdapter Wrapping Two Implementations
+**File:** `src/workers/sanitization-worker.ts`
 
-Introduce a `DeviceAdapter` that wraps either `BrowserAdapter` (WebLLM/WebGPU) or a new `WasmAdapter` (wllama/WASM), selected at initialization by GPU detection.
+The sanitization worker already runs DistilBERT NER for PII detection. For v5.0 entity intelligence, we have two options:
 
-**File:** `src/ai/adapters/device.ts` (NEW)
+**Recommended: Add DETECT_ENTITIES message type to existing sanitization worker.**
 
-The `DeviceAdapter`:
-1. Calls `detectDevice()` at init — checks `navigator.gpu` availability
-2. Instantiates `BrowserAdapter` (WebLLM) if WebGPU is present
-3. Instantiates `WasmAdapter` (wllama) if WebGPU is absent
-4. Exposes the same `AIAdapter` interface — callers never need to know which is active
-5. Reports `device: 'webgpu' | 'wasm-cpu'` to the store for UI display
+The existing worker maps NER labels to PII categories (PERSON, LOCATION, etc.) and discards ORG by mapping it to LOCATION. For entity intelligence, we need the raw NER labels preserved.
 
 ```typescript
-// src/ai/adapters/device.ts (NEW)
-
-export class DeviceAdapter implements AIAdapter {
-  readonly id = 'browser' as const; // keeps existing store field name
-
-  private inner: BrowserAdapter | WasmAdapter | null = null;
-
-  async initialize(): Promise<void> {
-    const hasWebGPU = 'gpu' in navigator && !!(await navigator.gpu?.requestAdapter());
-    if (hasWebGPU) {
-      this.inner = new BrowserAdapter(this.modelId);
-    } else {
-      this.inner = new WasmAdapter(this.wasmModelUrl);
-    }
-    await this.inner.initialize();
-  }
-
-  execute(request: AIRequest): Promise<AIResponse> {
-    return this.inner!.execute(request);
-  }
-}
-```
-
-**File:** `src/ai/adapters/wasm.ts` (NEW)
-
-The `WasmAdapter` wraps `@wllama/wllama`:
-- Runs inference inside a worker thread (wllama's default — does not block UI)
-- Loads a small GGUF model: SmolLM2-360M-Instruct-Q4 (~200MB) or Qwen2.5-0.5B-Q4 (~300MB)
-- Single-threaded mode only (avoids COEP/COOP header requirement)
-- Model stored in Cache API (same pattern as existing ONNX classifier)
-
-```typescript
-// src/ai/adapters/wasm.ts (NEW)
-
-import { Wllama } from '@wllama/wllama';
-
-export class WasmAdapter implements AIAdapter {
-  readonly id = 'browser' as const;
-  private wllama: Wllama | null = null;
-
-  async initialize(): Promise<void> {
-    this.wllama = new Wllama({
-      'single-thread/wllama.wasm': '/wllama/single-thread/wllama.wasm',
-    });
-    // Use single-thread to avoid COEP/COOP requirement
-    await this.wllama.loadModelFromUrl(this.modelUrl, { n_ctx: 512 });
-    this._status = 'available';
-  }
-
-  async execute(request: AIRequest): Promise<AIResponse> {
-    const text = await this.wllama!.createCompletion(request.prompt, {
-      nPredict: request.maxTokens ?? 256,
-      temperature: 0.3,
-    });
-    return { requestId: request.requestId, text, provider: 'browser' };
-  }
-}
-```
-
-**Critical constraint:** wllama requires WASM binary files served from the same origin. Add to `public/wllama/single-thread/wllama.wasm` (copy from `node_modules/@wllama/wllama/esm/single-thread/`).
-
-**COEP/COOP decision:** Use single-threaded wllama only. Multi-threaded wllama requires `Cross-Origin-Embedder-Policy: require-corp` and `Cross-Origin-Opener-Policy: same-origin`. These headers break third-party iframes and some CDN resources. For a BYOK privacy-focused app, the tradeoff is not worth it. Single-thread wllama is slower but has zero header requirements.
-
-### What Changes vs. What Stays
-
-| Component | Status | Notes |
-|-----------|--------|-------|
-| `src/ai/adapters/browser.ts` | UNCHANGED | WebLLM/WebGPU path, stays as is |
-| `src/ai/adapters/device.ts` | NEW | Wraps browser or wasm, decides at init |
-| `src/ai/adapters/wasm.ts` | NEW | Wllama WASM path for mobile/no-WebGPU |
-| `src/ai/router.ts` | UNCHANGED | `setActiveAdapter()` / `dispatchAI()` unchanged |
-| Store initialization | MODIFIED | Instantiates `DeviceAdapter` instead of `BrowserAdapter` directly |
-| `adapter.ts` types | MODIFIED | Add `'wasm-cpu'` to device string; keep `provider: 'browser'` |
-
-### Model Selection for WasmAdapter
-
-Use the smallest capable GGUF model — this is for mobile devices with 3-4GB RAM:
-
-| Model | GGUF Size | RAM Usage | Context | Recommendation |
-|-------|-----------|-----------|---------|----------------|
-| SmolLM2-360M-Q4 | ~200MB | ~300MB | 512 tok | Best for mobile: fast, tiny |
-| Qwen2.5-0.5B-Q4 | ~300MB | ~450MB | 512 tok | Better quality, still mobile-safe |
-| Phi-3.5-mini-Q4 | ~2.4GB | ~3GB | 2k tok | Desktop-class only, not wllama target |
-
-**Recommendation:** Ship SmolLM2-360M-Q4 for WasmAdapter. The WASM path is a capability floor (offline mobile), not a capability ceiling. Limit context to 512 tokens to keep latency acceptable.
-
----
-
-## Integration Point 2: ONNX Sanitization Classifier
-
-### The Core Problem
-
-The current `sanitizeForCloud()` in `privacy-proxy.ts` is a type-boundary-only enforcement — it validates that a prompt is a string but does not actually detect whether it contains PII or sensitive content. When `level = 'full'` is selected, raw content flows to cloud providers unchecked. The v4.0 goal is an ONNX classifier that flags content as "safe to send" or "contains sensitive data" before it leaves the device.
-
-### Pipeline Position: Embedding Worker
-
-The sanitization classifier belongs inside the existing embedding worker (`src/search/embedding-worker.ts`), not in the main thread or a separate worker. Rationale:
-
-- The embedding worker already runs ONNX Runtime Web (`ort`) and manages the MiniLM model
-- Sanitization classification uses the same 384-dim MiniLM embedding as input — share the embedding step, run two ONNX inference sessions
-- Adding a second worker would double the startup overhead for model loading
-- All classification remains off main thread — no blocking
-- Graceful degradation pattern already exists: if classifier fails, emit error and continue
-
-**New message types added to embedding-worker.ts:**
-
-```typescript
-// Incoming
-{ type: 'SANITIZE_CHECK'; id: string; text: string }
-
-// Outgoing
-{ type: 'SANITIZE_RESULT'; id: string; isSafe: boolean; confidence: number; flags: string[] }
-{ type: 'SANITIZE_ERROR'; id: string; error: string }
-```
-
-**Sanitization classifier model:** Binary MLP classifier trained on:
-- Positive class: PII-containing text (names, emails, phone numbers, addresses, account numbers, medical info)
-- Negative class: abstract GTD content (tasks, facts, decisions without personal identifiers)
-- Architecture: same MiniLM embedding → sigmoid binary head (same training pipeline as triage-type classifier)
-- Output: `isSafe: boolean`, `confidence: 0-1`, `flags: string[]` (detected categories)
-- Model path: `public/models/classifiers/sanitize-check.onnx`
-- Cache key: `onnx-sanitizer-v1` (separate from `onnx-classifier-v1`)
-
-### Where It Gates Cloud Requests
-
-The sanitization check integrates into `CloudAdapter.execute()` between the `sanitizeForCloud()` call and the pre-send approval modal:
-
-```
-CloudAdapter.execute()
-  1. Check API key, online status, session consent (existing)
-  2. sanitizeForCloud(prompt, level) — string cleanup (existing)
-  3. NEW: await sanitizationWorker.check(sanitizedPrompt)
-     → if ONNX flags sensitive data AND level != 'full': throw with explanation
-     → if confidence < 0.6: pass through with warning in log entry
-     → if isSafe or level == 'full' (user acknowledged): continue
-  4. Pre-send approval modal (existing)
-  5. API call (existing)
-```
-
-The sanitization check should NOT block when the ONNX model is not yet loaded — degrade to `{ isSafe: true, confidence: 0 }` with a log entry flagging that the check was skipped.
-
-### Privacy Proxy Update
-
-`privacy-proxy.ts` evolves from a passthrough to an active gate:
-
-```typescript
-// src/ai/privacy-proxy.ts (MODIFIED)
-
-export interface SanitizationResult {
-  isSafe: boolean;
-  confidence: number;
-  flags: string[];  // e.g., ['email', 'phone', 'name']
-  checkedAt: number;
-}
-
-// NEW: async check via embedding worker
-export async function checkSanitization(
-  text: string,
-  worker: Worker,
-): Promise<SanitizationResult>
-```
-
-### Python Training Pipeline
-
-New script: `scripts/train/train-sanitizer.py`
-
-Same pattern as `train-classifier.py` but binary labels:
-- `scripts/training-data/sanitize-check.jsonl` — labeled examples
-- `scripts/training-data/generate-sanitizer-data.py` — synthetic PII generation for training
-- Exports to `public/models/classifiers/sanitize-check.onnx`
-
-This is a separate training pipeline from the type classifier. The class file becomes `sanitize-check-classes.json` with `{"0": "safe", "1": "sensitive"}`.
-
-### What Changes vs. What Stays
-
-| Component | Status | Notes |
-|-----------|--------|-------|
-| `src/search/embedding-worker.ts` | MODIFIED | Add SANITIZE_CHECK handler, second ONNX session |
-| `src/ai/privacy-proxy.ts` | MODIFIED | Add `checkSanitization()` async function |
-| `src/ai/adapters/cloud.ts` | MODIFIED | Call sanitization check before approval modal |
-| `scripts/train/` | NEW FILES | `train-sanitizer.py`, sanitizer data generation |
-| `public/models/classifiers/` | NEW FILES | `sanitize-check.onnx`, `sanitize-check-classes.json` |
-| Existing type classifier | UNCHANGED | Different ONNX session, no interference |
-
----
-
-## Integration Point 3: Multi-Provider Cloud Adapter
-
-### The Core Problem
-
-`CloudAdapter` is hardcoded to Anthropic's SDK (`@anthropic-ai/sdk`). The `AIResponse.provider` type is `'noop' | 'browser' | 'cloud'` — "cloud" is singular. Adding OpenAI, Grok, and corporate LLMs requires either: (a) a new adapter per provider (duplicates all safety gates), or (b) a single `CloudAdapter` that delegates to a provider-specific implementation.
-
-Option (b) is correct. The safety gates (key vault, session consent, pre-send approval, cloud request log) belong in ONE place — the `CloudAdapter`. Provider-specific implementations are thin request formatters.
-
-### Provider Plugin Architecture
-
-**File:** `src/ai/adapters/cloud-provider.ts` (NEW)
-
-```typescript
-// src/ai/adapters/cloud-provider.ts (NEW)
-
-export interface CloudProvider {
-  readonly id: 'anthropic' | 'openai' | 'grok' | 'corporate';
-  readonly displayName: string;
-  readonly defaultModel: string;
-
-  /** Initialize with user-supplied API key */
-  initialize(apiKey: string): void;
-
-  /** Execute a pre-sanitized, pre-approved request */
-  execute(
-    sanitizedPrompt: string,
-    maxTokens: number,
-    onChunk?: (chunk: string) => void,
-    signal?: AbortSignal,
-  ): Promise<{ text: string; model: string }>;
-
-  dispose(): void;
-}
-```
-
-**File:** `src/ai/adapters/providers/anthropic-provider.ts` (extracted from `cloud.ts`)
-**File:** `src/ai/adapters/providers/openai-provider.ts` (NEW)
-**File:** `src/ai/adapters/providers/grok-provider.ts` (NEW)
-**File:** `src/ai/adapters/providers/corporate-provider.ts` (NEW — custom base URL)
-
-`CloudAdapter` becomes provider-agnostic:
-
-```typescript
-// src/ai/adapters/cloud.ts (REFACTORED — all safety gates stay here)
-
-export class CloudAdapter implements AIAdapter {
-  private provider: CloudProvider | null = null;
-
-  setProvider(provider: CloudProvider): void {
-    this.provider = provider;
-    this.provider.initialize(getMemoryKey() ?? '');
-    this._status = 'available';
-  }
-
-  async execute(request: AIRequest): Promise<AIResponse> {
-    // ALL safety gates execute here, provider-agnostic:
-    if (!isOnline()) throw ...;
-    if (!hasSessionConsent()) throw ...;
-    const sanitized = sanitizeForCloud(request.prompt, level);
-    await checkSanitization(sanitized, embeddingWorker); // NEW
-    // Pre-send approval modal
-    const approved = await this.onPreSendApproval?.(logEntry);
-    if (!approved) throw ...;
-    // Delegate to provider (no safety logic in provider)
-    const { text, model } = await this.provider!.execute(...);
-    return { requestId: request.requestId, text, provider: 'cloud', model };
-  }
-}
-```
-
-### Provider Implementations
-
-**OpenAI Provider:**
-- Uses `openai` npm package with `dangerouslyAllowBrowser: true`
-- Default model: `gpt-4o-mini` (cost-efficient, same use case as Haiku)
-- Streaming via `client.chat.completions.create({ stream: true })`
-- Same BYOK pattern as Anthropic
-
-**Grok Provider:**
-- Grok API is OpenAI-compatible — use the `openai` package with custom `baseURL: 'https://api.x.ai/v1'`
-- No separate SDK needed: `new OpenAI({ apiKey, baseURL: 'https://api.x.ai/v1', dangerouslyAllowBrowser: true })`
-- Default model: `grok-4` (current as of 2026-03)
-- HIGH confidence (verified: xAI docs confirm OpenAI SDK compatibility with baseURL swap)
-
-**Corporate LLM Provider:**
-- Same pattern as Grok: OpenAI-compatible base URL, user-supplied endpoint
-- Supports Ollama, LM Studio, vLLM, Azure OpenAI, any OpenAI-compatible endpoint
-- User enters base URL + optional API key in settings
-- No auth required for local Ollama deployments (key = empty string)
-
-### CloudRequestLogEntry Update
-
-Add `provider` field granularity to the log:
-
-```typescript
-export interface CloudRequestLogEntry {
-  // ... existing fields ...
-  provider: 'anthropic' | 'openai' | 'grok' | 'corporate'; // was just string
-  providerDisplayName: string; // e.g., "OpenAI", "Grok (xAI)", "My Ollama"
-}
-```
-
-### What Changes vs. What Stays
-
-| Component | Status | Notes |
-|-----------|--------|-------|
-| `src/ai/adapters/cloud.ts` | REFACTORED | Becomes provider-agnostic shell; all safety gates stay |
-| `src/ai/adapters/cloud-provider.ts` | NEW | Interface definition |
-| `src/ai/adapters/providers/anthropic-provider.ts` | NEW (extracted) | Extracted from cloud.ts |
-| `src/ai/adapters/providers/openai-provider.ts` | NEW | Uses `openai` npm package |
-| `src/ai/adapters/providers/grok-provider.ts` | NEW | OpenAI SDK + `baseURL: 'https://api.x.ai/v1'` |
-| `src/ai/adapters/providers/corporate-provider.ts` | NEW | OpenAI SDK + user-supplied baseURL |
-| `src/ai/adapters/adapter.ts` | MODIFIED | `provider` field in AIResponse stays `'cloud'` — sub-provider tracked in model field |
-| `src/ai/key-vault.ts` | MODIFIED | Multi-key storage: one slot per provider |
-| AI Settings UI | MODIFIED | Provider selector + per-provider key entry |
-
-### Key Vault Multi-Provider Extension
-
-Currently `key-vault.ts` stores a single `binderos-ai-key`. Extend to per-provider slots:
-
-```typescript
-// key-vault.ts (MODIFIED)
-const PROVIDER_KEY_PREFIX = 'binderos-ai-key-'; // e.g., binderos-ai-key-anthropic
-
-export function setProviderKey(provider: CloudProviderId, key: string): void
-export function getProviderKey(provider: CloudProviderId): string | null
-export function clearProviderKey(provider: CloudProviderId): void
-```
-
-This is additive — existing `setMemoryKey()` / `getMemoryKey()` remain for backward compatibility during transition.
-
----
-
-## Integration Point 4: Template Engine
-
-### The Core Problem
-
-Review briefings, compression explanations, and GTD flow prompts currently require LLM generation — even when the content is mostly boilerplate with a few slot-filled values (entropy score, atom count, section name). A template engine handles 80% of these cases deterministically, skipping Tier 3 entirely for structured content.
-
-### Placement: Main Thread, Pure Functions
-
-The template engine belongs in the main thread as pure functions, not in a worker. Rationale:
-
-- Templates are string interpolation — trivially fast, no compute pressure
-- Moving to a worker adds message-passing overhead for no benefit
-- Template functions need access to current store state (entropy signals, atom counts) — easier from main thread
-- Pure functions are testable, zero dependencies on workers
-
-**Pattern:** No external template library is needed. The existing GTD prompt building in `triage.ts`, `compression.ts`, and `analysis.ts` already demonstrates the pattern. Formalize it.
-
-**File:** `src/ai/templates/index.ts` (NEW directory)
-
-```typescript
-// src/ai/templates/types.ts (NEW)
-export interface TemplateContext {
-  atomCount?: number;
-  staleCount?: number;
-  inboxCount?: number;
-  entropyLevel?: 'green' | 'yellow' | 'red';
-  sectionName?: string;
-  weekNumber?: number;
-  topStaleAtom?: { title: string; staleness: number };
-  // ... etc
-}
-
-export interface TemplateResult {
+// NEW message types added to sanitization-worker.ts
+type WorkerIncoming =
+  | { type: 'SANITIZE'; id: string; text: string }    // existing
+  | { type: 'LOAD_NER' }                               // existing
+  | { type: 'DETECT_ENTITIES'; id: string; text: string } // NEW: return raw NER entities
+
+// NEW outgoing:
+// { type: 'ENTITIES_RESULT'; id: string; entities: RawNEREntity[] }
+// { type: 'ENTITIES_ERROR'; id: string; error: string }
+
+interface RawNEREntity {
   text: string;
-  source: 'template';
-  templateId: string;
+  label: string;       // raw NER label: PER, LOC, ORG, MISC
+  start: number;
+  end: number;
+  confidence: number;
 }
 ```
 
-```typescript
-// src/ai/templates/review-templates.ts (NEW)
-export function weeklyReviewBriefing(ctx: TemplateContext): TemplateResult
-export function getCleanBriefing(ctx: TemplateContext): TemplateResult
-export function getCurrentBriefing(ctx: TemplateContext): TemplateResult
-export function getCreativeBriefing(ctx: TemplateContext): TemplateResult
-```
+**Why reuse the same worker instead of a new one:**
+- The NER model is already loaded in memory (~50MB) -- loading a second instance doubles memory for zero benefit
+- The existing DistilBERT model (`sanitize-check`) already detects PERSON/LOCATION/ORG -- the same entities v5.0 needs
+- Adding a message type is 20 lines of code vs a new worker + model download
+
+**Why NOT use bert-base-NER separately:**
+- The project memory mentions `Xenova/bert-base-NER` for entity detection, but the existing `sanitize-check` model already does NER
+- If bert-base-NER is specifically needed for better ORG detection or different label granularity, load it in the SAME worker (the worker can manage two pipelines)
+- Decision point: benchmark `sanitize-check` vs `bert-base-NER` on entity detection quality before committing to a second model
+
+### 2. Entity Detector (NEW)
+
+**File:** `src/ai/entity/detector.ts`
+
+Thin orchestration layer on the main thread that:
+1. Sends content to the sanitization worker via `DETECT_ENTITIES`
+2. Receives raw NER entities
+3. Maps NER labels to v5.0 entity types (PERSON, PLACE, ORGANIZATION -- distinct from PII categories)
+4. Returns typed entities for the accumulator
 
 ```typescript
-// src/ai/templates/compression-templates.ts (NEW)
-export function compressionExplanation(atom: AtomSummary, ctx: TemplateContext): TemplateResult
-export function compressionCoachIntro(count: number, ctx: TemplateContext): TemplateResult
+// Entity types for the knowledge graph (distinct from PII EntityCategory)
+export type KnowledgeEntityType = 'person' | 'place' | 'organization' | 'date' | 'topic';
+
+export interface KnowledgeEntity {
+  text: string;
+  normalizedText: string;       // lowercase, trimmed
+  type: KnowledgeEntityType;
+  confidence: number;
+  sourceAtomId?: string;        // which atom/inbox item this came from
+  sourceOffset: { start: number; end: number };
+}
 ```
+
+**Pure module pattern** -- no store imports. Same convention as sanitizer.ts.
+
+### 3. Entity Accumulator (NEW)
+
+**File:** `src/ai/entity/accumulator.ts`
+
+Manages the lifecycle of detected entities:
+
+1. **Deduplication:** Normalize text, check `entityRegistry` for existing entry
+2. **Merge:** If entity exists, increment `lastSeenAt` and co-occurrence count
+3. **Create:** If new, assign ID and persist to `entityRegistry`
+4. **Co-occurrence tracking:** When two entities appear in the same atom, record the co-occurrence in a map
+
+**Key design decision: Extend EntityRegistryEntry, don't replace it.**
+
+The existing `EntityRegistryEntry` is designed for sanitization pseudonyms. v5.0 needs additional fields:
 
 ```typescript
-// src/ai/templates/gtd-templates.ts (NEW)
-export function inboxTriageBriefing(ctx: TemplateContext): TemplateResult
-export function waitingFollowUpNudge(ctx: TemplateContext): TemplateResult
+// Extension to existing EntityRegistryEntry (new Dexie migration v9)
+export interface EntityRegistryEntryV2 extends EntityRegistryEntry {
+  // NEW fields for entity intelligence
+  entityType: KnowledgeEntityType;     // person, place, organization (separate from PII category)
+  occurrenceCount: number;             // how many times seen across all atoms
+  sourceAtomIds: string[];             // which atoms mentioned this entity
+  aliases: string[];                   // alternative spellings/names detected
+  userCorrected: boolean;              // whether user has manually edited this entity
+  mergedIntoId?: string;               // if this entity was merged into another
+}
 ```
 
-### Template Integration in the Tiered Pipeline
+**Important: backward-compatible migration.** Existing entityRegistry entries (from sanitization) get `entityType` derived from their `category` field. New entries get both fields.
 
-Templates add a Tier 0 concept — deterministic, no ML, no LLM:
+### 4. Relationship Inference Engine (NEW)
 
-```
-Tier 0: Template engine (new for structured content)
-  ↓ (if template not applicable for this task)
-Tier 1: Deterministic heuristics (existing)
-  ↓ (confidence < threshold)
-Tier 2: ONNX classifiers (existing)
-  ↓ (confidence < threshold)
-Tier 3: LLM (existing)
-```
+**File:** `src/ai/entity/relationship-inference.ts`
 
-Templates are not registered as `TierHandler` instances — they are called directly by the feature modules that know their content is template-eligible. The `AITaskType` system grows:
+T1 deterministic relationship inference from two sources:
+
+**Source A: Keyword patterns (high confidence)**
 
 ```typescript
-// types.ts (MODIFIED)
+const RELATIONSHIP_KEYWORDS: Record<string, { keywords: string[]; relationship: string }[]> = {
+  person: [
+    { keywords: ['wife', 'husband', 'spouse', 'married', 'partner'], relationship: 'spouse' },
+    { keywords: ['mom', 'dad', 'mother', 'father', 'parent'], relationship: 'parent' },
+    { keywords: ['son', 'daughter', 'child', 'kid'], relationship: 'child' },
+    { keywords: ['boss', 'manager', 'supervisor', 'director'], relationship: 'manager' },
+    { keywords: ['coworker', 'colleague', 'teammate'], relationship: 'colleague' },
+    { keywords: ['friend', 'buddy', 'pal'], relationship: 'friend' },
+    { keywords: ['doctor', 'dentist', 'therapist', 'attorney', 'lawyer', 'accountant'], relationship: 'professional' },
+    { keywords: ['anniversary', 'birthday'], relationship: 'personal' },
+  ],
+};
+```
+
+**Source B: Co-occurrence evidence (lower confidence)**
+
+When entities frequently appear together, infer relationship. Example: "Pam" + "anniversary" in same atom = personal relationship evidence.
+
+```typescript
+interface RelationshipEvidence {
+  entityA: string;           // entity registry ID
+  entityB: string;           // entity registry ID or keyword
+  evidenceType: 'keyword' | 'co-occurrence' | 'user-corrected';
+  relationship: string;
+  confidence: number;
+  atomIds: string[];         // supporting evidence
+}
+```
+
+**Writes to existing `entityGraph` table.** The existing `EntityGraphEntry` schema supports this -- uses `entityType: 'person'`, `relationship: 'spouse'`, `targetValue: entityId`.
+
+### 5. Entity Context Provider (NEW)
+
+**File:** `src/ai/entity/context-provider.ts`
+
+Read-only query layer that builds entity context summaries for downstream consumers:
+
+```typescript
+export interface EntityContext {
+  /** All entities detected in this atom's content */
+  mentionedEntities: Array<{
+    id: string;
+    text: string;
+    type: KnowledgeEntityType;
+    relationships: Array<{ targetEntity: string; relationship: string; confidence: number }>;
+  }>;
+  /** Summary string suitable for injection into prompts */
+  contextSummary: string;
+  /** Count of entity mentions across all user content */
+  entityFrequency: Map<string, number>;
+}
+
+/**
+ * Build entity context for a piece of content.
+ * Used by enrichment engine and triage flow.
+ */
+export async function buildEntityContext(content: string): Promise<EntityContext>;
+
+/**
+ * Get all known relationships for a specific entity.
+ * Used by entity card UI.
+ */
+export async function getEntityRelationships(entityId: string): Promise<EntityGraphEntry[]>;
+
+/**
+ * Format entity context as a prompt fragment for T3 cloud requests.
+ * Uses pseudonyms from sanitization -- never exposes raw names to cloud.
+ */
+export async function formatEntityContextForCloud(
+  context: EntityContext,
+  reverseMap: Map<string, string>,
+): Promise<string>;
+```
+
+### 6. Integration Points with Existing Components
+
+#### 6A. Triage Flow (MODIFY)
+
+**File:** `src/ai/triage.ts`
+
+Current flow: inbox item -> type classification -> section routing -> user approval.
+
+v5.0 addition: After content arrives, run entity detection in parallel with type classification. Entity context injected into T3 triage prompts.
+
+```typescript
+// In triage flow, add entity detection step
+async function triageWithEntityContext(inboxItem: InboxItem): Promise<TriageResult> {
+  // Run in parallel: entity detection + type classification
+  const [entityContext, typeResult] = await Promise.all([
+    buildEntityContext(inboxItem.content),
+    dispatchTiered({ task: 'classify-type', features: { content: inboxItem.content } }),
+  ]);
+
+  // Entity context available for enrichment engine downstream
+  return { ...typeResult, entityContext };
+}
+```
+
+#### 6B. Enrichment Engine (MODIFY)
+
+**File:** `src/ai/enrichment/enrichment-engine.ts`
+
+Add entity context to `TieredFeatures` so enrichment questions can reference known entities:
+
+```typescript
+// Extend TieredFeatures with entity context
+export interface TieredFeatures {
+  // ... existing fields ...
+  entityContext?: EntityContext;  // NEW: entities detected in this content
+}
+```
+
+The enrichment question templates can then generate entity-aware questions:
+- "You mentioned [Person]. What's their role in this task?"
+- "Is [Place] where this needs to happen?"
+- "Does [Organization] need to approve this?"
+
+#### 6C. Tiered Pipeline (MODIFY)
+
+**File:** `src/ai/tier2/types.ts`
+
+Add new task types for entity operations:
+
+```typescript
 export type AITaskType =
   | 'classify-type'
-  | 'route-section'
-  | 'extract-entities'
-  | 'assess-staleness'
-  | 'summarize'
-  | 'analyze-gtd'
-  | 'generate-review-briefing'  // NEW — template-eligible
-  | 'generate-compression-explanation';  // NEW — template-eligible
+  | 'detect-entities'          // NEW: replaces old extract-entities (T1 regex only)
+  | 'infer-relationships'     // NEW: T1 keyword + co-occurrence
+  | 'entity-aware-enrich'     // NEW: entity-context enrichment questions
+  // ... existing types ...
 ```
 
-For `generate-review-briefing` and `generate-compression-explanation`, `dispatchTiered()` checks for a template first before escalating. If a template covers the request, `TieredResult.tier` = 0 (or `1` with a `source: 'template'` annotation — implementation detail to decide during build).
+#### 6D. Store Extensions (MODIFY)
 
-### What Changes vs. What Stays
+**File:** `src/ui/signals/store.ts`
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| `src/ai/templates/` | NEW directory | Pure function slot-fill templates |
-| `src/ai/tier2/types.ts` | MODIFIED | Add template-eligible task types |
-| `src/ai/triage.ts` | MODIFIED | Call templates before dispatchTiered when appropriate |
-| `src/ai/compression.ts` | MODIFIED | Call templates for coaching intros |
-| `src/ai/review-flow.ts` | MODIFIED | Call templates for briefing sections |
-| `src/ai/analysis.ts` | MODIFIED | Minor wiring changes |
-| `dispatchTiered()` | UNCHANGED | Template callers bypass it directly |
-
----
-
-## Recommended File Structure (v4.0 Changes Only)
-
-```
-src/ai/
-├── adapters/
-│   ├── adapter.ts           # MODIFIED: WasmAdapter device field
-│   ├── browser.ts           # UNCHANGED (WebLLM)
-│   ├── cloud.ts             # REFACTORED (provider-agnostic shell)
-│   ├── cloud-provider.ts    # NEW: CloudProvider interface
-│   ├── device.ts            # NEW: DeviceAdapter (WebGPU vs WASM router)
-│   ├── wasm.ts              # NEW: WlamaAdapter (wllama binding)
-│   ├── noop.ts              # UNCHANGED
-│   └── providers/
-│       ├── anthropic-provider.ts   # NEW (extracted from cloud.ts)
-│       ├── openai-provider.ts      # NEW
-│       ├── grok-provider.ts        # NEW
-│       └── corporate-provider.ts   # NEW
-├── templates/
-│   ├── index.ts             # NEW: re-exports all templates
-│   ├── types.ts             # NEW: TemplateContext, TemplateResult
-│   ├── review-templates.ts  # NEW: weekly review, get clear/current/creative
-│   ├── compression-templates.ts  # NEW: compression coach text
-│   └── gtd-templates.ts     # NEW: inbox triage, waiting nudges
-├── tier2/
-│   ├── types.ts             # MODIFIED: add template task types, Tier 0
-│   ├── pipeline.ts          # UNCHANGED
-│   ├── handler.ts           # UNCHANGED
-│   ├── tier1-handler.ts     # UNCHANGED
-│   ├── tier2-handler.ts     # MINOR: add new ONNX classifiers
-│   ├── tier3-handler.ts     # UNCHANGED
-│   ├── centroid-builder.ts  # UNCHANGED
-│   └── index.ts             # UNCHANGED
-├── router.ts                # UNCHANGED
-├── privacy-proxy.ts         # MODIFIED: add checkSanitization()
-├── key-vault.ts             # MODIFIED: multi-provider key slots
-├── triage.ts                # MODIFIED: template integration
-├── compression.ts           # MODIFIED: template integration
-├── review-flow.ts           # MODIFIED: template integration
-└── llm-worker.ts            # UNCHANGED (WebLLM worker entry point)
-
-src/search/
-└── embedding-worker.ts      # MODIFIED: add SANITIZE_CHECK, second ONNX session
-
-public/
-├── models/
-│   └── classifiers/
-│       ├── triage-type.onnx         # UNCHANGED
-│       ├── triage-type-classes.json # UNCHANGED
-│       ├── sanitize-check.onnx      # NEW
-│       └── sanitize-check-classes.json  # NEW
-└── wllama/
-    └── single-thread/
-        └── wllama.wasm             # NEW (copied from npm package)
-
-scripts/train/
-├── train-classifier.py     # UNCHANGED
-├── train-sanitizer.py      # NEW
-└── generate-sanitizer-data.py  # NEW
-```
-
----
-
-## Architectural Patterns
-
-### Pattern 1: Adapter-Within-Adapter (DeviceAdapter)
-
-**What:** The `DeviceAdapter` implements `AIAdapter` and delegates to either `BrowserAdapter` or `WasmAdapter`. The store and router never know which is active.
-
-**When to use:** When two implementations of the same interface diverge only in capability detection, not in interface contract.
-
-**Trade-offs:** Adds one layer of indirection. Worth it because it keeps all device-detection logic in one file and the rest of the codebase device-oblivious.
+Add entity-related state to the store:
 
 ```typescript
-// Store init (MODIFIED):
-// Before v4.0: new BrowserAdapter(modelId)
-// After v4.0:  new DeviceAdapter(modelId, wasmModelUrl)
+// New store fields
+entityDetectionPending: boolean;
+entityContext: EntityContext | null;        // cached for current item
+entityCorrectionModal: {
+  open: boolean;
+  entityId: string | null;
+  currentRelationship: string | null;
+} | null;
 ```
 
-### Pattern 2: Safety Gates in One Place (CloudAdapter)
+**SolidJS gotcha reminder:** Do NOT store callback functions in the store. Entity resolution callbacks must use module-level variables (same pattern as cloud approval).
 
-**What:** All cloud safety gates (key check, online check, session consent, sanitization check, pre-send approval, request logging) live in `CloudAdapter.execute()`. Provider implementations (`AnthropicProvider`, `OpenAIProvider`, etc.) contain only request formatting and response parsing — zero safety logic.
+### 7. Database Schema Changes
 
-**When to use:** Whenever security checks must apply uniformly across multiple implementations.
+**New migration v9** (after existing v8):
 
-**Trade-offs:** `CloudAdapter` becomes longer. Acceptable because the length reflects actual safety requirements, not accidental complexity.
+```typescript
+// src/storage/migrations/v9.ts
+export function applyV9Migration(db: BinderDB): void {
+  db.version(9).stores({
+    // ... all existing tables unchanged ...
+    // entityRegistry: add new indexes for entity intelligence queries
+    entityRegistry: '&id, [normalizedText+category], category, entityType, [entityType+normalizedText]',
+    // entityGraph: add targetEntityId index for relationship queries
+    entityGraph: '&id, sourceAtomId, [sourceAtomId+entityType], entityType, relationship, targetValue, [entityType+relationship]',
+  });
+}
+```
 
-### Pattern 3: Template-First, LLM-Fallback
-
-**What:** For tasks with predictable structure (review briefings, compression explanations), call a pure template function first. If it produces output, return immediately without touching the pipeline. Escalate to `dispatchTiered()` only for truly open-ended content.
-
-**When to use:** When output structure is known in advance and only data values vary (counts, titles, scores).
-
-**Trade-offs:** Templates produce less creative output than LLMs. The trade is acceptable: briefings and explanations are functional, not creative.
-
-### Pattern 4: Single ONNX Session per Model (Embedding Worker)
-
-**What:** The embedding worker maintains separate `ort.InferenceSession` instances for the type classifier and the sanitization classifier. Both run in the same worker thread, sequentially. The shared MiniLM embedding step feeds both.
-
-**When to use:** When multiple ONNX models share the same input representation.
-
-**Trade-offs:** Sequential execution means sanitization adds latency to cloud dispatch. This is acceptable because cloud dispatch already has user-visible approval wait time — a 100-200ms ONNX check is imperceptible.
-
----
+**Data migration:** Existing entityRegistry entries (from sanitization) need `entityType` backfilled:
+- `category: 'PERSON'` -> `entityType: 'person'`
+- `category: 'LOCATION'` -> `entityType: 'place'`
+- Others -> `entityType: 'organization'` (conservative default)
 
 ## Data Flow
 
-### New: Cloud Request with Sanitization Check
+### Entity Detection Flow (on inbox item arrival)
 
 ```
-User approves cloud AI use in settings
-    ↓
-Feature module (e.g., review-flow.ts) builds prompt
-    ↓
-dispatchAI({ requestId, prompt })  [or dispatchTiered → Tier 3]
-    ↓
-CloudAdapter.execute(request)
-    ├── Check API key, online, session consent (existing)
-    ├── sanitizeForCloud(prompt, level)     (existing string cleanup)
-    ├── checkSanitization(text, worker) [NEW] ← postMessage to embedding worker
-    │       ↓ CLASSIFY_ONNX (reuse embedding) → sanitize-check.onnx → isSafe + flags
-    │   if not safe AND level != 'full' → throw SanitizationBlockedError
-    │   if confidence < 0.6 → log warning, continue
-    ├── Pre-send approval modal (existing, shows sanitization flags if any)
-    └── Provider.execute(sanitizedPrompt, ...) [NEW: delegates to active provider]
-            ↓
-        AnthropicProvider / OpenAIProvider / GrokProvider / CorporateProvider
+1. User captures content -> InboxItem created in Dexie
+2. Triage triggers (existing flow)
+3. NEW: Entity Detector sends content to sanitization worker (DETECT_ENTITIES)
+4. Worker returns RawNEREntity[]
+5. Entity Detector maps to KnowledgeEntity[]
+6. Entity Accumulator deduplicates, persists to entityRegistry
+7. Relationship Inference runs keyword patterns + co-occurrence
+8. Results written to entityGraph
+9. Entity Context Provider builds context for downstream consumers
 ```
 
-### New: Device LLM Selection
+### Entity Context Injection Flow (enrichment)
 
 ```
-Store initializes AI adapter
-    ↓
-DeviceAdapter.initialize()
-    ├── await navigator.gpu?.requestAdapter()
-    │   ├── WebGPU available → new BrowserAdapter(modelId) → initialize()
-    │   └── WebGPU unavailable → new WasmAdapter(wasmModelUrl) → initialize()
-    └── onStatusChange({ device: 'webgpu' | 'wasm-cpu', status: 'available' })
-            ↓
-        Store updates: aiDeviceType, llmStatus
-        UI shows: "Local AI: WebGPU" or "Local AI: WASM (mobile mode)"
+1. Enrichment wizard opens for inbox item
+2. Entity Context Provider queries entityRegistry + entityGraph for content entities
+3. EntityContext injected into TieredFeatures
+4. Enrichment question templates use entity context for personalized questions
+5. User answers may correct entity relationships -> fed back to accumulator
 ```
 
-### New: Template-First Review Briefing
+### Privacy-Preserving Cloud Flow
 
 ```
-User starts Weekly Review
-    ↓
-review-flow.ts: buildWeeklyReviewBriefing(ctx)
-    ├── ctx = { atomCount, staleCount, entropyLevel, weekNumber, ... }
-    ├── result = weeklyReviewBriefing(ctx)  ← pure template function
-    │       → returns structured briefing text immediately
-    │   if result.text.length > 50:
-    │       return result  (no LLM needed)
-    │   else:
-    │       dispatchTiered({ task: 'generate-review-briefing', features })
-    └── render briefing in ConversationTurnCard
+1. T1/T2 see raw entity names (local-only processing)
+2. If T3 cloud needed: Entity Context Provider uses sanitization reverseMap
+3. Cloud sees "<Person 1> is mentioned in context of <Location 2>"
+4. Response de-pseudonymized before display
 ```
 
----
+## Patterns to Follow
 
-## Integration Boundaries
+### Pattern 1: Pure Module with Dexie Direct Access
 
-### What Tier 2 ONNX Expansion Adds
+**What:** Entity modules import `db` directly for reads/writes, never import store.
+**When:** All entity intelligence modules (detector, accumulator, inference, context provider).
+**Why:** Matches existing sanitization pattern. Entity data is persistence-layer concern, not UI state.
 
-The question asked about sanitization classifier specifically, but v4.0 also adds:
-- Section routing classifier (ONNX, not centroid)
-- Compression candidate detector (ONNX binary: "compress now" vs "keep")
-- Priority prediction (ONNX regression: importance score 0-1)
+```typescript
+// CORRECT: pure module with db import
+import { db } from '../../storage/db';
 
-All three follow the same integration pattern as the sanitization classifier: new ONNX session in the embedding worker, new message type, new `TieredResult` field. They slot into the existing Tier 2 handler's `canHandle()` routing.
+export async function accumulateEntity(entity: KnowledgeEntity): Promise<void> {
+  const existing = await db.entityRegistry
+    .where('[normalizedText+category]')
+    .equals([entity.normalizedText, mapToCategory(entity.type)])
+    .first();
+  // ...
+}
+```
 
-### External Service Boundaries
+### Pattern 2: Parallel Detection via Existing Worker
 
-| Service | Integration | Auth | Notes |
-|---------|-------------|------|-------|
-| Anthropic API | `@anthropic-ai/sdk` via `AnthropicProvider` | BYOK, memory-only | Existing, extracted into provider |
-| OpenAI API | `openai` npm, `dangerouslyAllowBrowser: true` | BYOK, memory-only | New provider |
-| xAI Grok API | `openai` npm + `baseURL: 'https://api.x.ai/v1'` | BYOK, memory-only | OpenAI-compatible, verified |
-| Corporate LLM | `openai` npm + user baseURL | Optional BYOK | Covers Ollama, LM Studio, Azure OpenAI |
-| HuggingFace CDN | BLOCKED (`allowRemoteModels = false`) | None | No change — models bundled locally |
+**What:** Entity detection reuses the sanitization worker's NER pipeline via a new message type.
+**When:** Every time content arrives (triage, manual enrichment, import).
+**Why:** Avoids loading a second NER model. Worker already manages pipeline lifecycle.
 
-### Internal Module Boundaries
+### Pattern 3: Evidence-Based Confidence
 
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| Main thread ↔ Embedding Worker | `postMessage` / `onmessage` typed protocol | Add SANITIZE_CHECK/RESULT messages |
-| Main thread ↔ LLM Worker (WebLLM) | `CreateWebWorkerMLCEngine` RPC | Unchanged |
-| Main thread ↔ WasmAdapter | Wllama internal worker (transparent) | Wllama manages its own worker |
-| CloudAdapter ↔ CloudProvider | Direct method call (same thread) | Provider is injected, not async |
-| DeviceAdapter ↔ BrowserAdapter/WasmAdapter | Direct method delegation | Thin wrapper |
-| Template functions ↔ Store | Store state passed as `TemplateContext` arg | No direct store import in templates |
+**What:** Relationship inference tracks evidence strength, not binary assertions.
+**When:** All relationship writes to entityGraph.
+**Why:** Enables progressive confidence building. User corrections override with confidence: 1.0.
 
----
+```typescript
+interface RelationshipWrite {
+  relationship: string;
+  confidence: number;       // 0.3 for single co-occurrence, 0.7 for keyword, 1.0 for user
+  evidenceCount: number;    // how many supporting atoms
+  source: 'keyword' | 'co-occurrence' | 'user-corrected';
+}
+```
 
-## Anti-Patterns
+### Pattern 4: Entity-Aware Question Generation
 
-### Anti-Pattern 1: Safety Gates in Provider Implementations
+**What:** Enrichment templates reference detected entities by name.
+**When:** During enrichment wizard question generation.
+**Why:** "What's Pam's role?" is more useful than "Who is involved?"
 
-**What people do:** Put API key checks, consent verification, and request logging inside each cloud provider.
+## Anti-Patterns to Avoid
 
-**Why it's wrong:** Safety gates must apply uniformly. Duplicate code drifts. One provider forgets a check. Cloud data leaks.
+### Anti-Pattern 1: Separate NER Worker for Entity Detection
 
-**Do this instead:** All gates live in `CloudAdapter.execute()`. Providers only format requests and parse responses.
+**What:** Creating a new worker that loads bert-base-NER separately from the sanitization worker.
+**Why bad:** Doubles memory (~100MB total for two NER models). Both models detect the same entity types.
+**Instead:** Extend existing sanitization worker with `DETECT_ENTITIES` message. If bert-base-NER is needed for better quality, swap the model, don't add a second worker.
 
-### Anti-Pattern 2: Multi-Threaded Wllama
+### Anti-Pattern 2: Entity State in SolidJS Store
 
-**What people do:** Enable wllama multi-thread for better performance on mobile, requiring COEP/COOP headers.
+**What:** Storing the full entity registry or graph in the reactive store.
+**Why bad:** Entity data can grow large (thousands of entries over time). SolidJS proxy overhead on large objects causes performance degradation.
+**Instead:** Query Dexie directly from entity modules. Cache only the current item's `EntityContext` in store (small, bounded).
 
-**Why it's wrong:** COEP breaks cross-origin resources (fonts, analytics, CDN scripts). On GitHub Pages and most static hosts, COOP/COEP headers are not configurable without a service worker hack. Single-thread is slower but universally compatible.
+### Anti-Pattern 3: Synchronous Entity Detection Blocking Triage
 
-**Do this instead:** Use `single-thread/wllama.wasm` only. Set `n_threads: 1`. Accept the performance tradeoff — WASM path is a mobile fallback, not a primary path.
+**What:** Awaiting entity detection before proceeding with type classification.
+**Why bad:** NER inference takes 50-200ms per item. Type classification (ONNX) takes 20-50ms. Serial execution doubles latency.
+**Instead:** Run entity detection and type classification in parallel. They use different workers (sanitization vs embedding).
 
-### Anti-Pattern 3: Template Engine in a Worker
+### Anti-Pattern 4: Neo4j-Style Graph Database
 
-**What people do:** Move template rendering to a web worker to avoid main thread work.
+**What:** Using a full graph database for entity relationships.
+**Why bad:** Browser environment, no server. IndexedDB via Dexie is the only option.
+**Instead:** Two flat tables (entityRegistry + entityGraph) with indexed compound queries. The existing entityGraph table schema already supports this.
 
-**Why it's wrong:** Templates are string interpolation — microseconds on main thread. Worker overhead (message serialization, deserialization, worker startup) costs more than the template execution itself.
+### Anti-Pattern 5: Eager Entity Detection on All Historical Atoms
 
-**Do this instead:** Pure functions on main thread. If a "template" becomes complex enough to need a worker, it's no longer a template — escalate to the LLM tier.
+**What:** On first v5.0 load, scanning all existing atoms for entities.
+**Why bad:** Could take minutes on large datasets. Blocks UI.
+**Instead:** Detect entities lazily -- when atoms are viewed, triaged, or enriched. Offer optional "Scan Library" action that processes in background batches.
 
-### Anti-Pattern 4: Sanitization as a Complete Blocker
+## New vs Modified Components Summary
 
-**What people do:** Refuse to send ANY content that the sanitization classifier flags, treating it as a hard block.
+### New Components (create from scratch)
 
-**Why it's wrong:** Binary ONNX classifiers have false positives. Blocking legitimate content (e.g., a task about "calling my doctor" is not PII) destroys trust in the system. The user is the privacy arbiter, not the classifier.
+| Component | File | Purpose |
+|-----------|------|---------|
+| Entity Detector | `src/ai/entity/detector.ts` | Orchestrate NER calls, map labels |
+| Entity Accumulator | `src/ai/entity/accumulator.ts` | Dedup, persist, co-occurrence |
+| Relationship Inference | `src/ai/entity/relationship-inference.ts` | Keyword + co-occurrence rules |
+| Entity Context Provider | `src/ai/entity/context-provider.ts` | Query layer for consumers |
+| Entity Card UI | `src/ui/components/EntityCard.tsx` | User correction interface |
+| Entity Panel UI | `src/ui/components/EntityPanel.tsx` | Entity list/browse view |
+| DB Migration v9 | `src/storage/migrations/v9.ts` | Schema extensions |
+| Entity types | `src/ai/entity/types.ts` | Shared type definitions |
 
-**Do this instead:** Classifier flags surface as a warning in the pre-send approval modal ("This content may contain personal information. Review before sending."). User can proceed or cancel. Only when `level = 'abstract'` and sensitivity is detected should the system auto-block.
+### Modified Components (extend existing)
 
----
+| Component | File | What Changes |
+|-----------|------|-------------|
+| Sanitization Worker | `src/workers/sanitization-worker.ts` | Add `DETECT_ENTITIES` message handler |
+| Sanitizer | `src/ai/sanitization/sanitizer.ts` | Add `detectEntitiesForKnowledgeGraph()` public API |
+| Tier 2 Types | `src/ai/tier2/types.ts` | Add entity-related task types to `AITaskType` |
+| Tiered Features | `src/ai/tier2/types.ts` | Add `entityContext` to `TieredFeatures` |
+| Tiered Result | `src/ai/tier2/types.ts` | Add entity-related result fields |
+| Enrichment Engine | `src/ai/enrichment/enrichment-engine.ts` | Inject entity context into question generation |
+| Question Templates | `src/ai/clarification/question-templates.ts` | Entity-aware question variants |
+| Store | `src/ui/signals/store.ts` | Entity state fields, correction modal |
+| Triage | `src/ai/triage.ts` | Parallel entity detection in triage flow |
+| Entity Registry | `src/ai/sanitization/entity-registry.ts` | Add entity intelligence fields |
 
-## Build Order Implications
+### Unchanged Components (no modifications needed)
 
-Based on dependencies between the four integration points:
+| Component | Why Unchanged |
+|-----------|--------------|
+| Embedding Worker | Entity detection uses sanitization worker, not embedding worker |
+| LLM Worker | Entity detection is T1/T2 only, no LLM calls needed |
+| Pipeline (pipeline.ts) | Escalation logic unchanged, new task types auto-routed |
+| Cognitive Signals | Entity intelligence is orthogonal to cognitive ONNX models |
+| WASM Scoring Engine | Entity intelligence doesn't affect entropy/priority scoring |
 
-**Phase 1 — Template Engine** (no dependencies on other new components)
-- New file, no modified interfaces
-- Immediately reduces LLM calls for review briefings
-- Can be built and tested independently
+## Suggested Build Order
 
-**Phase 2 — Multi-Provider Cloud** (depends only on existing CloudAdapter interface)
-- Refactor CloudAdapter before adding sanitization (avoids doing the refactor twice)
-- Provider extraction (Anthropic) → add OpenAI → add Grok → add Corporate
-- Key vault multi-slot extension is a parallel sub-task
+Build order follows dependency chains -- each phase produces something testable.
 
-**Phase 3 — Sanitization Classifier** (depends on multi-provider CloudAdapter refactor being done first)
-- Add SANITIZE_CHECK messages to embedding worker
-- Update privacy-proxy.ts with async check
-- Wire into CloudAdapter.execute() (after Phase 2 refactor)
-- Python training pipeline (can run in parallel with code work)
+### Phase 1: Foundation (entity types + DB migration + worker extension)
+**Dependencies:** None (builds on existing schema)
+**Deliverables:**
+1. `src/ai/entity/types.ts` -- KnowledgeEntity, KnowledgeEntityType, EntityContext types
+2. `src/storage/migrations/v9.ts` -- schema extensions with new indexes
+3. `src/workers/sanitization-worker.ts` -- add `DETECT_ENTITIES` handler (reuse existing NER pipeline)
+4. `src/ai/sanitization/sanitizer.ts` -- add `detectEntitiesForKnowledgeGraph()` public API
 
-**Phase 4 — Device-Adaptive Local LLM** (depends only on existing BrowserAdapter interface)
-- WasmAdapter and DeviceAdapter can be built independently
-- WASM binary serving via Vite public dir is the main setup task
-- Model download and caching follows same Cache API pattern as ONNX classifier
+**Rationale:** Types and DB schema must exist before anything can read/write entities. Worker extension is the data source for everything downstream.
 
-**Tier 2 ONNX Expansion** (section routing, compression detection, priority prediction) fits after Phase 3 because:
-- Embedding worker already modified for sanitization
-- Training pipeline already extended
-- Adding more ONNX sessions follows the same pattern
+### Phase 2: Entity Accumulator + Detector
+**Dependencies:** Phase 1 (types, migration, worker)
+**Deliverables:**
+1. `src/ai/entity/detector.ts` -- orchestrate worker calls, map NER labels to KnowledgeEntity
+2. `src/ai/entity/accumulator.ts` -- dedup, normalize, persist to entityRegistry, co-occurrence tracking
 
----
+**Rationale:** These two modules form the "write path" -- entities go in. Must work before inference or queries.
 
-## Scaling Considerations
+### Phase 3: Relationship Inference
+**Dependencies:** Phase 2 (accumulator providing entities)
+**Deliverables:**
+1. `src/ai/entity/relationship-inference.ts` -- keyword pattern matching, co-occurrence rules
+2. Wire into accumulator: after entity accumulation, trigger relationship inference
 
-This is a local-first PWA — traditional scaling (users, servers) does not apply. The relevant scale dimension is device capability diversity.
+**Rationale:** Relationship inference reads from entityRegistry and writes to entityGraph. Needs accumulated entities to have meaningful data.
 
-| Device Profile | Expected Behavior | Risk |
-|----------------|-------------------|------|
-| Modern desktop (WebGPU) | WebLLM + all ONNX classifiers + cloud | None — optimal path |
-| Modern mobile (no WebGPU) | WasmAdapter (SmolLM2 Q4) + ONNX + no cloud | SmolLM2 quality lower than Llama 3B |
-| Low-RAM mobile (<3GB) | ONNX + templates only (WasmAdapter OOM risk) | Need RAM detection before loading WASM model |
-| Offline any device | Templates + ONNX + local LLM (if loaded) | Cloud features gracefully disabled |
-| Corporate (custom endpoint) | Corporate provider + ONNX + templates | Endpoint auth varies; user-configured |
+### Phase 4: Entity Context Provider + Triage Integration
+**Dependencies:** Phase 3 (relationships in graph)
+**Deliverables:**
+1. `src/ai/entity/context-provider.ts` -- query layer, context building
+2. Modify `src/ai/triage.ts` -- parallel entity detection during triage
+3. Extend `TieredFeatures` with `entityContext`
 
-**RAM detection for WasmAdapter:** Before loading the WASM model, check `navigator.deviceMemory` (available in Chrome/Edge on Android). If `< 4`, skip WasmAdapter initialization and use templates + Tier 2 only. Degrade gracefully rather than OOM-crash.
+**Rationale:** Context provider is the "read path" -- entity intelligence becomes consumable by other systems. Triage is the natural first consumer because every inbox item passes through it.
 
----
+### Phase 5: Enrichment Integration
+**Dependencies:** Phase 4 (entity context available)
+**Deliverables:**
+1. Modify enrichment-engine.ts -- accept entityContext, pass to question templates
+2. Modify question-templates.ts -- entity-aware question variants
+3. Entity-aware T2B handlers if applicable
+
+**Rationale:** Enrichment is the highest-value consumer of entity context. "What's Pam's role in this?" vs "Who is involved?"
+
+### Phase 6: User Correction UX
+**Dependencies:** Phase 4 (entities visible/queryable)
+**Deliverables:**
+1. `src/ui/components/EntityCard.tsx` -- inline entity display with edit
+2. `src/ui/components/EntityPanel.tsx` -- entity browse/search
+3. Store extensions for entity correction modal
+4. Correction feedback loop to accumulator (user corrections = confidence: 1.0)
+
+**Rationale:** UX is built last because the entity data pipeline must be working and populated before corrections make sense. User corrections feed back into the accumulator as ground truth.
+
+### Phase 7: Polish + Background Scan
+**Dependencies:** All phases
+**Deliverables:**
+1. Background entity scan for existing atoms (batch processing)
+2. Entity count badges/indicators in UI
+3. Entity-aware GTD review prompts
+4. Performance optimization (batch Dexie reads, caching)
+
+## Scalability Considerations
+
+| Concern | At 100 atoms | At 1K atoms | At 10K atoms |
+|---------|-------------|-------------|--------------|
+| Entity registry size | ~50 entities, instant queries | ~500 entities, <10ms queries | ~2000 entities, index scan <50ms |
+| EntityGraph edges | ~100 edges, trivial | ~2K edges, compound index fine | ~20K edges, may need pagination |
+| NER inference per item | 50-200ms, acceptable | Same per-item, background scan batched | Same per-item, lazy detection essential |
+| Memory (NER model) | ~50MB (already loaded for sanitization) | Same | Same |
+| Co-occurrence matrix | In-memory OK | In-memory OK | Persist to Dexie, query on demand |
 
 ## Sources
 
-- WebLLM / MLC-AI: [GitHub](https://github.com/mlc-ai/web-llm), [Docs](https://webllm.mlc.ai/docs/)
-- Wllama (llama.cpp WASM binding): [GitHub](https://github.com/ngxson/wllama), [npm @wllama/wllama](https://app.unpkg.com/@wllama/wllama@1.16.2/files/README.md)
-- OpenAI Node SDK browser support: [github.com/openai/openai-node](https://github.com/openai/openai-node)
-- xAI Grok API / OpenAI compatibility: [docs.x.ai/developers/quickstart](https://docs.x.ai/developers/quickstart)
-- COEP/COOP for SharedArrayBuffer: [web.dev/articles/coop-coep](https://web.dev/articles/coop-coep)
-- Vite COEP/COOP plugin: [github.com/chaosprint/vite-plugin-cross-origin-isolation](https://github.com/chaosprint/vite-plugin-cross-origin-isolation)
-- WebGPU browser support 2025: [caniuse.com/webgpu](https://caniuse.com/webgpu)
-- sklearn-onnx for classifier export: [onnx.ai/sklearn-onnx](https://onnx.ai/sklearn-onnx/)
-- ONNX local PII detection patterns: [Medium: local-first reversible PII scrubber](https://medium.com/@tj.ruesch/a-local-first-reversible-pii-scrubber-for-ai-workflows-using-onnx-and-regex-e9850a7531fc)
-
----
-
-*Architecture research for: BinderOS v4.0 Device-Adaptive AI*
-*Researched: 2026-03-05*
+- Existing codebase analysis (HIGH confidence -- direct code reading)
+- `src/workers/sanitization-worker.ts` -- NER worker architecture
+- `src/ai/sanitization/` -- entity registry and sanitizer patterns
+- `src/storage/entity-graph.ts` -- existing entity graph schema
+- `src/ai/tier2/` -- tiered pipeline architecture
+- `src/ai/enrichment/` -- enrichment engine integration points
+- Project memory MEMORY.md -- v5.0 vision and constraints
