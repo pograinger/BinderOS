@@ -56,10 +56,11 @@ export type EnrichmentRecord = z.infer<typeof EnrichmentRecordSchema>;
 
 export const EntityMentionSchema = z.object({
   entityText: z.string(),
-  entityType: z.enum(['PER', 'LOC', 'ORG']),
+  entityType: z.enum(['PER', 'LOC', 'ORG', 'MISC', 'DATE']),
   spanStart: z.number(),
   spanEnd: z.number(),
   confidence: z.number(),
+  entityId: z.string().optional(),
 });
 export type EntityMention = z.infer<typeof EntityMentionSchema>;
 

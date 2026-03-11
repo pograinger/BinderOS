@@ -91,6 +91,52 @@ export const PII_PATTERNS: PIIPattern[] = [
   },
 ];
 
+// ---------------------------------------------------------------------------
+// DATE regex patterns for knowledge graph entity detection (Phase 27)
+// ---------------------------------------------------------------------------
+
+const DATE_PATTERNS: RegExp[] = [
+  // ISO format: 2026-03-11
+  /\b\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])\b/,
+  // US format: 03/11/2026 or 3/11/2026
+  /\b(?:0?[1-9]|1[0-2])\/(?:0?[1-9]|[12]\d|3[01])\/\d{4}\b/,
+  // Named month with year: March 11, 2026 or Mar 11 2026
+  /\b(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\.?\s+\d{1,2}(?:st|nd|rd|th)?,?\s*\d{4}\b/i,
+  // Day Month Year: 11 March 2026
+  /\b\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\.?\s+\d{4}\b/i,
+  // Month and day without year: March 11, January 1st
+  /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:st|nd|rd|th)?\b/i,
+];
+
+/**
+ * Detect date patterns in text for knowledge graph entity detection.
+ *
+ * Returns raw entity mentions with type 'DATE' and confidence 1.0.
+ * These are NOT PII — they are informational entities for the entity registry.
+ *
+ * Phase 27: ENTD-01
+ */
+export function detectDates(text: string): { text: string; type: string; start: number; end: number; confidence: number }[] {
+  const results: { text: string; type: string; start: number; end: number; confidence: number }[] = [];
+
+  for (const pattern of DATE_PATTERNS) {
+    const globalPattern = new RegExp(pattern.source, pattern.flags.replace('g', '') + 'g');
+    for (const match of text.matchAll(globalPattern)) {
+      if (match.index === undefined) continue;
+      results.push({
+        text: match[0],
+        type: 'DATE',
+        start: match.index,
+        end: match.index + match[0].length,
+        confidence: 1.0,
+      });
+    }
+  }
+
+  results.sort((a, b) => a.start - b.start);
+  return results;
+}
+
 /**
  * Run all PII regex patterns against the input text.
  *

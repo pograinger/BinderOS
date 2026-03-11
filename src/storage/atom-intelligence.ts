@@ -10,7 +10,7 @@
  */
 
 import { db } from './db';
-import type { AtomIntelligence, EnrichmentRecord, CachedCognitiveSignal } from '../types/intelligence';
+import type { AtomIntelligence, EnrichmentRecord, CachedCognitiveSignal, EntityMention } from '../types/intelligence';
 
 /**
  * Create an empty intelligence sidecar row for an atom.
@@ -86,6 +86,25 @@ export async function writeCognitiveSignals(
 ): Promise<void> {
   const intel = await getOrCreateIntelligence(atomId);
   intel.cognitiveSignals = signals;
+  intel.version++;
+  intel.lastUpdated = Date.now();
+  await db.atomIntelligence.put(intel);
+}
+
+/**
+ * Replace all entity mentions for an atom (full-replace strategy).
+ *
+ * On re-scan, old mentions are replaced entirely with new detection results.
+ * Bumps version and lastUpdated.
+ *
+ * Phase 27: ENTD-03
+ */
+export async function writeEntityMentions(
+  atomId: string,
+  mentions: EntityMention[],
+): Promise<void> {
+  const intel = await getOrCreateIntelligence(atomId);
+  intel.entityMentions = mentions;
   intel.version++;
   intel.lastUpdated = Date.now();
   await db.atomIntelligence.put(intel);

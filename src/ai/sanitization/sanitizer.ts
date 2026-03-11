@@ -15,8 +15,18 @@
 
 import type { DetectedEntity, SanitizedResult } from './types';
 import { createSanitizedPrompt } from './types';
-import { detectWithRegex } from './regex-patterns';
+import { detectWithRegex, detectDates } from './regex-patterns';
 import { buildEntityMap } from './entity-registry';
+
+// --- Raw entity mention type for knowledge graph detection ---
+
+export interface RawEntityMention {
+  text: string;
+  type: string;
+  start: number;
+  end: number;
+  confidence: number;
+}
 
 // --- Worker management ---
 
@@ -27,6 +37,12 @@ let workerFailed = false;
 /** Pending NER requests awaiting worker response */
 const pendingRequests = new Map<string, {
   resolve: (entities: DetectedEntity[]) => void;
+  reject: (error: Error) => void;
+}>();
+
+/** Pending entity detection requests awaiting worker response */
+const pendingEntityRequests = new Map<string, {
+  resolve: (entities: RawEntityMention[]) => void;
   reject: (error: Error) => void;
 }>();
 
@@ -66,6 +82,11 @@ export function initSanitizationWorker(): void {
           pending.reject(new Error(msg.error));
           pendingRequests.delete(id);
         }
+        // Also reject pending entity requests
+        for (const [id, pending] of pendingEntityRequests) {
+          pending.reject(new Error(msg.error));
+          pendingEntityRequests.delete(id);
+        }
         return;
       }
 
@@ -97,6 +118,37 @@ export function initSanitizationWorker(): void {
         if (pending) {
           pending.reject(new Error(msg.error));
           pendingRequests.delete(msg.id);
+        }
+        return;
+      }
+
+      if (msg.type === 'ENTITIES_RESULT') {
+        const pending = pendingEntityRequests.get(msg.id);
+        if (pending) {
+          const entities: RawEntityMention[] = msg.entities.map((e: {
+            text: string;
+            type: string;
+            start: number;
+            end: number;
+            confidence: number;
+          }) => ({
+            text: e.text,
+            type: e.type,
+            start: e.start,
+            end: e.end,
+            confidence: e.confidence,
+          }));
+          pending.resolve(entities);
+          pendingEntityRequests.delete(msg.id);
+        }
+        return;
+      }
+
+      if (msg.type === 'ENTITIES_ERROR') {
+        const pending = pendingEntityRequests.get(msg.id);
+        if (pending) {
+          pending.reject(new Error(msg.error));
+          pendingEntityRequests.delete(msg.id);
         }
         return;
       }
@@ -293,6 +345,39 @@ export function dePseudonymize(response: string, entityMap: Map<string, string>)
 }
 
 /**
+ * Detect entities for the knowledge graph via the NER worker.
+ *
+ * Returns raw NER entities (PER/LOC/ORG/MISC) merged with regex DATE detections.
+ * Graceful degradation: resolves with empty array if worker unavailable.
+ *
+ * Phase 27: ENTD-01
+ */
+export async function detectEntitiesForKnowledgeGraph(text: string): Promise<RawEntityMention[]> {
+  // Ensure worker is initialized
+  if (!worker && !workerFailed) {
+    initSanitizationWorker();
+  }
+
+  let nerEntities: RawEntityMention[] = [];
+
+  if (worker && !workerFailed) {
+    try {
+      nerEntities = await new Promise<RawEntityMention[]>((resolve, reject) => {
+        const id = `ent-${++requestCounter}`;
+        pendingEntityRequests.set(id, { resolve, reject });
+        worker!.postMessage({ type: 'DETECT_ENTITIES', id, text });
+      });
+    } catch {
+      // NER failed — continue with empty NER results
+    }
+  }
+
+  // Merge with regex DATE detections
+  const dateEntities = detectDates(text);
+  return [...nerEntities, ...dateEntities];
+}
+
+/**
  * Terminate the sanitization worker and clean up resources.
  */
 export function disposeSanitizationWorker(): void {
@@ -303,5 +388,6 @@ export function disposeSanitizationWorker(): void {
   workerReady = false;
   workerFailed = false;
   pendingRequests.clear();
+  pendingEntityRequests.clear();
   requestCounter = 0;
 }

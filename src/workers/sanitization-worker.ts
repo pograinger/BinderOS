@@ -54,7 +54,7 @@ let nerPipeline: NERPipeline | null = null;
 let nerLoading = false;
 let nerError: string | null = null;
 
-const NER_MODEL_ID = 'sanitization/sanitize-check';
+const NER_MODEL_ID = 'onnx-community/distilbert-NER-ONNX';
 
 /**
  * Map NER model entity labels to EntityCategory strings.
@@ -118,7 +118,7 @@ async function loadNER(): Promise<NERPipeline> {
     nerLoading = false;
     const msg = err instanceof Error ? err.message : String(err);
     nerError = msg.includes('404') || msg.includes('not found') || msg.includes('fetch')
-      ? 'NER model not found at /models/sanitization/sanitize-check/. Ensure model files are downloaded.'
+      ? 'NER model not found at /models/onnx-community/distilbert-NER-ONNX/. Ensure model files are downloaded.'
       : msg;
     self.postMessage({ type: 'NER_ERROR', error: nerError });
     throw new Error(nerError);
@@ -129,6 +129,7 @@ async function loadNER(): Promise<NERPipeline> {
 
 type WorkerIncoming =
   | { type: 'SANITIZE'; id: string; text: string }
+  | { type: 'DETECT_ENTITIES'; id: string; text: string }
   | { type: 'LOAD_NER' };
 
 self.onmessage = async (event: MessageEvent) => {
@@ -166,6 +167,34 @@ self.onmessage = async (event: MessageEvent) => {
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       self.postMessage({ type: 'SANITIZE_ERROR', id: msg.id, error });
+    }
+    return;
+  }
+
+  if (msg.type === 'DETECT_ENTITIES') {
+    try {
+      const pipe = await loadNER();
+      const rawEntities = await pipe(msg.text);
+
+      // Return raw NER labels (PER/LOC/ORG/MISC) without mapEntityCategory
+      const entities = rawEntities
+        .filter((e) => (e.score ?? 0) >= 0.7)
+        .map((e) => {
+          const label = (e.entity_group ?? e.entity ?? '').replace(/^[BI]-/, '').toUpperCase();
+          return {
+            text: e.word,
+            type: label,
+            start: e.start,
+            end: e.end,
+            confidence: e.score,
+          };
+        })
+        .filter((e) => ['PER', 'LOC', 'ORG', 'MISC'].includes(e.type));
+
+      self.postMessage({ type: 'ENTITIES_RESULT', id: msg.id, entities });
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      self.postMessage({ type: 'ENTITIES_ERROR', id: msg.id, error });
     }
     return;
   }
