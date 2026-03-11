@@ -14,6 +14,7 @@
 
 import { z } from 'zod/v4';
 import type { PriorityTier, EnergyLevel } from './config';
+import { SmartLinkSchema } from './intelligence';
 
 // --- Enums ---
 
@@ -74,6 +75,8 @@ const BaseAtomFields = {
   aiSourced: z.boolean().optional(),
   // Phase 24: 32-bit bitmask tracking which AI models contributed to this atom
   provenance: z.number().default(0),
+  // Phase 26: typed external links (URLs, deep links, etc.)
+  smartLinks: z.array(SmartLinkSchema).default([]),
 };
 
 // --- Type-specific atom schemas (discriminated union members) ---
