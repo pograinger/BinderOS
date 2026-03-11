@@ -13,6 +13,7 @@ import { detectEntitiesForKnowledgeGraph } from '../ai/sanitization/sanitizer';
 import { findOrCreateEntity, decrementEntityMentionCount } from '../storage/entity-helpers';
 import { getIntelligence, writeEntityMentions } from '../storage/atom-intelligence';
 import type { EntityMention } from '../types/intelligence';
+import { inferRelationshipsForAtom } from '../inference/relationship-inference';
 
 /** Entity types that get full registry treatment */
 const REGISTRY_TYPES = new Set(['PER', 'LOC', 'ORG']);
@@ -76,6 +77,10 @@ export async function detectEntitiesForAtom(
 
     // Write mentions to sidecar (full replace)
     await writeEntityMentions(atomId, mentions);
+
+    // Phase 28: Infer relationships between detected entities
+    // Fire-and-forget: errors are caught inside inferRelationshipsForAtom
+    await inferRelationshipsForAtom({ atomId, content, entityMentions: mentions });
   } catch (err) {
     // Entity detection must NEVER block atom operations
     console.warn('[entity-detector] Detection failed for atom', atomId, err);
