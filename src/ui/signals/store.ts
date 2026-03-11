@@ -61,8 +61,9 @@ import { BrowserAdapter, DEFAULT_MODEL_ID } from '../../ai/adapters/browser';
 import { triageInbox, cancelTriage } from '../../ai/triage';
 import type { TriageSuggestion } from '../../ai/triage';
 import type { ClarificationResult } from '../../ai/clarification/types';
-// entity-graph.ts removed in Phase 26 (v9 migration). Entity seeding will be
-// rewired to the new entities/entityRelations tables in Phase 27.
+// Phase 27: Entity detection lifecycle hooks (fire-and-forget after atom create/update/delete)
+import { detectEntitiesForAtom } from '../../entity/entity-detector';
+import { cleanupEntityMentionsForAtom } from '../../storage/entity-helpers';
 import { logClarification } from '../../storage/classification-log';
 import type { BriefingResult } from '../../ai/analysis';
 import type { ReviewSession } from '../../storage/review-session';
@@ -1355,6 +1356,12 @@ export function acceptAISuggestion(itemId: string): void {
     },
   });
 
+  // Phase 27: Fire-and-forget entity detection after classification
+  const inboxItem = state.inboxItems.find((i) => i.id === itemId);
+  if (inboxItem?.content) {
+    void detectEntitiesForAtom(itemId, inboxItem.content);
+  }
+
   // Remove from suggestion Map
   setTriageSuggestions((prev) => {
     const next = new Map(prev);
@@ -1396,6 +1403,11 @@ export function acceptAllAISuggestions(): void {
           aiSourced: true,
         },
       });
+      // Phase 27: Fire-and-forget entity detection after bulk classification
+      const inboxItem = state.inboxItems.find((i) => i.id === itemId);
+      if (inboxItem?.content) {
+        void detectEntitiesForAtom(itemId, inboxItem.content);
+      }
     }
   }
   setTriageSuggestions(new Map());
@@ -1507,6 +1519,8 @@ export function approveProposal(proposalId: string): void {
             aiRequestId: proposal.id,
           },
         });
+        // Phase 27: Fire-and-forget entity cleanup on atom delete
+        void cleanupEntityMentionsForAtom(proposal.atomId);
       }
       break;
   }
@@ -2448,6 +2462,9 @@ export function handleClarificationComplete(result: ClarificationResult): void {
       source: 'ai',
     },
   });
+
+  // Phase 27: Fire-and-forget entity detection after content update
+  void detectEntitiesForAtom(atomId, result.enrichedContent);
 
   // 3. Log clarification events -- one per category (including skips for pattern learning)
   const suggestion = triageSuggestions().get(atomId);
