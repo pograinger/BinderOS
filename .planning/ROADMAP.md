@@ -87,7 +87,10 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
   3. User pastes a URL into an atom and sees it stored as a structured smart link with title, summary, and resolution metadata in `atom.links[]`
   4. Dexie schema includes `entities` table with normalization, alias tracking, mention counts, and CRDT-ready version fields
   5. Dexie schema includes `entityRelations` table with typed edges, source attribution, and confidence scores
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 26-01-PLAN.md — Intelligence type system, v9 migration, sidecar helpers, entity stubs
+- [ ] 26-02-PLAN.md — Enrichment pipeline refactor from content-appending to sidecar writes
 
 ### Phase 27: Entity Detection + Registry
 **Goal**: The system detects people, places, and organizations in atom content using the existing NER model, accumulates them into a deduplicated entity registry, and shows entity badges on atom detail views
@@ -99,7 +102,10 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
   3. "Sarah Chen" and "Dr. Chen" appearing in different atoms resolve to the same entity in the registry via normalized text matching and alias resolution
   4. User opens atom detail view and sees entity badges/chips for detected people, places, and organizations
   5. Entity-atom links exist in the entity graph so that looking up an entity returns all atoms that mention it
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 26-01-PLAN.md — Intelligence type system, v9 migration, sidecar helpers, entity stubs
+- [ ] 26-02-PLAN.md — Enrichment pipeline refactor from content-appending to sidecar writes
 
 ### Phase 28: Relationship Inference
 **Goal**: The system infers relationships between entities using keyword patterns and co-occurrence evidence, building a relationship graph that grows more confident as more atoms are processed
@@ -109,7 +115,10 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
   1. User creates an atom "Pam's anniversary is next month" and the system infers a spouse relationship between "Pam" and the user via the "anniversary" keyword pattern at confidence 0.3
   2. After 3+ atoms mention "Pam" alongside family-related keywords, the spouse relationship confidence increases based on accumulated evidence
   3. Co-occurrence counts for entity pairs are tracked in memory and periodically flushed to Dexie, with sentence-level proximity checks preventing false positives from unrelated entities in the same atom
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 26-01-PLAN.md — Intelligence type system, v9 migration, sidecar helpers, entity stubs
+- [ ] 26-02-PLAN.md — Enrichment pipeline refactor from content-appending to sidecar writes
 
 ### Phase 29: Entity Intelligence Consumers
 **Goal**: Entity knowledge feeds into enrichment questions, GTD context suggestions, and user correction UX — making the system visibly smarter about the user's world while keeping the user in control of entity relationships
