@@ -29,7 +29,7 @@ import { AIOrb } from '../components/AIOrb';
 import { AIQuestionFlow } from '../components/AIQuestionFlow';
 import { GTDAnalysisFlow } from '../components/GTDAnalysisFlow';
 import { ReviewResumeToast } from '../components/ReviewResumeToast';
-import { state, setPendingCloudRequest, showAISettings, setShowAISettings, showCapture } from '../signals/store';
+import { state, setPendingCloudRequest, resolvePendingCloudRequest, showAISettings, setShowAISettings, showCapture } from '../signals/store';
 import { getActiveAdapter } from '../../ai/router';
 import type { CloudRequestLogEntry } from '../../ai/key-vault';
 import type { DetectedEntity } from '../../ai/sanitization/types';
@@ -123,14 +123,8 @@ export function Shell() {
           entry={state.pendingCloudRequest!}
           entities={state.pendingCloudRequestEntities}
           entityMap={state.pendingCloudRequestEntityMap}
-          onApprove={() => {
-            state.pendingCloudRequestResolve?.(true);
-            setPendingCloudRequest(null, null);
-          }}
-          onCancel={() => {
-            state.pendingCloudRequestResolve?.(false);
-            setPendingCloudRequest(null, null);
-          }}
+          onApprove={() => resolvePendingCloudRequest(true)}
+          onCancel={() => resolvePendingCloudRequest(false)}
         />
       </Show>
     </div>

@@ -107,7 +107,6 @@ export interface BinderState {
   compressionEnabled: boolean;
   // Phase 4: Cloud request preview state (wired by Shell.tsx -> CloudAdapter pre-send approval handler)
   pendingCloudRequest: CloudRequestLogEntry | null;
-  pendingCloudRequestResolve: ((approved: boolean) => void) | null;
   // Phase 14: Sanitization entity data for pre-send modal
   pendingCloudRequestEntities: DetectedEntity[];
   pendingCloudRequestEntityMap: Map<string, string>;
@@ -161,7 +160,6 @@ const initialState: BinderState = {
   compressionEnabled: true,
   // Phase 4: Cloud request preview state
   pendingCloudRequest: null,
-  pendingCloudRequestResolve: null,
   // Phase 14: Sanitization entity data for pre-send modal
   pendingCloudRequestEntities: [],
   pendingCloudRequestEntityMap: new Map(),
@@ -180,6 +178,11 @@ const initialState: BinderState = {
 // --- Create the store ---
 
 const [state, setState] = createStore<BinderState>(initialState);
+
+// --- Cloud approval resolve callback (stored outside SolidJS store) ---
+// SolidJS stores wrap values in proxies, which can break function references.
+// The resolve callback must be a plain variable to guarantee it's callable.
+let _pendingCloudResolve: ((approved: boolean) => void) | null = null;
 
 // --- Worker message handler ---
 
@@ -590,9 +593,18 @@ export function setPendingCloudRequest(
   entityMap?: Map<string, string>,
 ): void {
   setState('pendingCloudRequest', entry);
-  setState('pendingCloudRequestResolve', resolve);
+  // Store resolve callback outside SolidJS store to avoid proxy wrapping.
+  // SolidJS proxies can break function references, making them uncallable.
+  _pendingCloudResolve = resolve;
   setState('pendingCloudRequestEntities', entities ?? []);
   setState('pendingCloudRequestEntityMap', entityMap ?? new Map());
+}
+
+/** Resolve the pending cloud approval (true=approve, false=cancel). */
+export function resolvePendingCloudRequest(approved: boolean): void {
+  _pendingCloudResolve?.(approved);
+  _pendingCloudResolve = null;
+  setPendingCloudRequest(null, null);
 }
 
 // --- Phase 5: Triage suggestion state (ephemeral, main-thread only) ---
