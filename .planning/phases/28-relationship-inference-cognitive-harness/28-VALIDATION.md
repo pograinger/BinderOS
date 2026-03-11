@@ -47,7 +47,7 @@ created: 2026-03-11
 | 28-03-02 | 03 | 1 | RELI-03 | unit | `pnpm test src/inference/cooccurrence-tracker.test.ts -t "threshold"` | ❌ W0 | ⬜ pending |
 | 28-04-01 | 04 | 2 | HARN-01 | smoke | `npx tsx scripts/harness/run-harness.ts --dry-run` | ❌ W0 | ⬜ pending |
 | 28-05-01 | 05 | 2 | HARN-02 | integration | `npx tsx scripts/harness/run-harness.ts` | ❌ W0 | ⬜ pending |
-| 28-06-01 | 06 | 2 | HARN-03 | unit | `pnpm test scripts/harness/cloud-simulator.test.ts` | ❌ W0 | ⬜ pending |
+| 28-06-01 | 06 | 2 | HARN-03 | smoke | `npx tsx scripts/harness/run-harness.ts --dry-run` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
