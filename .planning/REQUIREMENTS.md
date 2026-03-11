@@ -95,16 +95,16 @@ Requirements for v5.0 Entity Intelligence & Knowledge Graph. Each maps to roadma
 
 ### Entity Detection
 
-- [ ] **ENTD-01**: Sanitization worker extended with `DETECT_ENTITIES` message type, reusing existing DistilBERT NER for entity extraction (PER/LOC/ORG)
-- [ ] **ENTD-02**: Entity detection runs asynchronously on atom create, update, and triage — same lifecycle pattern as ONNX classification
-- [ ] **ENTD-03**: NER results written to `atomIntelligence.entityMentions` as structured records (entity text, type, span positions, confidence)
+- [x] **ENTD-01**: Sanitization worker extended with `DETECT_ENTITIES` message type, reusing existing DistilBERT NER for entity extraction (PER/LOC/ORG)
+- [x] **ENTD-02**: Entity detection runs asynchronously on atom create, update, and triage — same lifecycle pattern as ONNX classification
+- [x] **ENTD-03**: NER results written to `atomIntelligence.entityMentions` as structured records (entity text, type, span positions, confidence)
 
 ### Entity Registry
 
 - [x] **ENTR-01**: New `entities` Dexie table with deduplication, normalization, alias tracking, mention count, first/last seen timestamps, CRDT-ready version fields
 - [x] **ENTR-02**: New `entityRelations` Dexie table for entity-to-entity typed edges with source attribution (keyword, co-occurrence, user-correction) and confidence scores
-- [ ] **ENTR-03**: Entity-atom linking via `mentions-entity` edges connecting atoms to their detected entities
-- [ ] **ENTR-04**: Entity deduplication via normalized text matching with alias resolution ("Sarah Chen" = "Dr. Chen" = "Sarah")
+- [x] **ENTR-03**: Entity-atom linking via `mentions-entity` edges connecting atoms to their detected entities
+- [x] **ENTR-04**: Entity deduplication via normalized text matching with alias resolution ("Sarah Chen" = "Dr. Chen" = "Sarah")
 - [ ] **ENTR-05**: Entity badges/chips visible in atom detail view showing detected people, places, organizations
 
 ### Relationship Inference
@@ -237,11 +237,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SIDE-04 | Phase 26 | Complete |
 | ENTR-01 | Phase 26 | Complete |
 | ENTR-02 | Phase 26 | Complete |
-| ENTD-01 | Phase 27 | Pending |
-| ENTD-02 | Phase 27 | Pending |
-| ENTD-03 | Phase 27 | Pending |
-| ENTR-03 | Phase 27 | Pending |
-| ENTR-04 | Phase 27 | Pending |
+| ENTD-01 | Phase 27 | Complete |
+| ENTD-02 | Phase 27 | Complete |
+| ENTD-03 | Phase 27 | Complete |
+| ENTR-03 | Phase 27 | Complete |
+| ENTR-04 | Phase 27 | Complete |
 | ENTR-05 | Phase 27 | Pending |
 | RELI-01 | Phase 28 | Pending |
 | RELI-02 | Phase 28 | Pending |

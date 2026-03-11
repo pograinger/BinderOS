@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Entity Intelligence & Knowledge Graph
 status: executing
-stopped_at: Phase 27 context gathered
-last_updated: "2026-03-11T06:22:38.893Z"
-last_activity: 2026-03-11 — Phase 26 Plan 02 complete
+stopped_at: Completed 27-01-PLAN.md
+last_updated: "2026-03-11T07:13:00.000Z"
+last_activity: 2026-03-11 — Phase 27 Plan 01 complete
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 3
+  completed_plans: 3
   percent: 90
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 26 — Intelligence Sidecar + Schema
+**Current focus:** Phase 27 — Entity Detection + Registry
 
 ## Current Position
 
-Phase: 26 — first of 4 v5.0 phases (26-29)
-Plan: 2 of 5 in current phase (complete)
-Status: Executing Phase 26
-Last activity: 2026-03-11 — Phase 26 Plan 02 complete
+Phase: 27 — second of 4 v5.0 phases (26-29)
+Plan: 1 of 5 in current phase (complete)
+Status: Executing Phase 27
+Last activity: 2026-03-11 — Phase 27 Plan 01 complete
 
-Progress: [██████████████████████░░] 90% (v5.0 Phase 26: 2/5 plans)
+Progress: [██████████████████████░░] 90% (v5.0 Phase 27: 1/? plans)
 
 ## Performance Metrics
 
@@ -53,6 +53,10 @@ Progress: [██████████████████████░
 ### Decisions
 
 Recent decisions affecting v5.0:
+- [27-01]: distilbert-NER-ONNX replaces sanitize-check -- same arch, gains ORG/MISC, 65.8MB q8
+- [27-01]: DETECT_ENTITIES returns raw labels; SANITIZE still maps to PERSON/LOCATION for PII
+- [27-01]: Entity dedup auto-merges at >= 0.7 match score; Phase 29 adds user confirmation UX
+- [27-01]: Detection hooks at triage acceptance and clarification completion, not STATE_UPDATE
 - [26-02]: enrichment-engine stays pure (sidecarEnrichment[] param, no db imports) -- caller reads sidecar
 - [26-02]: Graduated atoms get clean originalContent -- enrichment persists only in sidecar
 - [26-02]: computePriorAnswers replaced with enrichmentPriorAnswers reactive signal for sync UI
@@ -79,6 +83,6 @@ Recent decisions affecting v5.0:
 
 ## Session Continuity
 
-Last session: 2026-03-11T06:22:38.891Z
-Stopped at: Phase 27 context gathered
-Resume file: .planning/phases/27-entity-detection-registry/27-CONTEXT.md
+Last session: 2026-03-11T07:13:00.000Z
+Stopped at: Completed 27-01-PLAN.md
+Resume file: .planning/phases/27-entity-detection-registry/27-01-SUMMARY.md
