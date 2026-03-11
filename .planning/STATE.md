@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Entity Intelligence & Knowledge Graph
 status: executing
-stopped_at: Phase 28 context gathered
-last_updated: "2026-03-11T22:48:43.918Z"
+stopped_at: Completed 28-01-PLAN.md
+last_updated: "2026-03-11T23:37:03.036Z"
 last_activity: 2026-03-11 — Phase 27 Plan 01 complete
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 6
+  completed_plans: 5
   percent: 90
 ---
 
@@ -48,6 +48,7 @@ Progress: [██████████████████████░
 | v3.0 | 3 | 8 | 2 days |
 | v4.0 | 14 | 32 | 5 days |
 | Phase 27 P02 | 2min | 1 tasks | 2 files |
+| Phase 28 P01 | 583 | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,9 @@ Recent decisions affecting v5.0:
 - [v5.0]: In-memory co-occurrence Map with periodic Dexie flush (avoids O(n^2) writes)
 - [v5.0]: Benchmark sanitize-check vs bert-base-NER before committing to entity detection model
 - [Phase 27]: DATE badges hidden; MISC shown; createResource for sidecar loading
+- [Phase 28]: relationship-patterns.json loaded as standalone import, not nested in BinderTypeConfig — avoids interface modification
+- [Phase 28]: CO_OCCURRENCE_THRESHOLD = 3 — personal GTD binders have fewer atoms, 3 co-occurrences = meaningful signal
+- [Phase 28]: [SELF] sentinel as sourceEntityId for implicit self-relationships — no USER entity in registry
 
 ### Pending Todos
 
@@ -85,6 +89,6 @@ Recent decisions affecting v5.0:
 
 ## Session Continuity
 
-Last session: 2026-03-11T22:48:43.916Z
-Stopped at: Phase 28 context gathered
-Resume file: .planning/phases/28-relationship-inference-cognitive-harness/28-CONTEXT.md
+Last session: 2026-03-11T23:37:03.034Z
+Stopped at: Completed 28-01-PLAN.md
+Resume file: None

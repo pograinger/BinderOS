@@ -168,5 +168,5 @@ Plans:
 | 25. Iterative Enrichment Deepening | v4.0 | 3/3 | Complete | 2026-03-10 |
 | 26. Intelligence Sidecar + Schema | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 27. Entity Detection + Registry | 2/2 | Complete   | 2026-03-11 | - |
-| 28. Relationship Inference | v5.0 | 0/2 | Not started | - |
+| 28. Relationship Inference | 1/2 | In Progress|  | - |
 | 29. Entity Intelligence Consumers | v5.0 | 0/TBD | Not started | - |

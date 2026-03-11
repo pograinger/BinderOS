@@ -109,9 +109,9 @@ Requirements for v5.0 Entity Intelligence & Knowledge Graph. Each maps to roadma
 
 ### Relationship Inference
 
-- [ ] **RELI-01**: T1 keyword pattern engine with ~20 deterministic patterns mapping keyword + entity co-occurrence to relationship types (anniversary->spouse, boss->reports-to, Dr.->healthcare-provider)
-- [ ] **RELI-02**: Cross-item co-occurrence accumulation tracking entity pair frequency across atoms with in-memory Map and periodic Dexie flush
-- [ ] **RELI-03**: Evidence-based confidence scoring with sentence-level proximity checks, minimum co-occurrence thresholds (>=2), and source attribution on all edges
+- [x] **RELI-01**: T1 keyword pattern engine with ~20 deterministic patterns mapping keyword + entity co-occurrence to relationship types (anniversary->spouse, boss->reports-to, Dr.->healthcare-provider)
+- [x] **RELI-02**: Cross-item co-occurrence accumulation tracking entity pair frequency across atoms with in-memory Map and periodic Dexie flush
+- [x] **RELI-03**: Evidence-based confidence scoring with sentence-level proximity checks, minimum co-occurrence thresholds (>=2), and source attribution on all edges
 
 ### Entity Intelligence Consumers
 
@@ -243,9 +243,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENTR-03 | Phase 27 | Complete |
 | ENTR-04 | Phase 27 | Complete |
 | ENTR-05 | Phase 27 | Complete |
-| RELI-01 | Phase 28 | Pending |
-| RELI-02 | Phase 28 | Pending |
-| RELI-03 | Phase 28 | Pending |
+| RELI-01 | Phase 28 | Complete |
+| RELI-02 | Phase 28 | Complete |
+| RELI-03 | Phase 28 | Complete |
 | ENTC-01 | Phase 29 | Pending |
 | ENTC-02 | Phase 29 | Pending |
 | ENTC-03 | Phase 29 | Pending |
