@@ -89,8 +89,8 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
   5. Dexie schema includes `entityRelations` table with typed edges, source attribution, and confidence scores
 **Plans**: 2 plans
 Plans:
-- [ ] 26-01-PLAN.md — Intelligence type system, v9 migration, sidecar helpers, entity stubs
-- [ ] 26-02-PLAN.md — Enrichment pipeline refactor from content-appending to sidecar writes
+- [x] 26-01-PLAN.md — Intelligence type system, v9 migration, sidecar helpers, entity stubs
+- [x] 26-02-PLAN.md — Enrichment pipeline refactor from content-appending to sidecar writes
 
 ### Phase 27: Entity Detection + Registry
 **Goal**: The system detects people, places, and organizations in atom content using the existing NER model, accumulates them into a deduplicated entity registry, and shows entity badges on atom detail views
@@ -104,8 +104,8 @@ Plans:
   5. Entity-atom links exist in the entity graph so that looking up an entity returns all atoms that mention it
 **Plans**: 2 plans
 Plans:
-- [ ] 26-01-PLAN.md — Intelligence type system, v9 migration, sidecar helpers, entity stubs
-- [ ] 26-02-PLAN.md — Enrichment pipeline refactor from content-appending to sidecar writes
+- [ ] 27-01-PLAN.md — NER model swap, detection pipeline, entity matcher, registry dedup, lifecycle hooks
+- [ ] 27-02-PLAN.md — Entity badge UI on atom detail views
 
 ### Phase 28: Relationship Inference
 **Goal**: The system infers relationships between entities using keyword patterns and co-occurrence evidence, building a relationship graph that grows more confident as more atoms are processed
@@ -117,8 +117,8 @@ Plans:
   3. Co-occurrence counts for entity pairs are tracked in memory and periodically flushed to Dexie, with sentence-level proximity checks preventing false positives from unrelated entities in the same atom
 **Plans**: 2 plans
 Plans:
-- [ ] 26-01-PLAN.md — Intelligence type system, v9 migration, sidecar helpers, entity stubs
-- [ ] 26-02-PLAN.md — Enrichment pipeline refactor from content-appending to sidecar writes
+- [ ] 28-01-PLAN.md — [To be planned]
+- [ ] 28-02-PLAN.md — [To be planned]
 
 ### Phase 29: Entity Intelligence Consumers
 **Goal**: Entity knowledge feeds into enrichment questions, GTD context suggestions, and user correction UX — making the system visibly smarter about the user's world while keeping the user in control of entity relationships
@@ -161,7 +161,7 @@ Plans:
 | 23. Cloud-tutored reinforcement | v4.0 | 3/3 | Complete | 2026-03-09 |
 | 24. Unified Enrichment Wizard | v4.0 | 7/7 | Complete | 2026-03-10 |
 | 25. Iterative Enrichment Deepening | v4.0 | 3/3 | Complete | 2026-03-10 |
-| 26. Intelligence Sidecar + Schema | 2/2 | Complete    | 2026-03-11 | - |
-| 27. Entity Detection + Registry | v5.0 | 0/TBD | Not started | - |
+| 26. Intelligence Sidecar + Schema | v5.0 | 2/2 | Complete | 2026-03-11 |
+| 27. Entity Detection + Registry | v5.0 | 0/2 | Not started | - |
 | 28. Relationship Inference | v5.0 | 0/TBD | Not started | - |
 | 29. Entity Intelligence Consumers | v5.0 | 0/TBD | Not started | - |
