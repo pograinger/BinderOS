@@ -82,6 +82,57 @@ Requirements for v4.0 Device-Adaptive AI. Each maps to roadmap phases.
 - [x] **ENRICH-09**: Tier 2B handler stub registered in pipeline for WASM LLM tasks (enrich-questions, enrich-options, decompose-contextual, synthesize-enrichment); falls back to T2A on unsupported devices
 - [x] **ENRICH-10**: Dexie v7 migration adds provenance and maturity fields; enrichment state machine orchestrates unified clarification+decomposition flow
 
+## v5.0 Requirements
+
+Requirements for v5.0 Entity Intelligence & Knowledge Graph. Each maps to roadmap phases.
+
+### Intelligence Sidecar Architecture
+
+- [ ] **SIDE-01**: `atomIntelligence` Dexie table stores all AI-generated knowledge per atom (entity mentions, cognitive signals, enrichment Q&A) separately from atom.content
+- [ ] **SIDE-02**: Existing enrichment answers migrated from atom.content text appending to structured `atomIntelligence.enrichment[]` records
+- [ ] **SIDE-03**: Enrichment engine writes structured Q&A pairs to atomIntelligence sidecar; UI renders intelligence from sidecar, not content parsing
+- [ ] **SIDE-04**: Atom schema gains structured `links[]` field for user-provided smart links (URL, title, summary, thumbnail cache key, resolution metadata)
+
+### Entity Detection
+
+- [ ] **ENTD-01**: Sanitization worker extended with `DETECT_ENTITIES` message type, reusing existing DistilBERT NER for entity extraction (PER/LOC/ORG)
+- [ ] **ENTD-02**: Entity detection runs asynchronously on atom create, update, and triage — same lifecycle pattern as ONNX classification
+- [ ] **ENTD-03**: NER results written to `atomIntelligence.entityMentions` as structured records (entity text, type, span positions, confidence)
+
+### Entity Registry
+
+- [ ] **ENTR-01**: New `entities` Dexie table with deduplication, normalization, alias tracking, mention count, first/last seen timestamps, CRDT-ready version fields
+- [ ] **ENTR-02**: New `entityRelations` Dexie table for entity-to-entity typed edges with source attribution (keyword, co-occurrence, user-correction) and confidence scores
+- [ ] **ENTR-03**: Entity-atom linking via `mentions-entity` edges connecting atoms to their detected entities
+- [ ] **ENTR-04**: Entity deduplication via normalized text matching with alias resolution ("Sarah Chen" = "Dr. Chen" = "Sarah")
+- [ ] **ENTR-05**: Entity badges/chips visible in atom detail view showing detected people, places, organizations
+
+### Relationship Inference
+
+- [ ] **RELI-01**: T1 keyword pattern engine with ~20 deterministic patterns mapping keyword + entity co-occurrence to relationship types (anniversary->spouse, boss->reports-to, Dr.->healthcare-provider)
+- [ ] **RELI-02**: Cross-item co-occurrence accumulation tracking entity pair frequency across atoms with in-memory Map and periodic Dexie flush
+- [ ] **RELI-03**: Evidence-based confidence scoring with sentence-level proximity checks, minimum co-occurrence thresholds (>=2), and source attribution on all edges
+
+### Entity Intelligence Consumers
+
+- [ ] **ENTC-01**: Entity context injected into enrichment questions — "You mentioned Sarah (your wife) — is this related to your anniversary planning?"
+- [ ] **ENTC-02**: User correction UX with inline entity cards, editable relationships; corrections stored as ground truth (confidence 1.0) overriding all inference
+- [ ] **ENTC-03**: Entity relationships inform GTD context tag suggestions — "Meeting with Dr. Chen" -> @health context
+- [ ] **ENTC-04**: Recency-weighted entity relevance with exponential decay (MunninDB-style, ~30 day half-life)
+- [ ] **ENTC-05**: Entity timeline view showing all atoms mentioning a specific entity, ordered chronologically
+
+### Future Goals (accommodate in v5.0 schema design)
+
+Schema and architecture decisions in v5.0 must not preclude these future capabilities:
+
+- Smart link atomization workers (MS Graph, photo share, link summarization, thumbnail caching)
+- Background WebLLM agents continuously enriching the intelligence sidecar on capable devices
+- Cross-device CRDT sync of atomIntelligence records (v7.0)
+- Per-atom encryption envelopes covering atom + its intelligence sidecar
+- Cross-binder entity linking and spine caching
+- Entity merge/split UX
+- T2 ONNX methodology-specific entity reasoning (needs v5.0 correction data for training)
+
 ## Future Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
@@ -96,10 +147,16 @@ Deferred to future release. Tracked but not in current roadmap.
 - **CLOUD-05**: Streaming token display for OpenAI/Grok responses
 - **CLOUD-06**: WebGPU LLM opt-in for capable Android devices
 
-### Sync (v5.0)
+### Sync (v7.0)
 
 - **SYNC-01**: CRDT-based multi-device sync
 - **SYNC-02**: Correction log federation across user's own devices
+
+### Smart Link Atomization (future)
+
+- **LINK-01**: Atomization workers summarize external links and cache thumbnails
+- **LINK-02**: MS Graph integration for Office object linking
+- **LINK-03**: Background WebLLM agents continuously deepen intelligence sidecar on capable devices
 
 ## Out of Scope
 
@@ -113,6 +170,12 @@ Deferred to future release. Tracked but not in current roadmap.
 | Real-time sanitization overlay | O(n) ONNX inference on every keystroke causes typing lag |
 | Corporate OAuth/SAML auth | Requires backend infrastructure; support Bearer token API keys only |
 | In-browser model retraining | ONNX Runtime Web is inference-only; use Python offline pipeline |
+| Neo4j or server-side graph DB | Browser-only constraint; IndexedDB with compound indexes handles entity graph at personal scale |
+| LLM-based entity extraction replacing NER | Slower (500ms+ vs 50ms), inconsistent output, requires LLM worker loaded |
+| Real-time entity detection during typing | NER on every keystroke saturates embedding worker; detect on save/create |
+| Cloud-powered entity resolution | Entity names are PII; all resolution runs locally; user corrections fill gaps |
+| Ontology-driven entity typing (schema.org, RDF) | Over-engineered for personal PIM; flat relationship type strings are simpler and user-comprehensible |
+| Entity staleness notifications | BinderOS is not a CRM; entropy engine already surfaces stale atoms |
 
 ## Traceability
 
