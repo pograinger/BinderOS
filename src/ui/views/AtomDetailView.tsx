@@ -18,15 +18,18 @@
  * CRITICAL: Never early-return from component body.
  */
 
-import { Show, Switch, Match, createSignal, createMemo, onCleanup, For, createEffect } from 'solid-js';
+import { Show, Switch, Match, createSignal, createMemo, onCleanup, For, createEffect, createResource } from 'solid-js';
 import { state, sendCommand, setSelectedAtomId } from '../signals/store';
 import { AtomTypeIcon } from '../components/AtomTypeIcon';
 import { PriorityBadge } from '../components/PriorityBadge';
 import { TagInput } from '../components/TagInput';
 import { BacklinksPanel } from '../components/BacklinksPanel';
 import { MentionAutocomplete } from '../components/MentionAutocomplete';
+import { EntityBadges } from '../components/EntityBadges';
 import { SECTION_IDS } from '../../storage/migrations/v1';
+import { getIntelligence } from '../../storage/atom-intelligence';
 import type { Atom, AtomStatus, AtomLink } from '../../types/atoms';
+import type { EntityMention } from '../../types/intelligence';
 
 // --- Safe property access for type-specific atom fields ---
 // CRITICAL: Do NOT use 'field in proxy' with SolidJS store proxies.
@@ -89,6 +92,16 @@ export function AtomDetailView() {
   // Reactive reference to the selected atom
   const atom = createMemo(() =>
     state.atoms.find((a) => a.id === state.selectedAtomId) ?? null,
+  );
+
+  // --- Entity mentions from sidecar (async Dexie load, keyed on selectedAtomId) ---
+  const [entityMentions] = createResource(
+    () => state.selectedAtomId,
+    async (atomId): Promise<EntityMention[]> => {
+      if (!atomId) return [];
+      const intel = await getIntelligence(atomId);
+      return intel?.entityMentions ?? [];
+    },
   );
 
   // Read-only guard — AnalysisAtom has isReadOnly: true; uses safe cast (same pattern as getAtomDate)
@@ -448,6 +461,14 @@ export function AtomDetailView() {
             disabled={isReadOnly()}
           />
         </div>
+
+        {/* Entity badges — color-coded chips from NER sidecar detection */}
+        <Show when={(entityMentions() ?? []).length > 0}>
+          <div class="atom-detail-section">
+            <span class="atom-detail-section-label">Entities</span>
+            <EntityBadges mentions={entityMentions() ?? []} />
+          </div>
+        </Show>
 
         {/* Metadata */}
         <div class="atom-detail-section atom-detail-meta">
