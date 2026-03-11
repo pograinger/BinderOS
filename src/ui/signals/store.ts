@@ -632,7 +632,8 @@ import {
   computeGraduationReadiness,
 } from '../../ai/enrichment/enrichment-engine';
 import { buildGraduationProposal, toggleChildInclusion, getGraduationActions } from '../../ai/enrichment/graduation';
-import { parseEnrichment, appendEnrichment } from '../../ai/clarification/enrichment';
+import { writeEnrichmentRecord, getIntelligence } from '../../storage/atom-intelligence';
+import type { EnrichmentRecord } from '../../types/intelligence';
 import { computeMaturity } from '../../ai/enrichment/maturity';
 import { TEMPLATE_TIER_COUNT } from '../../ai/enrichment/types';
 import { selectSemanticFollowUp } from '../../ai/enrichment/semantic-selector';
@@ -649,8 +650,9 @@ if (typeof window !== 'undefined') {
 
 const [enrichmentSession, setEnrichmentSession] = createSignal<EnrichmentSession | null>(null);
 const [graduationProposal, setGraduationProposal] = createSignal<GraduationProposal | null>(null);
+const [enrichmentPriorAnswers, setEnrichmentPriorAnswers] = createSignal<Record<string, string>>({});
 
-export { enrichmentSession, graduationProposal };
+export { enrichmentSession, graduationProposal, enrichmentPriorAnswers };
 
 /**
  * Build a T3EnrichmentContext from the current session and inbox item.
@@ -734,19 +736,37 @@ function attemptT3Replace(
  * When T3 is available, immediately attempts to replace the first template question
  * with a contextual LLM-generated question.
  */
-export function startEnrichment(inboxItemId: string): void {
+export async function startEnrichment(inboxItemId: string): Promise<void> {
   const item = state.inboxItems.find((i) => i.id === inboxItemId);
   if (!item) return;
 
-  const parsed = parseEnrichment(item.content);
+  const intel = await getIntelligence(inboxItemId);
+  const sidecarRecords = intel?.enrichment ?? [];
   const session = createEnrichmentSession({
     inboxItemId,
     content: item.content,
     atomType: item.type,
-    existingEnrichments: parsed.enrichments,
+    sidecarEnrichment: sidecarRecords,
     depthMap: item.enrichmentDepth ?? {},
     cognitiveSignals: null, // Future: pass cached cognitive signals when available
   });
+
+  // Populate prior answers signal from sidecar for UI display
+  const CATEGORY_DISPLAY_KEYS: Record<string, string> = {
+    'missing-outcome': 'Outcome',
+    'missing-next-action': 'Next Action',
+    'missing-timeframe': 'Deadline',
+    'missing-context': 'Context',
+    'missing-reference': 'Reference',
+  };
+  const priorAnswers: Record<string, string> = {};
+  for (const rec of sidecarRecords) {
+    const displayKey = CATEGORY_DISPLAY_KEYS[rec.category];
+    if (displayKey && rec.answer) {
+      priorAnswers[displayKey] = rec.answer;
+    }
+  }
+  setEnrichmentPriorAnswers(priorAnswers);
 
   // If T3 is available and there are questions, attempt to replace the first one
   if (isT3Available() && session.questions.length > 0) {
@@ -802,27 +822,37 @@ export async function handleEnrichmentAnswer(answer: ClarificationAnswer): Promi
   const maturityScore = computeMaturity(enrichments);
   const maturityFilled = Object.keys(enrichments);
 
-  // Persist maturity + provenance + enriched content to Dexie immediately.
-  // Rebuild content from original + all answers so partial enrichment survives close.
-  const { original } = parseEnrichment(session.originalContent);
-  const enrichedContent = appendEnrichment(original, updated.answers);
+  // Write enrichment answer to sidecar (structured record, not content-appending)
+  const currentQuestion = session.questions[session.currentQuestionIndex];
+  const enrichRecord: EnrichmentRecord = {
+    category: answer.category,
+    question: currentQuestion?.questionText ?? '',
+    answer: answer.wasFreeform ? (answer.freeformText ?? '') : (answer.selectedOption ?? ''),
+    depth: updated.categoryDepth[answer.category] ?? 0,
+    timestamp: Date.now(),
+    tier: 'T1',
+  };
 
   try {
+    // Write structured enrichment to sidecar (content stays pure user text)
+    await writeEnrichmentRecord(session.inboxItemId, enrichRecord);
+
+    // Update prior answers signal for UI reactivity
+    setEnrichmentPriorAnswers({ ...enrichmentPriorAnswers(), ...enrichments });
+
+    // Persist maturity + provenance + depth to Dexie (but NOT content)
     const { db: dexie } = await import('../../storage/db');
     await dexie.inbox.update(session.inboxItemId, {
-      content: enrichedContent,
       maturityScore,
       maturityFilled,
       provenance: updated.provenance,
       enrichmentDepth: updated.categoryDepth,
     });
 
-    // Sync in-memory state so subsequent startEnrichment reads updated depth/content.
-    // Without this, re-enrichment reads stale data and generates first-pass questions again.
+    // Sync in-memory state so subsequent startEnrichment reads updated depth.
     const idx = state.inboxItems.findIndex((i) => i.id === session.inboxItemId);
     if (idx >= 0) {
       setState('inboxItems', idx, {
-        content: enrichedContent,
         maturityScore,
         maturityFilled,
         provenance: updated.provenance,
@@ -886,7 +916,7 @@ export function closeEnrichment(): void {
  * At depth 3+, uses MiniLM semantic selection to pick the most novel question
  * from the question bank based on embedding distance from previously asked questions.
  */
-export function handleAskMore(category: MissingInfoCategory): void {
+export async function handleAskMore(category: MissingInfoCategory): Promise<void> {
   const session = enrichmentSession();
   if (!session) return;
 
@@ -948,14 +978,16 @@ export function handleAskMore(category: MissingInfoCategory): void {
   }
 
   // --- Fallback path: no AI adapter available, use template/semantic ---
+  const intel = await getIntelligence(session.inboxItemId);
+  const sidecarEnrichment = intel?.enrichment ?? [];
+
   if (newDepth <= TEMPLATE_TIER_COUNT) {
     // Depths 1-2: use template tiers (sync, zero inference cost)
-    const parsed = parseEnrichment(item.content);
     const newSession = createEnrichmentSession({
       inboxItemId: session.inboxItemId,
       content: item.content,
       atomType: item.type,
-      existingEnrichments: parsed.enrichments,
+      sidecarEnrichment,
       depthMap: updatedDepth,
       cognitiveSignals: session.cognitiveSignals,
     });
@@ -971,12 +1003,11 @@ export function handleAskMore(category: MissingInfoCategory): void {
     const worker = getEmbeddingWorker();
     if (!worker) {
       // No worker available — fall back to template cycling
-      const parsed = parseEnrichment(item.content);
       const newSession = createEnrichmentSession({
         inboxItemId: session.inboxItemId,
         content: item.content,
         atomType: item.type,
-        existingEnrichments: parsed.enrichments,
+        sidecarEnrichment,
         depthMap: updatedDepth,
         cognitiveSignals: session.cognitiveSignals,
       });
@@ -1025,20 +1056,22 @@ export function handleAskMore(category: MissingInfoCategory): void {
  * Replicates the template-tier / semantic-selection logic so the async T3
  * path can invoke it without re-entering handleAskMore.
  */
-function handleAskMoreFallback(
+async function handleAskMoreFallback(
   session: EnrichmentSession,
   item: InboxItem,
   category: MissingInfoCategory,
   updatedDepth: Record<string, number>,
   newDepth: number,
-): void {
+): Promise<void> {
+  const intel = await getIntelligence(session.inboxItemId);
+  const sidecarEnrichment = intel?.enrichment ?? [];
+
   if (newDepth <= TEMPLATE_TIER_COUNT) {
-    const parsed = parseEnrichment(item.content);
     const newSession = createEnrichmentSession({
       inboxItemId: session.inboxItemId,
       content: item.content,
       atomType: item.type,
-      existingEnrichments: parsed.enrichments,
+      sidecarEnrichment,
       depthMap: updatedDepth,
       cognitiveSignals: session.cognitiveSignals,
     });
@@ -1053,12 +1086,11 @@ function handleAskMoreFallback(
     // Depth 3+: semantic selection via MiniLM embeddings
     const worker = getEmbeddingWorker();
     if (!worker) {
-      const parsed = parseEnrichment(item.content);
       const newSession = createEnrichmentSession({
         inboxItemId: session.inboxItemId,
         content: item.content,
         atomType: item.type,
-        existingEnrichments: parsed.enrichments,
+        sidecarEnrichment,
         depthMap: updatedDepth,
         cognitiveSignals: session.cognitiveSignals,
       });
@@ -1114,14 +1146,29 @@ export function handleMoveNext(): void {
 }
 
 /**
- * Compute prior answers from an inbox item's content for display in the enrichment wizard.
+ * Compute prior answers from the sidecar for display in the enrichment wizard.
  * Returns a Record keyed by display name (e.g., "Outcome", "Next Action").
  */
-export function computePriorAnswers(inboxItemId: string): Record<string, string> {
-  const item = state.inboxItems.find((i) => i.id === inboxItemId);
-  if (!item) return {};
-  const parsed = parseEnrichment(item.content);
-  return parsed.enrichments;
+export async function computePriorAnswers(inboxItemId: string): Promise<Record<string, string>> {
+  const CATEGORY_DISPLAY_KEYS: Record<string, string> = {
+    'missing-outcome': 'Outcome',
+    'missing-next-action': 'Next Action',
+    'missing-timeframe': 'Deadline',
+    'missing-context': 'Context',
+    'missing-reference': 'Reference',
+  };
+
+  const intel = await getIntelligence(inboxItemId);
+  if (!intel?.enrichment?.length) return {};
+
+  const result: Record<string, string> = {};
+  for (const rec of intel.enrichment) {
+    const displayKey = CATEGORY_DISPLAY_KEYS[rec.category];
+    if (displayKey && rec.answer) {
+      result[displayKey] = rec.answer;
+    }
+  }
+  return result;
 }
 
 /**

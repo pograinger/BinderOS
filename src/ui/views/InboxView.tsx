@@ -24,7 +24,7 @@ import {
   enrichmentSession, graduationProposal, advanceEnrichment,
   toggleGraduationChild, handleGraduationConfirm,
   startEnrichment, handleEnrichmentAnswer, handleDecompositionStep, closeEnrichment,
-  handleAskMore, handleMoveNext, computePriorAnswers,
+  handleAskMore, handleMoveNext, enrichmentPriorAnswers,
 } from '../signals/store';
 import { AtomTypeIcon } from '../components/AtomTypeIcon';
 import { InboxAISuggestion } from '../components/InboxAISuggestion';
@@ -478,7 +478,7 @@ export function InboxView() {
               onClose={() => closeEnrichment()}
               onAskMore={(category) => handleAskMore(category)}
               onMoveNext={() => handleMoveNext()}
-              priorAnswers={computePriorAnswers(enrichmentSession()!.inboxItemId)}
+              priorAnswers={enrichmentPriorAnswers()}
             />
           </Show>
 

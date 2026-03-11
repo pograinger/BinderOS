@@ -14,7 +14,8 @@
 
 import { createSignal, createEffect, onCleanup, Show, For } from 'solid-js';
 import { generateTemplateOptions } from '../../ai/clarification/question-templates';
-import { appendEnrichment } from '../../ai/clarification/enrichment';
+import { writeEnrichmentRecord } from '../../storage/atom-intelligence';
+import type { EnrichmentRecord } from '../../types/intelligence';
 import { prefetchCloudOptions } from '../../ai/clarification/cloud-options';
 import { rankOptions, getSkipPatterns, shouldDeprioritizeCategory } from '../../ai/clarification/option-ranking';
 import { getClassificationHistory } from '../../storage/classification-log';
@@ -175,7 +176,22 @@ function cleanup(): void {
 
 function finishClarification(atom: ClarificationAtom, finalAnswers: ClarificationAnswer[]): void {
   const questions = clarificationQuestions();
-  const enrichedContent = appendEnrichment(atom.content, finalAnswers);
+
+  // Write each answer to sidecar as structured records (no content appending)
+  for (const answer of finalAnswers) {
+    if (answer.wasSkipped) continue;
+    const question = questions.find((q) => q.category === answer.category);
+    const enrichRecord: EnrichmentRecord = {
+      category: answer.category,
+      question: question?.questionText ?? '',
+      answer: answer.wasFreeform ? (answer.freeformText ?? '') : (answer.selectedOption ?? ''),
+      depth: 0,
+      timestamp: Date.now(),
+      tier: 'T1',
+    };
+    // Fire-and-forget sidecar write
+    void writeEnrichmentRecord(atom.id, enrichRecord);
+  }
 
   const allCategories = questions.map((q) => q.category);
   const answeredCategories = finalAnswers
@@ -188,7 +204,7 @@ function finishClarification(atom: ClarificationAtom, finalAnswers: Clarificatio
   const result: ClarificationResult = {
     atomId: atom.id,
     answers: finalAnswers,
-    enrichedContent,
+    enrichedContent: atom.content, // Content stays pure — enrichment in sidecar
     categoriesDetected: allCategories,
     categoriesAnswered: answeredCategories,
     categoriesSkipped: skippedCategories,
