@@ -105,7 +105,7 @@ Requirements for v5.0 Entity Intelligence & Knowledge Graph. Each maps to roadma
 - [x] **ENTR-02**: New `entityRelations` Dexie table for entity-to-entity typed edges with source attribution (keyword, co-occurrence, user-correction) and confidence scores
 - [x] **ENTR-03**: Entity-atom linking via `mentions-entity` edges connecting atoms to their detected entities
 - [x] **ENTR-04**: Entity deduplication via normalized text matching with alias resolution ("Sarah Chen" = "Dr. Chen" = "Sarah")
-- [ ] **ENTR-05**: Entity badges/chips visible in atom detail view showing detected people, places, organizations
+- [x] **ENTR-05**: Entity badges/chips visible in atom detail view showing detected people, places, organizations
 
 ### Relationship Inference
 
@@ -242,7 +242,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENTD-03 | Phase 27 | Complete |
 | ENTR-03 | Phase 27 | Complete |
 | ENTR-04 | Phase 27 | Complete |
-| ENTR-05 | Phase 27 | Pending |
+| ENTR-05 | Phase 27 | Complete |
 | RELI-01 | Phase 28 | Pending |
 | RELI-02 | Phase 28 | Pending |
 | RELI-03 | Phase 28 | Pending |
