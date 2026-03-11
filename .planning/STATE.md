@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Entity Intelligence & Knowledge Graph
 status: executing
-stopped_at: Completed 28-01-PLAN.md
-last_updated: "2026-03-11T23:37:03.036Z"
-last_activity: 2026-03-11 — Phase 27 Plan 01 complete
+stopped_at: Completed 28-02-PLAN.md
+last_updated: "2026-03-11T23:47:12.000Z"
+last_activity: 2026-03-11 — Phase 28 Plan 02 complete
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 6
-  completed_plans: 5
-  percent: 90
+  completed_plans: 6
+  percent: 95
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 27 — Entity Detection + Registry
+**Current focus:** Phase 28 — Relationship Inference + Cognitive Harness
 
 ## Current Position
 
-Phase: 27 — second of 4 v5.0 phases (26-29)
-Plan: 1 of 5 in current phase (complete)
-Status: Executing Phase 27
-Last activity: 2026-03-11 — Phase 27 Plan 01 complete
+Phase: 28 — third of 4 v5.0 phases (26-29)
+Plan: 2 of 2 in current phase (complete)
+Status: Executing Phase 28
+Last activity: 2026-03-11 — Phase 28 Plan 02 complete
 
-Progress: [██████████████████████░░] 90% (v5.0 Phase 27: 1/? plans)
+Progress: [███████████████████████░] 95% (v5.0 Phase 28: 2/2 plans)
 
 ## Performance Metrics
 
@@ -49,6 +49,7 @@ Progress: [██████████████████████░
 | v4.0 | 14 | 32 | 5 days |
 | Phase 27 P02 | 2min | 1 tasks | 2 files |
 | Phase 28 P01 | 583 | 3 tasks | 9 files |
+| Phase 28 P02 | 584 | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,9 @@ Recent decisions affecting v5.0:
 - [Phase 28]: relationship-patterns.json loaded as standalone import, not nested in BinderTypeConfig — avoids interface modification
 - [Phase 28]: CO_OCCURRENCE_THRESHOLD = 3 — personal GTD binders have fewer atoms, 3 co-occurrences = meaningful signal
 - [Phase 28]: [SELF] sentinel as sourceEntityId for implicit self-relationships — no USER entity in registry
+- [28-02]: Harness-specific inference wrappers instead of DI params on production modules — production code stays clean
+- [28-02]: HarnessEntityStore synchronous Map ops — no async overhead for deterministic offline scoring
+- [28-02]: Privacy score = entities with inferred relationships / GT entities with relationships — measures semantic sanitization readiness
 
 ### Pending Todos
 
@@ -89,6 +93,6 @@ Recent decisions affecting v5.0:
 
 ## Session Continuity
 
-Last session: 2026-03-11T23:37:03.034Z
-Stopped at: Completed 28-01-PLAN.md
+Last session: 2026-03-11T23:47:12.000Z
+Stopped at: Completed 28-02-PLAN.md
 Resume file: None
