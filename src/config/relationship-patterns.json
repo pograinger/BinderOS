@@ -1,0 +1,173 @@
+{
+  "version": 1,
+  "patterns": [
+    {
+      "id": "spouse-anniversary",
+      "keywords": ["anniversary", "marriage", "married", "marry", "wedding", "honeymoon"],
+      "relationshipType": "spouse",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.30,
+      "scope": "sentence"
+    },
+    {
+      "id": "spouse-direct",
+      "keywords": ["wife", "husband", "spouse", "partner"],
+      "relationshipType": "spouse",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.65,
+      "scope": "sentence"
+    },
+    {
+      "id": "boss-reports-to",
+      "keywords": ["boss", "manager", "supervisor", "reports to", "direct report"],
+      "relationshipType": "reports-to",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.55,
+      "scope": "sentence"
+    },
+    {
+      "id": "healthcare-title",
+      "keywords": ["Dr.", "Doctor", "dentist", "therapist", "physician", "nurse", "psychiatrist", "psychologist", "optometrist", "orthodontist", "chiropractor", "dermatologist"],
+      "relationshipType": "healthcare-provider",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.70,
+      "scope": "sentence"
+    },
+    {
+      "id": "family-parent",
+      "keywords": ["mom", "dad", "mother", "father", "parent", "parents"],
+      "relationshipType": "parent",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.60,
+      "scope": "sentence"
+    },
+    {
+      "id": "family-child",
+      "keywords": ["son", "daughter", "kid", "child", "children"],
+      "relationshipType": "child",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.60,
+      "scope": "sentence"
+    },
+    {
+      "id": "family-sibling",
+      "keywords": ["brother", "sister", "sibling", "twin"],
+      "relationshipType": "sibling",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.60,
+      "scope": "sentence"
+    },
+    {
+      "id": "colleague",
+      "keywords": ["coworker", "colleague", "teammate", "workmate"],
+      "relationshipType": "colleague",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.45,
+      "scope": "sentence"
+    },
+    {
+      "id": "friend",
+      "keywords": ["friend", "buddy", "pal"],
+      "relationshipType": "friend",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.45,
+      "scope": "sentence"
+    },
+    {
+      "id": "works-at",
+      "keywords": ["works at", "work at", "employed at", "job at", "office at", "headquartered at", "based at"],
+      "relationshipType": "works-at",
+      "targetEntityType": "ORG",
+      "confidenceBase": 0.55,
+      "scope": "sentence"
+    },
+    {
+      "id": "lives-at",
+      "keywords": ["lives at", "lives in", "live at", "live in", "home in", "address", "neighborhood", "house in", "apartment in", "moved to", "moving to"],
+      "relationshipType": "lives-at",
+      "targetEntityType": "LOC",
+      "confidenceBase": 0.50,
+      "scope": "sentence"
+    },
+    {
+      "id": "org-member",
+      "keywords": ["joined", "member of", "part of", "belongs to", "on the team", "signed up for"],
+      "relationshipType": "org-member",
+      "targetEntityType": "ORG",
+      "confidenceBase": 0.40,
+      "scope": "sentence"
+    },
+    {
+      "id": "mentor",
+      "keywords": ["mentor", "mentors me", "mentored by", "taught me", "learned from", "my mentor"],
+      "relationshipType": "mentor",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.55,
+      "scope": "sentence"
+    },
+    {
+      "id": "client",
+      "keywords": ["client", "customer", "account manager", "vendor"],
+      "relationshipType": "client",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.50,
+      "scope": "sentence"
+    },
+    {
+      "id": "neighbor",
+      "keywords": ["neighbor", "next door", "across the street", "lives nearby"],
+      "relationshipType": "neighbor",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.55,
+      "scope": "sentence"
+    },
+    {
+      "id": "teacher",
+      "keywords": ["teacher", "professor", "instructor", "tutor", "teaches me"],
+      "relationshipType": "teacher",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.55,
+      "scope": "sentence"
+    },
+    {
+      "id": "landlord",
+      "keywords": ["landlord", "landlady", "property manager", "rents to me"],
+      "relationshipType": "landlord",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.60,
+      "scope": "sentence"
+    },
+    {
+      "id": "accountant",
+      "keywords": ["accountant", "CPA", "tax preparer", "bookkeeper"],
+      "relationshipType": "accountant",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.60,
+      "scope": "sentence"
+    },
+    {
+      "id": "lawyer",
+      "keywords": ["lawyer", "attorney", "solicitor", "legal counsel", "my lawyer"],
+      "relationshipType": "lawyer",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.60,
+      "scope": "sentence"
+    },
+    {
+      "id": "veterinarian",
+      "keywords": ["vet", "veterinarian", "veterinary"],
+      "relationshipType": "veterinarian",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.60,
+      "scope": "sentence"
+    },
+    {
+      "id": "coach",
+      "keywords": ["coach", "trainer", "fitness coach", "life coach"],
+      "relationshipType": "coach",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.55,
+      "scope": "sentence"
+    }
+  ]
+}
