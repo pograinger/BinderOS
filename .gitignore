@@ -51,5 +51,8 @@ scripts/train/label_map.json
 # ONNX Runtime WASM (downloaded at build time, too large for git)
 public/ort-wasm-*.wasm
 
+# Harness generated reports (re-generated from corpus)
+scripts/harness/reports/
+
 # Claude Code
 .claude/
