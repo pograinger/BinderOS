@@ -300,3 +300,288 @@ Issues that cause friction or suboptimal behavior but have straightforward fixes
 - [Handling Nicknames and Variants in Data Matching (Data Ladder)](https://dataladder.com/managing-nicknames-abbreviations-variants-in-entity-matching/) -- name normalization patterns
 - [Fuzzy Matching Guide (WinPure)](https://winpure.com/fuzzy-matching-guide/) -- fuzzy matching limitations for entity resolution
 - Existing codebase: `src/workers/sanitization-worker.ts`, `src/search/embedding-worker.ts`, `src/storage/entity-graph.ts`, `src/ai/sanitization/`, `src/ai/tier2/cognitive-signals.ts`
+
+---
+
+---
+
+# v5.5 Cortical Intelligence Pitfalls
+
+**Domain:** Adding context gating, predictive enrichment, sequence learning, and binder-type specialization to an existing local-first PWA with 10+ ONNX models
+**Researched:** 2026-03-12
+**Confidence:** HIGH for worker memory explosion (verified: OOM issues documented for ONNX on iOS Safari, existing worker already near limits); HIGH for sequence model overfitting (well-documented LSTM small-data failure mode); HIGH for BinderTypeConfig premature abstraction (Rule of Three is a firmly established principle); MEDIUM for gate threshold calibration (extrapolated from gating mechanism literature); MEDIUM for predictive enrichment trust erosion (supported by human-AI trust research, not directly measured here)
+
+---
+
+## Critical Pitfalls (v5.5)
+
+### Pitfall 13: Sequence Model Added to Existing Embedding Worker Causes OOM on iOS Safari
+
+**What goes wrong:**
+The embedding worker already hosts MiniLM-L6-v2 (~23 MB), up to 15 ONNX classifier sessions (type, GTD x4, decomposition, completeness, missing-info x5), and the 10 cognitive signal models. Adding a sequence model (LSTM or attention head, even quantized at 5-15 MB) to this same worker causes peak memory during concurrent inference that crashes iOS Safari. The worker dies silently — no TypeScript exception propagates to the main thread — and the entire T2 pipeline silently falls back to T1 heuristics. The user sees no error. All GTD enrichment stops working.
+
+**Why it happens:**
+Each `onnxruntime-web` `InferenceSession` allocates its own segment of the WASM heap. With `numThreads: 1` (required — the codebase already enforces this to avoid SharedArrayBuffer requirements), sessions cannot share memory. On iPhone 13/14/15, the practical per-tab WASM memory ceiling is ~300-500 MB total across all workers. The embedding worker is already holding several hundred MB of model weights; the sequence model pushes it over during the simultaneous inference that happens on atom triage (embedding + type classification + cognitive signals all fire at once).
+
+**How to avoid:**
+Create a dedicated `sequence-worker.ts` that holds ONLY the sequence model. This worker accepts pre-computed float32 embedding arrays (produced by the existing embedding worker) via `postMessage` — it does NOT re-embed raw text. This means the sequence model has zero MiniLM dependency and only needs to allocate memory for the small LSTM/attention model itself. Keep both workers under a 150 MB budget each. Instrument memory via `performance.measureUserAgentSpecificMemory()` (Chrome) and worker termination events (both platforms) to catch regressions before mobile testing.
+
+**Warning signs:**
+- T2 classification stops completing for triage items after adding sequence model (silent OOM)
+- iPhone test device gets hot or unresponsive during a triage batch of 5+ items
+- Sequence model loads fine on desktop Chrome but fails silently on Safari iOS
+- Worker-terminated events in DevTools with no caught TypeScript exception
+
+**Phase to address:**
+Sequence learning phase — separate-worker architecture must be the first design decision, before any LSTM training begins.
+
+---
+
+### Pitfall 14: Context Gate Thresholds Never Measured, Providing No Actual Benefit
+
+**What goes wrong:**
+Context gating is implemented with intuitive threshold values ("activate energy-level agent only if hour >= 18", "suppress review-cadence agent if atom count < 5"). These thresholds are never validated against real classification behavior. The result is either over-gating (agents suppressed so often they provide no incremental coverage) or under-gating (every agent activates for every atom, achieving nothing over the current always-on approach). Neither failure is obvious because the system "works" in both cases — atoms get classified, but gating provides zero measurable benefit.
+
+**Why it happens:**
+Gating feels like a configuration problem, so developers set values from intuition rather than measurement. The existing harness evaluates entity graph quality (F1 on entity relationships), not gate activation recall or precision. Without a gate-specific metric, there is no feedback signal. The gap between "gating is wired up" and "gating is actually doing something useful" is invisible.
+
+**How to avoid:**
+Define a gate activation audit log in the intelligence sidecar (`atomIntelligence.gatingDecisions[]`) BEFORE implementing any predicates. For each classification event, record: which agents were gated out, what the predicate values were, and what the final classification confidence was. After N atoms or a harness simulation day, compute gate suppression rate per agent and correlation between suppression and classification confidence changes. Set initial thresholds loose (suppression rate < 20%) and tighten empirically. The harness must simulate a full synthetic day (morning/afternoon/evening atom patterns) to validate temporal predicates before they ship.
+
+**Warning signs:**
+- Gate suppression rate > 80% for any single agent (over-gating — that agent is effectively disabled)
+- Gate suppression rate < 5% across ALL agents (under-gating — gating is theater)
+- Classification confidence is statistically identical with gating enabled vs disabled after a harness run
+- Specific binder types or routes never trigger any specialized agents at all
+
+**Phase to address:**
+Context gating phase — log-first, gate-second. The gating audit schema must exist before any predicates are written.
+
+---
+
+### Pitfall 15: Predictive Enrichment Destroys User Trust Before Entity Graph Matures
+
+**What goes wrong:**
+Predictive enrichment proactively surfaces questions or suggestions before the user requests them. When the entity graph is sparse (new user with 30-50 atoms and 5-10 entities), the evidence basis for "what will this user need next?" is thin. Predictions are frequently wrong: predicting "health" questions for a work task, predicting delegation questions for a solo item, predicting follow-ups on enrichment that was already completed. Each wrong prediction is a friction event. Users build dismissal habits after 3-5 wrong predictions. Once dismissal is habitual, even accurate predictions are reflexively dismissed. The feature cannot recover without a visible UX redesign.
+
+**Why it happens:**
+Developers test predictive enrichment with their own data after months of use. Cold-start failure (first week, sparse data) is never observed during development. The harness generates balanced synthetic persona data that masks the cold-start distribution problem.
+
+**How to avoid:**
+Gate predictive enrichment behind a minimum evidence threshold: at least 25 atoms processed through full enrichment, at least 5 entities with 2+ confirmed relations each. Show a progress indicator toward this threshold so users understand why predictions are not yet active. When predictions do start, make the prediction source visible inline ("Based on your work patterns on weekday mornings...") so users can evaluate correctness rather than blindly accept or dismiss. Implement an explicit one-tap "this was wrong" button that decrements confidence for that prediction class. Start predictions in passive-display mode (sidebar strip, not interrupting triage flow) before promoting to active suggestions. Never show predictions that duplicate already-answered enrichment categories on the same atom.
+
+**Warning signs:**
+- Dismissal rate for predictive suggestions > 60% in first week
+- Users complete enrichment without touching any predictive suggestions
+- Predictions repeat enrichment categories already answered on that atom
+- Harness simulation shows prediction accuracy < 40% on day-1 data
+
+**Phase to address:**
+Predictive enrichment phase — cold-start gating and passive-first mode must be encoded in requirements, not left as implementation choices.
+
+---
+
+### Pitfall 16: LSTM Sequence Model Trained on Synthetic Harness Data Fails on Real Personal Data
+
+**What goes wrong:**
+The sequence model is trained on synthetic persona atom sequences from the harness (Alex Jordan, Dev Kumar, Maria Santos, etc.). Real user atom sequences have fundamentally different statistical properties: multi-day runs of similar atom types (users focus on one project for days), irregular gaps (weeks of inactivity during holidays), and idiosyncratic personal vocabulary the synthetic personas do not capture. The model learns the synthetic distribution — it benchmarks well in harness scoring but generalizes poorly to real personal use. This is not detected until real users notice that enrichment suggestions feel "off" in ways they cannot articulate.
+
+**Why it happens:**
+The harness generates diverse, balanced atom sequences to cover all classification cases. Real usage is bursty, repetitive, and personal. The gap between synthetic training distribution and personal usage distribution is a known ML pitfall that is easy to overlook when harness numbers look good. The adversarial cycle currently evaluates entity graph quality, not sequence model generalization.
+
+**How to avoid:**
+Treat the sequence model as a weak prior, not a strong predictor. Feed its output as a soft additive bias (logit delta) into T2 classifiers, never as a hard override. Cap the maximum influence of the sequence signal to ±0.15 on any single classifier logit — if removing the sequence signal changes the top-1 classification, something is wrong with the cap. Implement sequence signal strength as a tunable constant (`SEQUENCE_SIGNAL_WEIGHT`) in the harness so ablation experiments can quantify its contribution. Before shipping, run an ablation: harness F1 with sequence signal enabled vs disabled. If the improvement is < 2% F1, the model is adding noise. The sequence window must be fixed at N=20 atoms max (sliding, not cumulative) to prevent inference time growth as users accumulate history.
+
+**Warning signs:**
+- Sequence model confidence consistently > 0.85 on first 5 atoms from any new user (impossible with sparse context — signals overfit)
+- Removing the sequence signal improves harness F1 (it is actively degrading performance)
+- Harness F1 with sequence signal is > 5% higher than observed accuracy on real data
+- Sequence signal recommendations are identical across different binder types (not learning type-specific patterns)
+
+**Phase to address:**
+Sequence learning phase — the weak-prior constraint and the ±0.15 logit cap must be in the model architecture before training, not added after noticing degradation.
+
+---
+
+### Pitfall 17: BinderTypeConfig Interface Is GTD-in-Disguise
+
+**What goes wrong:**
+`BinderTypeConfig` is designed with GTD as the sole reference implementation and a hypothetical second binder type in mind. Because there is only one concrete implementation, the interface ends up shaped exactly like GTD: GTD horizon labels (`runway`, `10k-projects`) become required interface fields; GTD agent activation predicates (checking `gtdHorizon` or `nextActionContext`) become the assumed defaults; the harness SDK surface is defined by what the adversarial cycle needs for GTD, not by what a non-GTD binder type would need. When a real second binder type is built (v6.0 or community contribution), the interface must be broken to accommodate it, requiring a migration across all callers.
+
+**Why it happens:**
+Designing an abstraction from one implementation is the classic premature abstraction failure. A well-designed plugin interface requires at least two concrete implementations with meaningfully divergent requirements to avoid the interface collapsing into its single implementation's shape. GTD is the only binder type — there is no divergence case to inform what should be generic vs type-specific.
+
+**How to avoid:**
+Before shipping `BinderTypeConfig`, mock out a non-functional second binder type (e.g., "Reading List" with atom types: book, author, theme, note) and validate that the base interface accommodates it without any GTD-specific leakage. Specific rules: GTD horizon labels must NOT appear in the base interface — they belong in `GTDBinderTypeConfig extends BinderTypeConfig`. Agent activation predicates in the base interface must be expressible as pure functions on the universal atom schema (`AtomType`, `createdAt`, `content`), not on GTD-specific fields. The harness SDK surface must be defined by what any binder type would need (corpus generation, scoring, persona simulation), not by what the GTD adversarial cycle currently does. Ship NO new binder-type UI in this milestone — `BinderTypeConfig` is internal infrastructure only.
+
+**Warning signs:**
+- `BinderTypeConfig` base interface has fields named `gtd*` or referencing GTD-specific concepts
+- A stub `ReadingListBinderTypeConfig` requires empty/null values for > 30% of required fields
+- Agent activation predicates reference `atom.gtdContext`, `atom.gtdHorizon`, or similar GTD fields
+- Harness SDK functions have GTD-specific parameters that non-GTD callers would need to pass as `null`
+
+**Phase to address:**
+Binder-type specialization phase — the interface design review must use a concrete second-type mock as a forcing function, even if that type never ships in v5.5.
+
+---
+
+### Pitfall 18: Harness SDK Refactor Silently Breaks Existing Adversarial Tests
+
+**What goes wrong:**
+The harness is refactored from adversarial-focused scripts into a general SDK. During refactoring, the function signatures in `adversarial-cycle.ts`, `score-graph.ts`, and `run-adversarial.ts` change to accommodate the more general SDK contract. Existing adversarial cycle tests that validated entity graph quality (the v5.0 investment) silently break — they still compile and run, but evaluate against wrong baselines or skip assertions that relied on old interface shapes. TypeScript structural typing means breaking changes that preserve the call shape (same function name, compatible parameter types) compile without error even if the semantics changed.
+
+**Why it happens:**
+The harness is TypeScript scripts, not a proper test framework with explicit assertion contracts. A function that previously returned `{ precision: number; recall: number; f1: number }` now returns `{ score: number; breakdown: Record<string, number> }` — TypeScript compiles both callers cleanly, but the second form cannot reproduce the original assertions. The adversarial cycle is complex enough that a partial API break produces plausible-looking but wrong output rather than a thrown exception.
+
+**How to avoid:**
+Before any harness refactoring begins, snapshot the current adversarial cycle output for all existing personas as golden files: `scripts/harness/baselines/{persona-id}/pre-refactor-scores.json`. Any harness change that moves any score by more than 2% must be flagged as a breaking change requiring explicit justification. Keep `run-adversarial.ts` as a thin stable wrapper that calls into the new SDK — do not rewrite it. At SDK boundaries, add TypeScript discriminant union checks (not just structural compatibility) so type changes fail at compile time rather than runtime. The adversarial cycle must run and produce identical output to the golden files within tolerance before any SDK refactor is merged.
+
+**Warning signs:**
+- Adversarial cycle completes without errors but all graph scores are 0.0 or 1.0 (degenerate output)
+- Entity counts in harness reports drop to zero after refactor (entity store interface broken)
+- Score changes > 5% across all personas simultaneously without any model change (systematic interface break, not a real improvement)
+- TypeScript compiles clean but `score-graph.ts` returns fields with `undefined` values
+
+**Phase to address:**
+Binder-type specialization / harness SDK phase — golden-file baselines must be captured before any refactoring begins.
+
+---
+
+### Pitfall 19: Adding New Cognitive Models Instead of Tuning Existing 10
+
+**What goes wrong:**
+The cortical intelligence framing suggests architectural expansion. A new `binder-activity-level` or `sequence-context` cognitive model gets proposed because it "fits the cortical pattern." It gets built and added to the embedding worker. Meanwhile the existing 10 cognitive models have known weaknesses documented in the harness ablation reports (scripts/harness/personas/). The new model adds memory pressure without addressing root classification gaps, the existing models continue underperforming in the same ways, and the worker budget is consumed by redundant measurement.
+
+**Why it happens:**
+Building a new model is visibly productive; tuning an existing model requires reading ablation data and writing targeted training examples — less visible as progress. The cortical intelligence framing implicitly suggests new architectural components rather than optimization of what exists.
+
+**How to avoid:**
+Establish a standing model budget: the embedding worker + sequence worker combined must stay under 300 MB on mobile (150 MB per worker). Any new model must pass a pre-addition review against three questions: (a) does it address a gap provable from existing harness ablation data? (b) can an existing model be augmented instead of replaced? (c) what model is retired or merged to offset the memory cost? The 10 existing cognitive models cover cognitive-load, emotional-valence, energy-level, gtd-horizon, information-lifecycle, knowledge-domain, priority-matrix, review-cadence, collaboration-type, time-estimate — a new model in any of these semantic areas is almost certainly redundant. New models that correlate > 0.7 with existing models are measuring the same thing twice.
+
+**Warning signs:**
+- Total model count across all workers exceeds 13 without a documented retirement
+- New model training data overlaps > 60% with an existing model's training data labels
+- Harness ablation shows new model signal correlates > 0.7 with an existing signal
+- No ablation data cited in the PR description justifying the new model
+
+**Phase to address:**
+All phases — establish the 300 MB combined worker memory budget as a standing constraint before sequence model training specifications are written.
+
+---
+
+## Technical Debt Patterns (v5.5)
+
+| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
+|----------|-------------------|----------------|-----------------|
+| Hard-code gating thresholds as constants | Ships fast, no audit infrastructure needed | Thresholds never get tuned; gating provides no measurable benefit permanently | Never — use configurable values with audit logging from day one |
+| Put sequence model in embedding worker | Avoids new worker architecture | OOM on iOS, silent failure cascade across all T2 classification | Never — memory risk is documented and too high |
+| Design BinderTypeConfig from GTD shape alone | Ships the interface fast | Interface is GTD-in-disguise; breaks when real second type arrives | Only if second binder type is explicitly out of scope for 3+ milestones AND interface is clearly annotated `@gtd-specific` in a prominent docstring |
+| Use harness synthetic sequences as-is for LSTM training without influence cap | Re-uses existing corpus, no new training data needed | Sequence model overfits synthetic distribution; fails on real personal data without the cap catching it | Acceptable for initial baseline if and only if the ±0.15 logit cap is enforced and ablation is required before ship |
+| Skip passive-first mode for predictive enrichment | Simpler UX implementation | Aggressive predictions during cold start destroy user trust before graph matures | Never — passive mode is a single display flag, not a major feature |
+| Treat gate audit log as optional | Reduces sidecar write volume | Cannot tune gating without audit data; gating is permanently unmeasurable | Never if gating is a shipped feature claiming to provide benefit |
+
+---
+
+## Integration Gotchas (v5.5)
+
+| Integration | Common Mistake | Correct Approach |
+|-------------|----------------|------------------|
+| Sequence worker → Embedding worker | Pass raw atom text to sequence worker, causing it to load MiniLM internally | Pass pre-computed float32 embedding arrays from embedding worker via `postMessage`; sequence worker never touches MiniLM |
+| Gating predicates → Cognitive signal outputs | Evaluate gating predicates by triggering live ONNX inference | Cache last classification's cognitive signals in the intelligence sidecar; predicates read the cache, not live inference |
+| Sequence signal → T2 classifier pipeline | Replace T2 classifier output with sequence model prediction | Inject sequence signal as additive logit delta AFTER base classifier produces scores; never substitute or override |
+| BinderTypeConfig → GTD agent handlers | Register GTD-specific handlers as the "default" tier handlers | Register GTD handlers explicitly under a GTD binder type ID; default T1 handlers are universal and type-agnostic |
+| Harness SDK → existing adversarial cycle | Rewrite `adversarial-cycle.ts` to use new SDK interfaces | SDK wraps the adversarial cycle as a thin adapter; do not rewrite the cycle itself |
+| Predictive enrichment → intelligence sidecar | Write predictions into `atomIntelligence.enrichment[]` alongside confirmed user Q&A | Write to a distinct `atomIntelligence.predictions[]` field; confirmed Q&A and speculative predictions must never share the same array |
+
+---
+
+## Performance Traps (v5.5)
+
+| Trap | Symptoms | Prevention | When It Breaks |
+|------|----------|------------|----------------|
+| Gating predicate evaluated on main thread per atom | UI jank during rapid inbox triage | All gating logic runs inside the embedding worker (co-located with T2 classifiers); predicates are pure functions of cached signals | Breaks at ~10 atoms/minute if any DOM access occurs |
+| Sequence `InferenceSession` re-initialized per inference | 200-400 ms cold-start latency per atom on mobile | Keep session alive as singleton in sequence worker; only terminate on explicit `UNLOAD_SEQUENCE` message | Breaks immediately on first use if session is not persistent |
+| Cognitive signal army fires fresh inference for every gate check | 10x ONNX inference overhead per gate evaluation | Gate predicates read from sidecar cache (last classification result); cache invalidates only on new atom classification, not on route changes | Breaks when gate checks are triggered by UI navigation events rather than atom triage events |
+| LSTM sequence window grows unbounded | Inference latency increases as user accumulates atoms (doubles every ~50 atoms without windowing) | Fix window at N=20 atoms max; always a sliding window over recent history, never full accumulation | Latency regression becomes user-visible at ~100 atoms |
+| IndexedDB writes for gate audit log on every atom | Storage I/O thrashing on iPhone, slow triage | Batch gate audit writes; flush every 10 events or every 30 seconds, whichever comes first | Breaks at ~5 atoms/minute on mobile with slow IndexedDB |
+
+---
+
+## Privacy Mistakes (v5.5)
+
+| Mistake | Risk | Prevention |
+|---------|------|------------|
+| Sequence context cache (last N embeddings) stored in IndexedDB | Raw embedding vectors are partial content fingerprints that bypass the intelligence sidecar boundary | Store last N embeddings only in sequence worker memory; only classification results (not embedding vectors) go to IndexedDB |
+| Predictive enrichment suggestions stored with atom content fragments | Unconfirmed predictions about user intent persist in a queryable table | Predictions store only category labels and confidence scores, never any atom text fragment |
+| Binder type ID sent to cloud T3 during enrichment prompts | Binder type reveals usage context (a "Medical Records" binder type signals health issues to cloud) | Binder type config is local-only; cloud T3 never receives binder type, only sanitized atom content |
+| Harness SDK corpus contains real user atom data | Developer accidentally ships corpus.json with personal data in the SDK distribution | Harness SDK validates that all corpus items have synthetic persona ID prefixes; real data paths are blocked at SDK boundary with a runtime check |
+
+---
+
+## UX Pitfalls (v5.5)
+
+| Pitfall | User Impact | Better Approach |
+|---------|-------------|-----------------|
+| Predictive enrichment interrupts triage flow | User is mid-triage; a prediction appears as a modal or inline insert; they lose context | Predictions appear only in a passive sidebar strip; user pulls them into the active flow if interested; never interrupt |
+| Context gating makes agents disappear without explanation | User saw "energy level" suggestion yesterday, it's gone today; feels like a bug | When an agent is gated out, its category remains visible but shows a muted "not relevant right now" state; gating is always transparent |
+| Sequence learning changes classification results users trusted | Task classified differently than yesterday (sequence context shifted); feels inconsistent and arbitrary | Sequence signal is additive with a ceiling; if it would flip the top-1 classification, show a "similar to recent patterns" indicator rather than silently changing the result |
+| Binder type label appears in UI before a second binder type exists | Users click to explore other binder types; nothing exists; disappointment and expectation drift | No binder-type UI ships in this milestone; BinderTypeConfig is internal infrastructure only; GTD remains the implicit default everywhere |
+| Predictive enrichment predicts wrong relationship type in cold start | User sees "Your contact John appears to be a manager" when John is their spouse | Cold-start gate prevents predictions until minimum evidence threshold is met; prediction confidence is always displayed; one-tap correction immediately and permanently demotes that prediction class |
+
+---
+
+## "Looks Done But Isn't" Checklist (v5.5)
+
+- [ ] **Context gating:** Gate audit log schema exists in intelligence sidecar AND is being written — verify by checking `atomIntelligence` records after a triage batch contains `gatingDecisions` field
+- [ ] **Context gating:** Gating is measurably reducing compute — verify that suppressed agents are NOT running internally and discarding output; they must be skipped entirely
+- [ ] **Predictive enrichment:** Cold-start threshold is enforced — verify that a fresh-user session with 0 atoms and 0 confirmed entity relations produces zero prediction events
+- [ ] **Predictive enrichment:** Prediction results live in `atomIntelligence.predictions[]`, not mixed into `atomIntelligence.enrichment[]` — verify schema separately from implementation
+- [ ] **Sequence learning:** Sequence model is in its own worker — verify by checking DevTools worker list during triage; should show 3 workers (BinderCore, embedding, sequence), not 2
+- [ ] **Sequence learning:** Sequence signal is capped at ±0.15 logit — verify ablation: disabling sequence signal changes final classification in < 5% of cases
+- [ ] **Binder-type specialization:** Base `BinderTypeConfig` interface has no GTD-specific fields — verify by checking that a stub `ReadingListBinderTypeConfig` compiles with zero `null` hacks for GTD fields
+- [ ] **Binder-type specialization:** Harness golden-file baselines captured before any refactoring — verify `scripts/harness/baselines/` contains pre-refactor entity graph scores for all personas
+- [ ] **Model budget:** Combined embedding worker + sequence worker memory is measured on mobile Safari — verify via Safari Web Inspector process memory during a 5-atom triage batch; must be < 300 MB combined
+
+---
+
+## Recovery Strategies (v5.5)
+
+| Pitfall | Recovery Cost | Recovery Steps |
+|---------|---------------|----------------|
+| Sequence model in embedding worker causes OOM | HIGH | Migrate to dedicated `sequence-worker.ts`; new postMessage protocol; update all callers; 2-3 day rework minimum |
+| Over-gated agents (> 80% suppression) | LOW | Loosen threshold constants; no schema change; deploy same day |
+| Under-gated agents (gating is theater) | MEDIUM | Audit gate activation log; identify always-true predicates; redesign predicate logic; 1 day |
+| Predictive enrichment dismissal habit formed | HIGH | Cannot un-train dismissal habit; requires distinct visual redesign of prediction UI so users do not associate new appearance with old behavior; 1-2 week rework |
+| BinderTypeConfig is GTD-shaped when second type arrives | HIGH | Must break interface; add GTD-specific extension; migrate all callers; rewrite risk proportional to how many consumers have accumulated |
+| Harness adversarial tests silently broken by SDK refactor | MEDIUM | Restore golden-file baselines; diff against current output; identify regression source; fix interface; 1-2 days if baselines exist, weeks if not |
+| LSTM overfits synthetic corpus | MEDIUM | Reduce model capacity (fewer LSTM units); add dropout; enforce ±0.15 cap; retrain in Python (1-2 hours); no product code changes required |
+
+---
+
+## Pitfall-to-Phase Mapping (v5.5)
+
+| Pitfall | Prevention Phase | Verification |
+|---------|------------------|--------------|
+| Worker OOM from sequence model (P13) | Sequence learning — architecture decision first | DevTools + Safari Inspector: each worker < 150 MB during 5-atom triage |
+| Gate thresholds never measured (P14) | Context gating — audit schema before predicates | Harness reports include gate suppression rate per agent per binder type |
+| Predictive enrichment as smart spam (P15) | Predictive enrichment — cold-start gate + passive mode in requirements | Fresh-user session produces zero predictions; dismissal rate < 30% in harness simulation |
+| LSTM trained on synthetic, fails on real (P16) | Sequence learning — weak-prior + ±0.15 cap in architecture | Ablation: sequence signal changes top-1 classification in < 5% of harness cases |
+| BinderTypeConfig as GTD-in-disguise (P17) | Binder-type specialization — mock second type before interface ships | Stub `ReadingListBinderTypeConfig` compiles with zero null hacks |
+| Harness refactor breaks adversarial tests (P18) | Binder-type specialization — golden files before any refactor | All persona scores within 2% of pre-refactor baselines |
+| Model proliferation (P19) | All phases — 300 MB combined worker budget as standing constraint | Worker memory < 300 MB combined on iPhone 13; model count < 13 total |
+
+---
+
+## Sources (v5.5)
+
+- ONNX Runtime Web iOS OOM: [Issue #22086](https://github.com/microsoft/onnxruntime/issues/22086)
+- ONNX Runtime memory tuning: [official docs](https://onnxruntime.ai/docs/performance/tune-performance/memory.html)
+- Gating mechanisms — over/under-gating patterns: [Shadecoder 2025](https://www.shadecoder.com/topics/gating-mechanism-a-comprehensive-guide-for-2025)
+- LSTM overfitting on small datasets: [MachineLearningMastery](https://machinelearningmastery.com/diagnose-overfitting-underfitting-lstm-models/), [PyTorch Forums LSTM small dataset](https://discuss.pytorch.org/t/lstm-for-small-dataset/54805)
+- Premature abstraction — single implementation trap: [Better Programming](https://betterprogramming.pub/avoiding-premature-software-abstractions-8ba2e990930a), [3d-logic blog](https://blog.3d-logic.com/2024/04/12/the-self-inflicted-pain-of-premature-abstractions/)
+- AI prediction trust and dismissal habit: [MIT News](https://news.mit.edu/2022/ai-predictions-human-trust-0119), [Human-AI Trust PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC12561693/)
+- Codebase: `src/workers/sanitization-worker.ts`, `src/search/embedding-worker.ts`, `src/ai/tier2/cognitive-signals.ts`, `src/ai/tier2/pipeline.ts`, `scripts/harness/harness-types.ts`, `scripts/harness/adversarial-cycle.ts`
+
+---
+*Pitfalls research for: cortical intelligence additions (context gating, predictive enrichment, sequence learning, binder-type specialization) to BinderOS local-first PWA*
+*Researched: 2026-03-12*

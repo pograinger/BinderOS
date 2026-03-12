@@ -1,181 +1,197 @@
 # Project Research Summary
 
-**Project:** BinderOS v5.0 Entity Intelligence & Knowledge Graph
-**Domain:** Local-first NER-based entity detection, knowledge graph construction, and entity-aware enrichment for a browser-based PWA
-**Researched:** 2026-03-10
-**Confidence:** MEDIUM-HIGH
+**Project:** BinderOS v5.5 — Cortical Intelligence
+**Domain:** Local-first browser AI — context gating, predictive enrichment, sequence learning, pluggable binder-type protocol
+**Researched:** 2026-03-12
+**Confidence:** HIGH (all four research files grounded in direct codebase inspection + verified library versions)
 
 ## Executive Summary
 
-BinderOS v5.0 adds an entity intelligence layer that transforms the existing atom-based PIM into a system that "knows your world" -- recognizing people, places, and organizations across all content and building relationship knowledge over time. The critical insight from research is that **no new dependencies are needed**. The existing stack (Transformers.js, Dexie, ONNX Runtime Web) provides everything required. The primary work is: (1) reusing the sanitization worker's NER pipeline for entity detection via a new `DETECT_ENTITIES` message type, (2) adding two new Dexie tables (`entities` for canonical entity records, `entityRelations` for entity-to-entity edges) via a v9 migration, and (3) building a T1 deterministic relationship inference engine from keyword patterns and co-occurrence evidence.
+BinderOS v5.5 adds a cortical intelligence layer to an existing, fully operational ONNX agent stack. This is not a greenfield project — ten cognitive ONNX classifiers, a headless adversarial harness, an entity registry with relationship inference, and an enrichment sidecar are already running. The v5.5 milestone applies four organizing principles from Hawkins HTM theory — context gating, predictive enrichment, sequence learning, and binder-type specialization — implemented entirely through the existing ONNX Runtime Web infrastructure. The only genuinely new artifact is a single LSTM sequence model (~135K parameters, <500KB ONNX) trained offline via PyTorch and the existing harness corpus. Every other feature is TypeScript logic over data already in Dexie.
 
-The recommended approach follows the existing tiered architecture: T1 handles entity detection (NER) and keyword-based relationship inference deterministically and locally; T2 cognitive signals (knowledge domain, collaboration type) aid entity disambiguation; T3 cloud never sees raw entity names -- entity context is injected into cloud prompts using sanitization pseudonyms only. The architecture adds 4 new pure modules (`detector.ts`, `accumulator.ts`, `relationship-inference.ts`, `context-provider.ts`) in `src/ai/entity/` following the established pure-module pattern (no store imports, direct Dexie access). The entity context provider serves as the read-path API for all downstream consumers (enrichment, triage, GTD processing).
+The recommended approach is strictly additive and ordered by dependency. `BinderTypeConfig` is the unlock: context gating, harness SDK, and pluggable enrichment categories all require the interface first, so it ships in Phase 1. Context gating (a pre-dispatch predicate filter in `dispatchTiered()`) and predictive enrichment (a scoring function replacing `computeSignalRelevance()`) follow in Phases 2 and 3 respectively. The LSTM sequence model — the highest-risk, highest-reward piece — is deliberately deferred to Phase 4 after the lower-risk phases are validated by harness scoring metrics. This ordering ensures that each phase delivers measurable value independently and that the harness can prove quality improvements before the next phase begins.
 
-The top risks are: (1) **worker memory contention** -- loading a second NER model alongside the existing sanitization model would push mobile browsers past memory limits, so the sanitization worker must be reused rather than creating a new entity worker; (2) **entity disambiguation** -- "John" appearing in 50 items could be 5 different people, requiring conservative dedup (never auto-merge by name alone, use domain signals, defer to user confirmation); (3) **relationship inference false positives** -- keyword patterns like "anniversary" near a person name can produce incorrect spouse relationships without sentence-level proximity checks and evidence accumulation thresholds. All three risks have clear mitigation strategies documented in the research.
+The primary risks are memory contention on mobile (multiple NER workers triggering OOM) and entity disambiguation false positives corrupting the knowledge graph. Both are already architecturally mitigated: entity NER shares the sanitization worker (decided in v5.0), and entity dedup is conservative-by-design (no auto-merge by name alone). The remaining risk is sequence model ONNX export stability with dynamic sequence length — mitigated by using PyTorch 2.10.0's `dynamo=True` exporter with opset 18, which is the documented stable path for LSTM with dynamic axes. Harness ablation before replacing production classifiers provides the safety net.
+
+---
 
 ## Key Findings
 
 ### Recommended Stack
 
-No new NPM packages required. The existing `@huggingface/transformers` (3.8.1), `dexie` (4.3.0), and `onnxruntime-web` (1.24.2) cover all needs. The only addition is downloading the Xenova/bert-base-NER model (q8 quantized, ~110MB) as a fallback if the existing sanitization NER model proves insufficient for general entity detection quality.
+The v5.5 stack requires exactly one new dependency: `torch==2.10.0` for offline sequence model training. PyTorch is already present as a transitive dependency of `sentence-transformers` in the training `.venv`, so this is likely a verification step rather than a new install. All browser-side (production) code runs on the existing `onnxruntime-web 1.24.2` + `@huggingface/transformers 3.8.1` stack. No new npm packages are needed.
 
 **Core technologies:**
-- **Existing sanitization NER (DistilBERT)** -- reuse for entity detection via extended worker protocol; avoids loading a second model
-- **Two new Dexie tables (`entities` + `entityRelations`)** -- v9 migration; separate from existing `entityRegistry` (sanitization) and `entityGraph` (atom-metadata edges)
-- **In-memory co-occurrence Map with Dexie flush** -- accumulate entity pair counts in memory, persist to `entityRelations` when threshold crossed; avoids O(n^2) IndexedDB writes
-- **Pure TypeScript keyword pattern engine** -- T1 deterministic relationship inference; no ML model needed for patterns like "wife", "boss", "works at"
+- `onnxruntime-web 1.24.2` (existing): Runs sequence LSTM + all existing classifiers in browser — WASM SIMD + WebGPU fallback already in place; sequence model is another `ClassifierConfig` entry in the existing embedding worker
+- `torch 2.10.0` (training-only, Python): Train single-layer LSTM, export via `torch.onnx.export(dynamo=True, opset_version=18)` — the only stable path for LSTM with dynamic sequence length
+- `Dexie 4.3.0` (existing): v10 migration adds three new tables (`gateActivationLog`, `sequenceContext`, `binderTypeConfig`) plus `predictionCache` — fully additive, no schema mutations to prior versions
+- `SolidJS 1.9.11` + `@solidjs/router 0.15.4` (existing): Route signals feed context gate predicates; `useLocation().pathname` is already a reactive signal
+- `Optuna 4.7.0` (existing, Python): Tunes sequence model hyperparameters (`hidden_dim`, window N, dropout) via the adversarial harness cycle
 
-**Critical version note:** Xenova/bert-base-NER should be benchmarked against the existing `sanitize-check` model before committing to a second model. If `sanitize-check` provides adequate PER/LOC/ORG detection, skip the additional download entirely.
+**Critical version note:** PyTorch `dynamo=False` (legacy TorchScript) must NOT be used for LSTM export — known instability with dynamic sequence lengths documented in pytorch/pytorch #41774 and #45653. Use `dynamo=True` with opset 18 exclusively.
 
 ### Expected Features
 
-**Must have (table stakes):**
-- NER-based entity detection (PER, LOC, ORG, MISC) on all atom lifecycle events
-- Persistent entity registry with deduplication and normalization
-- Entity-atom linking via `mentions-entity` edges in entity graph
-- Entity context visible in atom detail view (chips/badges)
-- Privacy boundary maintained: NER runs locally, entities never sent to cloud
+**Must have (table stakes — v5.5 milestone fails without these):**
+- `BinderTypeConfig` interface with GTD as first implementation — unlocks every other feature; currently GTD is hardcoded constants scattered across `COMPOSITOR_RULES`, enrichment categories, and classifier configs
+- Context gating predicate system (`shouldActivate(context: GateContext): boolean`) wired as pre-loop filter in `dispatchTiered()` — without this, the "efficient cortex" premise is not realized at all
+- Sequence context signal reaching T2 classifiers — the stated functional goal of sequence learning; if the signal never reaches T2, the feature does not exist
+- Predictive enrichment scoring function replacing `computeSignalRelevance()` — shifts from "what's missing on this atom?" to "what will the user need next given recent context?"
 
-**Should have (differentiators):**
-- Keyword-based relationship inference (T1 deterministic: "anniversary" -> spouse)
-- User correction UX for entity relationships (binary yes/no first, rich editing later)
-- Entity-aware enrichment questions ("You mentioned Pam (your wife) -- is this for your anniversary?")
-- Cross-item co-occurrence accumulation for relationship evidence
-- Entity context in GTD processing (entity relationships inform context tag suggestions)
-- Recency-weighted entity relevance (MunninDB-style exponential decay)
+**Should have (competitive differentiators):**
+- Time-of-day aware gating — deep-cognitive agents suppress in low-energy evening windows; reads `Date.now()` only, no new model needed
+- Route-aware gating — triage agents skip Insights/Archive/Settings views; SolidJS route signal already reactive
+- Recent atom history gating — skip re-enrichment when `atomIntelligence.enrichment.depth >= 2` and `lastUpdated < 7 days`; reads sidecar, no new model
+- Cognitive signal delta trends as prediction features — rising `stress-risk` composite over last-N atoms influences enrichment priority ordering
+- Harness as SDK — parameterize `run-harness.ts` on `BinderTypeConfig`; corporate/third-party binder types train via existing pipeline framework
 
-**Defer (v5.x+):**
-- Entity merge/split UX -- power user feature, defer until entity count creates real duplication
-- Entity timeline view -- valuable but not core to the intelligence layer
-- T2 ONNX methodology-specific entity reasoning -- requires training data from v5.0 user corrections
-- Entity-aware GTD routing -- needs validated entity-to-context mappings first
+**Defer (Phase 4 — after Phase 1-3 harness-validated):**
+- LSTM sequence ONNX model — highest complexity (Python training + ONNX export + worker integration + MLP retrain); defer until gating and prediction prove measurable F1 improvement via harness metrics
+- Entity graph trajectory as prediction feature — depends on entity graph quality stabilizing; Phase 29 is actively tuning entity dedup and F1; premature to rely on trajectory scoring before quality stabilizes
+
+**Anti-features (do not build):**
+- Centralized context orchestrator agent — violates emergent/no-conductor architecture; `COMPOSITOR_RULES` already handles multi-signal synthesis without a conductor
+- Per-user personalized sequence model — privacy surface too large without backend; shared model trained on synthetic personas via harness is the correct approach
+- Real-time sequence embedding on every keystroke — 50-100ms per NER call on mobile; trigger only on atom save/triage completion
+- NuPIC / SDR algorithms — never found production traction; apply HTM as organizing principle (gating, prediction, specialization) via ONNX, not SDR math
 
 ### Architecture Approach
 
-v5.0 adds an Entity Intelligence Layer as a pipeline between the existing NER/sanitization system and the enrichment/triage consumers. Four new pure modules handle the entity lifecycle: detection, accumulation, relationship inference, and context provision. The sanitization worker is extended (not replaced) with a `DETECT_ENTITIES` message type. Entity data lives in Dexie (not the SolidJS store) to avoid reactivity cascades. Only the current item's bounded `EntityContext` object is cached in the store.
+The architecture is strictly additive and layered around two integration points. First: a new `ActivationGate` filter wraps the existing `dispatchTiered()` handler loop as a pre-loop predicate check, without touching any `TierHandler` interface (handlers remain pure). Second: a new `PredictiveEnrichmentScorer` is a pure async function over existing Dexie tables that plugs into `enrichment-engine.ts` as a drop-in replacement for `computeSignalRelevance()`. The sequence ONNX model is a new `ClassifierConfig` entry in the existing embedding worker — collocated to share the single ORT session pool and avoid a fourth worker causing mobile OOM. The `BinderTypeConfig` interface is extended with three optional fields (`activationPredicates`, `modelColumns`, `harnessSdkPersonas`) using string IDs resolved to TypeScript functions at module load, keeping JSON config serializable.
 
 **Major components:**
-1. **Entity Detector** (`src/ai/entity/detector.ts`) -- orchestrates NER calls via sanitization worker, maps labels to knowledge entity types
-2. **Entity Accumulator** (`src/ai/entity/accumulator.ts`) -- deduplicates, normalizes, persists to `entities` table, tracks co-occurrence in memory
-3. **Relationship Inference** (`src/ai/entity/relationship-inference.ts`) -- keyword pattern matching at sentence level with proximity checks, co-occurrence rules with evidence accumulation
-4. **Entity Context Provider** (`src/ai/entity/context-provider.ts`) -- read-only query layer that builds context summaries for enrichment, triage, and GTD consumers
-5. **User Correction UI** (`src/ui/components/EntityCard.tsx`) -- inline entity cards with binary correction interface
+1. `src/ai/context-gate/` (NEW) — Pure TypeScript predicate evaluator; four predicate dimensions (route, time-of-day, binder type, atom history); zero coupling to existing handlers; harness bypasses it by passing no `context` on `TieredRequest` — fully backwards-compatible
+2. `src/ai/prediction/` (NEW) — `scorePredictedNeeds()` reads entity trajectory + composite signal history window from Dexie; results cached in `predictionCache` with 5-minute TTL; called lazily on wizard open, never on a timer or in the background
+3. `src/search/embedding-worker.ts` (MODIFY) — Add `SEQUENCE_CONTEXT`/`SEQUENCE_RESULT` message types; sequence LSTM is another lazy-loaded `ClassifierConfig` entry; ring buffer of last-N embeddings maintained in-worker, capped at N=10 per binder
+4. `scripts/train/sequence/` (NEW) — Four-script Python pipeline: corpus generation from harness persona atom history, LSTM training, ONNX export, Node.js validation; output is `sequence-context.onnx` in `public/models/classifiers/`
+5. `scripts/harness/harness-binder-type-sdk.ts` (NEW) — Thin orchestration wrapper over existing `runAdversarialCycle` + `AblationEngine`; reads `BinderTypeConfig.modelColumns` + `.harnessSdkPersonas` to drive custom binder type training
+
+**Key patterns:**
+- Pre-loop filter in `dispatchTiered()` — never add session-state logic inside `canHandle()`; handlers must stay pure and harness-compatible
+- Sequence context fires speculatively before user action — do not block classification on the SEQUENCE_RESULT round-trip
+- Prediction is lazy + TTL-cached, never timer-based — no background agents, no conductors
+- `SessionContext` is ephemeral; never write it to Dexie — assembled inline from SolidJS signals per request
 
 ### Critical Pitfalls
 
-1. **Dual NER models cause OOM on mobile** -- share the sanitization worker; never load two NER models in separate workers simultaneously. Budget worker memory explicitly and lazy-load the entity NER pipeline.
-2. **Entity disambiguation without context creates noise** -- never auto-merge by name alone. Use cognitive domain signals for disambiguation. Implement merge suggestions, not auto-merges. Cluster by co-occurrence context, not by name string.
-3. **IndexedDB graph traversal is O(N)** -- build an in-memory adjacency index on app load (~10KB for 3,000 relationships). Cap traversal to 2 hops max. Add missing `entityValue` index to the entityGraph schema. Denormalize entity counts.
-4. **Entity context bloats enrichment prompts** -- budget entity context to 150 tokens max. Select 2-3 most relevant entities using cognitive signals. Only inject entity context for people/place-related enrichment categories.
-5. **Keyword relationship inference false positives** -- use sentence-level co-occurrence (not item-level), require 5-token proximity between entity and keyword, start all keyword-inferred relationships at confidence 0.3, require 2+ co-occurrences before creating typed relationship edges.
+1. **Dual NER workers cause OOM on mobile** — Architecturally mitigated in v5.0: entity detection NER shares the sanitization worker via `DETECT_ENTITIES` message type. Do NOT create a fourth worker for sequence inference either — add it as a `ClassifierConfig` in the existing embedding worker. Three concurrent ORT instances is the safe practical maximum on mobile.
+
+2. **Entity name disambiguation without context creates noise** — "John" across 50 items may be 5 different people. Never auto-merge by name alone; require exact full-name match plus contextual domain similarity. Use the `knowledge-domain` cognitive signal as a disambiguation feature. Surface merge suggestions for user confirmation; never auto-merge.
+
+3. **IndexedDB is not a graph database — naive multi-hop traversal becomes O(N) full table scans** — Build an in-memory adjacency index (`Map<entityValue, Set<sourceAtomId>>`) loaded at startup (~10KB for 3,000 relationships). Cap graph traversal at 2 hops. Add a missing `entityValue` index to the `entityGraph` schema. Store `mentionCount` and `lastMentioned` on the `Entity` record to avoid count queries.
+
+4. **Entity context injection bloats enrichment prompts past token limits** — Budget entity context to 150 tokens maximum. Select 2-3 most relevant entities by enrichment category; summarize each in one line. Only inject entity context for questions about delegation, references, or next actions — not for outcome or complexity questions. Cache entity summaries on the `Entity` record.
+
+5. **Keyword relationship inference false positives from co-occurrence noise** — Use sentence-level co-occurrence (not item-level), require entity-keyword proximity within 5 tokens, start all keyword-inferred relationships at confidence 0.3, require 2+ co-occurrences before creating a typed relationship edge. Track evidence records separately from confirmed relationships.
+
+6. **SolidJS store reactivity cascade from entity data updates** — Keep entity data outside the main `createStore`; use `createResource` for async Dexie lookups. Use `batch()` for all entity updates from a single triage operation. Never store graph traversal results in the store — compute in `createMemo` on demand.
+
+---
 
 ## Implications for Roadmap
 
-Based on research, suggested phase structure (7 phases):
+The dependency graph is unambiguous and drives the phase order. `BinderTypeConfig` and the Dexie v10 schema are the unlock for everything else. Context gating is lower-risk than predictive enrichment (pure predicates, no Dexie query performance concerns). Sequence learning is highest-risk and highest-reward — deferred until gating and prediction phases prove independent value through harness ablation metrics.
 
-### Phase 1: Foundation -- Types, Schema, Worker Extension
-**Rationale:** Everything downstream depends on entity types, database tables, and the NER data source. Schema decisions (separate `entities` table vs extending `entityRegistry`, CRDT fields, indexes) must be locked before any entity data is stored. The worker extension is minimal code (~20 lines) with high leverage.
-**Delivers:** `src/ai/entity/types.ts`, Dexie v9 migration with `entities` + `entityRelations` tables, `DETECT_ENTITIES` handler in sanitization worker, `detectEntitiesForKnowledgeGraph()` API on sanitizer.
-**Addresses:** Entity registry (table stakes), privacy boundary (table stakes)
-**Avoids:** Pitfall 5 (registry naming confusion), Pitfall 11 (missing CRDT fields), Pitfall 12 (insufficient schema)
+### Phase 1: Schema + BinderTypeConfig Protocol
+**Rationale:** Every other feature depends on either the v10 Dexie schema or the `BinderTypeConfig` interface. This phase has zero ONNX risk, is fully unit-testable without models running, and unblocks all subsequent phases. The schema contracts must be locked before any implementation writes data.
+**Delivers:** v10 migration (`sequenceContext`, `predictionCache`, `gateActivationLog`, `binderTypeConfig` tables); `BinderTypeConfig` interface extended with `activationPredicates`, `modelColumns`, `harnessSdkPersonas` optional fields; GTD updated as first implementation of the extended interface; predicate registry scaffolded in `src/ai/context-gate/predicates/`
+**Features addressed:** BinderTypeConfig interface (P1 table stakes), binder-type protocol foundation (P2 differentiator seed)
+**Avoids:** Naming collision between sanitization `entityRegistry` and knowledge graph `entities` tables (Pitfall 5); schema decisions made before any entity data is written
+**Research flag:** No deeper research needed — established Dexie additive migration pattern; v9 migration is the direct template
 
-### Phase 2: Entity Detection + Accumulation
-**Rationale:** The "write path" -- entities must flow into the registry before anything can query them. Deduplication and normalization logic is the most design-sensitive code; getting it wrong creates cascading data quality problems.
-**Delivers:** Entity Detector module, Entity Accumulator with dedup/normalization, entity-atom linking in entity graph, entity detection wired to atom CRUD lifecycle (on commit, not keystroke).
-**Addresses:** NER entity detection (table stakes), entity dedup (table stakes), entity-atom linking (table stakes)
-**Avoids:** Pitfall 1 (dual NER OOM -- reuses sanitization worker), Pitfall 2 (John disambiguation), Pitfall 6 (boundary noise), Pitfall 10 (keystroke inference)
+### Phase 2: Context Gate Evaluator
+**Rationale:** Lowest-risk new feature; pure TypeScript predicate logic with zero ONNX dependency. Proves the pre-loop filter pattern in `dispatchTiered()` works correctly before adding more complex features. The harness can immediately measure agent activation rate reduction, providing the first v5.5 quality metric.
+**Delivers:** `src/ai/context-gate/` directory with four predicate implementations (route, time-of-day, binder type, atom history); `ActivationGate` filter integrated into `pipeline.ts`; `SessionContext` optional field on `TieredRequest`; harness passes no `context` field (backwards-compatible, all handlers remain active in test runs)
+**Features addressed:** Context gating — route-aware (P1 differentiator), time-of-day (P1 differentiator), recent atom history (P1 differentiator)
+**Avoids:** Session-state logic inside `canHandle()` which breaks harness (Architecture Anti-Pattern 1); persisting `SessionContext` to Dexie creating stale reads (Architecture Anti-Pattern 3)
+**Research flag:** No deeper research needed — standard pre-dispatch filter; SolidJS `useLocation()` is already reactive out of the box
 
-### Phase 3: Relationship Inference
-**Rationale:** Depends on Phase 2 providing accumulated entities. Relationship inference is the bridge between raw entity detection and useful entity intelligence. Evidence-based confidence model must be established here.
-**Delivers:** Keyword pattern engine, co-occurrence accumulator (in-memory Map with Dexie flush), evidence-based confidence scoring, sentence-level proximity checks.
-**Addresses:** Keyword relationship inference (differentiator), co-occurrence accumulation (differentiator)
-**Avoids:** Pitfall 7 (keyword false positives -- sentence-level, proximity, evidence accumulation)
+### Phase 3: Predictive Enrichment Scorer
+**Rationale:** No new ONNX model required. Pure Dexie reads over data already populated by v5.0 Phases 26-29. Can run in parallel with Phase 4 once Phase 1+2 are complete. Validates that entity graph and cognitive signal sidecar data is correctly queryable as prediction inputs — a prerequisite before the sequence model phase relies on data quality.
+**Delivers:** `src/ai/prediction/trajectory-scorer.ts` (entity recency + mention count delta queries) and `signal-scorer.ts` (composite signal delta trends); `predictionCache` table with 5-minute TTL writes; `enrichment-engine.ts` consuming `scorePredictedNeeds()` for question ordering; windowed `CachedCognitiveSignal` query with delta computation
+**Features addressed:** Predictive enrichment scoring function (P2 core differentiator), cognitive signal delta trends (P2 differentiator)
+**Avoids:** Timer-based prediction agent (Architecture Anti-Pattern 4); entity context prompt bloat enforced here with 150-token budget (Pitfall 4); graph traversal O(N) scans via in-memory adjacency index and query caps (Pitfall 3)
+**Research flag:** Shallow check recommended on Dexie compound query performance at 2,000+ entity rows before Phase 3 ships. The in-memory adjacency index from Pitfall 3 must be implemented here, not deferred.
 
-### Phase 4: Entity Context Provider + Triage Integration
-**Rationale:** The "read path" -- makes entity intelligence consumable by existing systems. Triage is the natural first consumer since every inbox item passes through it. This phase also addresses the in-memory adjacency index for graph query performance.
-**Delivers:** Entity Context Provider module, parallel entity detection in triage flow, `entityContext` in `TieredFeatures`, in-memory adjacency index for graph queries.
-**Addresses:** Entity context visible in atom view (table stakes), entity lifecycle detection (table stakes)
-**Avoids:** Pitfall 3 (IndexedDB traversal performance), Pitfall 8 (SolidJS reactivity cascade -- entity data stays in Dexie, not store)
+### Phase 4: Sequence Context ONNX Model
+**Rationale:** Highest complexity, highest reward. Deferred until Phases 1-3 are harness-validated so the Python training pipeline investment is made on a proven foundation. The LSTM model improves T2 classifier quality but is additive — existing production classifiers remain active until ablation confirms F1 improvement, at which point retrained 512-dim MLPs replace them.
+**Delivers:** Four-script Python training pipeline in `scripts/train/sequence/` (corpus extraction, LSTM training, ONNX export with `dynamo=True` opset 18, Node.js validation); `sequence-context.onnx` in `public/models/classifiers/`; `SEQUENCE_CONTEXT`/`SEQUENCE_RESULT` message types in embedding worker; `sequenceContext?: number[]` field on `TieredFeatures`; retrained MLP classifiers with 512-dim input (384 MiniLM + 128 context); harness ablation report comparing F1 before and after context injection
+**Features addressed:** Sequence learning ONNX model (P3), sequence context signal reaching T2 classifiers (P1 table stakes — completion)
+**Avoids:** In-browser ONNX training attempt (Architecture Anti-Pattern 2); fourth worker for sequence inference causing mobile OOM (Architecture Anti-Pattern 5 / Pitfall 1); `dynamo=False` TorchScript export path with known LSTM dynamic-shape instability
+**Research flag:** Validate ONNX export with `72_validate_sequence_model.mjs` against onnxruntime-node BEFORE wiring into browser. Run full harness ablation comparing F1 metrics before swapping any production MLP classifiers. This is the one phase with genuine technical risk.
 
-### Phase 5: Entity-Aware Enrichment
-**Rationale:** This is the highest-value consumer of entity context -- where entity intelligence becomes tangible to users. "What's Pam's role in this?" vs "Who is involved?" Depends on Phase 4's context provider.
-**Delivers:** Entity context injection into enrichment engine, entity-aware question templates, entity summary caching (one-line per entity), 150-token context budget enforcement.
-**Addresses:** Entity-aware enrichment questions (differentiator), entity context in GTD (differentiator)
-**Avoids:** Pitfall 4 (prompt bloat -- strict token budget, cognitive signal selection)
-
-### Phase 6: User Correction UX
-**Rationale:** Built after entity data pipeline is working and populated. User corrections are the ground truth feedback loop that improves all inference. Ship correction alongside inference -- never ship inference without correction capability.
-**Delivers:** EntityCard component with inline binary corrections, EntityPanel for browse/search, correction feedback to accumulator (confidence: 1.0), store extensions for correction modal.
-**Addresses:** User correction UX (differentiator), entity merge suggestions
-**Avoids:** Pitfall 9 (complexity vs willingness -- binary yes/no first, track engagement)
-
-### Phase 7: Polish + Background Scan
-**Rationale:** Optimization and catch-up phase. Background entity scan for existing atoms, recency-weighted relevance, entity count badges, performance tuning.
-**Delivers:** Background batch scan for historical atoms, recency decay scoring, entity badges in UI, Dexie read batching and caching optimizations.
-**Addresses:** Recency-weighted relevance (differentiator), entity timeline view (deferred differentiator)
+### Phase 5: Harness SDK + Second Binder Type Validation
+**Rationale:** After Phases 1-4 are complete, the harness SDK is a thin orchestration wrapper over existing infrastructure. Running a hypothetical second binder type through the full adversarial cycle validates that the entire `BinderTypeConfig` protocol is complete, the context gate predicates are correctly parameterized, and the harness framework is genuinely pluggable — serving as an integration test for all four prior phases.
+**Delivers:** `scripts/harness/harness-binder-type-sdk.ts` thin wrapper; a non-GTD `BinderTypeConfig` exercised through `runAdversarialCycle` + `AblationEngine`; ablation reports tagged by binder type; gap analysis identifying which model columns are undertrained for the new type
+**Features addressed:** Harness as SDK (P2 differentiator), binder-type specialization protocol
+**Avoids:** GTD-specific constants leaking into the generic pipeline; validates that the protocol is actually pluggable, not just nominally so
+**Research flag:** No deeper research needed — existing harness pipeline is well-understood from Phases 28-29; this is orchestration and parameterization work with clear templates
 
 ### Phase Ordering Rationale
 
-- **Phases 1-2 are strictly sequential** -- schema and types must exist before detection/accumulation can write data.
-- **Phase 3 depends on Phase 2** -- relationship inference needs accumulated entities to be meaningful.
-- **Phases 4-5 form the "read path"** -- they consume entity data produced by Phases 2-3. Phase 5 depends on Phase 4's context provider.
-- **Phase 6 is intentionally late** -- correction UX needs populated entity data to be testable. But it MUST ship in v5.0, not v5.x, because inference without correction erodes trust.
-- **Phase 7 is polish** -- background scan, recency decay, and performance are optimizations on a working system.
+- Schema migration always comes first — no implementation can proceed without locked Dexie contracts and type definitions
+- `BinderTypeConfig` is the dependency unlock — context gating reads `binderType`, prediction reads enrichment weights, harness SDK reads `modelColumns`; all three are blocked without the interface
+- Context gating before predictive enrichment — gating is synchronous pure-predicate logic with zero async risk; prediction requires verified Dexie query performance at scale
+- Sequence model last among core features — Python training pipeline is the only genuinely novel engineering work; entity graph quality (tuned in Phase 29) and gating infrastructure (Phase 2) must be proven before investing in it
+- Harness SDK last — it integrates and validates everything; its success is the final confidence signal for the entire milestone
 
 ### Research Flags
 
-Phases likely needing deeper research during planning:
-- **Phase 2:** Entity dedup/normalization strategy needs careful design. How aggressive should substring containment matching be? What cognitive signals best disambiguate entities? Benchmark `sanitize-check` vs `bert-base-NER` for entity detection quality.
-- **Phase 3:** Keyword pattern bank quality determines usefulness. Need to define the initial ~20 keyword patterns and their confidence weights. Sentence splitting heuristics need testing.
-- **Phase 5:** Entity-aware enrichment is novel integration with no direct prior art in browser PIM tools. Question template design needs iteration.
+**Phases needing attention during implementation:**
+- **Phase 4 (Sequence model):** LSTM ONNX export with dynamic sequence length via `dynamo=True` is the one known technical risk in the entire milestone. Validate with `onnxruntime-node` before browser deployment. Run harness ablation across N=3, N=5, N=7 window sizes. Do not swap production MLP classifiers until ablation confirms F1 improvement.
+- **Phase 3 (Predictive scorer):** In-memory adjacency index for entity graph queries must be implemented in this phase (not deferred). Profile Dexie compound query latency at representative data volumes before enabling on low-end mobile.
 
-Phases with standard patterns (skip research-phase):
-- **Phase 1:** Well-documented Dexie migration, straightforward worker message extension. Established patterns in codebase.
-- **Phase 4:** Context provider is a read-only query layer following existing patterns. Triage integration follows established parallel dispatch.
-- **Phase 6:** Standard UI component work. SolidJS patterns well understood. Binary correction UX is simple.
-- **Phase 7:** Background processing and caching are standard optimization patterns.
+**Phases with well-established patterns (skip deeper research):**
+- **Phase 1 (Schema migration):** Dexie additive migration is a solved pattern with 9 prior versions as templates
+- **Phase 2 (Context gating):** Pre-dispatch filter + SolidJS reactive signals are standard patterns with no architectural unknowns
+- **Phase 5 (Harness SDK):** Wrapping existing `runAdversarialCycle` requires no new infrastructure; the adversarial cycle and ablation engine are mature
+
+---
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | No new dependencies. Existing Transformers.js, Dexie, ONNX Runtime cover all needs. NER model verified on HuggingFace. |
-| Features | MEDIUM-HIGH | Table stakes are clear. Entity-aware enrichment is novel (no direct prior art in browser PIM) but builds on proven enrichment engine. |
-| Architecture | HIGH | Builds directly on existing worker, tiered pipeline, and Dexie patterns. All components follow established pure-module convention. |
-| Pitfalls | HIGH | Worker memory, IndexedDB limitations, and NER disambiguation are well-documented problems with clear mitigations. |
+| Stack | HIGH | All recommendations grounded in existing codebase + verified PyPI versions. PyTorch presence in `.venv` should be confirmed before Phase 4 begins, but fallback install path is documented. No new npm packages. |
+| Features | HIGH | Feature set derived from direct codebase inspection of `pipeline.ts`, `enrichment-engine.ts`, `cognitive-signals.ts`, `TieredFeatures`, and `PROJECT.md` active requirements. Dependency graph between features is precisely mapped. |
+| Architecture | HIGH | All integration points, message types, new directories, and anti-patterns are grounded in codebase inspection of 14 source files, not inference. Build order derived from actual code dependencies. |
+| Pitfalls | HIGH (critical), MEDIUM (moderate) | Critical pitfalls (OOM, entity disambiguation, IndexedDB traversal, prompt bloat) are verified against codebase and library documentation. Moderate pitfalls (reactivity cascades, relationship false positives) are extrapolated from existing patterns with high confidence. User correction UX adoption rates (Pitfall 9) are LOW confidence — no direct evidence. |
 
-**Overall confidence:** MEDIUM-HIGH
+**Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **sanitize-check vs bert-base-NER quality:** The existing sanitization model may or may not be adequate for general entity detection. A benchmark comparison is needed before Phase 2 implementation commits to one model or the other. If `sanitize-check` is insufficient, `bert-base-NER` should replace it (not supplement it) in the same worker.
-- **Keyword pattern bank completeness:** The initial set of ~20 relationship keyword patterns will cover common Western English cases. Cultural variation in relationship terms (different languages, naming conventions) will create gaps. User corrections are the designed mitigation, but initial pattern quality matters.
-- **Co-occurrence threshold tuning:** How many co-occurrences constitute meaningful evidence for a relationship? Research suggests minimum 2-3, but the optimal threshold depends on the user's data volume and entity density. Will need empirical tuning after Phase 3 ships.
-- **Entity count scaling:** Research assumes <2,000 entities at 10K atoms. If entity density is higher (e.g., business users with many contacts), the in-memory adjacency index and co-occurrence Map may need size-bounded eviction policies.
-- **STACK.md vs ARCHITECTURE.md model disagreement:** STACK.md recommends a new dedicated entity worker with bert-base-NER. ARCHITECTURE.md recommends reusing the sanitization worker with its existing DistilBERT model. This summary sides with ARCHITECTURE.md (reuse sanitization worker) because it avoids the dual-model OOM risk identified as the top critical pitfall. Benchmark first, decide model second.
+- **Entity graph quality stability for trajectory prediction:** Phase 3's prediction scorer uses entity graph trajectory as a signal. Phase 29 is actively tuning entity dedup and F1 — the scorer must degrade gracefully when entity data is sparse or low-confidence. Design a confidence floor check before using entity trajectory features; fall back to signal-only scoring when entity quality is below threshold.
+- **Sequence model window size N tuning:** Research recommends N=5 as default, tunable by Optuna. The harness must run ablation across N=3, N=5, N=7 before locking the default. Window size affects both training corpus batching and mobile memory footprint directly.
+- **Mobile ORT session memory ceiling variance:** The practical per-tab memory limit varies across iOS Safari versions and Android Chrome releases. Research documents 256-512MB as the practical range. Add `performance.measureUserAgentSpecificMemory()` logging to the embedding worker's model-load path to warn before OOM, not after.
+- **PyTorch transitive dependency confirmation:** Research notes PyTorch is "likely" already in `.venv` as a transitive dep of `sentence-transformers`. Confirm with `python -c "import torch; print(torch.__version__)"` at the start of Phase 4 planning — do not assume it is present.
+
+---
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [Xenova/bert-base-NER on HuggingFace](https://huggingface.co/Xenova/bert-base-NER) -- model capabilities, ONNX format, entity types
-- [dslim/bert-base-NER on HuggingFace](https://huggingface.co/dslim/bert-base-NER) -- 91.3% F1, BIO tagging, CoNLL-2003 training
-- [Dexie.js Compound Index documentation](https://dexie.org/docs/Compound-Index) -- index design for entity queries
-- [Dexie.js MultiEntry Index documentation](https://dexie.org/docs/MultiEntry-Index) -- multi-entry index for atomIds arrays
-- [Dexie.js Main Limitations of IndexedDB](https://dexie.org/docs/The-Main-Limitations-of-IndexedDB) -- graph query limitations
-- Existing codebase: sanitization-worker.ts, embedding-worker.ts, entity-graph.ts, db.ts, tier2/, enrichment/ -- direct code review
+- Codebase: `src/ai/tier2/pipeline.ts`, `handler.ts`, `types.ts`, `cognitive-signals.ts` — tiered pipeline internals, TierHandler interface, TieredFeatures schema
+- Codebase: `src/ai/enrichment/enrichment-engine.ts` — `computeSignalRelevance()` predecessor, enrichment session state machine
+- Codebase: `src/search/embedding-worker.ts` — ClassifierConfig pattern, fetchWithCache, ORT session management, existing message types
+- Codebase: `src/config/binder-types/index.ts`, `gtd-personal.json` — existing BinderTypeConfig interface and GTD implementation
+- Codebase: `src/types/intelligence.ts`, `src/storage/db.ts` — AtomIntelligence, Entity, EntityRelation schema; Dexie v1-v9 migration pattern
+- Codebase: `scripts/harness/harness-types.ts`, `harness-pipeline.ts`, `ablation-engine.ts` — headless harness infrastructure
+- Codebase: `src/inference/relationship-inference.ts`, `src/entity/entity-detector.ts` — pure module contract, NER-to-registry orchestration
+- PyTorch 2.10.0 — PyPI (latest stable, January 21, 2026)
+- `torch.onnx.export` dynamo=True — PyTorch 2.10 official documentation
+- onnxruntime-web WebGPU + WASM SIMD — official onnxruntime.ai documentation
+- `useLocation` — @solidjs/router official documentation
 
 ### Secondary (MEDIUM confidence)
-- [ONNX Runtime Web: Large Models](https://onnxruntime.ai/docs/tutorials/web/large-models.html) -- WASM memory limits
-- [Knowledge Graph Construction (MDPI)](https://www.mdpi.com/2076-3417/15/7/3727) -- NER as first stage of KG construction
-- [Entity Co-occurrence Networks (Springer)](https://link.springer.com/chapter/10.1007/978-3-031-77792-9_5) -- co-occurrence relationship inference
-- [Entity Resolution (Towards Data Science)](https://towardsdatascience.com/an-introduction-to-entity-resolution-needs-and-challenges-97fba052dde5/) -- disambiguation complexity
-- [Transformers.js documentation](https://huggingface.co/docs/transformers.js/en/index) -- token classification pipeline API
-- [ONNX Runtime: Memory Consumption](https://onnxruntime.ai/docs/performance/tune-performance/memory.html) -- memory tuning for multiple models
+- pytorch/pytorch #41774, #45653 — LSTM ONNX dynamic shape export; community-verified workaround using `batch_size=1` fixed at export time with `h0/c0` as model inputs
+- Dexie documentation — IndexedDB query limitations, compound index behavior, MultiEntry index patterns
+- Project memory files: `project_htm_cortical_vision.md`, `project_os_architecture_vision.md` — HTM principles mapping, mobile feasibility assessment, LSTM vs attention recommendation
 
 ### Tertiary (LOW confidence)
-- [Tana Knowledge Graph](https://tana.inc/knowledge-graph) -- design inspiration only (marketing page)
-- [Obsidian Graph View](https://www.aitechgirl.com/posts/2025/05/obsidian/) -- graph visualization reference (deferred to v6.0)
+- Mobile browser per-tab memory limits (256-512MB range) — documented variability across iOS Safari versions; treat as approximate guideline for budgeting, not a hard ceiling
+- User correction UX adoption rates in PIM tools — extrapolated from PIM literature; no direct measurement for BinderOS usage patterns
 
 ---
-*Research completed: 2026-03-10*
+*Research completed: 2026-03-12*
 *Ready for roadmap: yes*
