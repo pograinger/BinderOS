@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Entity Intelligence & Knowledge Graph
 status: executing
-stopped_at: Phase 29 context gathered
-last_updated: "2026-03-12T04:54:58.816Z"
+stopped_at: Completed 29-02-PLAN.md
+last_updated: "2026-03-12T05:35:00.394Z"
 last_activity: 2026-03-11 — Phase 28 Plan 02 complete
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 9
+  completed_plans: 7
   percent: 95
 ---
 
@@ -50,6 +50,7 @@ Progress: [███████████████████████
 | Phase 27 P02 | 2min | 1 tasks | 2 files |
 | Phase 28 P01 | 583 | 3 tasks | 9 files |
 | Phase 28 P02 | 584 | 3 tasks | 9 files |
+| Phase 29 P02 | 364 | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,9 @@ Recent decisions affecting v5.0:
 - [28-02]: Harness-specific inference wrappers instead of DI params on production modules — production code stays clean
 - [28-02]: HarnessEntityStore synchronous Map ops — no async overhead for deterministic offline scoring
 - [28-02]: Privacy score = entities with inferred relationships / GT entities with relationships — measures semantic sanitization readiness
+- [Phase 29-02]: computeEntityRelevance uses mentionCount * exp(-ln2/30 * daysSince) -- 30-day half-life
+- [Phase 29-02]: Semantic tags use uppercase relationship type in square brackets -- [SPOUSE] vs <Person 1> disambiguates format
+- [Phase 29-02]: correctRelationship uses [SELF] sentinel as sourceEntityId per Phase 28 convention
 
 ### Pending Todos
 
@@ -93,6 +97,6 @@ Recent decisions affecting v5.0:
 
 ## Session Continuity
 
-Last session: 2026-03-12T04:54:58.814Z
-Stopped at: Phase 29 context gathered
-Resume file: .planning/phases/29-entity-consumers-trained-agent-validation/29-CONTEXT.md
+Last session: 2026-03-12T05:35:00.391Z
+Stopped at: Completed 29-02-PLAN.md
+Resume file: None
