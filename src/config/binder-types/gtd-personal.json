@@ -111,6 +111,22 @@
     }
   },
   "backgroundCloudEnrichment": false,
+  "entityContextMappings": {
+    "healthcare-provider": "@health",
+    "spouse": "@home",
+    "parent": "@home",
+    "child": "@home",
+    "reports-to": "@work",
+    "colleague": "@work",
+    "works-at": "@work",
+    "client": "@work",
+    "friend": "@personal",
+    "neighbor": "@home",
+    "teacher": "@education",
+    "mentor": "@work",
+    "accountant": "@finance",
+    "lawyer": "@legal"
+  },
   "followUpTemplates": {
     "missing-outcome": {
       "tiers": [

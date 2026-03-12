@@ -5,10 +5,16 @@
  * matches against existing entities of the same type, and either links to
  * an existing entity or creates a new one.
  *
+ * Phase 29 additions:
+ * - correctRelationship(): user-correction with confidence 1.0 ground truth
+ * - getEntityTimeline(): atomIds mentioning entity, ordered by recency
+ * - findHighestConfidenceRelation(): prefers user-corrections over inferred
+ *
  * Pure module: imports db and matcher only.
  *
  * Phase 26: SIDE-02 (stubs)
  * Phase 27: ENTR-04 (full dedup)
+ * Phase 29: ENTC-02, ENTC-05
  */
 
 import { db } from './db';
@@ -128,6 +134,145 @@ export async function decrementEntityMentionCount(entityId: string): Promise<voi
     updatedAt: Date.now(),
     version: entity.version + 1,
   });
+}
+
+/**
+ * Save a user correction for an entity relationship.
+ *
+ * Creates a new EntityRelation with confidence 1.0 and sourceAttribution
+ * 'user-correction'. Removes any existing inferred relations for the same
+ * entity+type pair (to prevent contradictory relations).
+ *
+ * Uses '[SELF]' as sourceEntityId per Phase 28 convention for implicit
+ * self-relationships (user is always the anchor).
+ *
+ * Phase 29: ENTC-02
+ */
+export async function correctRelationship(
+  entityId: string,
+  correctType: string,
+  atomId: string,
+): Promise<void> {
+  const now = Date.now();
+
+  // Remove existing inferred relations for this entity+type pair
+  const existing = await db.entityRelations
+    .where('targetEntityId')
+    .equals(entityId)
+    .filter((r) => r.relationshipType === correctType && r.sourceAttribution !== 'user-correction')
+    .toArray();
+
+  for (const rel of existing) {
+    await db.entityRelations.delete(rel.id);
+  }
+
+  // Also check source direction
+  const existingSource = await db.entityRelations
+    .where('sourceEntityId')
+    .equals(entityId)
+    .filter((r) => r.relationshipType === correctType && r.sourceAttribution !== 'user-correction')
+    .toArray();
+
+  for (const rel of existingSource) {
+    await db.entityRelations.delete(rel.id);
+  }
+
+  // Create user-correction relation
+  const correctionId = crypto.randomUUID();
+  const correction: EntityRelation = {
+    id: correctionId,
+    sourceEntityId: '[SELF]',
+    targetEntityId: entityId,
+    relationshipType: correctType,
+    confidence: 1.0,
+    sourceAttribution: 'user-correction',
+    evidence: [{ atomId, snippet: 'user-correction from atom ' + atomId, timestamp: now }],
+    version: 1,
+    deviceId: '',
+    updatedAt: now,
+  };
+
+  await db.entityRelations.put(correction);
+}
+
+/**
+ * Get all atom IDs that mention a specific entity, ordered by recency descending.
+ *
+ * Queries atomIntelligence sidecars where entityMentions includes the given
+ * entityId. Falls back to Dexie .filter() since there's no direct index on
+ * nested entity IDs.
+ *
+ * Phase 29: ENTC-05
+ */
+export async function getEntityTimeline(entityId: string): Promise<string[]> {
+  const allIntel = await db.atomIntelligence
+    .filter((intel) => intel.entityMentions.some((m) => m.entityId === entityId))
+    .toArray();
+
+  if (allIntel.length === 0) return [];
+
+  // Fetch atom timestamps for sorting
+  const atomIds = allIntel.map((i) => i.atomId);
+  const atoms = await db.atoms.where('id').anyOf(atomIds).toArray();
+  const tsMap = new Map<string, number>();
+  for (const atom of atoms) {
+    tsMap.set(atom.id, atom.created_at ?? 0);
+  }
+
+  // Sort by createdAt descending (most recent first)
+  return atomIds.sort((a, b) => (tsMap.get(b) ?? 0) - (tsMap.get(a) ?? 0));
+}
+
+/**
+ * Find the highest-confidence relation for an entity, given entity text.
+ *
+ * Looks up entity by canonicalName or alias, then finds all relations
+ * where it is source or target. Prefers user-corrections (confidence 1.0)
+ * over inferred relations. Returns null if no qualifying relation >= 0.6
+ * confidence exists.
+ *
+ * Phase 29: ENTC-04 (semantic sanitization support)
+ */
+export async function findHighestConfidenceRelation(
+  entityText: string,
+): Promise<EntityRelation | null> {
+  const normalized = entityText.toLowerCase().trim();
+
+  // Find entity by canonicalName or alias
+  const allEntities = await db.entities.toArray();
+  const entity = allEntities.find((e) => {
+    if (e.canonicalName.toLowerCase() === normalized) return true;
+    return e.aliases.some((a) => a.toLowerCase() === normalized);
+  });
+
+  if (!entity) return null;
+
+  // Find all relations involving this entity
+  const [asTarget, asSource] = await Promise.all([
+    db.entityRelations.where('targetEntityId').equals(entity.id).toArray(),
+    db.entityRelations.where('sourceEntityId').equals(entity.id).toArray(),
+  ]);
+
+  const all = [...asTarget, ...asSource];
+  if (all.length === 0) return null;
+
+  // Sort: user-corrections first, then by confidence descending
+  const sorted = all.sort((a, b) => {
+    const aIsCorrection = a.sourceAttribution === 'user-correction' ? 1 : 0;
+    const bIsCorrection = b.sourceAttribution === 'user-correction' ? 1 : 0;
+    if (aIsCorrection !== bIsCorrection) return bIsCorrection - aIsCorrection;
+    return b.confidence - a.confidence;
+  });
+
+  const best = sorted[0];
+  if (!best) return null;
+
+  // Return if confidence qualifies (user-corrections always qualify)
+  if (best.sourceAttribution === 'user-correction' || best.confidence >= 0.6) {
+    return best;
+  }
+
+  return null;
 }
 
 /**
