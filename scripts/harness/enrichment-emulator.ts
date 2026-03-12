@@ -13,6 +13,7 @@ import type { EntityMention } from '../../src/types/intelligence.js';
 import { HarnessEntityStore } from './harness-entity-store.js';
 import {
   runHarnessKeywordPatterns,
+  ENRICHMENT_CONFIDENCE_DISCOUNT,
   updateHarnessCooccurrence,
 } from './harness-inference.js';
 import type { EnrichmentEmulation, SimulatedQA } from './harness-types.js';
@@ -194,13 +195,13 @@ async function mineAnswerForEntities(
       entityId,
       spanStart: match.index,
       spanEnd: match.index + entityText.length,
-      confidence: 0.7,
+      confidence: 0.7 * ENRICHMENT_CONFIDENCE_DISCOUNT,
     });
   }
 
   // Run keyword patterns on answer text for relationship signals
   if (mentions.length > 0) {
-    await runHarnessKeywordPatterns(store, atomId + '-enrichment', answer, mentions);
+    await runHarnessKeywordPatterns(store, atomId + '-enrichment', answer, mentions, { fromEnrichment: true });
     updateHarnessCooccurrence(answer, mentions);
   }
 

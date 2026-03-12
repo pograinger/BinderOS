@@ -51,7 +51,18 @@ interface CooccurrenceEntry {
   evidence: Array<{ atomId: string; snippet: string; timestamp: number }>;
 }
 
-export const CO_OCCURRENCE_THRESHOLD = 3;
+// ---------------------------------------------------------------------------
+// Tunable knobs (overridable via env vars for Optuna landscape search)
+// ---------------------------------------------------------------------------
+
+export const CO_OCCURRENCE_THRESHOLD = parseInt(
+  process.env.HARNESS_COOCCURRENCE_THRESHOLD ?? '3', 10,
+);
+
+export const PATTERN_CONFIDENCE_SCALE = parseFloat(
+  process.env.HARNESS_PATTERN_CONFIDENCE_SCALE ?? '1.0',
+);
+
 const EXCLUDED_TYPES = new Set(['MISC', 'DATE']);
 
 let cooccurrenceMap = new Map<string, CooccurrenceEntry>();
@@ -114,11 +125,17 @@ async function upsertKeywordRelation(
   }
 }
 
+/** Discount factor applied to confidenceBase for relations inferred from enrichment answers */
+export const ENRICHMENT_CONFIDENCE_DISCOUNT = parseFloat(
+  process.env.HARNESS_ENRICHMENT_DISCOUNT ?? '0.5',
+);
+
 export async function runHarnessKeywordPatterns(
   store: HarnessEntityStore,
   atomId: string,
   content: string,
   entityMentions: EntityMention[],
+  options?: { fromEnrichment?: boolean },
 ): Promise<void> {
   if (!entityMentions.length) return;
 
@@ -164,12 +181,17 @@ export async function runHarnessKeywordPatterns(
           if (existingRels.length > 0) continue;
         }
 
+        const scaledBase = pattern.confidenceBase * PATTERN_CONFIDENCE_SCALE;
+        const effectiveConfidence = options?.fromEnrichment
+          ? scaledBase * ENRICHMENT_CONFIDENCE_DISCOUNT
+          : scaledBase;
+
         await upsertKeywordRelation(store, {
           atomId,
           sourceEntityId: '[SELF]',
           targetEntityId: entity.entityId!,
           relationshipType: pattern.relationshipType,
-          confidenceBase: pattern.confidenceBase,
+          confidenceBase: effectiveConfidence,
           snippet: sentenceText,
         });
       }
@@ -379,7 +401,7 @@ export function flushHarnessCooccurrence(store: HarnessEntityStore): void {
         sourceEntityId: entityId1,
         targetEntityId: entityId2,
         relationshipType: 'associated',
-        confidence: 0.25,
+        confidence: 0.25 * PATTERN_CONFIDENCE_SCALE,
         sourceAttribution: 'co-occurrence',
         evidence: entry.evidence,
         version: 1,
