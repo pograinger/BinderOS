@@ -135,11 +135,13 @@ Plans:
   5. User taps an entity badge and sees a timeline view of all atoms mentioning that entity, ordered chronologically
   6. After processing 30+ synthetic inbox items through the harness training loop, the local stack correctly identifies >80% of the synthetic user's key relationships (family, work colleagues, medical providers) without cloud assistance
   7. T2 sanitization uses entity knowledge to produce semantically-rich cloud packets — "Pam" → "[SPOUSE]", "Dr. Chen" → "[CPA]" — preserving meaning while protecting identity
-**Plans**: 3 plans
+**Plans**: 5 plans
 Plans:
 - [ ] 29-01-PLAN.md — Multi-cycle adversarial training loop, 10+ personas, enrichment emulation, correction ripple
 - [ ] 29-02-PLAN.md — Production entity consumers: recency decay, semantic sanitization, correction UX, entity timeline
 - [ ] 29-03-PLAN.md — Ablation testing, auto-tune patterns, investment report
+- [ ] 29-04-PLAN.md — [GAP] Entity context mapping: BinderTypeConfig interface + suggestContextFromEntities() + store wiring
+- [ ] 29-05-PLAN.md — [GAP] Execute adversarial training run, verify TVAL-01/TVAL-02 benchmarks
 
 ## Progress
 
@@ -174,4 +176,4 @@ Plans:
 | 26. Intelligence Sidecar + Schema | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 27. Entity Detection + Registry | 2/2 | Complete   | 2026-03-11 | - |
 | 28. Relationship Inference | 2/2 | Complete   | 2026-03-11 | - |
-| 29. Entity Intelligence Consumers | 3/3 | Complete   | 2026-03-12 | - |
+| 29. Entity Intelligence Consumers | 3/5 | In Progress   | 2026-03-12 | - |
