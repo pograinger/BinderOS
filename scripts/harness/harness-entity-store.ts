@@ -33,6 +33,12 @@ const NON_ENTITY_WORDS = new Set([
   'come', 'give', 'tell', 'ask', 'use', 'find', 'keep', 'bring', 'send', 'talk',
   'pick', 'plan', 'work', 'done', 'sure', 'well', 'okay', 'son', 'but', 'she',
   'her', 'his', 'him', 'they', 'them', 'our', 'your', 'its', 'who', 'what',
+  // Professional/role words that corpus generators sometimes capitalize as entities
+  'doc', 'nurse', 'doctor', 'dentist', 'therapist', 'surgeon', 'specialist',
+  'boss', 'manager', 'supervisor', 'coach', 'trainer', 'mentor', 'tutor',
+  'neighbor', 'neighbour', 'landlord', 'landlady', 'accountant', 'lawyer',
+  'attorney', 'babysitter', 'nanny', 'sitter', 'buddy', 'pal', 'bestie',
+  'coworker', 'teammate', 'partner',
 ]);
 
 // ---------------------------------------------------------------------------

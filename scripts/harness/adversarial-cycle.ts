@@ -19,7 +19,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { HarnessEntityStore } from './harness-entity-store.js';
-import { runHarnessAtom, mergeRoleWordEntities } from './harness-pipeline.js';
+import { runHarnessAtom, mergeRoleWordEntities, mergeDescriptorEntities } from './harness-pipeline.js';
 import {
   resetHarnessCooccurrence,
   flushHarnessCooccurrence,
@@ -550,7 +550,14 @@ export async function runAdversarialCycle(
     console.log(`  [cycle ${cycleNumber}] Merged ${roleMerges} role-word entities`);
   }
 
-  // Step 3.6: Enforce uniqueness for singular relation types (spouse, reports-to, lives-at).
+  // Step 3.6: Merge descriptor entities into proper-name entities for non-singular types.
+  // E.g., "little one" → "Zara" when both have child, "pediatrician" → "Dr. Park" when both have healthcare-provider.
+  const descriptorMerges = mergeDescriptorEntities(store);
+  if (descriptorMerges > 0) {
+    console.log(`  [cycle ${cycleNumber}] Merged ${descriptorMerges} descriptor entities`);
+  }
+
+  // Step 3.7: Enforce uniqueness for singular relation types (spouse, reports-to, lives-at).
   // Keeps only the highest-confidence relation per type, eliminating duplicates from
   // entity fragmentation (e.g., "wife" entity + "Pam" entity both having spouse).
   const uniquenessRemoved = enforceRelationUniqueness(store);

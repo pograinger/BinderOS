@@ -7,7 +7,9 @@
       "relationshipType": "spouse",
       "targetEntityType": "PER",
       "confidenceBase": 0.30,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 6,
+      "entityTextFilter": "^[A-Z]"
     },
     {
       "id": "spouse-direct",
@@ -71,7 +73,9 @@
       "targetEntityType": "PER",
       "confidenceBase": 0.20,
       "scope": "sentence",
-      "entityTextFilter": "^(Dr\\.?|Doctor)\\s"
+      "entityTextFilter": "^(Dr\\.?|Doctor)\\s",
+      "suppressedByTypes": ["veterinarian"],
+      "proximityMaxWords": 5
     },
     {
       "id": "family-parent",
@@ -88,7 +92,9 @@
       "targetEntityType": "PER",
       "confidenceBase": 0.15,
       "scope": "sentence",
-      "proximityMaxWords": 4
+      "proximityMaxWords": 4,
+      "entityTextFilter": "^[A-Z]",
+      "suppressedByTypes": ["spouse", "child", "sibling"]
     },
     {
       "id": "family-child",
@@ -105,7 +111,9 @@
       "targetEntityType": "PER",
       "confidenceBase": 0.20,
       "scope": "sentence",
-      "proximityMaxWords": 3
+      "proximityMaxWords": 3,
+      "entityTextFilter": "^[A-Z]",
+      "suppressedByTypes": ["spouse", "colleague", "friend"]
     },
     {
       "id": "family-sibling",
@@ -130,7 +138,8 @@
       "targetEntityType": "PER",
       "confidenceBase": 0.20,
       "scope": "sentence",
-      "proximityMaxWords": 4
+      "proximityMaxWords": 4,
+      "suppressedByTypes": ["reports-to", "mentor", "client"]
     },
     {
       "id": "friend",
@@ -147,7 +156,8 @@
       "targetEntityType": "PER",
       "confidenceBase": 0.15,
       "scope": "sentence",
-      "proximityMaxWords": 4
+      "proximityMaxWords": 4,
+      "suppressedByTypes": ["spouse", "sibling", "colleague", "neighbor"]
     },
     {
       "id": "works-at",
@@ -231,7 +241,9 @@
       "targetEntityType": "PER",
       "confidenceBase": 0.10,
       "scope": "sentence",
-      "proximityMaxWords": 4
+      "proximityMaxWords": 4,
+      "entityTextFilter": "^[A-Z]",
+      "suppressedByTypes": ["spouse", "colleague", "friend", "sibling"]
     },
     {
       "id": "teacher",

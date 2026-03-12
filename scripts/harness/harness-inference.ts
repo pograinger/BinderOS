@@ -300,7 +300,27 @@ export async function reRunPatternsForEntity(
  * spouse, one boss, one home city. When entity fragmentation creates multiple
  * relations of the same singular type, keep only the highest-confidence one.
  */
-const SINGULAR_RELATION_TYPES = new Set(['spouse', 'reports-to', 'lives-at']);
+/**
+ * "Typically singular" relation types — most people have one, but edge cases
+ * (divorce, polyamory, matrix orgs) mean multiples are possible.
+ *
+ * Strategy: keep only the highest-confidence relation by default, but this is
+ * overridden by user-corrections. If a user confirms multiple (e.g., two
+ * spouses), their corrections (confidence 1.0) all survive.
+ *
+ * Edge cases (poly, divorce, dual-reporting) are real but uncommon — the
+ * system defaults to "one is most likely" and relies on user confirmation
+ * to learn about the rarer patterns.
+ */
+const SINGULAR_RELATION_TYPES = new Set([
+  'spouse',         // usually one; poly/divorce overridden by user-correction
+  'reports-to',     // usually one; matrix orgs overridden by user-correction
+  'lives-at',       // one primary residence
+  'landlord',       // one landlord per lease
+  'veterinarian',   // typically one vet
+  'accountant',     // typically one CPA
+  'lawyer',         // typically one primary attorney
+]);
 
 export function enforceRelationUniqueness(store: HarnessEntityStore): number {
   let removed = 0;
@@ -308,11 +328,29 @@ export function enforceRelationUniqueness(store: HarnessEntityStore): number {
     const rels = store.getRelations().filter((r) => r.relationshipType === type);
     if (rels.length <= 1) continue;
 
-    // Sort by confidence DESC, keep only the best
-    rels.sort((a, b) => b.confidence - a.confidence);
-    for (let i = 1; i < rels.length; i++) {
-      store.entityRelations.delete(rels[i].id);
-      removed++;
+    // User-corrections are sacred — if user confirmed multiple, keep all of them
+    const userCorrected = rels.filter((r) => r.sourceAttribution === 'user-correction');
+    const inferred = rels.filter((r) => r.sourceAttribution !== 'user-correction');
+
+    if (userCorrected.length > 1) {
+      // User confirmed multiple (e.g., poly, two managers) — remove only inferred duplicates
+      for (const rel of inferred) {
+        // Keep inferred if it matches a user-corrected entity (reinforcement)
+        const matchesUserCorrected = userCorrected.some(
+          (uc) => uc.targetEntityId === rel.targetEntityId,
+        );
+        if (!matchesUserCorrected) {
+          store.entityRelations.delete(rel.id);
+          removed++;
+        }
+      }
+    } else {
+      // Default: keep highest-confidence, remove the rest (among inferred only)
+      inferred.sort((a, b) => b.confidence - a.confidence);
+      for (let i = 1; i < inferred.length; i++) {
+        store.entityRelations.delete(inferred[i].id);
+        removed++;
+      }
     }
   }
   return removed;

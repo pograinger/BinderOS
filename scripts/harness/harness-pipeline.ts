@@ -28,9 +28,14 @@ const ROLE_WORDS = new Set([
   'dad', 'father', 'papa', 'pop',
   'brother', 'sister', 'bro', 'sis',
   'son', 'daughter', 'kid', 'kiddo',
-  'wife', 'husband',
+  'wife', 'husband', 'hubby',
   'uncle', 'aunt',
   'grandma', 'grandmother', 'grandpa', 'grandfather',
+  'boss', 'manager', 'supervisor',
+  'dentist', 'doctor', 'doc', 'therapist',
+  'neighbor', 'neighbour',
+  'buddy', 'bestie', 'pal',
+  'babysitter', 'nanny', 'sitter',
 ]);
 
 // ---------------------------------------------------------------------------
@@ -41,19 +46,32 @@ const ROLE_WORD_TO_RELATION = new Map<string, string>([
   // Spouse
   ['wife', 'spouse'], ['husband', 'spouse'], ['hubby', 'spouse'],
   ['spouse', 'spouse'], ['partner', 'spouse'],
+  ['better half', 'spouse'], ['sweetheart', 'spouse'],
   // Reports-to
   ['boss', 'reports-to'], ['manager', 'reports-to'], ['supervisor', 'reports-to'],
+  ['team lead', 'reports-to'],
   // Parent
   ['mom', 'parent'], ['mother', 'parent'], ['mama', 'parent'], ['ma', 'parent'],
   ['dad', 'parent'], ['father', 'parent'], ['papa', 'parent'], ['pop', 'parent'],
   // Child
   ['son', 'child'], ['daughter', 'child'], ['kid', 'child'], ['kiddo', 'child'],
+  ['little one', 'child'], ['baby', 'child'], ['my boy', 'child'], ['my girl', 'child'],
   // Healthcare
   ['dentist', 'healthcare-provider'], ['doctor', 'healthcare-provider'],
   ['therapist', 'healthcare-provider'], ['pediatrician', 'healthcare-provider'],
   ['physician', 'healthcare-provider'], ['psychiatrist', 'healthcare-provider'],
   ['orthodontist', 'healthcare-provider'], ['dermatologist', 'healthcare-provider'],
-  ['chiropractor', 'healthcare-provider'],
+  ['chiropractor', 'healthcare-provider'], ['doc', 'healthcare-provider'],
+  ['surgeon', 'healthcare-provider'], ['specialist', 'healthcare-provider'],
+  ['cardiologist', 'healthcare-provider'], ['oncologist', 'healthcare-provider'],
+  ['optometrist', 'healthcare-provider'], ['nurse', 'healthcare-provider'],
+  // Sibling
+  ['brother', 'sibling'], ['sister', 'sibling'], ['bro', 'sibling'], ['sis', 'sibling'],
+  // Friend
+  ['buddy', 'friend'], ['bestie', 'friend'], ['pal', 'friend'], ['bff', 'friend'],
+  // Colleague
+  ['coworker', 'colleague'], ['co-worker', 'colleague'], ['teammate', 'colleague'],
+  ['workmate', 'colleague'],
   // Other
   ['neighbor', 'neighbor'], ['neighbour', 'neighbor'],
   ['lawyer', 'lawyer'], ['attorney', 'lawyer'],
@@ -63,6 +81,7 @@ const ROLE_WORD_TO_RELATION = new Map<string, string>([
   ['coach', 'coach'], ['trainer', 'coach'],
   ['mentor', 'mentor'],
   ['teacher', 'teacher'], ['tutor', 'teacher'],
+  ['babysitter', 'childcare'], ['nanny', 'childcare'], ['sitter', 'childcare'],
 ]);
 
 // ---------------------------------------------------------------------------
@@ -327,6 +346,60 @@ export function mergeRoleWordEntities(store: HarnessEntityStore): number {
 
       // Stop if already merged
       if (!store.getEntity(entity.id)) break;
+    }
+  }
+
+  return mergeCount;
+}
+
+/**
+ * Merge descriptor entities into proper-name entities for non-singular relation types.
+ *
+ * Handles cases that ROLE_WORD_TO_RELATION misses: when a descriptive phrase
+ * (lowercase, common noun) has the same relation type as a proper name.
+ * E.g., "little one" + "Zara" both with child → merge "little one" into Zara.
+ *
+ * Heuristic: an entity is a "descriptor" if its canonical name is:
+ *   - All lowercase (no proper-noun capitalization), OR
+ *   - A known role word in ROLE_WORD_TO_RELATION (already handled, but belt-and-suspenders)
+ *
+ * Only merges when exactly one proper-name entity has the same relation type,
+ * preventing ambiguous merges when multiple proper names share a type.
+ */
+export function mergeDescriptorEntities(store: HarnessEntityStore): number {
+  let mergeCount = 0;
+  const entities = store.getEntities();
+  const allRelations = store.getRelations();
+
+  // Build a map: relationshipType → list of {entityId, isDescriptor}
+  const relTypeToEntities = new Map<string, Array<{ entityId: string; isDescriptor: boolean }>>();
+
+  for (const rel of allRelations) {
+    if (rel.sourceEntityId !== '[SELF]') continue;
+    const entity = store.getEntity(rel.targetEntityId);
+    if (!entity || entity.type !== 'PER') continue;
+
+    const name = entity.canonicalName;
+    const isDescriptor =
+      name === name.toLowerCase() || // all lowercase = common noun
+      ROLE_WORD_TO_RELATION.has(name.toLowerCase());
+
+    const list = relTypeToEntities.get(rel.relationshipType) ?? [];
+    list.push({ entityId: entity.id, isDescriptor });
+    relTypeToEntities.set(rel.relationshipType, list);
+  }
+
+  for (const [_relType, entries] of relTypeToEntities) {
+    const descriptors = entries.filter((e) => e.isDescriptor && store.getEntity(e.entityId));
+    const properNames = entries.filter((e) => !e.isDescriptor && store.getEntity(e.entityId));
+
+    // Only merge when there's exactly one proper-name target (unambiguous)
+    if (properNames.length !== 1 || descriptors.length === 0) continue;
+
+    for (const desc of descriptors) {
+      if (!store.getEntity(desc.entityId)) continue; // already merged
+      mergeEntities(store, desc.entityId, properNames[0].entityId);
+      mergeCount++;
     }
   }
 

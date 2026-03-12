@@ -58,9 +58,17 @@ export const orgMatcher: EntityMatcher = {
   },
   matchScore(candidate: string, existing: { canonicalName: string; aliases: string[] }): number {
     const normCandidate = this.normalize(candidate);
-    if (this.normalize(existing.canonicalName) === normCandidate) return 1.0;
+    const normCanonical = this.normalize(existing.canonicalName);
+    if (normCandidate === normCanonical) return 1.0;
     for (const alias of existing.aliases) {
       if (this.normalize(alias) === normCandidate) return 1.0;
+    }
+    // Substring match for orgs: "Nexus" matches "Nexus Technologies"
+    // Require the shorter to be 3+ chars and a word-boundary match in the longer
+    const shorter = normCandidate.length <= normCanonical.length ? normCandidate : normCanonical;
+    const longer = normCandidate.length <= normCanonical.length ? normCanonical : normCandidate;
+    if (shorter.length >= 3 && longer.startsWith(shorter)) {
+      return 0.8;
     }
     return 0;
   },
