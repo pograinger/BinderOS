@@ -1,5 +1,24 @@
 # Milestones
 
+## v5.0 Entity Intelligence & Knowledge Graph (Shipped: 2026-03-12)
+
+**Phases completed:** 4 phases (26-29), 11 plans
+**Timeline:** 2 days (2026-03-10 → 2026-03-12)
+**Requirements:** 22 requirements
+
+**Delivered:** Local entity intelligence with NER detection, deduplicated entity registry, relationship inference via keyword patterns and co-occurrence, entity-aware enrichment, user correction UX, GTD context suggestions, semantic sanitization, and a headless adversarial training harness with synthetic personas, Optuna tuning, and ablation testing.
+
+**Key accomplishments:**
+- Intelligence sidecar (atomIntelligence) separating AI knowledge from atom content
+- NER entity detection reusing sanitization worker (no new worker, avoids mobile OOM)
+- Entity registry with alias resolution, normalized dedup, entity badges UI
+- Relationship inference: keyword patterns, co-occurrence accumulation, evidence scoring
+- Entity consumers: recency decay, semantic sanitization ([SPOUSE], [CPA]), correction UX
+- Headless cognitive harness: synthetic personas, multi-cycle adversarial scoring, Optuna landscape search
+- Ablation engine, pattern auto-tuning, enrichment value scoring
+
+---
+
 ## v4.0 Device-Adaptive AI (Shipped: 2026-03-10)
 
 **Phases completed:** 14 phases (12-25), 32 plans
