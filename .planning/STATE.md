@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Entity Intelligence & Knowledge Graph
 status: executing
-stopped_at: Completed 29-02-PLAN.md
-last_updated: "2026-03-12T05:35:00.394Z"
+stopped_at: Completed 29-01-PLAN.md
+last_updated: "2026-03-12T05:46:21.532Z"
 last_activity: 2026-03-11 — Phase 28 Plan 02 complete
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
   percent: 95
 ---
 
@@ -51,6 +51,7 @@ Progress: [███████████████████████
 | Phase 28 P01 | 583 | 3 tasks | 9 files |
 | Phase 28 P02 | 584 | 3 tasks | 9 files |
 | Phase 29 P02 | 364 | 2 tasks | 10 files |
+| Phase 29 P01 | 16 | 3 tasks | 20 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,9 @@ Recent decisions affecting v5.0:
 - [Phase 29-02]: computeEntityRelevance uses mentionCount * exp(-ln2/30 * daysSince) -- 30-day half-life
 - [Phase 29-02]: Semantic tags use uppercase relationship type in square brackets -- [SPOUSE] vs <Person 1> disambiguates format
 - [Phase 29-02]: correctRelationship uses [SELF] sentinel as sourceEntityId per Phase 28 convention
+- [Phase 29-01]: Component attribution uses Map serialized to array for JSON checkpoint persistence
+- [Phase 29-01]: Enrichment answer entity mining uses regex-based proper name extraction (offline, no BERT NER)
+- [Phase 29-01]: Atom content cached in atomIntelligence._content for correction ripple pattern re-run
 
 ### Pending Todos
 
@@ -97,6 +101,6 @@ Recent decisions affecting v5.0:
 
 ## Session Continuity
 
-Last session: 2026-03-12T05:35:00.391Z
-Stopped at: Completed 29-02-PLAN.md
+Last session: 2026-03-12T05:46:21.530Z
+Stopped at: Completed 29-01-PLAN.md
 Resume file: None
