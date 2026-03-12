@@ -164,7 +164,11 @@ Plans:
   2. `BinderTypeConfig` interface is the authoritative source for GTD's column set, compositor rules, enrichment categories, relationship patterns, entity types, and context gate predicates — no GTD-specific constants remain scattered in other files
   3. A developer can define a new binder type by implementing `BinderTypeConfig` and registering it in the type registry without modifying any GTD-specific code
   4. The predicate registry scaffold in `src/ai/context-gate/predicates/` exists with typed stubs that compile, ready to receive Phase 31 implementations
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 30-01-PLAN.md — Types, Zod schema, v10 migration, GTD config split into per-concern JSON files
+- [ ] 30-02-PLAN.md — Registry API expansion, consumer migration, compositor hydration, old file deletion
+- [ ] 30-03-PLAN.md — Context gate predicate scaffold with registry and four config-reading stubs
 
 ### Phase 31: Context Gate Evaluator
 **Goal**: Agents activate only when relevant — a pre-dispatch `ActivationGate` filter in `dispatchTiered()` evaluates route, time-of-day, binder type, and atom history predicates before any handler runs, with all gate decisions logged for harness measurement
@@ -244,7 +248,7 @@ Plans:
 | 27. Entity Detection + Registry | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 28. Relationship Inference + Cognitive Harness | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 29. Entity Consumers + Trained Agent Validation | v5.0 | 4/5 | Complete | 2026-03-12 |
-| 30. Schema + BinderTypeConfig Protocol | v5.5 | 0/? | Not started | - |
+| 30. Schema + BinderTypeConfig Protocol | v5.5 | 0/3 | Not started | - |
 | 31. Context Gate Evaluator | v5.5 | 0/? | Not started | - |
 | 32. Predictive Enrichment Scorer | v5.5 | 0/? | Not started | - |
 | 33. Sequence Context ONNX Model | v5.5 | 0/? | Not started | - |
