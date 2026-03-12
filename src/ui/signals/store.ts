@@ -63,7 +63,12 @@ import type { TriageSuggestion } from '../../ai/triage';
 import type { ClarificationResult } from '../../ai/clarification/types';
 // Phase 27: Entity detection lifecycle hooks (fire-and-forget after atom create/update/delete)
 import { detectEntitiesForAtom } from '../../entity/entity-detector';
-import { cleanupEntityMentionsForAtom } from '../../storage/entity-helpers';
+import { cleanupEntityMentionsForAtom, findHighestConfidenceRelation } from '../../storage/entity-helpers';
+// Phase 29: ENTC-03 — entity-to-GTD-context suggestion
+import { suggestContextFromEntities } from '../../entity/entity-context-suggestions';
+import type { EntityContextCandidate } from '../../entity/entity-context-suggestions';
+import { getBinderConfig } from '../../config/binder-types/index';
+import { db } from '../../storage/db';
 import { logClarification } from '../../storage/classification-log';
 import type { BriefingResult } from '../../ai/analysis';
 import type { ReviewSession } from '../../storage/review-session';
@@ -1300,6 +1305,52 @@ export async function startTriageInbox(): Promise<void> {
           next.set(suggestion.inboxItemId, suggestion);
           return next;
         });
+
+        // Phase 29: ENTC-03 — post-triage entity context enrichment (non-fatal, fire-and-forget)
+        // Only enriches complete suggestions that have no ONNX-derived contextTag yet.
+        if (suggestion.status === 'complete' && !suggestion.contextTag) {
+          (async () => {
+            try {
+              const intel = await db.atomIntelligence
+                .where('atomId').equals(suggestion.inboxItemId).first();
+              if (!intel || !intel.entityMentions || intel.entityMentions.length === 0) return;
+
+              const candidates: EntityContextCandidate[] = [];
+              for (const mention of intel.entityMentions) {
+                const relation = await findHighestConfidenceRelation(mention.entityText);
+                if (relation) {
+                  candidates.push({ entityText: mention.entityText, relation });
+                }
+              }
+
+              if (candidates.length === 0) return;
+
+              const entityContextTag = suggestContextFromEntities(candidates, getBinderConfig());
+              if (!entityContextTag) return;
+
+              // Find best candidate for confidence metadata
+              const bestCandidate = candidates.reduce((best, c) =>
+                c.relation.confidence > best.relation.confidence ? c : best,
+              );
+
+              setTriageSuggestions((prev) => {
+                const next = new Map(prev);
+                const existing = next.get(suggestion.inboxItemId);
+                if (existing && !existing.contextTag) {
+                  next.set(suggestion.inboxItemId, {
+                    ...existing,
+                    contextTag: entityContextTag,
+                    contextTagConfidence: bestCandidate.relation.confidence,
+                    contextTagLowConfidence: bestCandidate.relation.confidence < 0.7,
+                  });
+                }
+                return next;
+              });
+            } catch (err) {
+              console.warn('[triage] Entity context enrichment failed:', err);
+            }
+          })();
+        }
       },
       (itemId, error) => {
         // Individual item error — record error status on that item
