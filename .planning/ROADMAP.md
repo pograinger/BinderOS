@@ -6,7 +6,8 @@
 - [x] **v2.0 AI Orchestration** — Phases 4-7 (30/30 requirements, 14 plans, shipped 2026-03-03) → [Archive](.planning/milestones/v2.0-ROADMAP.md)
 - [x] **v3.0 Local AI + Polish** — Phases 9-11 (18/18 requirements, 8 plans, shipped 2026-03-05) → [Archive](.planning/milestones/v3.0-ROADMAP.md)
 - [x] **v4.0 Device-Adaptive AI** — Phases 12-25 (48/48 requirements, 32 plans, shipped 2026-03-10) → [Archive](.planning/milestones/v4.0-ROADMAP.md)
-- 🚧 **v5.0 Entity Intelligence & Knowledge Graph** — Phases 26-29 (22 requirements, in progress)
+- [x] **v5.0 Entity Intelligence & Knowledge Graph** — Phases 26-29 (22 requirements, shipped 2026-03-12)
+- 🚧 **v5.5 Cortical Intelligence** — Phases 30-34 (16 requirements, in progress)
 
 ## Phases
 
@@ -66,14 +67,25 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 
 </details>
 
-### v5.0 Entity Intelligence & Knowledge Graph (In Progress)
-
-**Milestone Goal:** Local AI agents that detect entities (people, places, orgs) from raw content, build a persistent entity registry with relationship inference, and feed entity context into enrichment and GTD processing — so the system "knows" the user's world through privacy-safe local-only intelligence.
+<details>
+<summary>v5.0 Entity Intelligence & Knowledge Graph (Phases 26-29) — SHIPPED 2026-03-12</summary>
 
 - [x] **Phase 26: Intelligence Sidecar + Schema** - Dexie migration with atomIntelligence sidecar, entity/relation tables, enrichment refactor to structured records, smart links field (completed 2026-03-11)
 - [x] **Phase 27: Entity Detection + Registry** - Sanitization worker extended for entity detection, detection lifecycle, entity-atom linking, dedup/normalization, entity badges (completed 2026-03-11)
 - [x] **Phase 28: Relationship Inference + Cognitive Harness** - T1 keyword pattern engine, co-occurrence accumulation, evidence scoring, headless testing harness, synthetic user profile, cloud adversarial scoring (completed 2026-03-11)
 - [x] **Phase 29: Entity Consumers + Trained Agent Validation** - Entity-aware enrichment, user correction UX, GTD context suggestions, cloud-as-user training loop, local stack benchmark proving emergent user learning (completed 2026-03-12)
+
+</details>
+
+### v5.5 Cortical Intelligence (In Progress)
+
+**Milestone Goal:** Apply HTM cortical organizing principles to the local ONNX agent stack — context gating for efficient activation, predictive enrichment that anticipates user needs, sequence learning across atom history, and a formalized binder-type specialization protocol that turns GTD into the first pluggable column set.
+
+- [ ] **Phase 30: Schema + BinderTypeConfig Protocol** - Dexie v10 migration, BinderTypeConfig interface with GTD as first implementation, predicate registry scaffold
+- [ ] **Phase 31: Context Gate Evaluator** - ActivationGate pre-dispatch filter, four predicate dimensions (route, time-of-day, binder type, atom history), gate audit logging
+- [ ] **Phase 32: Predictive Enrichment Scorer** - Entity trajectory + cognitive signal delta scoring, predictionCache with TTL, cold-start guard, enrichment question reordering
+- [ ] **Phase 33: Sequence Context ONNX Model** - Embedding ring buffer, LSTM training pipeline, sequence context signal wired to T2 classifiers, harness ablation validation
+- [ ] **Phase 34: Harness SDK + Second Binder Type Validation** - Harness parameterized on BinderTypeConfig, non-GTD stub binder type exercised through full adversarial cycle
 
 ## Phase Details
 
@@ -143,9 +155,64 @@ Plans:
 - [ ] 29-04-PLAN.md — [GAP] Entity context mapping: BinderTypeConfig interface + suggestContextFromEntities() + store wiring
 - [ ] 29-05-PLAN.md — [GAP] Execute adversarial training run, verify TVAL-01/TVAL-02 benchmarks
 
+### Phase 30: Schema + BinderTypeConfig Protocol
+**Goal**: The v10 Dexie schema is locked with all tables needed by v5.5, and the `BinderTypeConfig` interface is formalized with GTD as its first full implementation — unblocking every subsequent phase that reads binder type, writes gate audit logs, or stores sequence context
+**Depends on**: Phase 29 (v5.0 complete)
+**Requirements**: SCHM-01, BTYPE-01
+**Success Criteria** (what must be TRUE):
+  1. Dexie v10 migration runs without errors on a database that has v9 data, adding `gateActivationLog`, `sequenceContext`, and `binderTypeConfig` tables without touching any prior table
+  2. `BinderTypeConfig` interface is the authoritative source for GTD's column set, compositor rules, enrichment categories, relationship patterns, entity types, and context gate predicates — no GTD-specific constants remain scattered in other files
+  3. A developer can define a new binder type by implementing `BinderTypeConfig` and registering it in the type registry without modifying any GTD-specific code
+  4. The predicate registry scaffold in `src/ai/context-gate/predicates/` exists with typed stubs that compile, ready to receive Phase 31 implementations
+**Plans**: TBD
+
+### Phase 31: Context Gate Evaluator
+**Goal**: Agents activate only when relevant — a pre-dispatch `ActivationGate` filter in `dispatchTiered()` evaluates route, time-of-day, binder type, and atom history predicates before any handler runs, with all gate decisions logged for harness measurement
+**Depends on**: Phase 30 (BinderTypeConfig and gateActivationLog table must exist)
+**Requirements**: GATE-01, GATE-02, GATE-03, GATE-04, GATE-05
+**Success Criteria** (what must be TRUE):
+  1. User navigates to the Insights view and triggers triage — the triage and enrichment agents do not fire (route predicate blocks them), observable via gate audit log entries
+  2. A triage request dispatched at 10pm is processed with deep-cognitive agents suppressed — time-of-day predicate correctly identifies the low-energy window
+  3. An atom that already has `enrichment.depth >= 2` and was last updated 8 days ago is submitted for re-enrichment — the atom history predicate blocks the redundant enrichment pass
+  4. All gate activation decisions are written to `gateActivationLog` with predicate name, outcome, and context snapshot — harness can query the table and compute per-predicate activation rates
+  5. The harness test suite passes all existing handler tests unchanged — `dispatchTiered()` without a `context` field behaves identically to pre-Phase 31 behavior (full backwards compatibility)
+**Plans**: TBD
+
+### Phase 32: Predictive Enrichment Scorer
+**Goal**: Enrichment question ordering shifts from static signal relevance to dynamic prediction — a scoring function over entity graph trajectory and cognitive signal delta trends predicts what the user will need next, with a cold-start guard preventing premature predictions from eroding trust
+**Depends on**: Phase 31 (gate infrastructure must exist; prediction scorer integrates as a gate-aware enrichment path)
+**Requirements**: PRED-01, PRED-02, PRED-03
+**Success Criteria** (what must be TRUE):
+  1. User enriches a second atom about "quarterly budget planning" after previously enriching several atoms with rising `urgent-important` composite signals — the enrichment wizard leads with deadline and delegation questions rather than the default outcome question, reflecting the signal trend
+  2. User opens the enrichment wizard for an atom mentioning a recently-active entity (high recency + rising mention count delta) — that entity's enrichment category is promoted to the top of the question order
+  3. A brand-new binder with 10 atoms (below the 15-atom cold-start threshold) shows default static enrichment question ordering — the predictive scorer does not activate, preventing incorrect early predictions
+  4. Prediction results are cached in `predictionCache` with a 5-minute TTL — repeated wizard opens within the window do not re-query Dexie; a new atom triage correctly invalidates the cache
+**Plans**: TBD
+
+### Phase 33: Sequence Context ONNX Model
+**Goal**: A lightweight LSTM sequence model trained on harness persona atom history provides a 128-dim context embedding that is concatenated with MiniLM embeddings before T2 classifier inference — improving classification quality without adding a new worker or exceeding mobile memory limits
+**Depends on**: Phase 32 (harness data quality and gate infrastructure proven; prediction scorer validates entity/signal data is queryable before sequence model relies on it)
+**Requirements**: SEQ-01, SEQ-02, SEQ-03, SEQ-04
+**Success Criteria** (what must be TRUE):
+  1. The embedding worker maintains a per-binder ring buffer of the last 5 MiniLM embeddings (default N), capped in memory, updated only on atom save or triage completion — observable via worker message log
+  2. The Python sequence training pipeline (`scripts/train/sequence/`) runs end-to-end producing a `sequence-context.onnx` file that validates successfully against `onnxruntime-node` before any browser deployment
+  3. T2 classifiers receive a 512-dim input (384 MiniLM + 128 sequence context) without breaking existing classification for atoms in a binder with fewer than N prior embeddings (cold-start fallback to zero-padded context)
+  4. Harness ablation report shows T2 classifier F1 with sequence context vs without across N=3, N=5, N=7 window sizes — production MLP classifiers are only replaced if ablation confirms improvement
+**Plans**: TBD
+
+### Phase 34: Harness SDK + Second Binder Type Validation
+**Goal**: The harness is parameterized on `BinderTypeConfig` so any binder type can run a full adversarial training cycle, and a non-GTD stub binder type exercises the complete pipeline end-to-end — proving the protocol is genuinely pluggable, not GTD-shaped
+**Depends on**: Phase 33 (all v5.5 core features complete; this phase integrates and validates everything)
+**Requirements**: BTYPE-02, BTYPE-03
+**Success Criteria** (what must be TRUE):
+  1. Running the harness with a non-GTD `BinderTypeConfig` (e.g., ProjectBinder) produces a complete adversarial cycle report with per-binder-type ablation metrics — no GTD-specific constants appear in the output
+  2. The harness SDK `scripts/harness/harness-binder-type-sdk.ts` accepts any `BinderTypeConfig` and drives `runAdversarialCycle` + `AblationEngine` without modification — third-party binder type authors can use it as a framework
+  3. Gap analysis in the ablation report identifies which model columns are undertrained for the new binder type — the report is actionable, not just confirmatory
+**Plans**: TBD
+
 ## Progress
 
-**Execution Order:** 26 → 27 → 28 → 29
+**Execution Order:** 30 → 31 → 32 → 33 → 34
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -174,6 +241,11 @@ Plans:
 | 24. Unified Enrichment Wizard | v4.0 | 7/7 | Complete | 2026-03-10 |
 | 25. Iterative Enrichment Deepening | v4.0 | 3/3 | Complete | 2026-03-10 |
 | 26. Intelligence Sidecar + Schema | v5.0 | 2/2 | Complete | 2026-03-11 |
-| 27. Entity Detection + Registry | 2/2 | Complete   | 2026-03-11 | - |
-| 28. Relationship Inference | 2/2 | Complete   | 2026-03-11 | - |
-| 29. Entity Intelligence Consumers | 4/5 | In Progress|  | - |
+| 27. Entity Detection + Registry | v5.0 | 2/2 | Complete | 2026-03-11 |
+| 28. Relationship Inference + Cognitive Harness | v5.0 | 2/2 | Complete | 2026-03-11 |
+| 29. Entity Consumers + Trained Agent Validation | v5.0 | 4/5 | Complete | 2026-03-12 |
+| 30. Schema + BinderTypeConfig Protocol | v5.5 | 0/? | Not started | - |
+| 31. Context Gate Evaluator | v5.5 | 0/? | Not started | - |
+| 32. Predictive Enrichment Scorer | v5.5 | 0/? | Not started | - |
+| 33. Sequence Context ONNX Model | v5.5 | 0/? | Not started | - |
+| 34. Harness SDK + Second Binder Type Validation | v5.5 | 0/? | Not started | - |

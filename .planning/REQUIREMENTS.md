@@ -73,28 +73,28 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SCHM-01 | TBD | Pending |
-| GATE-01 | TBD | Pending |
-| GATE-02 | TBD | Pending |
-| GATE-03 | TBD | Pending |
-| GATE-04 | TBD | Pending |
-| GATE-05 | TBD | Pending |
-| PRED-01 | TBD | Pending |
-| PRED-02 | TBD | Pending |
-| PRED-03 | TBD | Pending |
-| SEQ-01 | TBD | Pending |
-| SEQ-02 | TBD | Pending |
-| SEQ-03 | TBD | Pending |
-| SEQ-04 | TBD | Pending |
-| BTYPE-01 | TBD | Pending |
-| BTYPE-02 | TBD | Pending |
-| BTYPE-03 | TBD | Pending |
+| SCHM-01 | Phase 30 | Pending |
+| BTYPE-01 | Phase 30 | Pending |
+| GATE-01 | Phase 31 | Pending |
+| GATE-02 | Phase 31 | Pending |
+| GATE-03 | Phase 31 | Pending |
+| GATE-04 | Phase 31 | Pending |
+| GATE-05 | Phase 31 | Pending |
+| PRED-01 | Phase 32 | Pending |
+| PRED-02 | Phase 32 | Pending |
+| PRED-03 | Phase 32 | Pending |
+| SEQ-01 | Phase 33 | Pending |
+| SEQ-02 | Phase 33 | Pending |
+| SEQ-03 | Phase 33 | Pending |
+| SEQ-04 | Phase 33 | Pending |
+| BTYPE-02 | Phase 34 | Pending |
+| BTYPE-03 | Phase 34 | Pending |
 
 **Coverage:**
 - v5.5 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16
+- Mapped to phases: 16
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-12 after initial definition*
+*Last updated: 2026-03-12 after roadmap creation — all 16 requirements mapped*

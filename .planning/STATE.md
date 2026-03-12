@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
-status: defining_requirements
+status: roadmap_ready
 stopped_at: null
 last_updated: "2026-03-12"
-last_activity: 2026-03-12 — Milestone v5.5 started
+last_activity: 2026-03-12 — Roadmap created, Phase 30 ready to plan
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,14 +21,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Defining requirements for v5.5 Cortical Intelligence
+**Current focus:** v5.5 Cortical Intelligence — Phase 30 next
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 30 (not started)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-03-12 — Milestone v5.5 started
+Status: Roadmap ready, awaiting phase planning
+Last activity: 2026-03-12 — Roadmap created for v5.5
+
+```
+[Phase 30] [Phase 31] [Phase 32] [Phase 33] [Phase 34]
+    [ ]         [ ]         [ ]         [ ]         [ ]
+  0% ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 0%
+```
 
 ## Performance Metrics
 
@@ -46,6 +52,7 @@ Last activity: 2026-03-12 — Milestone v5.5 started
 | v3.0 | 3 | 8 | 2 days |
 | v4.0 | 14 | 32 | 5 days |
 | v5.0 | 4 | 11 | 2 days |
+| v5.5 | 5 | TBD | in progress |
 
 ## Accumulated Context
 
@@ -62,11 +69,19 @@ Recent decisions affecting future work:
 - [v5.0]: ONNX contextTag takes precedence; entity-derived tag only fills when ONNX produces none
 - [HTM]: Adopt organizing principles (context gating, predictive enrichment, column protocol), NOT HTM algorithms
 - [HTM]: Sequence learning is the one HTM concept worth stealing — atom sequence context for classifiers
+- [v5.5]: BinderTypeConfig is the dependency unlock — Phase 30 must ship before any other v5.5 phase
+- [v5.5]: Pre-loop filter in dispatchTiered() — never add session-state logic inside canHandle(); handlers stay pure
+- [v5.5]: Sequence ONNX model runs in existing embedding worker (not a new worker) — avoids 4th concurrent ORT instance OOM on mobile
+- [v5.5]: dynamo=True with opset 18 is the only stable PyTorch ONNX export path for LSTM with dynamic sequence length
+- [v5.5]: Production MLP classifiers only replaced after harness ablation confirms F1 improvement
+- [v5.5]: Prediction is lazy + TTL-cached, never timer-based — no background agents, no conductors
 
 ### Pending Todos
 
 - Lightweight local computation validation sidecar (math.js + date-fns)
 - Wolfram computation engine integration (local + cloud)
+- Confirm PyTorch presence in .venv before Phase 33 begins: `python -c "import torch; print(torch.__version__)"`
+- Profile Dexie compound query latency at 2,000+ entity rows before Phase 32 ships on low-end mobile
 
 ### Blockers/Concerns
 
@@ -75,5 +90,6 @@ Recent decisions affecting future work:
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Starting v5.5 milestone
-Resume file: None
+Stopped at: Roadmap created for v5.5
+Resume file: .planning/ROADMAP.md
+Next action: `/gsd:plan-phase 30`
