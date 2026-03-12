@@ -35,11 +35,13 @@ const PATTERNS_CONFIG = patternsJson as RelationshipPatternsConfig;
 // Pre-build regexes for each pattern (avoid re-compiling on every call)
 interface CompiledPattern extends RelationshipPattern {
   regex: RegExp;
+  entityTextRegex?: RegExp;
 }
 
 const COMPILED_PATTERNS: CompiledPattern[] = PATTERNS_CONFIG.patterns.map((p) => ({
   ...p,
   regex: buildKeywordRegex(p.keywords),
+  entityTextRegex: p.entityTextFilter ? new RegExp(p.entityTextFilter, 'i') : undefined,
 }));
 
 // ---------------------------------------------------------------------------
@@ -177,7 +179,8 @@ export async function runKeywordPatterns(
 
       // Find entities of the target type in this sentence
       const matchingEntities = mentionsInSentence.filter(
-        (m) => m.entityType === pattern.targetEntityType && m.entityId,
+        (m) => m.entityType === pattern.targetEntityType && m.entityId &&
+          (!pattern.entityTextRegex || pattern.entityTextRegex.test(m.entityText)),
       );
 
       if (!matchingEntities.length) continue;

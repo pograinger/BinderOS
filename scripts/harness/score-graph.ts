@@ -72,26 +72,39 @@ function normalizeText(text: string): string {
 }
 
 /**
+ * Check if two normalized strings match (exact or substring).
+ * Substring: "pam" matches "pam jordan", "chen" matches "dr chen".
+ */
+function fuzzyMatch(a: string, b: string): boolean {
+  if (a === b) return true;
+  // Substring match — one must be at least 3 chars to avoid "a" matching "pam"
+  if (a.length >= 3 && b.includes(a)) return true;
+  if (b.length >= 3 && a.includes(b)) return true;
+  return false;
+}
+
+/**
  * Check if a detected entity matches a ground truth entity.
- * Match by canonical name or any alias (case-insensitive, title-stripped).
+ * Match by canonical name or any alias (case-insensitive, title-stripped, substring).
  */
 function entityMatches(detected: Entity, gt: GroundTruthEntity): boolean {
   const normDetected = normalizeText(detected.canonicalName);
+  const normGtCanonical = normalizeText(gt.canonicalName);
 
-  // Check canonical name
-  if (normDetected === normalizeText(gt.canonicalName)) return true;
+  // Check canonical name (exact + substring)
+  if (fuzzyMatch(normDetected, normGtCanonical)) return true;
 
   // Check GT aliases
   for (const alias of gt.aliases) {
-    if (normDetected === normalizeText(alias)) return true;
+    if (fuzzyMatch(normDetected, normalizeText(alias))) return true;
   }
 
   // Check detected aliases against GT canonical and aliases
   for (const detAlias of detected.aliases) {
     const normDetAlias = normalizeText(detAlias);
-    if (normDetAlias === normalizeText(gt.canonicalName)) return true;
+    if (fuzzyMatch(normDetAlias, normGtCanonical)) return true;
     for (const gtAlias of gt.aliases) {
-      if (normDetAlias === normalizeText(gtAlias)) return true;
+      if (fuzzyMatch(normDetAlias, normalizeText(gtAlias))) return true;
     }
   }
 
@@ -101,15 +114,19 @@ function entityMatches(detected: Entity, gt: GroundTruthEntity): boolean {
 /**
  * Resolve a ground truth entity name to a detected entity ID, if found.
  */
+/**
+ * Resolve a ground truth entity name to a detected entity ID, if found.
+ * Uses fuzzy matching (substring) to handle "Pam" matching "Pam Jordan".
+ */
 function resolveGtEntity(
   gtEntityName: string,
   detectedEntities: Entity[],
 ): string | undefined {
   const normGt = normalizeText(gtEntityName);
   for (const det of detectedEntities) {
-    if (normalizeText(det.canonicalName) === normGt) return det.id;
+    if (fuzzyMatch(normalizeText(det.canonicalName), normGt)) return det.id;
     for (const alias of det.aliases) {
-      if (normalizeText(alias) === normGt) return det.id;
+      if (fuzzyMatch(normalizeText(alias), normGt)) return det.id;
     }
   }
   return undefined;

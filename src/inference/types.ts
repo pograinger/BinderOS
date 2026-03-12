@@ -21,6 +21,9 @@ export interface RelationshipPattern {
   confidenceBase: number;
   /** Matching scope — always 'sentence' in Phase 28 */
   scope?: 'sentence';
+  /** Optional regex pattern the entity text must match for this pattern to fire.
+   *  Used to restrict healthcare-context to entities with "Dr." prefix. */
+  entityTextFilter?: string;
 }
 
 export interface RelationshipPatternsConfig {

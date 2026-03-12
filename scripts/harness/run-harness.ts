@@ -29,7 +29,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Constants
 // ---------------------------------------------------------------------------
 
-const CHECKPOINTS = [5, 10, 20, 30];
+/** Generate checkpoint positions: every 25% of corpus size, minimum at 5 */
+function computeCheckpoints(corpusSize: number): number[] {
+  const points: number[] = [];
+  const step = Math.max(5, Math.floor(corpusSize / 4));
+  for (let i = step; i < corpusSize; i += step) {
+    points.push(i);
+  }
+  return points;
+}
 
 // ---------------------------------------------------------------------------
 // Load utilities
@@ -75,7 +83,7 @@ function dryRun(corpus: Corpus, groundTruth: GroundTruth): void {
   console.log('');
 
   // Show expected checkpoints
-  const actualCheckpoints = CHECKPOINTS.filter((c) => c <= corpus.items.length);
+  const actualCheckpoints = computeCheckpoints(corpus.items.length);
   console.log('Expected checkpoints:');
   for (const cp of actualCheckpoints) {
     console.log(`  After atom ${cp}: score entity graph + relationships`);
@@ -158,7 +166,8 @@ async function main(): Promise<void> {
     await runHarnessAtom(item, store);
 
     // Score at checkpoints
-    if (CHECKPOINTS.includes(atomNumber)) {
+    const checkpoints = computeCheckpoints(corpus.items.length);
+    if (checkpoints.includes(atomNumber)) {
       // Flush co-occurrence before scoring at checkpoint
       flushHarnessCooccurrence(store);
 
@@ -191,6 +200,21 @@ async function main(): Promise<void> {
   console.log(`[run-harness] Processed ${finalAtomCount} atoms in ${duration}s`);
 
   // Write reports
+  // Diagnostic: dump all relations for analysis
+  if (args.includes('--debug')) {
+    console.log('\n[debug] All inferred relations:');
+    for (const rel of store.getRelations()) {
+      const target = store.getEntity(rel.targetEntityId);
+      const source = rel.sourceEntityId === '[SELF]' ? '[SELF]' : store.getEntity(rel.sourceEntityId)?.canonicalName ?? rel.sourceEntityId;
+      console.log(`  ${source} → ${target?.canonicalName ?? rel.targetEntityId}: ${rel.relationshipType} (${rel.sourceAttribution}, conf=${rel.confidence.toFixed(2)}, evidence=${rel.evidence.length})`);
+      if (rel.evidence.length <= 2) {
+        for (const ev of rel.evidence) {
+          console.log(`    snippet: "${ev.snippet}"`);
+        }
+      }
+    }
+  }
+
   const { jsonPath, mdPath } = writeReports(checkpointResults, reportsDir);
 
   console.log('');

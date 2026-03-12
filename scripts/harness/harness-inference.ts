@@ -31,11 +31,13 @@ const PATTERNS_CONFIG: RelationshipPatternsConfig = JSON.parse(
 
 interface CompiledPattern extends RelationshipPattern {
   regex: RegExp;
+  entityTextRegex?: RegExp;
 }
 
 const COMPILED_PATTERNS: CompiledPattern[] = PATTERNS_CONFIG.patterns.map((p) => ({
   ...p,
   regex: buildKeywordRegex(p.keywords),
+  entityTextRegex: p.entityTextFilter ? new RegExp(p.entityTextFilter, 'i') : undefined,
 }));
 
 // ---------------------------------------------------------------------------
@@ -132,7 +134,8 @@ export async function runHarnessKeywordPatterns(
       if (!pattern.regex.test(sentenceText)) continue;
 
       const matchingEntities = mentionsInSentence.filter(
-        (m) => m.entityType === pattern.targetEntityType && m.entityId,
+        (m) => m.entityType === pattern.targetEntityType && m.entityId &&
+          (!pattern.entityTextRegex || pattern.entityTextRegex.test(m.entityText)),
       );
 
       if (!matchingEntities.length) continue;

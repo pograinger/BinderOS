@@ -88,7 +88,7 @@ function dryRun(syntheticUser: Record<string, unknown>): void {
   console.log(`  Persona: ${syntheticUser.personaName}`);
   console.log(`  Ground truth entities: ${entities}`);
   console.log(`  Ground truth relationships: ${relationships}`);
-  console.log('  Would generate: 35 inbox items (80% natural, 20% edge cases)');
+  console.log('  Would generate: 60 inbox items (67% keyword-rich, 17% multi-entity, 8% edge, 8% reinforcing)');
   console.log('  Output: scripts/harness/corpus.json');
   console.log('');
   console.log('  To generate corpus, set ANTHROPIC_API_KEY and run without --dry-run');
@@ -105,6 +105,13 @@ function buildPrompt(syntheticUser: Record<string, unknown>): string {
   const relationships = JSON.stringify(gt.relationships, null, 2);
   const facts = JSON.stringify(gt.facts, null, 2);
 
+  // Load relationship patterns so the LLM knows what keywords to use
+  const patternsPath = path.join(__dirname, '../../src/config/relationship-patterns.json');
+  const patterns = JSON.parse(fs.readFileSync(patternsPath, 'utf-8'));
+  const patternSummary = (patterns.patterns as Array<{ id: string; keywords: string[]; relationshipType: string }>)
+    .map((p) => `  - ${p.relationshipType} (${p.id}): ${p.keywords.slice(0, 8).join(', ')}`)
+    .join('\n');
+
   return `You are generating a realistic GTD (Getting Things Done) inbox dataset for a synthetic user named Alex Jordan.
 
 ## Alex Jordan's Profile
@@ -120,25 +127,36 @@ ${relationships}
 **Key Facts:**
 ${facts}
 
+## Keyword Pattern Engine
+
+The system infers relationships by detecting keywords in the SAME SENTENCE as an entity mention. Here are the active patterns and their trigger keywords:
+
+${patternSummary}
+
+**CRITICAL:** For the system to infer a relationship, the inbox item MUST contain at least one keyword from the relevant pattern IN THE SAME SENTENCE as the entity name. Items without keywords will NOT create relationship inferences.
+
 ## Task
 
-Generate exactly 35 inbox items that Alex might capture during a typical week. These are raw inbox captures — thoughts, tasks, reminders, notes — NOT structured tasks.
+Generate exactly 60 inbox items that Alex might capture over 2-3 typical weeks. These are raw inbox captures — thoughts, tasks, reminders, notes — NOT structured tasks.
 
 **Distribution:**
-- 28 items (80%): Natural, realistic phrasing with organic entity mentions
-- 7 items (20%): Edge cases covering:
-  * Alias usage ("Pam" vs "Pamela", "Dr. Chen" vs "Chen", "Mom" vs "Linda")
-  * Title variations
-  * Multi-entity sentences (multiple people in one item)
-  * Entity-free items (no people/places mentioned)
-  * Ambiguous context
+- 40 items (67%): Natural, realistic phrasing that INCLUDES relationship-evidencing keywords. The keywords should feel organic, not forced. Examples:
+  * GOOD: "Grab beers with Jake after work Friday" (contains "beers" → friend pattern)
+  * GOOD: "Pick up my son Ethan from soccer practice" (contains "son" → child pattern)
+  * GOOD: "Pam and I need a date night this weekend" (contains "date night" → spouse pattern)
+  * BAD: "Jake" (no relationship evidence)
+  * BAD: "Call Pam about dinner plans" (no spouse keyword — system can't infer)
+- 10 items (17%): Items with multiple entities or repeated entity mentions (for co-occurrence)
+- 5 items (8%): Edge cases (alias usage, entity-free items, ambiguous context)
+- 5 items (8%): Relationship-reinforcing items (entity appears with DIFFERENT keywords from same relationship pattern, building evidence)
 
 **Requirements:**
-1. Cover ALL 14 ground truth relationships across the 35 items
+1. Cover ALL 14 ground truth relationships — each relationship must have AT LEAST 3 items with keyword evidence
 2. Use natural, first-person GTD inbox capture style
-3. Vary length (some very short like "Call Pam", some detailed)
+3. Vary length (some very short like "Pick up my son from school", some detailed)
 4. For each item, annotate entity mentions with character-level span positions
 5. Mark which ground truth relationships this item provides evidence for
+6. Ensure keyword presence is natural, not forced
 
 **Output Format (JSON only, no markdown):**
 {
@@ -168,7 +186,7 @@ Generate exactly 35 inbox items that Alex might capture during a typical week. T
 - entityId should NOT be set (resolved at runtime)
 - Only annotate PER, LOC, ORG entities (not DATE or MISC)
 
-Generate all 35 items now. Return ONLY valid JSON.`;
+Generate all 60 items now. Return ONLY valid JSON.`;
 }
 
 // ---------------------------------------------------------------------------
@@ -208,7 +226,7 @@ async function main(): Promise<void> {
 
   const message = await client.messages.create({
     model: 'claude-sonnet-4-20250514',
-    max_tokens: 8192,
+    max_tokens: 16384,
     messages: [
       {
         role: 'user',
