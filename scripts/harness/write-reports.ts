@@ -11,6 +11,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { GraphScore } from './score-graph.js';
+import type { ExperimentResult, PersonaAdversarialResult } from './harness-types.js';
+import { computeAggregateScore, computeLearningCurve } from './score-graph.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -137,6 +139,142 @@ function buildMarkdown(results: CheckpointResult[], runTimestamp: string): strin
 
 // ---------------------------------------------------------------------------
 // Main export
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Experiment-level report
+// ---------------------------------------------------------------------------
+
+function buildExperimentMarkdown(result: ExperimentResult): string {
+  const lines: string[] = [];
+
+  lines.push(`# Adversarial Training Experiment: ${result.experimentName}`);
+  lines.push(`**Started:** ${result.startedAt}`);
+  lines.push(`**Completed:** ${result.completedAt}`);
+  lines.push(`**Personas:** ${result.personas.length}`);
+  lines.push('');
+
+  // Cross-persona comparison table
+  lines.push('## Cross-Persona Summary');
+  lines.push('');
+  lines.push('| Persona | Cycles | Ent F1 | Rel F1 | Privacy | Status |');
+  lines.push('|---------|--------|--------|--------|---------|--------|');
+
+  const PASS_THRESHOLD = 0.80;
+
+  for (const persona of result.personas) {
+    const s = persona.finalScore;
+    const passed = s.relationshipF1 >= PASS_THRESHOLD ? 'PASS' : 'FAIL';
+    const cycleCount = persona.cycles.length;
+    lines.push(
+      `| ${persona.personaName} | ${cycleCount} | ${(s.entityF1 * 100).toFixed(1)}% | ${(s.relationshipF1 * 100).toFixed(1)}% | ${(s.privacyScore * 100).toFixed(1)}% | ${passed} |`,
+    );
+  }
+  lines.push('');
+
+  // Aggregate metrics
+  const agg = result.aggregateScore;
+  lines.push('## Aggregate Metrics');
+  lines.push('');
+  lines.push('| Metric | Mean | Median | Min | Max | StdDev |');
+  lines.push('|--------|------|--------|-----|-----|--------|');
+  const fmt = (n: number) => `${(n * 100).toFixed(1)}%`;
+  lines.push(`| Entity F1 | ${fmt(agg.entityF1.mean)} | ${fmt(agg.entityF1.median)} | ${fmt(agg.entityF1.min)} | ${fmt(agg.entityF1.max)} | ${fmt(agg.entityF1.stdDev)} |`);
+  lines.push(`| Relationship F1 | ${fmt(agg.relationshipF1.mean)} | ${fmt(agg.relationshipF1.median)} | ${fmt(agg.relationshipF1.min)} | ${fmt(agg.relationshipF1.max)} | ${fmt(agg.relationshipF1.stdDev)} |`);
+  lines.push(`| Privacy Score | ${fmt(agg.privacyScore.mean)} | ${fmt(agg.privacyScore.median)} | ${fmt(agg.privacyScore.min)} | ${fmt(agg.privacyScore.max)} | ${fmt(agg.privacyScore.stdDev)} |`);
+  lines.push('');
+
+  // Per-persona learning curves
+  lines.push('## Learning Curves (Relationship F1 by Cycle)');
+  lines.push('');
+  for (const [personaName, curve] of Object.entries(result.learningCurves)) {
+    lines.push(`### ${personaName}`);
+    for (const point of curve) {
+      lines.push(`  Cycle ${point.cycle}: ${asciiBar(point.relationshipF1)} RelF1  ${asciiBar(point.entityF1)} EntF1`);
+    }
+    lines.push('');
+  }
+
+  // Component attribution summary
+  lines.push('## Component Attribution');
+  lines.push('');
+  lines.push('Breakdown of how relationships were discovered across all personas:');
+  lines.push('');
+
+  const totalCounts: Record<string, number> = {
+    'keyword-pattern': 0,
+    'co-occurrence': 0,
+    'enrichment-mining': 0,
+    'user-correction': 0,
+  };
+  let totalRelations = 0;
+
+  for (const persona of result.personas) {
+    for (const cycle of persona.cycles) {
+      for (const [, count] of Object.entries(cycle.attribution.counts)) {
+        void count; // satisfy unused var
+      }
+      for (const source of Object.keys(totalCounts)) {
+        totalCounts[source] += cycle.attribution.counts[source as keyof typeof totalCounts] ?? 0;
+        totalRelations += cycle.attribution.counts[source as keyof typeof totalCounts] ?? 0;
+      }
+    }
+  }
+  // Deduplicate by persona final counts
+  if (totalRelations > 0) {
+    for (const [source, count] of Object.entries(totalCounts)) {
+      const pct = count / totalRelations;
+      lines.push(`  ${source.padEnd(22)}: ${asciiBar(pct)} (${count} relations)`);
+    }
+  }
+  lines.push('');
+
+  // Worst-performing personas
+  const sortedByRelF1 = [...result.personas].sort(
+    (a, b) => a.finalScore.relationshipF1 - b.finalScore.relationshipF1,
+  );
+  const worst = sortedByRelF1.slice(0, Math.min(3, sortedByRelF1.length));
+  if (worst.some((p) => p.finalScore.relationshipF1 < PASS_THRESHOLD)) {
+    lines.push('## Personas Needing Attention');
+    lines.push('');
+    for (const persona of worst) {
+      if (persona.finalScore.relationshipF1 >= PASS_THRESHOLD) continue;
+      const lastCycle = persona.cycles[persona.cycles.length - 1];
+      lines.push(`### ${persona.personaName} (RelF1: ${(persona.finalScore.relationshipF1 * 100).toFixed(1)}%)`);
+      if (lastCycle?.gaps.length > 0) {
+        lines.push(`**Remaining gaps after ${persona.cycles.length} cycles:**`);
+        for (const gap of lastCycle.gaps.slice(0, 5)) {
+          lines.push(`  - ${gap.groundTruthRelationship.entity}: "${gap.groundTruthRelationship.type}" — ${gap.gapReason}`);
+        }
+      }
+      lines.push('');
+    }
+  }
+
+  return lines.join('\n');
+}
+
+export function writeExperimentReport(
+  result: ExperimentResult,
+  outputDir: string,
+): { jsonPath: string; mdPath: string } {
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  const jsonPath = path.join(outputDir, 'experiment-report.json');
+  const mdPath = path.join(outputDir, 'experiment-report.md');
+
+  fs.writeFileSync(jsonPath, JSON.stringify(result, null, 2), 'utf-8');
+
+  const mdContent = buildExperimentMarkdown(result);
+  fs.writeFileSync(mdPath, mdContent, 'utf-8');
+
+  return { jsonPath, mdPath };
+}
+
+// ---------------------------------------------------------------------------
+// Single-persona reports (backward compatible)
 // ---------------------------------------------------------------------------
 
 export function writeReports(results: CheckpointResult[], outputDir: string): {

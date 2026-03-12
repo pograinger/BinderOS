@@ -1,0 +1,272 @@
+{
+  "personaName": "Rafael Moreno",
+  "bio": "Rafael Moreno is a third-generation Mexican-American business owner who runs a successful 3-location taqueria chain across the LA area. He works closely with his adult son Diego in the family business while managing a team of staff leads, key vendors, and professional service providers to keep operations running smoothly.",
+  "groundTruth": {
+    "entities": [
+      {
+        "canonicalName": "Rafael Moreno",
+        "type": "PER",
+        "aliases": [
+          "Rafael",
+          "Rafa",
+          "Señor Moreno",
+          "Mr. Moreno"
+        ]
+      },
+      {
+        "canonicalName": "Carmen Moreno",
+        "type": "PER",
+        "aliases": [
+          "Carmen",
+          "mi amor",
+          "wife"
+        ]
+      },
+      {
+        "canonicalName": "Diego Moreno",
+        "type": "PER",
+        "aliases": [
+          "Diego",
+          "mijo",
+          "son"
+        ]
+      },
+      {
+        "canonicalName": "Elena Moreno",
+        "type": "PER",
+        "aliases": [
+          "Elena",
+          "mama",
+          "mother"
+        ]
+      },
+      {
+        "canonicalName": "Carlos Moreno Sr.",
+        "type": "PER",
+        "aliases": [
+          "Carlos",
+          "papa",
+          "father",
+          "dad"
+        ]
+      },
+      {
+        "canonicalName": "Maria Gonzalez",
+        "type": "PER",
+        "aliases": [
+          "Maria",
+          "chef Maria"
+        ]
+      },
+      {
+        "canonicalName": "Luis Rodriguez",
+        "type": "PER",
+        "aliases": [
+          "Luis",
+          "manager Luis"
+        ]
+      },
+      {
+        "canonicalName": "Ana Vasquez",
+        "type": "PER",
+        "aliases": [
+          "Ana",
+          "shift lead Ana"
+        ]
+      },
+      {
+        "canonicalName": "Miguel Santos",
+        "type": "PER",
+        "aliases": [
+          "Miguel",
+          "supplier Miguel"
+        ]
+      },
+      {
+        "canonicalName": "Rosa Martinez",
+        "type": "PER",
+        "aliases": [
+          "Rosa",
+          "Rosa from produce"
+        ]
+      },
+      {
+        "canonicalName": "Thomas Chen",
+        "type": "PER",
+        "aliases": [
+          "Thomas",
+          "Tom",
+          "accountant Chen"
+        ]
+      },
+      {
+        "canonicalName": "Jennifer Walsh",
+        "type": "PER",
+        "aliases": [
+          "Jennifer",
+          "Jenny",
+          "attorney Walsh"
+        ]
+      },
+      {
+        "canonicalName": "David Kim",
+        "type": "PER",
+        "aliases": [
+          "David",
+          "Dave",
+          "equipment Dave"
+        ]
+      },
+      {
+        "canonicalName": "Moreno's Taqueria",
+        "type": "ORG",
+        "aliases": [
+          "the business",
+          "taqueria",
+          "restaurant"
+        ]
+      },
+      {
+        "canonicalName": "East LA Chamber of Commerce",
+        "type": "ORG",
+        "aliases": [
+          "Chamber",
+          "ELACC",
+          "business chamber"
+        ]
+      },
+      {
+        "canonicalName": "Whittier Boulevard",
+        "type": "LOC",
+        "aliases": [
+          "main location",
+          "flagship store"
+        ]
+      },
+      {
+        "canonicalName": "Montebello",
+        "type": "LOC",
+        "aliases": [
+          "second location",
+          "Montebello store"
+        ]
+      },
+      {
+        "canonicalName": "Bell Gardens",
+        "type": "LOC",
+        "aliases": [
+          "third location",
+          "newest location"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "entity": "Carmen Moreno",
+        "type": "spouse",
+        "confidence": 1,
+        "note": "married 25 years"
+      },
+      {
+        "entity": "Diego Moreno",
+        "type": "child",
+        "confidence": 1,
+        "note": "works in family business"
+      },
+      {
+        "entity": "Elena Moreno",
+        "type": "parent",
+        "confidence": 1,
+        "note": "aging mother"
+      },
+      {
+        "entity": "Carlos Moreno Sr.",
+        "type": "parent",
+        "confidence": 1,
+        "note": "aging father"
+      },
+      {
+        "entity": "Maria Gonzalez",
+        "type": "direct-report",
+        "confidence": 1,
+        "note": "head chef across locations"
+      },
+      {
+        "entity": "Luis Rodriguez",
+        "type": "direct-report",
+        "confidence": 1,
+        "note": "general manager"
+      },
+      {
+        "entity": "Ana Vasquez",
+        "type": "direct-report",
+        "confidence": 1,
+        "note": "shift supervisor"
+      },
+      {
+        "entity": "Miguel Santos",
+        "type": "business-partner",
+        "confidence": 1,
+        "note": "meat supplier"
+      },
+      {
+        "entity": "Rosa Martinez",
+        "type": "business-partner",
+        "confidence": 1,
+        "note": "produce vendor"
+      },
+      {
+        "entity": "David Kim",
+        "type": "business-partner",
+        "confidence": 1,
+        "note": "kitchen equipment vendor"
+      },
+      {
+        "entity": "Thomas Chen",
+        "type": "accountant",
+        "confidence": 1,
+        "note": "handles business taxes"
+      },
+      {
+        "entity": "Jennifer Walsh",
+        "type": "lawyer",
+        "confidence": 1,
+        "note": "business attorney"
+      },
+      {
+        "entity": "Moreno's Taqueria",
+        "type": "works-at",
+        "confidence": 1,
+        "note": "business owner"
+      },
+      {
+        "entity": "East LA Chamber of Commerce",
+        "type": "member-of",
+        "confidence": 1,
+        "note": "active member"
+      },
+      {
+        "entity": "Diego Moreno",
+        "type": "colleague",
+        "confidence": 1,
+        "note": "business partner and son"
+      }
+    ],
+    "facts": [
+      "Rafael owns three taqueria locations in the LA area",
+      "His son Diego works in the family business",
+      "Rafael is married to Carmen for 25 years",
+      "He has aging parents Elena and Carlos who need care",
+      "Maria Gonzalez is his head chef across all locations",
+      "Luis Rodriguez manages day-to-day operations",
+      "Thomas Chen handles all business accounting and taxes",
+      "Jennifer Walsh provides legal counsel for the business",
+      "Rafael is an active member of the East LA Chamber of Commerce",
+      "The flagship location is on Whittier Boulevard",
+      "Miguel Santos supplies meat to all three restaurants",
+      "Rosa Martinez provides fresh produce weekly",
+      "Ana Vasquez supervises evening shifts",
+      "David Kim maintains kitchen equipment across locations"
+    ]
+  }
+}

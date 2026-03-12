@@ -1,0 +1,341 @@
+{
+  "personaName": "Sunita Patel",
+  "bio": "Sunita is a 38-year-old high school biology teacher who immigrated from Gujarat as a child and now lives in New Jersey with her husband and three children. She's deeply involved in her local Hindu temple community and manages a busy household that includes frequent coordination with her in-laws who live nearby. Sunita uses GTD primarily to juggle her teaching responsibilities, family obligations, and temple volunteer work.",
+  "groundTruth": {
+    "entities": [
+      {
+        "canonicalName": "Sunita Patel",
+        "type": "PER",
+        "aliases": [
+          "Sunita",
+          "Mrs. Patel"
+        ]
+      },
+      {
+        "canonicalName": "Rajesh Patel",
+        "type": "PER",
+        "aliases": [
+          "Raj",
+          "Rajesh",
+          "hubby"
+        ]
+      },
+      {
+        "canonicalName": "Priya Patel",
+        "type": "PER",
+        "aliases": [
+          "Pri",
+          "Priya"
+        ]
+      },
+      {
+        "canonicalName": "Arjun Patel",
+        "type": "PER",
+        "aliases": [
+          "Arjun",
+          "beta"
+        ]
+      },
+      {
+        "canonicalName": "Kavya Patel",
+        "type": "PER",
+        "aliases": [
+          "Kavs",
+          "Kavya",
+          "little one"
+        ]
+      },
+      {
+        "canonicalName": "Meera Patel",
+        "type": "PER",
+        "aliases": [
+          "Meera-ji",
+          "Ma",
+          "mother-in-law"
+        ]
+      },
+      {
+        "canonicalName": "Kishore Patel",
+        "type": "PER",
+        "aliases": [
+          "Kishore-ji",
+          "Papa",
+          "father-in-law"
+        ]
+      },
+      {
+        "canonicalName": "Nandini Shah",
+        "type": "PER",
+        "aliases": [
+          "Nandini",
+          "mom",
+          "Mummy"
+        ]
+      },
+      {
+        "canonicalName": "Bhavesh Shah",
+        "type": "PER",
+        "aliases": [
+          "Bhavesh",
+          "dad",
+          "Papa"
+        ]
+      },
+      {
+        "canonicalName": "Dr. Jennifer Chen",
+        "type": "PER",
+        "aliases": [
+          "Dr. Chen",
+          "pediatrician"
+        ]
+      },
+      {
+        "canonicalName": "Michelle Rodriguez",
+        "type": "PER",
+        "aliases": [
+          "Michelle",
+          "Ms. Rodriguez"
+        ]
+      },
+      {
+        "canonicalName": "David Kim",
+        "type": "PER",
+        "aliases": [
+          "Dave",
+          "Mr. Kim",
+          "principal"
+        ]
+      },
+      {
+        "canonicalName": "Sarah Johnson",
+        "type": "PER",
+        "aliases": [
+          "Sarah",
+          "Mrs. Johnson"
+        ]
+      },
+      {
+        "canonicalName": "Pandit Ramesh Sharma",
+        "type": "PER",
+        "aliases": [
+          "Pandit-ji",
+          "Ramesh-ji"
+        ]
+      },
+      {
+        "canonicalName": "Asha Desai",
+        "type": "PER",
+        "aliases": [
+          "Asha-ben",
+          "Asha"
+        ]
+      },
+      {
+        "canonicalName": "Robert Thompson",
+        "type": "PER",
+        "aliases": [
+          "Bob",
+          "Mr. Thompson"
+        ]
+      },
+      {
+        "canonicalName": "Lisa Martinez",
+        "type": "PER",
+        "aliases": [
+          "Lisa",
+          "neighbor"
+        ]
+      },
+      {
+        "canonicalName": "Edison High School",
+        "type": "ORG",
+        "aliases": [
+          "EHS",
+          "the school",
+          "Edison"
+        ]
+      },
+      {
+        "canonicalName": "Hindu Temple of Central Jersey",
+        "type": "ORG",
+        "aliases": [
+          "temple",
+          "HTCJ",
+          "mandir"
+        ]
+      },
+      {
+        "canonicalName": "Princeton Pediatrics",
+        "type": "ORG",
+        "aliases": [
+          "Dr. Chen's office",
+          "pediatrician office"
+        ]
+      },
+      {
+        "canonicalName": "Cherry Hill Elementary",
+        "type": "ORG",
+        "aliases": [
+          "Cherry Hill",
+          "Kavya's school"
+        ]
+      },
+      {
+        "canonicalName": "Edison Township",
+        "type": "LOC",
+        "aliases": [
+          "Edison",
+          "hometown"
+        ]
+      },
+      {
+        "canonicalName": "Mumbai",
+        "type": "LOC",
+        "aliases": [
+          "Bombay"
+        ]
+      },
+      {
+        "canonicalName": "Oak Lane",
+        "type": "LOC",
+        "aliases": [
+          "home",
+          "our street"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "entity": "Rajesh Patel",
+        "type": "spouse",
+        "confidence": 1,
+        "note": "married 16 years"
+      },
+      {
+        "entity": "Priya Patel",
+        "type": "child",
+        "confidence": 1,
+        "note": "eldest daughter, 14 years old"
+      },
+      {
+        "entity": "Arjun Patel",
+        "type": "child",
+        "confidence": 1,
+        "note": "son, 11 years old"
+      },
+      {
+        "entity": "Kavya Patel",
+        "type": "child",
+        "confidence": 1,
+        "note": "youngest daughter, 6 years old"
+      },
+      {
+        "entity": "Meera Patel",
+        "type": "extended-family",
+        "confidence": 1,
+        "note": "mother-in-law, lives nearby"
+      },
+      {
+        "entity": "Kishore Patel",
+        "type": "extended-family",
+        "confidence": 1,
+        "note": "father-in-law, lives nearby"
+      },
+      {
+        "entity": "Nandini Shah",
+        "type": "parent",
+        "confidence": 1,
+        "note": "mother, lives in Mumbai"
+      },
+      {
+        "entity": "Bhavesh Shah",
+        "type": "parent",
+        "confidence": 1,
+        "note": "father, lives in Mumbai"
+      },
+      {
+        "entity": "Dr. Jennifer Chen",
+        "type": "healthcare-provider",
+        "confidence": 1,
+        "note": "children's pediatrician"
+      },
+      {
+        "entity": "Michelle Rodriguez",
+        "type": "colleague",
+        "confidence": 1,
+        "note": "chemistry teacher, close work friend"
+      },
+      {
+        "entity": "David Kim",
+        "type": "reports-to",
+        "confidence": 1,
+        "note": "principal at Edison High School"
+      },
+      {
+        "entity": "Sarah Johnson",
+        "type": "colleague",
+        "confidence": 1,
+        "note": "science department head"
+      },
+      {
+        "entity": "Pandit Ramesh Sharma",
+        "type": "mentor",
+        "confidence": 1,
+        "note": "temple priest and spiritual guide"
+      },
+      {
+        "entity": "Asha Desai",
+        "type": "friend",
+        "confidence": 1,
+        "note": "temple committee member and close friend"
+      },
+      {
+        "entity": "Robert Thompson",
+        "type": "neighbor",
+        "confidence": 1,
+        "note": "next door neighbor"
+      },
+      {
+        "entity": "Lisa Martinez",
+        "type": "neighbor",
+        "confidence": 1,
+        "note": "across the street neighbor"
+      },
+      {
+        "entity": "Edison High School",
+        "type": "works-at",
+        "confidence": 1,
+        "note": "biology teacher for 12 years"
+      },
+      {
+        "entity": "Hindu Temple of Central Jersey",
+        "type": "member-of",
+        "confidence": 1,
+        "note": "active volunteer and committee member"
+      },
+      {
+        "entity": "Oak Lane",
+        "type": "lives-at",
+        "confidence": 1,
+        "note": "family home address"
+      }
+    ],
+    "facts": [
+      "Sunita teaches AP Biology and freshman biology at Edison High School",
+      "She volunteers on the cultural events committee at Hindu Temple of Central Jersey",
+      "Priya is in 9th grade and plays violin in the school orchestra",
+      "Arjun plays soccer and needs rides to practice twice a week",
+      "Kavya attends Cherry Hill Elementary and takes dance classes at the temple",
+      "Sunita's parents visit from Mumbai every winter for three months",
+      "She coordinates Sunday school teaching at the temple with Asha Desai",
+      "Michelle Rodriguez is her lab partner for joint biology experiments",
+      "The family celebrates Diwali every year with a big party at home",
+      "Sunita manages all medical appointments for the children with Dr. Chen",
+      "She carpools with Lisa Martinez for school pickup",
+      "Rajesh works in IT and travels occasionally for work",
+      "The in-laws help with childcare and traditional cooking",
+      "Sunita organizes the annual temple fundraising dinner",
+      "She attends parent-teacher conferences for all three children"
+    ]
+  }
+}

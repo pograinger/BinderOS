@@ -1,0 +1,231 @@
+{
+  "personaName": "Anna Liu",
+  "bio": "Anna is a 27-year-old PhD candidate in computational biology from Taiwan, studying at a prestigious U.S. university. She maintains close relationships with her lab group and advisor while navigating a long-distance relationship with her partner Kevin who lives in Boston.",
+  "groundTruth": {
+    "entities": [
+      {
+        "canonicalName": "Anna Liu",
+        "type": "PER",
+        "aliases": [
+          "Anna",
+          "Liu Anna"
+        ]
+      },
+      {
+        "canonicalName": "Professor Sarah Chen",
+        "type": "PER",
+        "aliases": [
+          "Dr. Chen",
+          "Prof. Chen",
+          "Sarah Chen",
+          "Chen"
+        ]
+      },
+      {
+        "canonicalName": "Kevin Martinez",
+        "type": "PER",
+        "aliases": [
+          "Kevin",
+          "Kev"
+        ]
+      },
+      {
+        "canonicalName": "Wei-Ming Liu",
+        "type": "PER",
+        "aliases": [
+          "Dad",
+          "Father",
+          "Wei-Ming"
+        ]
+      },
+      {
+        "canonicalName": "Li-Hua Liu",
+        "type": "PER",
+        "aliases": [
+          "Mom",
+          "Mother",
+          "Li-Hua"
+        ]
+      },
+      {
+        "canonicalName": "David Liu",
+        "type": "PER",
+        "aliases": [
+          "David",
+          "little brother"
+        ]
+      },
+      {
+        "canonicalName": "Marcus Thompson",
+        "type": "PER",
+        "aliases": [
+          "Marcus",
+          "Thompson"
+        ]
+      },
+      {
+        "canonicalName": "Priya Patel",
+        "type": "PER",
+        "aliases": [
+          "Priya"
+        ]
+      },
+      {
+        "canonicalName": "Dr. Jennifer Wong",
+        "type": "PER",
+        "aliases": [
+          "Dr. Wong",
+          "Jennifer Wong"
+        ]
+      },
+      {
+        "canonicalName": "Rachel Kim",
+        "type": "PER",
+        "aliases": [
+          "Rachel",
+          "CPA Kim"
+        ]
+      },
+      {
+        "canonicalName": "Stanford University",
+        "type": "ORG",
+        "aliases": [
+          "Stanford",
+          "the university"
+        ]
+      },
+      {
+        "canonicalName": "Chen Lab",
+        "type": "ORG",
+        "aliases": [
+          "the lab",
+          "our lab group"
+        ]
+      },
+      {
+        "canonicalName": "Graduate Student Association",
+        "type": "ORG",
+        "aliases": [
+          "GSA",
+          "grad student association"
+        ]
+      },
+      {
+        "canonicalName": "Taiwanese Student Association",
+        "type": "ORG",
+        "aliases": [
+          "TSA",
+          "Taiwan club"
+        ]
+      },
+      {
+        "canonicalName": "Palo Alto",
+        "type": "LOC",
+        "aliases": [
+          "PA",
+          "downtown Palo Alto"
+        ]
+      },
+      {
+        "canonicalName": "Taipei",
+        "type": "LOC",
+        "aliases": [
+          "Taipei City",
+          "home"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "entity": "Professor Sarah Chen",
+        "type": "reports-to",
+        "confidence": 1,
+        "note": "PhD advisor and lab supervisor"
+      },
+      {
+        "entity": "Kevin Martinez",
+        "type": "partner",
+        "confidence": 1,
+        "note": "Long-distance boyfriend in Boston"
+      },
+      {
+        "entity": "Wei-Ming Liu",
+        "type": "parent",
+        "confidence": 1,
+        "note": "Father living in Taipei"
+      },
+      {
+        "entity": "Li-Hua Liu",
+        "type": "parent",
+        "confidence": 1,
+        "note": "Mother living in Taipei"
+      },
+      {
+        "entity": "David Liu",
+        "type": "sibling",
+        "confidence": 1,
+        "note": "Younger brother, undergraduate in Taiwan"
+      },
+      {
+        "entity": "Marcus Thompson",
+        "type": "colleague",
+        "confidence": 1,
+        "note": "Fellow PhD student in Chen Lab"
+      },
+      {
+        "entity": "Priya Patel",
+        "type": "friend",
+        "confidence": 1,
+        "note": "Close friend and lab mate"
+      },
+      {
+        "entity": "Dr. Jennifer Wong",
+        "type": "healthcare-provider",
+        "confidence": 1,
+        "note": "Primary care physician"
+      },
+      {
+        "entity": "Rachel Kim",
+        "type": "accountant",
+        "confidence": 1,
+        "note": "Tax preparer for international student taxes"
+      },
+      {
+        "entity": "Stanford University",
+        "type": "studies-at",
+        "confidence": 1,
+        "note": "PhD program institution"
+      },
+      {
+        "entity": "Chen Lab",
+        "type": "works-at",
+        "confidence": 1,
+        "note": "Research lab affiliation"
+      },
+      {
+        "entity": "Graduate Student Association",
+        "type": "member-of",
+        "confidence": 1,
+        "note": "Active member and event organizer"
+      },
+      {
+        "entity": "Taiwanese Student Association",
+        "type": "member-of",
+        "confidence": 1,
+        "note": "Cultural organization membership"
+      }
+    ],
+    "facts": [
+      "Anna is pursuing a PhD in computational biology at Stanford University",
+      "Professor Chen is Anna's thesis advisor and lab supervisor",
+      "Kevin lives in Boston and maintains a long-distance relationship with Anna",
+      "Anna's parents Wei-Ming and Li-Hua live in Taipei, Taiwan",
+      "David is Anna's younger brother studying undergraduate in Taiwan",
+      "Marcus and Priya are fellow graduate students in the Chen Lab",
+      "Anna is an active member of both the Graduate Student Association and Taiwanese Student Association",
+      "Dr. Wong is Anna's primary care physician for routine checkups",
+      "Rachel Kim helps Anna with tax preparation as an international student",
+      "Anna lives in Palo Alto near the Stanford campus"
+    ]
+  }
+}

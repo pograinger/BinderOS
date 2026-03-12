@@ -1,0 +1,298 @@
+{
+  "personaName": "Margaret Chen",
+  "bio": "Margaret Chen is a 68-year-old retired elementary school teacher who dedicates her time to family and community service. After losing her husband five years ago, she stays busy volunteering at her church, helping with her four grandchildren's activities, and slowly transitioning her detailed paper planning system to digital tools.",
+  "groundTruth": {
+    "entities": [
+      {
+        "canonicalName": "Margaret Chen",
+        "type": "PER",
+        "aliases": [
+          "Margaret",
+          "Mrs. Chen",
+          "Grandma Chen",
+          "Maggie"
+        ]
+      },
+      {
+        "canonicalName": "Robert Chen",
+        "type": "PER",
+        "aliases": [
+          "Bob",
+          "Bobby",
+          "Dad"
+        ]
+      },
+      {
+        "canonicalName": "Jennifer Chen-Williams",
+        "type": "PER",
+        "aliases": [
+          "Jenny",
+          "Jen"
+        ]
+      },
+      {
+        "canonicalName": "Michael Chen",
+        "type": "PER",
+        "aliases": [
+          "Mike",
+          "Mikey"
+        ]
+      },
+      {
+        "canonicalName": "David Williams",
+        "type": "PER",
+        "aliases": [
+          "Dave"
+        ]
+      },
+      {
+        "canonicalName": "Sarah Chen",
+        "type": "PER",
+        "aliases": [
+          "Sarah"
+        ]
+      },
+      {
+        "canonicalName": "Emma Williams",
+        "type": "PER",
+        "aliases": [
+          "Em",
+          "Emmy"
+        ]
+      },
+      {
+        "canonicalName": "Lucas Williams",
+        "type": "PER",
+        "aliases": [
+          "Luke"
+        ]
+      },
+      {
+        "canonicalName": "Sophia Chen",
+        "type": "PER",
+        "aliases": [
+          "Sophie"
+        ]
+      },
+      {
+        "canonicalName": "Daniel Chen",
+        "type": "PER",
+        "aliases": [
+          "Danny",
+          "Dan"
+        ]
+      },
+      {
+        "canonicalName": "Dr. Patricia Morrison",
+        "type": "PER",
+        "aliases": [
+          "Dr. Morrison",
+          "Patricia"
+        ]
+      },
+      {
+        "canonicalName": "Dr. James Liu",
+        "type": "PER",
+        "aliases": [
+          "Dr. Liu"
+        ]
+      },
+      {
+        "canonicalName": "Helen Rodriguez",
+        "type": "PER",
+        "aliases": [
+          "Helen"
+        ]
+      },
+      {
+        "canonicalName": "Pastor William Kim",
+        "type": "PER",
+        "aliases": [
+          "Pastor Kim",
+          "Bill Kim"
+        ]
+      },
+      {
+        "canonicalName": "Nancy Thompson",
+        "type": "PER",
+        "aliases": [
+          "Nancy"
+        ]
+      },
+      {
+        "canonicalName": "Grace Community Church",
+        "type": "ORG",
+        "aliases": [
+          "Grace Church",
+          "the church"
+        ]
+      },
+      {
+        "canonicalName": "Riverside Elementary School",
+        "type": "ORG",
+        "aliases": [
+          "Riverside Elementary",
+          "the school"
+        ]
+      },
+      {
+        "canonicalName": "Morrison Family Practice",
+        "type": "ORG",
+        "aliases": [
+          "Dr. Morrison's office"
+        ]
+      },
+      {
+        "canonicalName": "Sunset Dental Group",
+        "type": "ORG",
+        "aliases": [
+          "the dentist office"
+        ]
+      },
+      {
+        "canonicalName": "Millbrook Library",
+        "type": "ORG",
+        "aliases": [
+          "the library"
+        ]
+      },
+      {
+        "canonicalName": "Oakland California",
+        "type": "LOC",
+        "aliases": [
+          "Oakland",
+          "home"
+        ]
+      },
+      {
+        "canonicalName": "Fremont California",
+        "type": "LOC",
+        "aliases": [
+          "Fremont"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "entity": "Robert Chen",
+        "type": "spouse",
+        "confidence": 1,
+        "note": "deceased husband"
+      },
+      {
+        "entity": "Jennifer Chen-Williams",
+        "type": "child",
+        "confidence": 1,
+        "note": "eldest daughter"
+      },
+      {
+        "entity": "Michael Chen",
+        "type": "child",
+        "confidence": 1,
+        "note": "youngest son"
+      },
+      {
+        "entity": "David Williams",
+        "type": "extended-family",
+        "confidence": 1,
+        "note": "son-in-law"
+      },
+      {
+        "entity": "Sarah Chen",
+        "type": "extended-family",
+        "confidence": 1,
+        "note": "daughter-in-law"
+      },
+      {
+        "entity": "Emma Williams",
+        "type": "extended-family",
+        "confidence": 1,
+        "note": "granddaughter"
+      },
+      {
+        "entity": "Lucas Williams",
+        "type": "extended-family",
+        "confidence": 1,
+        "note": "grandson"
+      },
+      {
+        "entity": "Sophia Chen",
+        "type": "extended-family",
+        "confidence": 1,
+        "note": "granddaughter"
+      },
+      {
+        "entity": "Daniel Chen",
+        "type": "extended-family",
+        "confidence": 1,
+        "note": "grandson"
+      },
+      {
+        "entity": "Dr. Patricia Morrison",
+        "type": "healthcare-provider",
+        "confidence": 1,
+        "note": "primary care physician"
+      },
+      {
+        "entity": "Dr. James Liu",
+        "type": "dentist",
+        "confidence": 1,
+        "note": "family dentist"
+      },
+      {
+        "entity": "Helen Rodriguez",
+        "type": "colleague",
+        "confidence": 1,
+        "note": "former teaching colleague"
+      },
+      {
+        "entity": "Pastor William Kim",
+        "type": "colleague",
+        "confidence": 1,
+        "note": "church pastor and committee collaborator"
+      },
+      {
+        "entity": "Nancy Thompson",
+        "type": "neighbor",
+        "confidence": 1,
+        "note": "next door neighbor"
+      },
+      {
+        "entity": "Grace Community Church",
+        "type": "volunteer-at",
+        "confidence": 1,
+        "note": "volunteers with children's ministry"
+      },
+      {
+        "entity": "Riverside Elementary School",
+        "type": "works-at",
+        "confidence": 1,
+        "note": "former workplace"
+      },
+      {
+        "entity": "Millbrook Library",
+        "type": "volunteer-at",
+        "confidence": 1,
+        "note": "volunteers with literacy program"
+      },
+      {
+        "entity": "Oakland California",
+        "type": "lives-at",
+        "confidence": 1,
+        "note": "current residence"
+      }
+    ],
+    "facts": [
+      "Margaret taught third grade for 35 years at Riverside Elementary School",
+      "She has been widowed for five years after Robert passed from cancer",
+      "Margaret volunteers at Grace Community Church helping with children's programs",
+      "She drives her grandchildren Emma and Lucas to soccer practice on weekends",
+      "Margaret is slowly learning to use digital planning tools instead of her paper system",
+      "She has regular checkups with Dr. Morrison for her diabetes management",
+      "Margaret helps organize the annual church fundraiser with Pastor Kim",
+      "She babysits grandson Danny every Tuesday while Sarah works",
+      "Margaret volunteers at the library teaching adults basic computer skills",
+      "Her neighbor Nancy waters her plants when she visits family in Fremont"
+    ]
+  }
+}

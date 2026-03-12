@@ -1,0 +1,373 @@
+{
+  "personaName": "Priya Nair",
+  "bio": "Priya Nair is a VP of Product at CloudSync Solutions, a mid-size SaaS company based in Austin, Texas. Originally from Kerala, India, she immigrated to the US for her MBA and has built a successful career in tech while raising two children with her husband Rajesh, who works remotely as a software architect.",
+  "groundTruth": {
+    "entities": [
+      {
+        "canonicalName": "Priya Nair",
+        "type": "PER",
+        "aliases": [
+          "Priya",
+          "VP Nair",
+          "Priya N."
+        ]
+      },
+      {
+        "canonicalName": "Rajesh Nair",
+        "type": "PER",
+        "aliases": [
+          "Raj",
+          "husband",
+          "Rajesh"
+        ]
+      },
+      {
+        "canonicalName": "Arjun Nair",
+        "type": "PER",
+        "aliases": [
+          "Arjun",
+          "son"
+        ]
+      },
+      {
+        "canonicalName": "Kavya Nair",
+        "type": "PER",
+        "aliases": [
+          "Kavya",
+          "daughter"
+        ]
+      },
+      {
+        "canonicalName": "Lakshmi Menon",
+        "type": "PER",
+        "aliases": [
+          "Mom",
+          "Amma",
+          "mother"
+        ]
+      },
+      {
+        "canonicalName": "Suresh Menon",
+        "type": "PER",
+        "aliases": [
+          "Dad",
+          "Achan",
+          "father"
+        ]
+      },
+      {
+        "canonicalName": "Deepa Pillai",
+        "type": "PER",
+        "aliases": [
+          "Deepa",
+          "sister",
+          "Deepa Pillai"
+        ]
+      },
+      {
+        "canonicalName": "Marcus Chen",
+        "type": "PER",
+        "aliases": [
+          "Marcus",
+          "CEO Chen",
+          "boss"
+        ]
+      },
+      {
+        "canonicalName": "Sarah Williams",
+        "type": "PER",
+        "aliases": [
+          "Sarah",
+          "direct report",
+          "Sarah W."
+        ]
+      },
+      {
+        "canonicalName": "Dr. Jennifer Martinez",
+        "type": "PER",
+        "aliases": [
+          "Dr. Martinez",
+          "pediatrician",
+          "Jenny Martinez"
+        ]
+      },
+      {
+        "canonicalName": "Lisa Rodriguez",
+        "type": "PER",
+        "aliases": [
+          "Lisa",
+          "CPA Rodriguez",
+          "accountant"
+        ]
+      },
+      {
+        "canonicalName": "James Thompson",
+        "type": "PER",
+        "aliases": [
+          "James",
+          "attorney",
+          "lawyer Thompson"
+        ]
+      },
+      {
+        "canonicalName": "Anita Sharma",
+        "type": "PER",
+        "aliases": [
+          "Anita",
+          "mentor",
+          "Anita Sharma"
+        ]
+      },
+      {
+        "canonicalName": "Michael Park",
+        "type": "PER",
+        "aliases": [
+          "Mike",
+          "neighbor",
+          "Michael"
+        ]
+      },
+      {
+        "canonicalName": "Rachel Kumar",
+        "type": "PER",
+        "aliases": [
+          "Rachel",
+          "colleague",
+          "Rachel K."
+        ]
+      },
+      {
+        "canonicalName": "David Johnson",
+        "type": "PER",
+        "aliases": [
+          "Dave",
+          "client",
+          "David from TechFlow"
+        ]
+      },
+      {
+        "canonicalName": "Meera Patel",
+        "type": "PER",
+        "aliases": [
+          "Meera",
+          "friend",
+          "Meera P."
+        ]
+      },
+      {
+        "canonicalName": "CloudSync Solutions",
+        "type": "ORG",
+        "aliases": [
+          "CloudSync",
+          "company",
+          "the company"
+        ]
+      },
+      {
+        "canonicalName": "Austin Women in Tech",
+        "type": "ORG",
+        "aliases": [
+          "AWIT",
+          "women in tech group",
+          "Austin WIT"
+        ]
+      },
+      {
+        "canonicalName": "Westlake Elementary",
+        "type": "ORG",
+        "aliases": [
+          "elementary school",
+          "Westlake",
+          "the school"
+        ]
+      },
+      {
+        "canonicalName": "TechFlow Industries",
+        "type": "ORG",
+        "aliases": [
+          "TechFlow",
+          "client company",
+          "TechFlow Inc."
+        ]
+      },
+      {
+        "canonicalName": "Austin Texas",
+        "type": "LOC",
+        "aliases": [
+          "Austin",
+          "ATX",
+          "home"
+        ]
+      },
+      {
+        "canonicalName": "Kochi Kerala",
+        "type": "LOC",
+        "aliases": [
+          "Kochi",
+          "hometown",
+          "Kerala"
+        ]
+      },
+      {
+        "canonicalName": "Westlake Hills",
+        "type": "LOC",
+        "aliases": [
+          "neighborhood",
+          "Westlake",
+          "our area"
+        ]
+      },
+      {
+        "canonicalName": "Product Excellence Board",
+        "type": "ORG",
+        "aliases": [
+          "PEB",
+          "industry board",
+          "board"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "entity": "Rajesh Nair",
+        "type": "spouse",
+        "confidence": 1,
+        "note": "married for 12 years"
+      },
+      {
+        "entity": "Arjun Nair",
+        "type": "child",
+        "confidence": 1,
+        "note": "10-year-old son"
+      },
+      {
+        "entity": "Kavya Nair",
+        "type": "child",
+        "confidence": 1,
+        "note": "7-year-old daughter"
+      },
+      {
+        "entity": "Lakshmi Menon",
+        "type": "parent",
+        "confidence": 1,
+        "note": "mother living in Kerala"
+      },
+      {
+        "entity": "Suresh Menon",
+        "type": "parent",
+        "confidence": 1,
+        "note": "father living in Kerala"
+      },
+      {
+        "entity": "Deepa Pillai",
+        "type": "sibling",
+        "confidence": 1,
+        "note": "younger sister in Mumbai"
+      },
+      {
+        "entity": "Marcus Chen",
+        "type": "reports-to",
+        "confidence": 1,
+        "note": "CEO of CloudSync Solutions"
+      },
+      {
+        "entity": "Sarah Williams",
+        "type": "direct-report",
+        "confidence": 1,
+        "note": "Senior Product Manager"
+      },
+      {
+        "entity": "Dr. Jennifer Martinez",
+        "type": "healthcare-provider",
+        "confidence": 1,
+        "note": "pediatrician for both kids"
+      },
+      {
+        "entity": "Lisa Rodriguez",
+        "type": "accountant",
+        "confidence": 1,
+        "note": "handles family and business taxes"
+      },
+      {
+        "entity": "James Thompson",
+        "type": "lawyer",
+        "confidence": 1,
+        "note": "family attorney for contracts"
+      },
+      {
+        "entity": "Anita Sharma",
+        "type": "mentor",
+        "confidence": 1,
+        "note": "former VP at Oracle, career advisor"
+      },
+      {
+        "entity": "Michael Park",
+        "type": "neighbor",
+        "confidence": 1,
+        "note": "lives next door in Westlake Hills"
+      },
+      {
+        "entity": "Rachel Kumar",
+        "type": "colleague",
+        "confidence": 1,
+        "note": "VP of Engineering at CloudSync"
+      },
+      {
+        "entity": "David Johnson",
+        "type": "client",
+        "confidence": 1,
+        "note": "CTO at TechFlow Industries"
+      },
+      {
+        "entity": "Meera Patel",
+        "type": "friend",
+        "confidence": 1,
+        "note": "college friend and fellow tech executive"
+      },
+      {
+        "entity": "CloudSync Solutions",
+        "type": "works-at",
+        "confidence": 1,
+        "note": "VP of Product since 2019"
+      },
+      {
+        "entity": "Austin Women in Tech",
+        "type": "member-of",
+        "confidence": 1,
+        "note": "active member and occasional speaker"
+      },
+      {
+        "entity": "Product Excellence Board",
+        "type": "board-member",
+        "confidence": 1,
+        "note": "serves on industry advisory board"
+      },
+      {
+        "entity": "Westlake Hills",
+        "type": "lives-at",
+        "confidence": 1,
+        "note": "family home since 2018"
+      }
+    ],
+    "facts": [
+      "Priya immigrated from Kerala, India to pursue her MBA at UT Austin",
+      "She celebrates her wedding anniversary with Rajesh every March",
+      "Arjun plays soccer and needs pickup from practice twice a week",
+      "Kavya takes piano lessons and has recitals at Westlake Elementary",
+      "Marcus assigned Priya to lead the new enterprise product initiative",
+      "Dr. Martinez schedules annual checkups for both children",
+      "Lisa handles tax preparation every April for business and personal returns",
+      "James reviewed the TechFlow contract before Priya signed the partnership agreement",
+      "Anita mentored Priya through her VP promotion and still provides career guidance",
+      "Michael borrowed Priya's ladder last weekend for yard work",
+      "Rachel and Priya do code reviews together for the platform architecture",
+      "David needs a demo of the new features for his stakeholder presentation",
+      "Meera and Priya meet for drinks monthly to catch up on work and family",
+      "CloudSync's all-hands meetings happen monthly with product updates",
+      "Austin Women in Tech hosts networking events that Priya regularly attends",
+      "The family visits Kochi every December for Christmas with her parents",
+      "Rajesh works remotely as a software architect while managing the kids' schedules",
+      "Sarah reports to Priya and handles day-to-day product management tasks"
+    ]
+  }
+}

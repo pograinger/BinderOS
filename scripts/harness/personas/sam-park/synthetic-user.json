@@ -1,0 +1,261 @@
+{
+  "personaName": "Sam Park",
+  "bio": "Sam Park is a 59-year-old Korean-American former software architect who now works as a technology consultant and serves on several startup boards. Semi-retired and married with two adult children, he's preparing for his first grandchild while balancing advisory work with family time and managing his investment portfolio.",
+  "groundTruth": {
+    "entities": [
+      {
+        "canonicalName": "Sam Park",
+        "type": "PER",
+        "aliases": [
+          "Sam",
+          "Samuel Park",
+          "Mr. Park"
+        ]
+      },
+      {
+        "canonicalName": "Linda Park",
+        "type": "PER",
+        "aliases": [
+          "Linda",
+          "Lin",
+          "honey"
+        ]
+      },
+      {
+        "canonicalName": "David Park",
+        "type": "PER",
+        "aliases": [
+          "David",
+          "Dave",
+          "my son"
+        ]
+      },
+      {
+        "canonicalName": "Jennifer Park-Chen",
+        "type": "PER",
+        "aliases": [
+          "Jennifer",
+          "Jen",
+          "Jenny",
+          "my daughter"
+        ]
+      },
+      {
+        "canonicalName": "Dr. Sarah Kim",
+        "type": "PER",
+        "aliases": [
+          "Dr. Kim",
+          "Sarah",
+          "my doctor"
+        ]
+      },
+      {
+        "canonicalName": "Robert Martinez",
+        "type": "PER",
+        "aliases": [
+          "Robert",
+          "Rob",
+          "my financial advisor"
+        ]
+      },
+      {
+        "canonicalName": "Claire Thompson",
+        "type": "PER",
+        "aliases": [
+          "Claire",
+          "CEO Thompson"
+        ]
+      },
+      {
+        "canonicalName": "Michael Chen",
+        "type": "PER",
+        "aliases": [
+          "Michael",
+          "Mike",
+          "CTO Chen"
+        ]
+      },
+      {
+        "canonicalName": "Nancy Wilson",
+        "type": "PER",
+        "aliases": [
+          "Nancy",
+          "my neighbor"
+        ]
+      },
+      {
+        "canonicalName": "James Lee",
+        "type": "PER",
+        "aliases": [
+          "James",
+          "Jim",
+          "my accountant"
+        ]
+      },
+      {
+        "canonicalName": "TechFlow Solutions",
+        "type": "ORG",
+        "aliases": [
+          "TechFlow",
+          "the company"
+        ]
+      },
+      {
+        "canonicalName": "DataVision AI",
+        "type": "ORG",
+        "aliases": [
+          "DataVision",
+          "the startup"
+        ]
+      },
+      {
+        "canonicalName": "GreenTech Innovations",
+        "type": "ORG",
+        "aliases": [
+          "GreenTech",
+          "the board"
+        ]
+      },
+      {
+        "canonicalName": "Korean Community Center",
+        "type": "ORG",
+        "aliases": [
+          "KCC",
+          "the community center",
+          "our center"
+        ]
+      },
+      {
+        "canonicalName": "Seattle Tennis Club",
+        "type": "ORG",
+        "aliases": [
+          "tennis club",
+          "the club",
+          "STC"
+        ]
+      },
+      {
+        "canonicalName": "Bellevue",
+        "type": "LOC",
+        "aliases": [
+          "home",
+          "our neighborhood",
+          "downtown Bellevue"
+        ]
+      },
+      {
+        "canonicalName": "San Francisco",
+        "type": "LOC",
+        "aliases": [
+          "SF",
+          "the city",
+          "Bay Area"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "entity": "Linda Park",
+        "type": "spouse",
+        "confidence": 1,
+        "note": "married for 32 years"
+      },
+      {
+        "entity": "David Park",
+        "type": "child",
+        "confidence": 1,
+        "note": "eldest son, software engineer"
+      },
+      {
+        "entity": "Jennifer Park-Chen",
+        "type": "child",
+        "confidence": 1,
+        "note": "daughter, expecting first grandchild"
+      },
+      {
+        "entity": "Dr. Sarah Kim",
+        "type": "healthcare-provider",
+        "confidence": 1,
+        "note": "primary care physician"
+      },
+      {
+        "entity": "Robert Martinez",
+        "type": "financial-advisor",
+        "confidence": 1,
+        "note": "manages retirement portfolio"
+      },
+      {
+        "entity": "Claire Thompson",
+        "type": "client",
+        "confidence": 1,
+        "note": "CEO at TechFlow Solutions"
+      },
+      {
+        "entity": "Michael Chen",
+        "type": "colleague",
+        "confidence": 1,
+        "note": "fellow board member at DataVision"
+      },
+      {
+        "entity": "Nancy Wilson",
+        "type": "neighbor",
+        "confidence": 1,
+        "note": "lives next door"
+      },
+      {
+        "entity": "James Lee",
+        "type": "accountant",
+        "confidence": 1,
+        "note": "handles tax preparation"
+      },
+      {
+        "entity": "TechFlow Solutions",
+        "type": "client",
+        "confidence": 1,
+        "note": "consulting engagement"
+      },
+      {
+        "entity": "DataVision AI",
+        "type": "board-member",
+        "confidence": 1,
+        "note": "serves on board of directors"
+      },
+      {
+        "entity": "GreenTech Innovations",
+        "type": "board-member",
+        "confidence": 1,
+        "note": "advisory board member"
+      },
+      {
+        "entity": "Korean Community Center",
+        "type": "volunteer-at",
+        "confidence": 1,
+        "note": "mentors young entrepreneurs"
+      },
+      {
+        "entity": "Seattle Tennis Club",
+        "type": "member-of",
+        "confidence": 1,
+        "note": "plays weekly doubles"
+      },
+      {
+        "entity": "Bellevue",
+        "type": "lives-at",
+        "confidence": 1,
+        "note": "family home for 20 years"
+      }
+    ],
+    "facts": [
+      "Sam is semi-retired from a successful career as a software architect",
+      "He serves on multiple technology company boards as an advisor",
+      "Sam and Linda are preparing to become grandparents for the first time",
+      "He volunteers at the Korean Community Center mentoring young entrepreneurs",
+      "Sam maintains an active tennis schedule at the Seattle Tennis Club",
+      "He works with a financial advisor to manage his retirement investments",
+      "Sam provides consulting services to TechFlow Solutions on cloud architecture",
+      "His daughter Jennifer recently got married and lives in San Francisco",
+      "He has regular checkups with Dr. Sarah Kim for preventive health care",
+      "Sam uses GTD methodology to manage his board commitments and advisory work"
+    ]
+  }
+}

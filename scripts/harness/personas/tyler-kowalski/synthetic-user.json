@@ -1,0 +1,240 @@
+{
+  "personaName": "Tyler Kowalski",
+  "bio": "Tyler is a 33-year-old independent UX consultant from Milwaukee who balances client work with playing bass in a local indie rock band. He shares custody of his 8-year-old daughter Emma with his ex-wife and works primarily from a downtown co-working space when not meeting with clients.",
+  "groundTruth": {
+    "entities": [
+      {
+        "canonicalName": "Tyler Kowalski",
+        "type": "PER",
+        "aliases": [
+          "Tyler",
+          "Ty",
+          "TK"
+        ]
+      },
+      {
+        "canonicalName": "Emma Kowalski",
+        "type": "PER",
+        "aliases": [
+          "Emma",
+          "Em",
+          "kiddo"
+        ]
+      },
+      {
+        "canonicalName": "Sarah Chen",
+        "type": "PER",
+        "aliases": [
+          "Sarah",
+          "Sara"
+        ]
+      },
+      {
+        "canonicalName": "Barbara Kowalski",
+        "type": "PER",
+        "aliases": [
+          "Barbara",
+          "Barb",
+          "mom"
+        ]
+      },
+      {
+        "canonicalName": "Marcus Rivera",
+        "type": "PER",
+        "aliases": [
+          "Marcus",
+          "Marc"
+        ]
+      },
+      {
+        "canonicalName": "Jenna Walsh",
+        "type": "PER",
+        "aliases": [
+          "Jenna",
+          "Jen"
+        ]
+      },
+      {
+        "canonicalName": "DevCraft Studios",
+        "type": "ORG",
+        "aliases": [
+          "DevCraft",
+          "DCS"
+        ]
+      },
+      {
+        "canonicalName": "The Basement",
+        "type": "ORG",
+        "aliases": [
+          "Basement",
+          "The Basement band"
+        ]
+      },
+      {
+        "canonicalName": "Jake Mitchell",
+        "type": "PER",
+        "aliases": [
+          "Jake",
+          "Jakey"
+        ]
+      },
+      {
+        "canonicalName": "Luis Santos",
+        "type": "PER",
+        "aliases": [
+          "Luis",
+          "Lou"
+        ]
+      },
+      {
+        "canonicalName": "Dr. Amanda Foster",
+        "type": "PER",
+        "aliases": [
+          "Dr. Foster",
+          "Amanda"
+        ]
+      },
+      {
+        "canonicalName": "Collective MKE",
+        "type": "ORG",
+        "aliases": [
+          "Collective",
+          "the co-working space"
+        ]
+      },
+      {
+        "canonicalName": "Milwaukee",
+        "type": "LOC",
+        "aliases": [
+          "MKE",
+          "Milwaukee WI"
+        ]
+      },
+      {
+        "canonicalName": "Rebecca Thompson",
+        "type": "PER",
+        "aliases": [
+          "Rebecca",
+          "Becca",
+          "Becky"
+        ]
+      },
+      {
+        "canonicalName": "David Kim",
+        "type": "PER",
+        "aliases": [
+          "David",
+          "Dave"
+        ]
+      },
+      {
+        "canonicalName": "Tom Bradley",
+        "type": "PER",
+        "aliases": [
+          "Tom",
+          "Tommy"
+        ]
+      },
+      {
+        "canonicalName": "Pine Valley Elementary",
+        "type": "ORG",
+        "aliases": [
+          "Pine Valley",
+          "Emma's school"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "entity": "Emma Kowalski",
+        "type": "child",
+        "confidence": 1,
+        "note": "8-year-old daughter, shared custody"
+      },
+      {
+        "entity": "Sarah Chen",
+        "type": "extended-family",
+        "confidence": 1,
+        "note": "ex-wife, co-parent"
+      },
+      {
+        "entity": "Barbara Kowalski",
+        "type": "parent",
+        "confidence": 1,
+        "note": "mother, babysits Emma"
+      },
+      {
+        "entity": "Marcus Rivera",
+        "type": "client",
+        "confidence": 1,
+        "note": "startup founder, UX project"
+      },
+      {
+        "entity": "Jenna Walsh",
+        "type": "client",
+        "confidence": 1,
+        "note": "marketing director at tech company"
+      },
+      {
+        "entity": "DevCraft Studios",
+        "type": "client",
+        "confidence": 1,
+        "note": "software development agency"
+      },
+      {
+        "entity": "The Basement",
+        "type": "member-of",
+        "confidence": 1,
+        "note": "indie rock band, plays bass"
+      },
+      {
+        "entity": "Jake Mitchell",
+        "type": "colleague",
+        "confidence": 1,
+        "note": "bandmate, lead guitar"
+      },
+      {
+        "entity": "Luis Santos",
+        "type": "colleague",
+        "confidence": 1,
+        "note": "bandmate, drummer"
+      },
+      {
+        "entity": "Dr. Amanda Foster",
+        "type": "healthcare-provider",
+        "confidence": 1,
+        "note": "family physician"
+      },
+      {
+        "entity": "Collective MKE",
+        "type": "member-of",
+        "confidence": 1,
+        "note": "co-working space membership"
+      },
+      {
+        "entity": "Rebecca Thompson",
+        "type": "friend",
+        "confidence": 1,
+        "note": "fellow freelancer at co-working space"
+      },
+      {
+        "entity": "David Kim",
+        "type": "accountant",
+        "confidence": 1,
+        "note": "CPA, handles freelance taxes"
+      }
+    ],
+    "facts": [
+      "Tyler plays bass guitar in an indie rock band called The Basement",
+      "Tyler has shared custody of his daughter Emma with his ex-wife Sarah",
+      "Tyler works as an independent UX consultant for various tech companies",
+      "Tyler's mother Barbara helps with childcare when needed",
+      "Tyler is a member of Collective MKE co-working space in downtown Milwaukee",
+      "Tyler uses Dr. Amanda Foster as his family physician",
+      "Tyler's band performs at local venues around Milwaukee",
+      "Tyler manages multiple client projects simultaneously",
+      "Emma attends Pine Valley Elementary school",
+      "Tyler relies on David Kim for tax preparation and freelance accounting"
+    ]
+  }
+}

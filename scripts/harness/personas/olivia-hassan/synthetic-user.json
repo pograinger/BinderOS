@@ -1,0 +1,312 @@
+{
+  "personaName": "Olivia Hassan",
+  "bio": "Olivia Hassan is a 31-year-old remote project manager married to an active-duty Army sergeant, with two young children ages 4 and 2. Her African-American and Lebanese-American heritage brings rich family traditions, while frequent military relocations require her to maintain extensive contact networks across multiple bases. She manages complex administrative tasks including powers of attorney, childcare coordination, and supporting her husband's military career while advancing her own remote work.",
+  "groundTruth": {
+    "entities": [
+      {
+        "canonicalName": "Olivia Hassan",
+        "type": "PER",
+        "aliases": [
+          "Olivia",
+          "Liv",
+          "Mrs. Hassan"
+        ]
+      },
+      {
+        "canonicalName": "Sergeant Michael Hassan",
+        "type": "PER",
+        "aliases": [
+          "Michael",
+          "Mike",
+          "SGT Hassan",
+          "my husband"
+        ]
+      },
+      {
+        "canonicalName": "Zara Hassan",
+        "type": "PER",
+        "aliases": [
+          "Zara",
+          "kiddo"
+        ]
+      },
+      {
+        "canonicalName": "Omar Hassan",
+        "type": "PER",
+        "aliases": [
+          "Omar",
+          "little man"
+        ]
+      },
+      {
+        "canonicalName": "Gloria Williams",
+        "type": "PER",
+        "aliases": [
+          "Mom",
+          "Gloria",
+          "mother"
+        ]
+      },
+      {
+        "canonicalName": "James Williams",
+        "type": "PER",
+        "aliases": [
+          "Dad",
+          "James",
+          "father"
+        ]
+      },
+      {
+        "canonicalName": "Amira Hassan",
+        "type": "PER",
+        "aliases": [
+          "Teta Amira",
+          "mother-in-law"
+        ]
+      },
+      {
+        "canonicalName": "Khalil Hassan",
+        "type": "PER",
+        "aliases": [
+          "Jiddo Khalil",
+          "father-in-law"
+        ]
+      },
+      {
+        "canonicalName": "Jasmine Williams",
+        "type": "PER",
+        "aliases": [
+          "Jazz",
+          "sister"
+        ]
+      },
+      {
+        "canonicalName": "Sarah Chen",
+        "type": "PER",
+        "aliases": [
+          "Sarah",
+          "boss"
+        ]
+      },
+      {
+        "canonicalName": "Marcus Rodriguez",
+        "type": "PER",
+        "aliases": [
+          "Marcus",
+          "teammate"
+        ]
+      },
+      {
+        "canonicalName": "Dr. Jennifer Park",
+        "type": "PER",
+        "aliases": [
+          "Dr. Park",
+          "pediatrician"
+        ]
+      },
+      {
+        "canonicalName": "Captain Lisa Thompson",
+        "type": "PER",
+        "aliases": [
+          "CPT Thompson",
+          "FRG leader"
+        ]
+      },
+      {
+        "canonicalName": "Maria Santos",
+        "type": "PER",
+        "aliases": [
+          "Maria",
+          "babysitter"
+        ]
+      },
+      {
+        "canonicalName": "David Kim",
+        "type": "PER",
+        "aliases": [
+          "David",
+          "lawyer"
+        ]
+      },
+      {
+        "canonicalName": "Rebecca Johnson",
+        "type": "PER",
+        "aliases": [
+          "Becca",
+          "neighbor"
+        ]
+      },
+      {
+        "canonicalName": "Fort Campbell",
+        "type": "LOC",
+        "aliases": [
+          "base",
+          "post"
+        ]
+      },
+      {
+        "canonicalName": "Atlanta",
+        "type": "LOC",
+        "aliases": [
+          "ATL",
+          "hometown"
+        ]
+      },
+      {
+        "canonicalName": "Little Steps Daycare",
+        "type": "ORG",
+        "aliases": [
+          "daycare",
+          "preschool"
+        ]
+      },
+      {
+        "canonicalName": "TechFlow Solutions",
+        "type": "ORG",
+        "aliases": [
+          "TechFlow",
+          "company",
+          "work"
+        ]
+      },
+      {
+        "canonicalName": "Military Family Life Counseling",
+        "type": "ORG",
+        "aliases": [
+          "MFLC",
+          "counseling services"
+        ]
+      },
+      {
+        "canonicalName": "Family Readiness Group",
+        "type": "ORG",
+        "aliases": [
+          "FRG",
+          "spouse group"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "entity": "Sergeant Michael Hassan",
+        "type": "spouse",
+        "confidence": 1,
+        "note": "married 6 years, active duty Army"
+      },
+      {
+        "entity": "Zara Hassan",
+        "type": "child",
+        "confidence": 1,
+        "note": "4-year-old daughter"
+      },
+      {
+        "entity": "Omar Hassan",
+        "type": "child",
+        "confidence": 1,
+        "note": "2-year-old son"
+      },
+      {
+        "entity": "Gloria Williams",
+        "type": "parent",
+        "confidence": 1,
+        "note": "mother, lives in Atlanta"
+      },
+      {
+        "entity": "James Williams",
+        "type": "parent",
+        "confidence": 1,
+        "note": "father, retired educator"
+      },
+      {
+        "entity": "Amira Hassan",
+        "type": "extended-family",
+        "confidence": 1,
+        "note": "mother-in-law, Lebanese immigrant"
+      },
+      {
+        "entity": "Khalil Hassan",
+        "type": "extended-family",
+        "confidence": 1,
+        "note": "father-in-law, owns restaurant"
+      },
+      {
+        "entity": "Jasmine Williams",
+        "type": "sibling",
+        "confidence": 1,
+        "note": "younger sister, college student"
+      },
+      {
+        "entity": "Sarah Chen",
+        "type": "reports-to",
+        "confidence": 1,
+        "note": "direct manager at TechFlow"
+      },
+      {
+        "entity": "Marcus Rodriguez",
+        "type": "colleague",
+        "confidence": 1,
+        "note": "senior developer, same team"
+      },
+      {
+        "entity": "Dr. Jennifer Park",
+        "type": "healthcare-provider",
+        "confidence": 1,
+        "note": "children's pediatrician"
+      },
+      {
+        "entity": "Captain Lisa Thompson",
+        "type": "friend",
+        "confidence": 1,
+        "note": "military spouse mentor"
+      },
+      {
+        "entity": "Maria Santos",
+        "type": "childcare",
+        "confidence": 1,
+        "note": "evening babysitter"
+      },
+      {
+        "entity": "David Kim",
+        "type": "lawyer",
+        "confidence": 1,
+        "note": "handles military legal documents"
+      },
+      {
+        "entity": "Rebecca Johnson",
+        "type": "neighbor",
+        "confidence": 1,
+        "note": "next door, also military spouse"
+      },
+      {
+        "entity": "TechFlow Solutions",
+        "type": "works-at",
+        "confidence": 1,
+        "note": "remote project manager position"
+      },
+      {
+        "entity": "Family Readiness Group",
+        "type": "member-of",
+        "confidence": 1,
+        "note": "volunteer coordinator role"
+      },
+      {
+        "entity": "Fort Campbell",
+        "type": "lives-at",
+        "confidence": 1,
+        "note": "current duty station"
+      }
+    ],
+    "facts": [
+      "Olivia works remotely as a project manager while managing frequent military relocations",
+      "She maintains power of attorney documents for her deployed husband",
+      "The family has moved three times in five years due to military assignments",
+      "Olivia coordinates with extended family in Atlanta and Detroit for holiday visits",
+      "She volunteers with the Family Readiness Group to support other military spouses",
+      "The children attend Little Steps Daycare on base while Olivia works",
+      "Olivia tracks important contacts across multiple military installations",
+      "She manages complex administrative tasks including school transfers and medical records",
+      "The family celebrates both African-American and Lebanese cultural traditions",
+      "Olivia mentors newly arrived military spouses on base resources and procedures"
+    ]
+  }
+}

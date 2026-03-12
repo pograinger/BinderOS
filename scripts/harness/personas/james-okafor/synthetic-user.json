@@ -1,0 +1,174 @@
+{
+  "personaName": "James Okafor",
+  "bio": "James is a 24-year-old junior data analyst at a fast-growing fintech startup in Austin. Born to Nigerian immigrant parents, he balances his demanding career with close family ties and an active social life with his college buddies.",
+  "groundTruth": {
+    "entities": [
+      {
+        "canonicalName": "James Okafor",
+        "type": "PER",
+        "aliases": [
+          "Jams",
+          "OG",
+          "Jimmy",
+          "J"
+        ]
+      },
+      {
+        "canonicalName": "Adebayo Okafor",
+        "type": "PER",
+        "aliases": [
+          "Dad",
+          "Pops",
+          "Mr. Okafor"
+        ]
+      },
+      {
+        "canonicalName": "Chioma Okafor",
+        "type": "PER",
+        "aliases": [
+          "Mom",
+          "Mama",
+          "Mrs. Okafor"
+        ]
+      },
+      {
+        "canonicalName": "Sarah Chen",
+        "type": "PER",
+        "aliases": [
+          "Sarah",
+          "Boss"
+        ]
+      },
+      {
+        "canonicalName": "Marcus Williams",
+        "type": "PER",
+        "aliases": [
+          "Marc",
+          "Marcus",
+          "MW"
+        ]
+      },
+      {
+        "canonicalName": "Tyler Rodriguez",
+        "type": "PER",
+        "aliases": [
+          "Ty",
+          "Tyler",
+          "T-Rod"
+        ]
+      },
+      {
+        "canonicalName": "Dr. Jennifer Liu",
+        "type": "PER",
+        "aliases": [
+          "Dr. Liu",
+          "Doc Liu"
+        ]
+      },
+      {
+        "canonicalName": "DataFlow Technologies",
+        "type": "ORG",
+        "aliases": [
+          "DataFlow",
+          "the startup",
+          "work"
+        ]
+      },
+      {
+        "canonicalName": "Austin Young Professionals Network",
+        "type": "ORG",
+        "aliases": [
+          "AYPN",
+          "networking group",
+          "young professionals"
+        ]
+      },
+      {
+        "canonicalName": "Austin",
+        "type": "LOC",
+        "aliases": [
+          "ATX",
+          "the city",
+          "downtown"
+        ]
+      },
+      {
+        "canonicalName": "Houston",
+        "type": "LOC",
+        "aliases": [
+          "H-Town",
+          "home",
+          "parents' place"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "entity": "Adebayo Okafor",
+        "type": "parent",
+        "confidence": 1,
+        "note": "Father, immigration consultant"
+      },
+      {
+        "entity": "Chioma Okafor",
+        "type": "parent",
+        "confidence": 1,
+        "note": "Mother, nurse practitioner"
+      },
+      {
+        "entity": "Sarah Chen",
+        "type": "reports-to",
+        "confidence": 1,
+        "note": "Manager at DataFlow"
+      },
+      {
+        "entity": "Marcus Williams",
+        "type": "friend",
+        "confidence": 1,
+        "note": "College roommate, lives in Austin"
+      },
+      {
+        "entity": "Tyler Rodriguez",
+        "type": "friend",
+        "confidence": 1,
+        "note": "College buddy, software engineer"
+      },
+      {
+        "entity": "Dr. Jennifer Liu",
+        "type": "healthcare-provider",
+        "confidence": 1,
+        "note": "Primary care physician"
+      },
+      {
+        "entity": "DataFlow Technologies",
+        "type": "works-at",
+        "confidence": 1,
+        "note": "Junior data analyst position"
+      },
+      {
+        "entity": "Austin Young Professionals Network",
+        "type": "member-of",
+        "confidence": 1,
+        "note": "Active member, attends monthly events"
+      },
+      {
+        "entity": "Austin",
+        "type": "lives-at",
+        "confidence": 1,
+        "note": "Current residence with roommates"
+      }
+    ],
+    "facts": [
+      "James works as a junior data analyst at DataFlow Technologies",
+      "James reports to Sarah Chen who is his manager",
+      "James lives in Austin with roommates including Marcus Williams",
+      "James's parents Adebayo and Chioma live in Houston",
+      "James is a member of Austin Young Professionals Network",
+      "James has regular checkups with Dr. Jennifer Liu",
+      "James frequently hangs out with his college friends Marcus and Tyler",
+      "James visits his parents in Houston for holidays and family events",
+      "James uses nicknames like Jams and OG with close friends",
+      "James balances his startup career with active social and family life"
+    ]
+  }
+}

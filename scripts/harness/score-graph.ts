@@ -10,6 +10,7 @@
 
 import type { Entity, EntityRelation } from '../../src/types/intelligence.js';
 import { HarnessEntityStore } from './harness-entity-store.js';
+import type { PersonaAdversarialResult, AggregateScore, LearningCurvePoint } from './harness-types.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -184,6 +185,72 @@ function resolveAllGtEntities(
 function f1(precision: number, recall: number): number {
   if (precision + recall === 0) return 0;
   return (2 * precision * recall) / (precision + recall);
+}
+
+// ---------------------------------------------------------------------------
+// Aggregate scoring helpers
+// ---------------------------------------------------------------------------
+
+function mean(values: number[]): number {
+  if (values.length === 0) return 0;
+  return values.reduce((a, b) => a + b, 0) / values.length;
+}
+
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+}
+
+function stdDev(values: number[]): number {
+  if (values.length < 2) return 0;
+  const m = mean(values);
+  const variance = values.reduce((sum, v) => sum + Math.pow(v - m, 2), 0) / values.length;
+  return Math.sqrt(variance);
+}
+
+function statSummary(values: number[]): { mean: number; median: number; min: number; max: number; stdDev: number } {
+  return {
+    mean: mean(values),
+    median: median(values),
+    min: values.length > 0 ? Math.min(...values) : 0,
+    max: values.length > 0 ? Math.max(...values) : 0,
+    stdDev: stdDev(values),
+  };
+}
+
+/**
+ * Compute aggregate score statistics across all personas.
+ */
+export function computeAggregateScore(results: PersonaAdversarialResult[]): AggregateScore {
+  const entityF1Values = results.map((r) => r.finalScore.entityF1);
+  const relationF1Values = results.map((r) => r.finalScore.relationshipF1);
+  const privacyValues = results.map((r) => r.finalScore.privacyScore);
+
+  return {
+    entityF1: statSummary(entityF1Values),
+    relationshipF1: statSummary(relationF1Values),
+    privacyScore: statSummary(privacyValues),
+    perPersona: results.map((r) => ({
+      personaName: r.personaName,
+      entityF1: r.finalScore.entityF1,
+      relationshipF1: r.finalScore.relationshipF1,
+      privacyScore: r.finalScore.privacyScore,
+    })),
+  };
+}
+
+/**
+ * Compute per-cycle progression data (learning curve) for a persona.
+ */
+export function computeLearningCurve(cycles: Array<{ cycleNumber: number; score: GraphScore }>): LearningCurvePoint[] {
+  return cycles.map((c) => ({
+    cycle: c.cycleNumber,
+    entityF1: c.score.entityF1,
+    relationshipF1: c.score.relationshipF1,
+    privacyScore: c.score.privacyScore,
+  }));
 }
 
 // ---------------------------------------------------------------------------
