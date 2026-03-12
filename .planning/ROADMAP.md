@@ -72,7 +72,7 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 
 - [x] **Phase 26: Intelligence Sidecar + Schema** - Dexie migration with atomIntelligence sidecar, entity/relation tables, enrichment refactor to structured records, smart links field (completed 2026-03-11)
 - [x] **Phase 27: Entity Detection + Registry** - Sanitization worker extended for entity detection, detection lifecycle, entity-atom linking, dedup/normalization, entity badges (completed 2026-03-11)
-- [x] **Phase 28: Relationship Inference + Cognitive Harness** - T1 keyword pattern engine, co-occurrence accumulation, evidence scoring, headless testing harness, synthetic user profile, cloud adversarial scoring (completed 2026-03-11)
+- [x] **Phase 28: Relationship Inference + Cognitive Harness** - T1 keyword pattern engine, co-occurrence accumulation, evidence scoring, headless testing harness, synthetic user profile, cloud adversarial scoring (completed 2026-03-11)
 - [ ] **Phase 29: Entity Consumers + Trained Agent Validation** - Entity-aware enrichment, user correction UX, GTD context suggestions, cloud-as-user training loop, local stack benchmark proving emergent user learning
 
 ## Phase Details
@@ -135,6 +135,11 @@ Plans:
   5. User taps an entity badge and sees a timeline view of all atoms mentioning that entity, ordered chronologically
   6. After processing 30+ synthetic inbox items through the harness training loop, the local stack correctly identifies >80% of the synthetic user's key relationships (family, work colleagues, medical providers) without cloud assistance
   7. T2 sanitization uses entity knowledge to produce semantically-rich cloud packets — "Pam" → "[SPOUSE]", "Dr. Chen" → "[CPA]" — preserving meaning while protecting identity
+**Plans**: 3 plans
+Plans:
+- [ ] 29-01-PLAN.md — Multi-cycle adversarial training loop, 10+ personas, enrichment emulation, correction ripple
+- [ ] 29-02-PLAN.md — Production entity consumers: recency decay, semantic sanitization, correction UX, entity timeline
+- [ ] 29-03-PLAN.md — Ablation testing, auto-tune patterns, investment report
 
 ## Progress
 
@@ -169,4 +174,4 @@ Plans:
 | 26. Intelligence Sidecar + Schema | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 27. Entity Detection + Registry | 2/2 | Complete   | 2026-03-11 | - |
 | 28. Relationship Inference | 2/2 | Complete   | 2026-03-11 | - |
-| 29. Entity Intelligence Consumers | v5.0 | 0/TBD | Not started | - |
+| 29. Entity Intelligence Consumers | v5.0 | 0/3 | Not started | - |
