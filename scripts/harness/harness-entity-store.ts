@@ -179,4 +179,40 @@ export class HarnessEntityStore {
     this.entityRelations.clear();
     this.atomIntelligence.clear();
   }
+
+  // -------------------------------------------------------------------------
+  // Snapshot / Restore — for adversarial cycle checkpointing
+  // -------------------------------------------------------------------------
+
+  snapshot(): {
+    entities: Entity[];
+    relations: EntityRelation[];
+    atomIntelligence: AtomIntelligence[];
+  } {
+    return {
+      entities: Array.from(this.entities.values()),
+      relations: Array.from(this.entityRelations.values()),
+      atomIntelligence: Array.from(this.atomIntelligence.values()),
+    };
+  }
+
+  restore(snap: {
+    entities: Entity[];
+    relations: EntityRelation[];
+    atomIntelligence: AtomIntelligence[];
+  }): void {
+    this.entities.clear();
+    this.entityRelations.clear();
+    this.atomIntelligence.clear();
+
+    for (const entity of snap.entities) {
+      this.entities.set(entity.id, entity);
+    }
+    for (const relation of snap.relations) {
+      this.entityRelations.set(relation.id, relation);
+    }
+    for (const intel of snap.atomIntelligence) {
+      this.atomIntelligence.set(intel.atomId, intel);
+    }
+  }
 }
