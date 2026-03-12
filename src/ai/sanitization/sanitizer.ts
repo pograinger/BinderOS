@@ -16,7 +16,7 @@
 import type { DetectedEntity, SanitizedResult } from './types';
 import { createSanitizedPrompt } from './types';
 import { detectWithRegex, detectDates } from './regex-patterns';
-import { buildEntityMap } from './entity-registry';
+import { buildEntityMapWithRelationships } from './entity-registry';
 
 // --- Raw entity mention type for knowledge graph detection ---
 
@@ -304,7 +304,7 @@ export async function sanitizeText(text: string): Promise<SanitizedResult> {
     };
   }
 
-  const { entityMap, reverseMap } = await buildEntityMap(entities);
+  const { entityMap, reverseMap } = await buildEntityMapWithRelationships(entities);
 
   // Replace entities from end to start to preserve character offsets
   let sanitized = text;

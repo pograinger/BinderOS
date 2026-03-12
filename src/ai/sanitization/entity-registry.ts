@@ -6,10 +6,12 @@
  * is assigned <Person 1>, it stays <Person 1> forever.
  *
  * Phase 14: SNTZ-01 — entity registry for pseudonymization.
+ * Phase 29: ENTC-04 — semantic sanitization tags ([SPOUSE], [DENTIST], etc.)
  */
 
 import { db } from '../../storage/db';
 import type { EntityCategory, DetectedEntity, EntityRegistryEntry } from './types';
+import { findHighestConfidenceRelation } from '../../storage/entity-helpers';
 
 /**
  * Capitalize the first letter of a category for display in pseudonym tags.
@@ -102,6 +104,61 @@ export async function buildEntityMap(
     if (shouldRestore) continue;
 
     const { tag } = await getOrCreatePseudonym(entity.text, entity.category);
+
+    entityMap.set(tag, entity.text);
+    reverseMap.set(entity.text, tag);
+  }
+
+  return { entityMap, reverseMap };
+}
+
+/**
+ * Build bidirectional pseudonym maps with semantic relationship tags for PER entities.
+ *
+ * For PER entities with a known high-confidence relationship (user-correction or
+ * inferred >= 0.6), uses [RELATIONSHIP_TYPE] tag (uppercase, square brackets)
+ * instead of <Person N> pseudonym. This gives cloud AI semantic context while
+ * protecting identity: "Pam" becomes [SPOUSE] rather than <Person 1>.
+ *
+ * For PER entities without a known relationship, falls back to existing pseudonym.
+ * For non-PER entities (LOC, ORG, CONTACT, etc.), uses existing pseudonym logic.
+ * User-corrected relationships (sourceAttribution='user-correction') always take
+ * precedence over inferred relations.
+ *
+ * Tag format: [SPOUSE], [DENTIST], [BOSS], [FRIEND], [COLLEAGUE] — uppercase
+ * relationship type in square brackets, distinct from angle-bracket pseudonyms.
+ *
+ * Phase 29: ENTC-04
+ */
+export async function buildEntityMapWithRelationships(
+  entities: DetectedEntity[],
+): Promise<{ entityMap: Map<string, string>; reverseMap: Map<string, string> }> {
+  const entityMap = new Map<string, string>();
+  const reverseMap = new Map<string, string>();
+
+  for (const entity of entities) {
+    // Check restore preference — if true, skip this entity
+    const shouldRestore = await getRestorePreference(entity.text, entity.category);
+    if (shouldRestore) continue;
+
+    let tag: string;
+
+    // For PERSON entities, try semantic relationship tag first
+    if (entity.category === 'PERSON') {
+      const relation = await findHighestConfidenceRelation(entity.text);
+      if (relation) {
+        // Use uppercase relationship type in square brackets
+        tag = `[${relation.relationshipType.toUpperCase().replace(/-/g, '_')}]`;
+      } else {
+        // Fall back to pseudonym
+        const result = await getOrCreatePseudonym(entity.text, entity.category);
+        tag = result.tag;
+      }
+    } else {
+      // Non-PER entities: use existing pseudonym logic
+      const result = await getOrCreatePseudonym(entity.text, entity.category);
+      tag = result.tag;
+    }
 
     entityMap.set(tag, entity.text);
     reverseMap.set(entity.text, tag);
