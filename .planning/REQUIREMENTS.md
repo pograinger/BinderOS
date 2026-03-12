@@ -121,6 +121,11 @@ Requirements for v5.0 Entity Intelligence & Knowledge Graph. Each maps to roadma
 - [ ] **ENTC-04**: Recency-weighted entity relevance with exponential decay (MunninDB-style, ~30 day half-life)
 - [ ] **ENTC-05**: Entity timeline view showing all atoms mentioning a specific entity, ordered chronologically
 
+### Trained Agent Validation
+
+- [ ] **TVAL-01**: Multi-cycle adversarial training loop with 10+ diverse synthetic personas processes 150-250 items per persona through the local cognitive stack (triage, enrichment emulation, entity detection, relationship inference, corrections), achieving >80% relationship F1 after cycle 1 and >90% after 5 cycles
+- [ ] **TVAL-02**: Investment report with component ablation testing, auto-tuned pattern optimization, and ranked ONNX agent recommendations with impact+complexity matrix — derived from cross-persona training results and gap analysis
+
 ### Future Goals (accommodate in v5.0 schema design)
 
 Schema and architecture decisions in v5.0 must not preclude these future capabilities:
@@ -251,12 +256,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENTC-03 | Phase 29 | Pending |
 | ENTC-04 | Phase 29 | Pending |
 | ENTC-05 | Phase 29 | Pending |
+| TVAL-01 | Phase 29 | Pending |
+| TVAL-02 | Phase 29 | Pending |
 
 **Coverage:**
 - v4.0 requirements: 48 total, 48 mapped
-- v5.0 requirements: 20 total, 20 mapped
+- v5.0 requirements: 22 total, 22 mapped
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-05*
-*Last updated: 2026-03-11 — v5.0 roadmap created, 20/20 requirements mapped to Phases 26-29*
+*Last updated: 2026-03-12 — Added TVAL-01, TVAL-02 for trained agent validation (Phase 29)*

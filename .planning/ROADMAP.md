@@ -6,7 +6,7 @@
 - [x] **v2.0 AI Orchestration** — Phases 4-7 (30/30 requirements, 14 plans, shipped 2026-03-03) → [Archive](.planning/milestones/v2.0-ROADMAP.md)
 - [x] **v3.0 Local AI + Polish** — Phases 9-11 (18/18 requirements, 8 plans, shipped 2026-03-05) → [Archive](.planning/milestones/v3.0-ROADMAP.md)
 - [x] **v4.0 Device-Adaptive AI** — Phases 12-25 (48/48 requirements, 32 plans, shipped 2026-03-10) → [Archive](.planning/milestones/v4.0-ROADMAP.md)
-- 🚧 **v5.0 Entity Intelligence & Knowledge Graph** — Phases 26-29 (20 requirements, in progress)
+- 🚧 **v5.0 Entity Intelligence & Knowledge Graph** — Phases 26-29 (22 requirements, in progress)
 
 ## Phases
 
