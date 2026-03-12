@@ -13,6 +13,7 @@ import path from 'node:path';
 import type { GraphScore } from './score-graph.js';
 import type { ExperimentResult, PersonaAdversarialResult } from './harness-types.js';
 import { computeAggregateScore, computeLearningCurve } from './score-graph.js';
+import type { AblationSuiteResult } from './ablation-engine.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -145,7 +146,7 @@ function buildMarkdown(results: CheckpointResult[], runTimestamp: string): strin
 // Experiment-level report
 // ---------------------------------------------------------------------------
 
-function buildExperimentMarkdown(result: ExperimentResult): string {
+function buildExperimentMarkdown(result: ExperimentResult, ablation?: AblationSuiteResult): string {
   const lines: string[] = [];
 
   lines.push(`# Adversarial Training Experiment: ${result.experimentName}`);
@@ -184,11 +185,15 @@ function buildExperimentMarkdown(result: ExperimentResult): string {
   lines.push(`| Privacy Score | ${fmt(agg.privacyScore.mean)} | ${fmt(agg.privacyScore.median)} | ${fmt(agg.privacyScore.min)} | ${fmt(agg.privacyScore.max)} | ${fmt(agg.privacyScore.stdDev)} |`);
   lines.push('');
 
-  // Per-persona learning curves
+  // Per-persona learning curves with classification
   lines.push('## Learning Curves (Relationship F1 by Cycle)');
   lines.push('');
   for (const [personaName, curve] of Object.entries(result.learningCurves)) {
-    lines.push(`### ${personaName}`);
+    const f1Values = curve.map((p) => p.relationshipF1);
+    const curveType = classifyLearningCurve(f1Values);
+    const curveLabel = curveType === 'healthy-logarithmic' ? '✓ healthy' :
+      curveType === 'early-saturation' ? '⚠ early saturation' : '✗ degradation';
+    lines.push(`### ${personaName} [${curveLabel}]`);
     for (const point of curve) {
       lines.push(`  Cycle ${point.cycle}: ${asciiBar(point.relationshipF1)} RelF1  ${asciiBar(point.entityF1)} EntF1`);
     }
@@ -229,6 +234,11 @@ function buildExperimentMarkdown(result: ExperimentResult): string {
   }
   lines.push('');
 
+  // Ablation section (if provided)
+  if (ablation) {
+    lines.push(buildAblationSection(ablation));
+  }
+
   // Worst-performing personas
   const sortedByRelF1 = [...result.personas].sort(
     (a, b) => a.finalScore.relationshipF1 - b.finalScore.relationshipF1,
@@ -254,9 +264,80 @@ function buildExperimentMarkdown(result: ExperimentResult): string {
   return lines.join('\n');
 }
 
+// ---------------------------------------------------------------------------
+// Learning curve classification
+// ---------------------------------------------------------------------------
+
+export function classifyLearningCurve(
+  f1Values: number[],
+): 'healthy-logarithmic' | 'early-saturation' | 'degradation' {
+  if (f1Values.length < 2) return 'healthy-logarithmic';
+  const last = f1Values[f1Values.length - 1];
+  const first = f1Values[0];
+  if (last < first - 0.05) return 'degradation';
+  const midIdx = Math.floor(f1Values.length / 2);
+  const midVal = f1Values[midIdx];
+  const laterGain = last - midVal;
+  if (laterGain < 0.02 && last < 0.80) return 'early-saturation';
+  return 'healthy-logarithmic';
+}
+
+// ---------------------------------------------------------------------------
+// Ablation section builder
+// ---------------------------------------------------------------------------
+
+function buildAblationSection(ablation: AblationSuiteResult): string {
+  const lines: string[] = [];
+
+  lines.push('## Ablation Results');
+  lines.push('');
+  lines.push('Component contribution measured by disabling each component and re-scoring.');
+  lines.push('');
+
+  if (ablation.componentRanking.length === 0) {
+    lines.push('*No ablation data available.*');
+    return lines.join('\n');
+  }
+
+  // Component ranking table
+  lines.push('### Component Importance Ranking');
+  lines.push('');
+  lines.push('| Rank | Component | RelF1 Impact | EntF1 Impact | Overall Impact |');
+  lines.push('|------|-----------|-------------|-------------|----------------|');
+
+  for (let i = 0; i < ablation.componentRanking.length; i++) {
+    const comp = ablation.componentRanking[i];
+    const relDelta = comp.relationshipF1Delta < 0
+      ? `${(comp.relationshipF1Delta * 100).toFixed(1)}%`
+      : `+${(comp.relationshipF1Delta * 100).toFixed(1)}%`;
+    const entDelta = comp.entityF1Delta < 0
+      ? `${(comp.entityF1Delta * 100).toFixed(1)}%`
+      : `+${(comp.entityF1Delta * 100).toFixed(1)}%`;
+    lines.push(`| ${i + 1} | ${comp.componentName} | ${relDelta} | ${entDelta} | ${comp.impactScore.toFixed(3)} |`);
+  }
+  lines.push('');
+  lines.push('*Negative delta = removing this component hurt the score (it was contributing positively)*');
+  lines.push('');
+
+  // ASCII delta chart for relationship F1
+  lines.push('### RelF1 Impact (ASCII chart)');
+  lines.push('');
+  for (const comp of ablation.componentRanking) {
+    const absImpact = Math.abs(comp.relationshipF1Delta);
+    const bars = Math.round(absImpact * 40); // scale to 40 chars
+    const direction = comp.relationshipF1Delta <= 0 ? '-' : '+';
+    const bar = `${direction}${'█'.repeat(bars)}`;
+    lines.push(`  ${comp.componentName.padEnd(22)} ${bar.padEnd(45)} ${(comp.relationshipF1Delta * 100).toFixed(1)}%`);
+  }
+  lines.push('');
+
+  return lines.join('\n');
+}
+
 export function writeExperimentReport(
   result: ExperimentResult,
   outputDir: string,
+  ablation?: AblationSuiteResult,
 ): { jsonPath: string; mdPath: string } {
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
@@ -267,7 +348,7 @@ export function writeExperimentReport(
 
   fs.writeFileSync(jsonPath, JSON.stringify(result, null, 2), 'utf-8');
 
-  const mdContent = buildExperimentMarkdown(result);
+  const mdContent = buildExperimentMarkdown(result, ablation);
   fs.writeFileSync(mdPath, mdContent, 'utf-8');
 
   return { jsonPath, mdPath };

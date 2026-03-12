@@ -3,12 +3,16 @@
  *
  * Runs 5 adversarial cycles per persona, with gap-targeted corpus
  * generation, enrichment emulation, corrections, and aggregate reporting.
+ * After all personas complete: runs ablation suite, auto-tunes patterns,
+ * and generates the investment report.
  *
  * Usage:
  *   npx tsx scripts/harness/run-adversarial.ts --dry-run --personas all
  *   npx tsx scripts/harness/run-adversarial.ts --personas alex-jordan,dev-kumar --cycles 5
  *   npx tsx scripts/harness/run-adversarial.ts --personas all --resume --experiment my-run
  *   npx tsx scripts/harness/run-adversarial.ts --generate-personas --dry-run
+ *   npx tsx scripts/harness/run-adversarial.ts --personas all --skip-ablation
+ *   npx tsx scripts/harness/run-adversarial.ts --personas all --skip-report
  *
  * Flags:
  *   --personas <names>      Comma-separated persona names, or 'all'
@@ -18,6 +22,8 @@
  *   --delay-ms <n>          Throttle between API calls (default: 100)
  *   --dry-run               Validate personas, print run plan, exit
  *   --generate-personas     Generate all 9 new personas before running
+ *   --skip-ablation         Skip ablation suite after persona runs (faster)
+ *   --skip-report           Skip investment report generation
  *
  * CI exit codes:
  *   0 — all personas achieved >= 80% relationship F1 after final cycle
@@ -43,6 +49,9 @@ import {
 } from './checkpoint-store.js';
 import { computeAggregateScore, computeLearningCurve } from './score-graph.js';
 import { writeExperimentReport } from './write-reports.js';
+import { runFullAblationSuite } from './ablation-engine.js';
+import { autoTunePatterns } from './auto-tune-patterns.js';
+import { generateInvestmentReport } from './generate-investment-report.js';
 import type {
   PersonaAdversarialResult,
   ExperimentResult,
@@ -203,7 +212,7 @@ async function runPersonaAdversarial(
   client: Anthropic,
   resumeFromCycle: number,
   delayMs: number,
-): Promise<PersonaAdversarialResult> {
+): Promise<PersonaAdversarialResult & { _personaConfig: PersonaConfig }> {
   const { dirName, syntheticUser } = personaData;
   const personaConfig: PersonaConfig = {
     personaName: syntheticUser.personaName,
@@ -282,6 +291,7 @@ async function runPersonaAdversarial(
     cycles: completedCycles,
     totalDurationMs,
     finalScore,
+    _personaConfig: personaConfig,
   };
 }
 
@@ -294,6 +304,8 @@ async function main(): Promise<void> {
   const isDryRun = args.includes('--dry-run');
   const isResume = args.includes('--resume');
   const isGeneratePersonas = args.includes('--generate-personas');
+  const skipAblation = args.includes('--skip-ablation');
+  const skipReport = args.includes('--skip-report');
 
   const getArg = (flag: string) => {
     const idx = args.indexOf(flag);
@@ -371,6 +383,7 @@ async function main(): Promise<void> {
 
   const startedAt = new Date().toISOString();
   const personaResults: PersonaAdversarialResult[] = [];
+  const personaConfigs = new Map<string, PersonaConfig>();
   const personaStates: Array<{
     personaDirName: string;
     personaName: string;
@@ -399,6 +412,7 @@ async function main(): Promise<void> {
     );
 
     personaResults.push(result);
+    personaConfigs.set(dirName, result._personaConfig);
     personaStates.push({
       personaDirName: dirName,
       personaName: result.personaName,
@@ -436,7 +450,75 @@ async function main(): Promise<void> {
 
   // Write experiment report
   const experimentDir = path.join(EXPERIMENTS_DIR, experimentName);
+  if (!fs.existsSync(experimentDir)) {
+    fs.mkdirSync(experimentDir, { recursive: true });
+  }
   const { jsonPath, mdPath } = writeExperimentReport(experimentResult, experimentDir);
+
+  // Post-run analysis: ablation, auto-tune, investment report
+  let ablationSuiteResult = null;
+  let tuneResult = null;
+
+  if (!skipAblation && personaResults.length >= 2) {
+    console.log('\n[run-adversarial] Running ablation suite...');
+    console.log('='.repeat(70));
+    try {
+      ablationSuiteResult = await runFullAblationSuite(personaResults, personaConfigs, client);
+
+      // Save ablation results
+      const ablationPath = path.join(experimentDir, 'ablation-results.json');
+      // Serialize Map for JSON output
+      const ablationJson = {
+        fullRunScores: ablationSuiteResult.fullRunScores,
+        perComponentResults: Object.fromEntries(ablationSuiteResult.perComponentResults),
+        componentRanking: ablationSuiteResult.componentRanking,
+      };
+      fs.writeFileSync(ablationPath, JSON.stringify(ablationJson, null, 2), 'utf-8');
+      console.log(`[run-adversarial] Ablation results saved: ${ablationPath}`);
+    } catch (err) {
+      console.error(`[run-adversarial] Ablation suite failed: ${err}`);
+    }
+  } else if (skipAblation) {
+    console.log('\n[run-adversarial] Skipping ablation suite (--skip-ablation)');
+  } else {
+    console.log('\n[run-adversarial] Skipping ablation suite (need >= 2 personas)');
+  }
+
+  console.log('\n[run-adversarial] Auto-tuning patterns...');
+  try {
+    tuneResult = await autoTunePatterns(personaResults, client);
+    // Save tuned patterns to experiment dir as well
+    const tunedPath = path.join(experimentDir, 'tuned-patterns.json');
+    const harnessTunedPath = path.join(__dirname, 'tuned-patterns.json');
+    if (fs.existsSync(harnessTunedPath)) {
+      fs.copyFileSync(harnessTunedPath, tunedPath);
+    }
+  } catch (err) {
+    console.error(`[run-adversarial] Auto-tune failed: ${err}`);
+  }
+
+  if (!skipReport && tuneResult) {
+    console.log('\n[run-adversarial] Generating investment report...');
+    try {
+      const stubAblation = ablationSuiteResult ?? {
+        fullRunScores: {},
+        perComponentResults: new Map(),
+        componentRanking: [],
+      };
+      const reportPath = await generateInvestmentReport(
+        experimentResult,
+        stubAblation,
+        tuneResult,
+        experimentDir,
+        client,
+      );
+      console.log(`[run-adversarial] Investment report: ${reportPath}`);
+    } catch (err) {
+      console.error(`[run-adversarial] Investment report failed: ${err}`);
+    }
+  } else if (skipReport) {
+    console.log('[run-adversarial] Skipping investment report (--skip-report)');
+  }
 
   // Print summary table
   console.log('\n[run-adversarial] FINAL SUMMARY');
