@@ -23,7 +23,8 @@
       "relationshipType": "spouse",
       "targetEntityType": "PER",
       "confidenceBase": 0.20,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 4
     },
     {
       "id": "boss-reports-to",
@@ -39,7 +40,8 @@
       "relationshipType": "reports-to",
       "targetEntityType": "PER",
       "confidenceBase": 0.25,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 4
     },
     {
       "id": "healthcare-title-dr",
@@ -58,7 +60,9 @@
       "targetEntityType": "PER",
       "confidenceBase": 0.70,
       "scope": "sentence",
-      "suppressedByTypes": ["veterinarian"]
+      "suppressedByTypes": ["veterinarian"],
+      "proximityMaxWords": 3,
+      "skipOnPossessiveGap": true
     },
     {
       "id": "healthcare-context",
@@ -83,7 +87,8 @@
       "relationshipType": "parent",
       "targetEntityType": "PER",
       "confidenceBase": 0.15,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 4
     },
     {
       "id": "family-child",
@@ -99,7 +104,8 @@
       "relationshipType": "child",
       "targetEntityType": "PER",
       "confidenceBase": 0.20,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 3
     },
     {
       "id": "family-sibling",
@@ -119,11 +125,12 @@
     },
     {
       "id": "colleague-work-context",
-      "keywords": ["pair program", "code review", "standup with", "sprint with", "deploy with", "merge with", "PR from", "pull request from", "sync with", "working with", "collaborate with", "pair on", "pair with", "demo with"],
+      "keywords": ["pair program", "code review", "standup with", "sprint with", "deploy with", "merge with", "PR from", "pull request from", "sync with", "working with", "collaborate with", "pair on", "paired on", "pair with", "paired with", "demo with", "offsite", "travel request", "travel requests"],
       "relationshipType": "colleague",
       "targetEntityType": "PER",
       "confidenceBase": 0.20,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 4
     },
     {
       "id": "friend",
@@ -139,7 +146,8 @@
       "relationshipType": "friend",
       "targetEntityType": "PER",
       "confidenceBase": 0.15,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 4
     },
     {
       "id": "works-at",
@@ -155,11 +163,12 @@
       "relationshipType": "works-at",
       "targetEntityType": "ORG",
       "confidenceBase": 0.20,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 4
     },
     {
       "id": "lives-at",
-      "keywords": ["lives at", "lives in", "live at", "live in", "home in", "address", "neighborhood", "house in", "apartment in", "moved to", "moving to", "hometown", "our city", "my city"],
+      "keywords": ["lives at", "lives in", "live at", "live in", "living in", "home in", "address", "neighborhood", "house in", "apartment in", "moved to", "moving to", "hometown", "our city", "my city"],
       "relationshipType": "lives-at",
       "targetEntityType": "LOC",
       "confidenceBase": 0.50,
@@ -171,7 +180,8 @@
       "relationshipType": "lives-at",
       "targetEntityType": "LOC",
       "confidenceBase": 0.15,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 4
     },
     {
       "id": "org-member",
@@ -203,7 +213,8 @@
       "relationshipType": "client",
       "targetEntityType": "PER",
       "confidenceBase": 0.20,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 4
     },
     {
       "id": "neighbor",
@@ -219,7 +230,8 @@
       "relationshipType": "neighbor",
       "targetEntityType": "PER",
       "confidenceBase": 0.10,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 4
     },
     {
       "id": "teacher",
@@ -231,7 +243,7 @@
     },
     {
       "id": "landlord",
-      "keywords": ["landlord", "landlady", "property manager", "rents to me"],
+      "keywords": ["landlord", "landlady", "property manager", "rents to me", "pay rent", "lease renewal", "lease expires", "my lease", "rent to"],
       "relationshipType": "landlord",
       "targetEntityType": "PER",
       "confidenceBase": 0.60,
@@ -255,11 +267,12 @@
     },
     {
       "id": "lawyer-context",
-      "keywords": ["signed documents", "documents", "filing", "court", "deposition", "power of attorney", "will and testament", "estate"],
+      "keywords": ["signed documents", "legal documents", "filing", "court date", "court hearing", "deposition", "power of attorney", "will and testament", "estate"],
       "relationshipType": "lawyer",
       "targetEntityType": "PER",
       "confidenceBase": 0.15,
-      "scope": "sentence"
+      "scope": "sentence",
+      "proximityMaxWords": 4
     },
     {
       "id": "veterinarian",
@@ -275,7 +288,9 @@
       "relationshipType": "veterinarian",
       "targetEntityType": "PER",
       "confidenceBase": 0.15,
-      "scope": "sentence"
+      "scope": "sentence",
+      "caseSensitiveKeywords": true,
+      "proximityMaxWords": 4
     },
     {
       "id": "coach",

@@ -27,6 +27,17 @@ export interface RelationshipPattern {
   /** Relationship types that suppress this pattern for the same entity.
    *  E.g., if "veterinarian" already exists for Dr. Patel, don't also create "healthcare-provider". */
   suppressedByTypes?: string[];
+  /** When set, only fire on the entity closest to the keyword (within this word distance).
+   *  Prevents bystander false positives when multiple entities appear in one sentence.
+   *  If multiple entities are equidistant, all fire. If none are within range, none fire. */
+  proximityMaxWords?: number;
+  /** When true, keyword matching is case-sensitive (default: case-insensitive).
+   *  Used for animal keywords like "cat" to avoid matching "Cat" (name alias). */
+  caseSensitiveKeywords?: boolean;
+  /** When true, skip entity if a possessive pronoun (his/her/their/my) appears in the gap
+   *  between entity and keyword. Prevents "Arjun to his dentist" from tagging Arjun as
+   *  a healthcare-provider — the possessive indicates a third-party relationship. */
+  skipOnPossessiveGap?: boolean;
 }
 
 export interface RelationshipPatternsConfig {

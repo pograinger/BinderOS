@@ -1,7 +1,7 @@
 {
   "generatedAt": "2026-03-12T01:58:27.469Z",
   "personaName": "Dev Kumar",
-  "totalItems": 45,
+  "totalItems": 49,
   "items": [
     {
       "id": "item-001",
@@ -1067,6 +1067,90 @@
           "entityType": "PER",
           "spanStart": 59,
           "spanEnd": 63,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-046",
+      "content": "Pick up Arjun from soccer practice at 4pm, then drop Meera at ballet",
+      "expectedEntities": [
+        "Arjun Kumar",
+        "Meera Kumar"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Arjun",
+          "entityType": "PER",
+          "spanStart": 8,
+          "spanEnd": 13,
+          "confidence": 0.9
+        },
+        {
+          "entityText": "Meera",
+          "entityType": "PER",
+          "spanStart": 43,
+          "spanEnd": 48,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-047",
+      "content": "We love living in Seattle, especially the food scene and access to hiking",
+      "expectedEntities": [
+        "Seattle"
+      ],
+      "expectedRelationships": [
+        "lives-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Seattle",
+          "entityType": "LOC",
+          "spanStart": 19,
+          "spanEnd": 26,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": "item-048",
+      "content": "Renew my Seattle Tech Mentors membership, I joined last year and the events have been great",
+      "expectedEntities": [
+        "Seattle Tech Mentors"
+      ],
+      "expectedRelationships": [
+        "org-member"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Seattle Tech Mentors",
+          "entityType": "ORG",
+          "spanStart": 9,
+          "spanEnd": 29,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-049",
+      "content": "Marco and I paired on the auth module refactor, good progress on the middleware layer",
+      "expectedEntities": [
+        "Marco"
+      ],
+      "expectedRelationships": [
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Marco",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 5,
           "confidence": 0.9
         }
       ]

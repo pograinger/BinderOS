@@ -123,6 +123,16 @@ function resolveGtEntity(
   detectedEntities: Entity[],
 ): string | undefined {
   const normGt = normalizeText(gtEntityName);
+
+  // Pass 1: exact match (prefer exact over substring)
+  for (const det of detectedEntities) {
+    if (normalizeText(det.canonicalName) === normGt) return det.id;
+    for (const alias of det.aliases) {
+      if (normalizeText(alias) === normGt) return det.id;
+    }
+  }
+
+  // Pass 2: fuzzy/substring match
   for (const det of detectedEntities) {
     if (fuzzyMatch(normalizeText(det.canonicalName), normGt)) return det.id;
     for (const alias of det.aliases) {
@@ -130,6 +140,41 @@ function resolveGtEntity(
     }
   }
   return undefined;
+}
+
+/**
+ * Resolve a ground truth entity name to ALL matching detected entity IDs.
+ * Handles entity dedup issues where "Nexus", "Nexus Tech", and "Nexus Technologies"
+ * are separate entities in the store but the same entity in ground truth.
+ */
+function resolveAllGtEntities(
+  gtEntityName: string,
+  detectedEntities: Entity[],
+): string[] {
+  const normGt = normalizeText(gtEntityName);
+  const ids: string[] = [];
+  for (const det of detectedEntities) {
+    if (normalizeText(det.canonicalName) === normGt) {
+      ids.push(det.id);
+      continue;
+    }
+    const aliasMatch = det.aliases.some((a) => normalizeText(a) === normGt);
+    if (aliasMatch) {
+      ids.push(det.id);
+      continue;
+    }
+    if (fuzzyMatch(normalizeText(det.canonicalName), normGt)) {
+      ids.push(det.id);
+      continue;
+    }
+    for (const alias of det.aliases) {
+      if (fuzzyMatch(normalizeText(alias), normGt)) {
+        ids.push(det.id);
+        break;
+      }
+    }
+  }
+  return ids;
 }
 
 // ---------------------------------------------------------------------------
@@ -192,22 +237,21 @@ export function scoreEntityGraph(
   const missedRelations: Array<{ entity: string; type: string }> = [];
 
   for (const gtRel of gtRelationships) {
-    // Find the detected entity corresponding to this GT relationship target
-    const detectedEntityId = resolveGtEntity(gtRel.entity, detectedEntities);
+    // Find ALL detected entities that could match this GT entity
+    const candidateEntityIds = resolveAllGtEntities(gtRel.entity, detectedEntities);
 
-    if (!detectedEntityId) {
+    if (!candidateEntityIds.length) {
       // Entity not detected — relationship can't be found either
       missedRelations.push({ entity: gtRel.entity, type: gtRel.type });
       continue;
     }
 
-    // Check if any detected relation matches this GT relationship
-    // GT relationships use [SELF] as source (Alex's relationships)
+    // Check if any detected relation matches this GT relationship for ANY candidate entity
     const found = detectedRelations.some((rel) => {
       const typeMatches = rel.relationshipType === gtRel.type;
-      const entityMatched =
-        rel.targetEntityId === detectedEntityId ||
-        rel.sourceEntityId === detectedEntityId;
+      const entityMatched = candidateEntityIds.some(
+        (id) => rel.targetEntityId === id || rel.sourceEntityId === id,
+      );
       return typeMatches && entityMatched;
     });
 
@@ -221,16 +265,14 @@ export function scoreEntityGraph(
   // For precision: how many detected relations correspond to GT relationships
   let correctRelations = 0;
   for (const rel of detectedRelations) {
-    // Find the target entity
-    const targetEntityId =
-      rel.sourceEntityId === '[SELF]' ? rel.targetEntityId : rel.targetEntityId;
+    const targetEntityId = rel.targetEntityId;
     const detTarget = store.getEntity(targetEntityId);
     if (!detTarget) continue;
 
     const matchesGt = gtRelationships.some((gtRel) => {
-      const gtEntityId = resolveGtEntity(gtRel.entity, detectedEntities);
+      const gtEntityIds = resolveAllGtEntities(gtRel.entity, detectedEntities);
       return (
-        gtEntityId === targetEntityId && gtRel.type === rel.relationshipType
+        gtEntityIds.includes(targetEntityId) && gtRel.type === rel.relationshipType
       );
     });
     if (matchesGt) correctRelations++;

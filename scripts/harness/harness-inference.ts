@@ -11,7 +11,7 @@
  */
 
 import type { EntityMention, EntityRelation } from '../../src/types/intelligence.js';
-import { splitIntoSentences, buildKeywordRegex } from '../../src/inference/keyword-patterns.js';
+import { splitIntoSentences, buildKeywordRegex, buildKeywordPosRegex, filterByProximity } from '../../src/inference/keyword-patterns.js';
 import type { RelationshipPattern, RelationshipPatternsConfig } from '../../src/inference/types.js';
 import { HarnessEntityStore } from './harness-entity-store.js';
 import { createRequire } from 'node:module';
@@ -31,12 +31,14 @@ const PATTERNS_CONFIG: RelationshipPatternsConfig = JSON.parse(
 
 interface CompiledPattern extends RelationshipPattern {
   regex: RegExp;
+  keywordPosRegex: RegExp;
   entityTextRegex?: RegExp;
 }
 
 const COMPILED_PATTERNS: CompiledPattern[] = PATTERNS_CONFIG.patterns.map((p) => ({
   ...p,
-  regex: buildKeywordRegex(p.keywords),
+  regex: buildKeywordRegex(p.keywords, p.caseSensitiveKeywords),
+  keywordPosRegex: buildKeywordPosRegex(p.keywords, p.caseSensitiveKeywords),
   entityTextRegex: p.entityTextFilter ? new RegExp(p.entityTextFilter, 'i') : undefined,
 }));
 
@@ -140,7 +142,14 @@ export async function runHarnessKeywordPatterns(
 
       if (!matchingEntities.length) continue;
 
-      for (const entity of matchingEntities) {
+      // Apply proximity filtering: only keep entities closest to the keyword
+      const proximityFiltered = pattern.proximityMaxWords
+        ? filterByProximity(sentenceText, sentence.start, pattern, matchingEntities)
+        : matchingEntities;
+
+      if (!proximityFiltered.length) continue;
+
+      for (const entity of proximityFiltered) {
         // Check suppression: skip if entity already has a more specific relationship
         if (pattern.suppressedByTypes?.length) {
           const existingRels = store.getRelations().filter(

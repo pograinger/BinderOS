@@ -35,12 +35,15 @@ const PATTERNS_CONFIG = patternsJson as RelationshipPatternsConfig;
 // Pre-build regexes for each pattern (avoid re-compiling on every call)
 interface CompiledPattern extends RelationshipPattern {
   regex: RegExp;
+  /** Capture-group regex for finding keyword position within sentence text */
+  keywordPosRegex: RegExp;
   entityTextRegex?: RegExp;
 }
 
 const COMPILED_PATTERNS: CompiledPattern[] = PATTERNS_CONFIG.patterns.map((p) => ({
   ...p,
-  regex: buildKeywordRegex(p.keywords),
+  regex: buildKeywordRegex(p.keywords, p.caseSensitiveKeywords),
+  keywordPosRegex: buildKeywordPosRegex(p.keywords, p.caseSensitiveKeywords),
   entityTextRegex: p.entityTextFilter ? new RegExp(p.entityTextFilter, 'i') : undefined,
 }));
 
@@ -122,12 +125,134 @@ function restoreAbbreviations(
 }
 
 /**
- * Build a word-boundary anchored, case-insensitive regex from a list of keywords.
+ * Build a word-boundary anchored regex from a list of keywords.
  * Multi-word phrases are supported (word boundaries at start/end of phrase).
  */
-export function buildKeywordRegex(keywords: string[]): RegExp {
+export function buildKeywordRegex(keywords: string[], caseSensitive?: boolean): RegExp {
   const escaped = keywords.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  return new RegExp(`(?:^|\\b|\\s)(${escaped.join('|')})(?:\\b|\\s|$)`, 'i');
+  const flags = caseSensitive ? '' : 'i';
+  return new RegExp(`(?:^|\\b|\\s)(${escaped.join('|')})(?:\\b|\\s|$)`, flags);
+}
+
+/**
+ * Build a regex that captures keyword matches with their positions.
+ * Uses the global flag so we can iterate matches via exec().
+ */
+export function buildKeywordPosRegex(keywords: string[], caseSensitive?: boolean): RegExp {
+  const escaped = keywords.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const flags = caseSensitive ? 'g' : 'gi';
+  return new RegExp(`(?:^|\\b|\\s)(${escaped.join('|')})(?:\\b|\\s|$)`, flags);
+}
+
+// ---------------------------------------------------------------------------
+// Proximity filtering — only tag entity nearest to the keyword
+// ---------------------------------------------------------------------------
+
+/**
+ * Count word distance between a keyword match position and an entity mention
+ * within a sentence. Distance is measured as the number of whitespace-separated
+ * tokens between the keyword and the nearest edge of the entity span.
+ */
+/**
+ * Clause boundary penalty: commas and semicolons within the gap add virtual
+ * distance, preventing entities in a separate clause from being tagged.
+ * E.g., "Arjun to his dentist appointment, Sunita will..." — the comma
+ * between "appointment" and "Sunita" adds 3 virtual words of distance.
+ */
+const CLAUSE_BOUNDARY_PENALTY = 3;
+
+function wordDistance(
+  sentenceText: string,
+  keywordStartInSentence: number,
+  keywordEndInSentence: number,
+  entityStartInSentence: number,
+  entityEndInSentence: number,
+): number {
+  // If keyword and entity overlap, distance is 0
+  if (keywordStartInSentence < entityEndInSentence && keywordEndInSentence > entityStartInSentence) {
+    return 0;
+  }
+
+  // Determine the text gap between keyword and entity
+  const gapStart = Math.min(keywordEndInSentence, entityEndInSentence);
+  const gapEnd = Math.max(keywordStartInSentence, entityStartInSentence);
+  const gapText = sentenceText.slice(gapStart, gapEnd);
+
+  // Count words in the gap (split on whitespace, filter empty)
+  const words = gapText.split(/\s+/).filter((w) => w.length > 0).length;
+
+  // Add penalty for clause boundaries (commas, semicolons) in the gap
+  const clauseBoundaries = (gapText.match(/[,;]/g) || []).length;
+
+  return words + clauseBoundaries * CLAUSE_BOUNDARY_PENALTY;
+}
+
+/**
+ * Filter entities by proximity to keyword match. Returns only the entity(ies)
+ * closest to the keyword, provided they are within proximityMaxWords distance.
+ * If multiple entities are equidistant, all are returned.
+ */
+export function filterByProximity(
+  sentenceText: string,
+  sentenceStart: number,
+  pattern: CompiledPattern,
+  entities: EntityMention[],
+): EntityMention[] {
+  // Find keyword position(s) in sentence using the position-capturing regex
+  const posRegex = new RegExp(pattern.keywordPosRegex.source, pattern.keywordPosRegex.flags);
+  const keywordPositions: Array<{ start: number; end: number }> = [];
+  let match: RegExpExecArray | null;
+  while ((match = posRegex.exec(sentenceText)) !== null) {
+    // Group 1 is the keyword itself (offset by any leading whitespace/boundary)
+    const kwStart = match.index + (match[0].length - match[1].length);
+    keywordPositions.push({ start: kwStart, end: kwStart + match[1].length });
+  }
+
+  if (!keywordPositions.length) return entities; // fallback: no position found, keep all
+
+  // Possessive pronouns that indicate third-party relationships
+  const POSSESSIVE_RE = /\b(his|her|their|my)\b/i;
+
+  // For each entity, compute minimum word distance to any keyword occurrence
+  const scored = entities.map((ent) => {
+    const entityStartInSentence = ent.spanStart - sentenceStart;
+    const entityEndInSentence = entityStartInSentence + ent.entityText.length;
+
+    let minDist = Infinity;
+    let hasPossessiveGap = false;
+    for (const kw of keywordPositions) {
+      const dist = wordDistance(sentenceText, kw.start, kw.end, entityStartInSentence, entityEndInSentence);
+      if (dist < minDist) minDist = dist;
+
+      // Check for possessive in the gap between entity and keyword
+      if (pattern.skipOnPossessiveGap) {
+        const gapStart = Math.min(kw.end, entityEndInSentence);
+        const gapEnd = Math.max(kw.start, entityStartInSentence);
+        if (gapEnd > gapStart) {
+          const gapText = sentenceText.slice(gapStart, gapEnd);
+          if (POSSESSIVE_RE.test(gapText)) hasPossessiveGap = true;
+        }
+      }
+    }
+    return { entity: ent, distance: minDist, possessiveExcluded: hasPossessiveGap };
+  });
+
+  // Exclude entities with possessive gap (third-party relationships)
+  const eligible = pattern.skipOnPossessiveGap
+    ? scored.filter((s) => !s.possessiveExcluded)
+    : scored;
+
+  if (!eligible.length) return [];
+
+  // Find the minimum distance
+  const minDistance = Math.min(...eligible.map((s) => s.distance));
+
+  // Only keep entities at minimum distance AND within the max threshold
+  if (minDistance > pattern.proximityMaxWords!) return [];
+
+  return eligible
+    .filter((s) => s.distance === minDistance)
+    .map((s) => s.entity);
 }
 
 // ---------------------------------------------------------------------------
@@ -187,8 +312,15 @@ export async function runKeywordPatterns(
 
       if (!matchingEntities.length) continue;
 
+      // Apply proximity filtering: only keep entities closest to the keyword
+      const proximityFiltered = pattern.proximityMaxWords
+        ? filterByProximity(sentenceText, sentence.start, pattern, matchingEntities)
+        : matchingEntities;
+
+      if (!proximityFiltered.length) continue;
+
       // Create a relation for each matching entity
-      for (const entity of matchingEntities) {
+      for (const entity of proximityFiltered) {
         // Check suppression: skip if entity already has a more specific relationship
         if (pattern.suppressedByTypes?.length) {
           const suppressed = await isRelationSuppressed(

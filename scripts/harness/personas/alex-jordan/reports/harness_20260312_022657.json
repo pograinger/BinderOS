@@ -1,0 +1,392 @@
+{
+  "generatedAt": "2026-03-12T02:26:57.578Z",
+  "totalCheckpoints": 4,
+  "checkpoints": [
+    {
+      "score": {
+        "checkpoint": 15,
+        "entityPrecision": 1,
+        "entityRecall": 0.8666666666666667,
+        "entityF1": 0.9285714285714286,
+        "relationshipPrecision": 0.9230769230769231,
+        "relationshipRecall": 0.8571428571428571,
+        "relationshipF1": 0.888888888888889,
+        "privacyScore": 0.8571428571428571,
+        "totalDetectedEntities": 13,
+        "totalGroundTruthEntities": 15,
+        "correctEntities": 13,
+        "totalDetectedRelations": 13,
+        "totalGroundTruthRelations": 14,
+        "correctRelations": 12,
+        "foundEntities": [
+          "Pam Jordan",
+          "Dr. Chen",
+          "Marcus Webb",
+          "Linda Jordan",
+          "Ethan Jordan",
+          "Priya Sharma",
+          "Jake Morrison",
+          "Dr. Rivera",
+          "Tom Nguyen",
+          "Sandra Kim",
+          "Dr. Patel",
+          "Brian Foster",
+          "Acme Corp"
+        ],
+        "missedEntities": [
+          "Lincoln Elementary",
+          "Portland"
+        ],
+        "foundRelations": [
+          {
+            "entity": "Pam Jordan",
+            "type": "spouse"
+          },
+          {
+            "entity": "Marcus Webb",
+            "type": "reports-to"
+          },
+          {
+            "entity": "Ethan Jordan",
+            "type": "child"
+          },
+          {
+            "entity": "Dr. Chen",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Rivera",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Priya Sharma",
+            "type": "colleague"
+          },
+          {
+            "entity": "Jake Morrison",
+            "type": "friend"
+          },
+          {
+            "entity": "Tom Nguyen",
+            "type": "neighbor"
+          },
+          {
+            "entity": "Sandra Kim",
+            "type": "lawyer"
+          },
+          {
+            "entity": "Dr. Patel",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Brian Foster",
+            "type": "client"
+          },
+          {
+            "entity": "Acme Corp",
+            "type": "works-at"
+          }
+        ],
+        "missedRelations": [
+          {
+            "entity": "Linda Jordan",
+            "type": "parent"
+          },
+          {
+            "entity": "Portland",
+            "type": "lives-at"
+          }
+        ]
+      },
+      "atomsProcessed": 15
+    },
+    {
+      "score": {
+        "checkpoint": 30,
+        "entityPrecision": 1,
+        "entityRecall": 1,
+        "entityF1": 1,
+        "relationshipPrecision": 1,
+        "relationshipRecall": 1,
+        "relationshipF1": 1,
+        "privacyScore": 1,
+        "totalDetectedEntities": 16,
+        "totalGroundTruthEntities": 15,
+        "correctEntities": 15,
+        "totalDetectedRelations": 15,
+        "totalGroundTruthRelations": 14,
+        "correctRelations": 14,
+        "foundEntities": [
+          "Pam Jordan",
+          "Dr. Chen",
+          "Marcus Webb",
+          "Linda Jordan",
+          "Ethan Jordan",
+          "Priya Sharma",
+          "Jake Morrison",
+          "Dr. Rivera",
+          "Tom Nguyen",
+          "Sandra Kim",
+          "Dr. Patel",
+          "Brian Foster",
+          "Acme Corp",
+          "Lincoln Elementary",
+          "Portland"
+        ],
+        "missedEntities": [],
+        "foundRelations": [
+          {
+            "entity": "Pam Jordan",
+            "type": "spouse"
+          },
+          {
+            "entity": "Marcus Webb",
+            "type": "reports-to"
+          },
+          {
+            "entity": "Linda Jordan",
+            "type": "parent"
+          },
+          {
+            "entity": "Ethan Jordan",
+            "type": "child"
+          },
+          {
+            "entity": "Dr. Chen",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Rivera",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Priya Sharma",
+            "type": "colleague"
+          },
+          {
+            "entity": "Jake Morrison",
+            "type": "friend"
+          },
+          {
+            "entity": "Tom Nguyen",
+            "type": "neighbor"
+          },
+          {
+            "entity": "Sandra Kim",
+            "type": "lawyer"
+          },
+          {
+            "entity": "Dr. Patel",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Brian Foster",
+            "type": "client"
+          },
+          {
+            "entity": "Acme Corp",
+            "type": "works-at"
+          },
+          {
+            "entity": "Portland",
+            "type": "lives-at"
+          }
+        ],
+        "missedRelations": []
+      },
+      "atomsProcessed": 30
+    },
+    {
+      "score": {
+        "checkpoint": 45,
+        "entityPrecision": 0.9411764705882353,
+        "entityRecall": 1,
+        "entityF1": 0.9696969696969697,
+        "relationshipPrecision": 0.9375,
+        "relationshipRecall": 1,
+        "relationshipF1": 0.967741935483871,
+        "privacyScore": 1,
+        "totalDetectedEntities": 17,
+        "totalGroundTruthEntities": 15,
+        "correctEntities": 15,
+        "totalDetectedRelations": 16,
+        "totalGroundTruthRelations": 14,
+        "correctRelations": 14,
+        "foundEntities": [
+          "Pam Jordan",
+          "Dr. Chen",
+          "Marcus Webb",
+          "Linda Jordan",
+          "Ethan Jordan",
+          "Priya Sharma",
+          "Jake Morrison",
+          "Dr. Rivera",
+          "Tom Nguyen",
+          "Sandra Kim",
+          "Dr. Patel",
+          "Brian Foster",
+          "Acme Corp",
+          "Lincoln Elementary",
+          "Portland"
+        ],
+        "missedEntities": [],
+        "foundRelations": [
+          {
+            "entity": "Pam Jordan",
+            "type": "spouse"
+          },
+          {
+            "entity": "Marcus Webb",
+            "type": "reports-to"
+          },
+          {
+            "entity": "Linda Jordan",
+            "type": "parent"
+          },
+          {
+            "entity": "Ethan Jordan",
+            "type": "child"
+          },
+          {
+            "entity": "Dr. Chen",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Rivera",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Priya Sharma",
+            "type": "colleague"
+          },
+          {
+            "entity": "Jake Morrison",
+            "type": "friend"
+          },
+          {
+            "entity": "Tom Nguyen",
+            "type": "neighbor"
+          },
+          {
+            "entity": "Sandra Kim",
+            "type": "lawyer"
+          },
+          {
+            "entity": "Dr. Patel",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Brian Foster",
+            "type": "client"
+          },
+          {
+            "entity": "Acme Corp",
+            "type": "works-at"
+          },
+          {
+            "entity": "Portland",
+            "type": "lives-at"
+          }
+        ],
+        "missedRelations": []
+      },
+      "atomsProcessed": 45
+    },
+    {
+      "score": {
+        "checkpoint": 60,
+        "entityPrecision": 0.9411764705882353,
+        "entityRecall": 1,
+        "entityF1": 0.9696969696969697,
+        "relationshipPrecision": 0.9375,
+        "relationshipRecall": 1,
+        "relationshipF1": 0.967741935483871,
+        "privacyScore": 1,
+        "totalDetectedEntities": 17,
+        "totalGroundTruthEntities": 15,
+        "correctEntities": 15,
+        "totalDetectedRelations": 16,
+        "totalGroundTruthRelations": 14,
+        "correctRelations": 14,
+        "foundEntities": [
+          "Pam Jordan",
+          "Dr. Chen",
+          "Marcus Webb",
+          "Linda Jordan",
+          "Ethan Jordan",
+          "Priya Sharma",
+          "Jake Morrison",
+          "Dr. Rivera",
+          "Tom Nguyen",
+          "Sandra Kim",
+          "Dr. Patel",
+          "Brian Foster",
+          "Acme Corp",
+          "Lincoln Elementary",
+          "Portland"
+        ],
+        "missedEntities": [],
+        "foundRelations": [
+          {
+            "entity": "Pam Jordan",
+            "type": "spouse"
+          },
+          {
+            "entity": "Marcus Webb",
+            "type": "reports-to"
+          },
+          {
+            "entity": "Linda Jordan",
+            "type": "parent"
+          },
+          {
+            "entity": "Ethan Jordan",
+            "type": "child"
+          },
+          {
+            "entity": "Dr. Chen",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Rivera",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Priya Sharma",
+            "type": "colleague"
+          },
+          {
+            "entity": "Jake Morrison",
+            "type": "friend"
+          },
+          {
+            "entity": "Tom Nguyen",
+            "type": "neighbor"
+          },
+          {
+            "entity": "Sandra Kim",
+            "type": "lawyer"
+          },
+          {
+            "entity": "Dr. Patel",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Brian Foster",
+            "type": "client"
+          },
+          {
+            "entity": "Acme Corp",
+            "type": "works-at"
+          },
+          {
+            "entity": "Portland",
+            "type": "lives-at"
+          }
+        ],
+        "missedRelations": []
+      },
+      "atomsProcessed": 60
+    }
+  ]
+}
