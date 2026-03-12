@@ -35,27 +35,27 @@ Every piece of stored information must encode predictive value about your future
 - Classification correction export — JSONL export for retraining with synthetic corpus preserved as floor (v3.0)
 - Model lifecycle UX — download progress, Cache API persistence, model info in settings, correction count (v3.0)
 - Tech debt cleanup — StatusBar simplified, AIOrb cleaned, isReadOnly enforced, review resume toast (v3.0)
+- Intelligence sidecar schema — atomIntelligence table separating AI knowledge from atom.content (v5.0)
+- Entity detection and registry — NER-based entity spotting with dedup, alias resolution, entity badges (v5.0)
+- Relationship inference — keyword patterns, co-occurrence accumulation, evidence-based confidence scoring (v5.0)
+- Entity consumers — entity-aware enrichment, correction UX, GTD context suggestions, semantic sanitization (v5.0)
+- Cognitive harness — headless adversarial training loop with synthetic personas, Optuna tuning, ablation testing (v5.0)
 
 ### Active
 
-<!-- v5.0 Entity Intelligence & Knowledge Graph -->
+<!-- v5.5 Cortical Intelligence -->
 
-- T1 universal entity detection: pre-trained NER (Xenova/bert-base-NER via Transformers.js) for spotting people, places, orgs in raw content
-- Entity registry in Dexie: two tables (Entity + Relation) with typed edges, CRDT-friendly schema
-- T1 deterministic relationship inference: keyword patterns ("anniversary", "wife", "boss") for high-confidence relationship classification
-- T2 ONNX methodology-specific entity reasoning: GTD context inference from entity relationships
-- Cross-item entity accumulation: co-occurrence counting, evidence gathering across inbox items
-- User correction UX: inline entity cards with editable relationships, easy "Pam is my wife not coworker" fixes
-- Entity context fed into enrichment prompts and GTD processing
-- Privacy architecture: T1/T2 see raw unsanitized content (local-only), T3 cloud sees sanitized
+- Context gating: agents activate only when relevant based on binder type, route, time of day, recent atom history — no new models, activation predicates on existing ONNX army
+- Predictive enrichment: predict "what will the user need next?" using entity graph trajectory and cognitive signal patterns as a scoring function over existing signals
+- Sequence learning: lightweight sequence model (tiny LSTM or attention head) taking last N atom embeddings as context, fed to T2 classifiers as additional signal — trainable in ONNX, runs on mobile
+- Binder-type specialization protocol: formalize GTD as first pluggable binder type with BinderTypeConfig interface, each type gets own column set, same T1 substrate, harness becomes SDK for training custom local stacks
 
 ### Deferred
 
 - Section routing offline via embedding nearest-neighbor (deferred from v3.0)
 - PARA section views — full section-specific experiences
 - CRDT sync — multi-device P2P sync with cross-device agent collaboration (planned for v7.0)
-- Methodology modules — pluggable GTD/Zettelkasten/PARA frameworks (planned for v5.0+)
-- Dual embeddings — domain-specific + general purpose (planned for v5.0+)
+- Dual embeddings — domain-specific + general purpose (planned for v6.0+)
 
 ### Out of Scope
 
@@ -111,21 +111,21 @@ Every piece of stored information must encode predictive value about your future
 | 0.78 confidence threshold for ONNX | Platt-calibrated; balances Tier 2 accuracy vs Tier 3 escalation rate | Validated v3.0 |
 | Cache API for model persistence | Browser-native, survives IndexedDB clears, one-time download UX | Validated v3.0 |
 
-## Current Milestone: v5.0 Entity Intelligence & Knowledge Graph
+## Current Milestone: v5.5 Cortical Intelligence
 
-**Goal:** Local AI agents that detect entities (people, places, orgs) from raw content, build a persistent entity registry with relationship inference, and feed entity context into enrichment and GTD processing — so the system "knows" the user's world through privacy-safe local-only intelligence.
+**Goal:** Apply HTM cortical organizing principles to the local ONNX agent stack — context gating for efficient activation, predictive enrichment that anticipates user needs, sequence learning across atom history, and a formalized binder-type specialization protocol that turns GTD into the first pluggable column set.
 
 **Target features:**
-- Pre-trained NER entity detection running locally on all devices (Xenova/bert-base-NER via Transformers.js)
-- Dexie-backed entity registry with typed relationship edges and CRDT-friendly schema
-- T1 deterministic relationship inference from keyword patterns across inbox items
-- T2 ONNX methodology-specific entity reasoning (GTD context from entity relationships)
-- Cross-item evidence accumulation for entity relationship confidence
-- User correction UX for entity relationships with immediate feedback into entity graph
-- Entity context integration into enrichment prompts and GTD processing
-- Privacy architecture: T1/T2 agents see raw content (local-only), T3 cloud sees sanitized
+- Context gating: activation predicates on existing ONNX agents based on binder type, route, time of day, recent atom history
+- Predictive enrichment: scoring function over entity graph trajectory and cognitive signal patterns to predict "what will the user need next?"
+- Sequence learning: lightweight ONNX sequence model (LSTM or attention head) over last N atom embeddings as context signal for T2 classifiers
+- Binder-type specialization protocol: BinderTypeConfig interface formalizing GTD as first pluggable type, harness as SDK for training custom local stacks
 
-**Vision:** T1 agents are universal — entity detection works across all Binder types. T2 agents are methodology-specific — GTD reasoning about entities. Together they form a local intelligence layer that "knows" the user because they see raw unsanitized content. Future CRDT sync (v7.0) will enable these agents to collaborate across devices.
+**Vision:** The existing 3-tier architecture already embodies cortical-style organization (T1=sensory, T2=columns, T3=executive). This milestone makes the cortical principles explicit — agents wake only when relevant, predict rather than just classify, learn sequences not just snapshots, and operate through a pluggable protocol that future binder types can implement. The harness becomes the SDK.
+
+| HTM organizing principles, not algorithms | Borrow cortical logic (context gating, prediction, specialization), implement with ONNX/transformers | — Pending |
+| Sequence learning as context signal | LSTM/attention over recent atom embeddings fed to T2 classifiers | — Pending |
+| Binder-type as pluggable protocol | GTD is first implementation; BinderTypeConfig + harness SDK pattern | — Pending |
 
 ---
-*Last updated: 2026-03-05 — after v4.0 milestone start*
+*Last updated: 2026-03-12 — after v5.5 milestone start*
