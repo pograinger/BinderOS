@@ -20,6 +20,14 @@ export interface BinderTypeConfig {
   followUpTemplates?: Record<string, {
     tiers: Array<{ question: string; options: Record<string, string[]> }>;
   }>;
+  /**
+   * Maps entity relationship types to GTD @context tags.
+   * When an atom's entities have known relationships, the context tag is suggested.
+   * Keys are relationshipType values from entityRelations table.
+   * Values are GTD @context strings (e.g. "@health", "@work", "@home").
+   * Phase 29: ENTC-03
+   */
+  entityContextMappings?: Record<string, string>;
 }
 
 /** Registry of all binder type configs, keyed by slug. */
