@@ -19,7 +19,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { HarnessEntityStore } from './harness-entity-store.js';
-import { runHarnessAtom } from './harness-pipeline.js';
+import { runHarnessAtom, mergeRoleWordEntities } from './harness-pipeline.js';
 import {
   resetHarnessCooccurrence,
   flushHarnessCooccurrence,
@@ -91,6 +91,8 @@ Rules:
 - Vary length (some terse like "Pick up son from school", some detailed)
 - Use realistic aliases from the ground truth aliases list
 - Include 5 items with multiple entities (for co-occurrence)
+- entityType MUST match the entity: "ORG" for companies/organizations/schools, "LOC" for cities/places, "PER" for people ONLY
+- Do NOT annotate standalone role words (wife, boss, mom, dentist, neighbor) as entities — annotate the person's actual name instead. If ONLY a role word appears without a name, annotate the role word as PER.
 
 Return JSON only:
 {
@@ -172,6 +174,10 @@ ${relevantPatterns}
 **Don't use:**
 - Obvious role labels like "my husband" or "my boss"
 - Direct statements like "Pam is my wife"
+
+**Entity annotation rules:**
+- entityType MUST match: "ORG" for companies/organizations/schools, "LOC" for cities/places, "PER" for people ONLY
+- Do NOT annotate standalone role words (wife, boss, mom, dentist) as entities — use the person's actual name
 
 Return JSON only:
 {
@@ -533,6 +539,14 @@ export async function runAdversarialCycle(
         // Non-fatal: enrichment emulation failures don't stop the cycle
       }
     }
+  }
+
+  // Step 3.5: Merge role-word entities into proper-name entities
+  // E.g., "Boss" → "Marcus", "dentist" → "Dr. Chen" when both share a relation type.
+  // This eliminates duplicate relations that hurt precision without affecting recall.
+  const roleMerges = mergeRoleWordEntities(store);
+  if (roleMerges > 0) {
+    console.log(`  [cycle ${cycleNumber}] Merged ${roleMerges} role-word entities`);
   }
 
   // Step 4: Flush co-occurrence and clean suppressed

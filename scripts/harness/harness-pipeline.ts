@@ -33,6 +33,38 @@ const ROLE_WORDS = new Set([
   'grandma', 'grandmother', 'grandpa', 'grandfather',
 ]);
 
+// ---------------------------------------------------------------------------
+// Role-word → relationship type mapping for entity resolution
+// ---------------------------------------------------------------------------
+
+const ROLE_WORD_TO_RELATION = new Map<string, string>([
+  ['wife', 'spouse'], ['husband', 'spouse'],
+  ['boss', 'reports-to'], ['manager', 'reports-to'],
+  ['mom', 'parent'], ['mother', 'parent'], ['mama', 'parent'], ['ma', 'parent'],
+  ['dad', 'parent'], ['father', 'parent'], ['papa', 'parent'], ['pop', 'parent'],
+  ['son', 'child'], ['daughter', 'child'], ['kid', 'child'], ['kiddo', 'child'],
+  ['dentist', 'healthcare-provider'], ['doctor', 'healthcare-provider'],
+  ['therapist', 'healthcare-provider'],
+  ['neighbor', 'neighbor'], ['neighbour', 'neighbor'],
+  ['lawyer', 'lawyer'], ['attorney', 'lawyer'],
+  ['vet', 'veterinarian'], ['veterinarian', 'veterinarian'],
+]);
+
+// ---------------------------------------------------------------------------
+// Entity type heuristic — fixes corpus generator misclassifying ORG/LOC as PER
+// ---------------------------------------------------------------------------
+
+const ORG_INDICATORS = /\b(corp|inc|llc|ltd|co\.?|company|university|school|elementary|academy|institute|hospital|clinic|foundation|association|depot|store|bank|group)\b/i;
+
+function inferEntityType(
+  entityText: string,
+  annotatedType: 'PER' | 'LOC' | 'ORG',
+): 'PER' | 'LOC' | 'ORG' {
+  if (annotatedType !== 'PER') return annotatedType;
+  if (ORG_INDICATORS.test(entityText)) return 'ORG';
+  return annotatedType;
+}
+
 /**
  * Check if a known role word appears immediately before the entity mention.
  * If so, add it as an alias to enable future dedup (e.g., "mom Linda" → "mom" alias on Linda).
@@ -150,9 +182,15 @@ export async function runHarnessAtom(
       continue;
     }
 
-    const entityId = store.findOrCreateEntity(mention.entityText, mention.entityType, timestamp);
+    // Fix entity type: corpus generator sometimes misclassifies ORG/LOC as PER
+    const correctedType = inferEntityType(
+      mention.entityText,
+      mention.entityType as 'PER' | 'LOC' | 'ORG',
+    );
+
+    const entityId = store.findOrCreateEntity(mention.entityText, correctedType, timestamp);
     if (!entityId) continue; // Rejected as non-entity word
-    resolvedMentions.push({ ...mention, entityId });
+    resolvedMentions.push({ ...mention, entityType: correctedType, entityId });
 
     // Extract role-word context for deferred merging (e.g., "mom Linda" → link "mom" to Linda)
     if (mention.entityType === 'PER') {
@@ -200,4 +238,69 @@ export async function runHarnessAtom(
 
   // Step 5: Update co-occurrence map
   updateHarnessCooccurrence(content, registryMentions);
+}
+
+// ---------------------------------------------------------------------------
+// Post-cycle role-word entity merge
+// ---------------------------------------------------------------------------
+
+/**
+ * Merge single-word role-word entities into proper-name entities that share
+ * the same relationship type. E.g., merge "Boss" → "Marcus" when both have
+ * reports-to, or "dentist" → "Dr. Chen" when both have healthcare-provider.
+ *
+ * This eliminates duplicate relations that tank precision without helping recall.
+ * Call after all atoms in a cycle are processed, before scoring.
+ */
+export function mergeRoleWordEntities(store: HarnessEntityStore): number {
+  let mergeCount = 0;
+  // Snapshot entity list — merges mutate the map
+  const entities = store.getEntities();
+
+  for (const entity of entities) {
+    // Skip if already merged (deleted from store)
+    if (!store.getEntity(entity.id)) continue;
+
+    const roleRelation = ROLE_WORD_TO_RELATION.get(entity.canonicalName.toLowerCase());
+    if (!roleRelation) continue;
+
+    // This IS a role-word entity — find a proper-name entity with the same relation type
+    const allRelations = store.getRelations();
+
+    // Find relations on this role-word entity
+    const roleEntityRelations = allRelations.filter(
+      (r) => r.targetEntityId === entity.id || r.sourceEntityId === entity.id,
+    );
+
+    // Find proper-name entities with the same relationship type
+    for (const rel of roleEntityRelations) {
+      const sameTypeRelations = allRelations.filter(
+        (r) =>
+          r.relationshipType === rel.relationshipType &&
+          r.id !== rel.id,
+      );
+
+      for (const otherRel of sameTypeRelations) {
+        // Relations are [SELF] → targetEntityId
+        const otherTargetId = otherRel.targetEntityId;
+        if (otherTargetId === entity.id) continue;
+
+        const otherEntity = store.getEntity(otherTargetId);
+        if (!otherEntity) continue;
+
+        // Don't merge into another role-word entity
+        if (ROLE_WORD_TO_RELATION.has(otherEntity.canonicalName.toLowerCase())) continue;
+
+        // Merge role-word entity into proper-name entity
+        mergeEntities(store, entity.id, otherTargetId);
+        mergeCount++;
+        break;
+      }
+
+      // Stop if already merged
+      if (!store.getEntity(entity.id)) break;
+    }
+  }
+
+  return mergeCount;
 }
