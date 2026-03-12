@@ -42,6 +42,12 @@ import {
   purgeSpuriousRelations,
 } from './correction-emulator.js';
 import { saveCheckpoint } from './checkpoint-store.js';
+import {
+  computeAtomEVS,
+  aggregateCycleEVS,
+  formatEVSReport,
+} from './enrichment-value-score.js';
+import type { AtomEVS, CycleEVS } from './enrichment-value-score.js';
 import type {
   CycleState,
   GraphSnapshot,
@@ -467,6 +473,7 @@ export async function runAdversarialCycle(
   // Compute synthetic timestamps for this cycle
   const cycleStartDate = computeCycleSyntheticStart(cycleNumber, 5);
   const enrichmentEmulations: EnrichmentEmulation[] = [];
+  const atomEVSScores: AtomEVS[] = [];
 
   // Step 2-3: Process each atom
   for (let i = 0; i < corpus.length; i++) {
@@ -489,6 +496,10 @@ export async function runAdversarialCycle(
         .map((m) => m.entityId!);
       const entitySummary = buildEntitySummary(store, mentionedEntityIds);
 
+      // Capture pre-enrichment counts for EVS delta measurement
+      const preEnrichmentRelCount = store.getRelations().length;
+      const preEnrichmentEntityCount = store.getEntities().length;
+
       try {
         const { emulation } = await emulateEnrichmentSession(
           {
@@ -504,6 +515,16 @@ export async function runAdversarialCycle(
           syntheticTs,
         );
         enrichmentEmulations.push(emulation);
+
+        // Compute per-atom EVS
+        const atomEvs = computeAtomEVS(
+          emulation,
+          store,
+          preEnrichmentRelCount,
+          preEnrichmentEntityCount,
+          persona.groundTruth,
+        );
+        atomEVSScores.push(atomEvs);
 
         // Enrichment quality comparison: sample first N atoms of cycle 1 only (cost control)
         if (
@@ -625,6 +646,13 @@ export async function runAdversarialCycle(
     console.log(`  [cycle ${cycleNumber}] Enrichment quality (entity context vs baseline): ${avgEnrichmentQuality.toFixed(2)}/5`);
   }
 
+  // Aggregate EVS across all atoms in this cycle
+  const cycleEVS = aggregateCycleEVS(atomEVSScores);
+  if (cycleEVS.totalAtoms > 0) {
+    console.log(`  [cycle ${cycleNumber}] Enrichment Value Score:`);
+    console.log(formatEVSReport(cycleEVS));
+  }
+
   const cycleState: CycleState = {
     personaName: persona.personaName,
     cycleNumber,
@@ -639,6 +667,7 @@ export async function runAdversarialCycle(
     durationMs,
     syntheticStartTimestamp: syntheticTimestampStr,
     enrichmentQualityScore: avgEnrichmentQuality,
+    enrichmentValueScore: cycleEVS.totalAtoms > 0 ? cycleEVS : undefined,
   };
 
   // Save checkpoint

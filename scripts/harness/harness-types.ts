@@ -10,6 +10,7 @@
 import type { Entity, EntityRelation, AtomIntelligence, EntityMention } from '../../src/types/intelligence.js';
 import type { GraphScore } from './score-graph.js';
 import type { CorpusItem } from './generate-corpus.js';
+import type { CycleEVS } from './enrichment-value-score.js';
 
 // ---------------------------------------------------------------------------
 // Graph persistence types
@@ -117,6 +118,8 @@ export interface CycleState {
   syntheticStartTimestamp: string; // ISO — start of corpus items in this cycle
   /** Average quality improvement score (1-5) from entity context injection vs baseline (ENTC-01 validation) */
   enrichmentQualityScore?: number;
+  /** Enrichment Value Score — measures how much smarter the stack got from enrichment */
+  enrichmentValueScore?: CycleEVS;
 }
 
 // ---------------------------------------------------------------------------

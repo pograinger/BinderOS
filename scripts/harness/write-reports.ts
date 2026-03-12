@@ -14,6 +14,7 @@ import type { GraphScore } from './score-graph.js';
 import type { ExperimentResult, PersonaAdversarialResult } from './harness-types.js';
 import { computeAggregateScore, computeLearningCurve } from './score-graph.js';
 import type { AblationSuiteResult } from './ablation-engine.js';
+import { formatEVSReport } from './enrichment-value-score.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -233,6 +234,31 @@ function buildExperimentMarkdown(result: ExperimentResult, ablation?: AblationSu
     }
   }
   lines.push('');
+
+  // Enrichment Value Score section
+  const personasWithEVS = result.personas.filter(
+    (p) => p.cycles.some((c) => c.enrichmentValueScore),
+  );
+  if (personasWithEVS.length > 0) {
+    lines.push('## Enrichment Value Score (EVS)');
+    lines.push('');
+    lines.push('Measures how much smarter the local stack got from enrichment across five dimensions.');
+    lines.push('');
+
+    for (const persona of personasWithEVS) {
+      lines.push(`### ${persona.personaName}`);
+      lines.push('');
+      for (const cycle of persona.cycles) {
+        if (cycle.enrichmentValueScore) {
+          lines.push(`**Cycle ${cycle.cycleNumber}:**`);
+          lines.push('```');
+          lines.push(formatEVSReport(cycle.enrichmentValueScore));
+          lines.push('```');
+          lines.push('');
+        }
+      }
+    }
+  }
 
   // Ablation section (if provided)
   if (ablation) {
