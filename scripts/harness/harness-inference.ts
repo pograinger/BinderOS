@@ -89,6 +89,9 @@ async function upsertKeywordRelation(
   const existing = store.findRelation(sourceEntityId, targetEntityId, relationshipType);
 
   if (existing) {
+    // Guard: never overwrite user-corrections with inferred patterns
+    if (existing.sourceAttribution === 'user-correction') return;
+
     const updatedConfidence = Math.min(0.95, existing.confidence + 0.1);
     store.updateRelation(existing.id, {
       confidence: updatedConfidence,
@@ -257,6 +260,34 @@ export function cleanSuppressedRelations(store: HarnessEntityStore): void {
 
   for (const id of toDelete) {
     store.entityRelations.delete(id);
+  }
+}
+
+/**
+ * Re-run keyword patterns for all atoms mentioning a specific entity.
+ * Used by correction ripple: after a user-correction, re-evaluate all
+ * existing atoms that reference the corrected entity.
+ */
+export async function reRunPatternsForEntity(
+  entityId: string,
+  store: HarnessEntityStore,
+): Promise<void> {
+  const allIntel = Array.from(store.atomIntelligence.values());
+  for (const intel of allIntel) {
+    const mentionsEntity = intel.entityMentions.some((m) => m.entityId === entityId);
+    if (!mentionsEntity) continue;
+
+    // Get atom content from the sidecar — reconstruct content from evidence snippets is not feasible,
+    // so we use the entity mention spans to build keyword pattern content from available context.
+    // Workaround: we run keyword patterns using the entity mentions only (re-resolve).
+    const registryMentions = intel.entityMentions.filter((m) => m.entityId);
+    if (registryMentions.length > 0) {
+      // We need the content; store it in atomIntelligence as optional cache
+      const contentCache = (intel as unknown as { _content?: string })._content;
+      if (contentCache) {
+        await runHarnessKeywordPatterns(store, intel.atomId, contentCache, registryMentions);
+      }
+    }
   }
 }
 

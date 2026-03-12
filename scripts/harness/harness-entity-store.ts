@@ -56,7 +56,7 @@ export class HarnessEntityStore {
   // findOrCreateEntity — mirrors entity-helpers.ts logic
   // -------------------------------------------------------------------------
 
-  findOrCreateEntity(text: string, type: 'PER' | 'LOC' | 'ORG'): string {
+  findOrCreateEntity(text: string, type: 'PER' | 'LOC' | 'ORG', syntheticTimestamp?: number): string {
     const matcher = getMatcherForType(type);
     const allOfType = this.getEntitiesByType(type);
 
@@ -72,7 +72,7 @@ export class HarnessEntityStore {
     }
 
     if (bestScore >= MERGE_CANDIDATE_THRESHOLD && bestEntity) {
-      const now = Date.now();
+      const now = syntheticTimestamp ?? Date.now();
       const normalizedText = matcher.normalize(text);
       const existingAliases = bestEntity.aliases.map((a) => matcher.normalize(a));
       const canonicalNorm = matcher.normalize(bestEntity.canonicalName);
@@ -92,7 +92,7 @@ export class HarnessEntityStore {
     }
 
     // No match: create new entity
-    const now = Date.now();
+    const now = syntheticTimestamp ?? Date.now();
     return this.createEntity({
       canonicalName: text,
       type,

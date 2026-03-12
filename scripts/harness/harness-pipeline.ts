@@ -107,6 +107,14 @@ function mergeEntities(store: HarnessEntityStore, sourceId: string, targetId: st
 // ---------------------------------------------------------------------------
 
 /**
+ * Get all atom IDs processed so far in this store.
+ * Used by correction ripple to iterate existing atoms.
+ */
+export function getProcessedAtomIds(store: HarnessEntityStore): string[] {
+  return Array.from(store.atomIntelligence.keys());
+}
+
+/**
  * Process one corpus item through the headless pipeline.
  *
  * Steps:
@@ -115,15 +123,21 @@ function mergeEntities(store: HarnessEntityStore, sourceId: string, targetId: st
  * 3. Write mentions to atomIntelligence sidecar
  * 4. Run keyword pattern inference
  * 5. Update co-occurrence map
+ *
+ * @param syntheticTimestamp Optional ISO timestamp to use for entity lastSeen / sidecar timestamps
  */
 export async function runHarnessAtom(
   item: CorpusItem,
   store: HarnessEntityStore,
+  syntheticTimestamp?: number,
 ): Promise<void> {
   const atomId = item.id;
   const content = item.content;
 
   // Step 1: Triage acceptance — harness always accepts all items
+
+  // Use synthetic timestamp if provided (for realistic decay simulation), else real time
+  const timestamp = syntheticTimestamp ?? Date.now();
 
   // Step 2: Resolve entity mentions to registry IDs
   const resolvedMentions: EntityMention[] = [];
@@ -136,7 +150,7 @@ export async function runHarnessAtom(
       continue;
     }
 
-    const entityId = store.findOrCreateEntity(mention.entityText, mention.entityType);
+    const entityId = store.findOrCreateEntity(mention.entityText, mention.entityType, timestamp);
     resolvedMentions.push({ ...mention, entityId });
 
     // Extract role-word context for deferred merging (e.g., "mom Linda" → link "mom" to Linda)
@@ -161,7 +175,6 @@ export async function runHarnessAtom(
   }
 
   // Step 3: Write atomIntelligence sidecar
-  const now = Date.now();
   const intel: AtomIntelligence = {
     atomId,
     enrichment: [],
@@ -170,10 +183,13 @@ export async function runHarnessAtom(
     records: [],
     version: 1,
     deviceId: '',
-    lastUpdated: now,
+    lastUpdated: timestamp,
     schemaVersion: 1,
   };
   store.putAtomIntelligence(intel);
+
+  // Cache content for reRunPatternsForEntity correction ripple
+  (intel as unknown as { _content: string })._content = content;
 
   // Step 4: Run keyword patterns for registry mentions
   const registryMentions = resolvedMentions.filter((m) => m.entityId);
