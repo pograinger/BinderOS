@@ -176,4 +176,4 @@ Plans:
 | 26. Intelligence Sidecar + Schema | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 27. Entity Detection + Registry | 2/2 | Complete   | 2026-03-11 | - |
 | 28. Relationship Inference | 2/2 | Complete   | 2026-03-11 | - |
-| 29. Entity Intelligence Consumers | 3/5 | In Progress   | 2026-03-12 | - |
+| 29. Entity Intelligence Consumers | 4/5 | In Progress|  | - |

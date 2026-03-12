@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Entity Intelligence & Knowledge Graph
-status: executing
-stopped_at: Completed 29-03-PLAN.md
-last_updated: "2026-03-12T05:58:00.000Z"
+status: completed
+stopped_at: Completed 29-04-PLAN.md
+last_updated: "2026-03-12T06:30:40.795Z"
 last_activity: 2026-03-12 — Phase 29 Plan 03 complete
 progress:
   total_phases: 4
-  completed_phases: 4
-  total_plans: 9
-  completed_plans: 9
+  completed_phases: 3
+  total_plans: 11
+  completed_plans: 10
   percent: 100
 ---
 
@@ -53,6 +53,7 @@ Progress: [███████████████████████
 | Phase 29 P02 | 364 | 2 tasks | 10 files |
 | Phase 29 P01 | 16 | 3 tasks | 20 files |
 | Phase 29 P03 | 10 | 2 tasks | 9 files |
+| Phase 29 P04 | 245 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,8 @@ Recent decisions affecting v5.0:
 - [Phase 29-03]: Enrichment quality sampled on first 3 atoms of cycle 1 only — Sonnet rates 1-5 vs Haiku baseline
 - [Phase 29-03]: Auto-tune precision > 70% boosts +0.05, < 40% halves and flags — research-derived thresholds
 - [Phase 29-03]: Post-run analysis (ablation + tune + report) is non-fatal — CI pass/fail from persona F1 only
+- [Phase 29-04]: Entity context enrichment is post-triage fire-and-forget — non-fatal, does not block triage display
+- [Phase 29-04]: ONNX contextTag takes precedence; entity-derived tag only fills when ONNX produces none
 
 ### Pending Todos
 
@@ -107,6 +110,6 @@ Recent decisions affecting v5.0:
 
 ## Session Continuity
 
-Last session: 2026-03-12T05:58:00.000Z
-Stopped at: Completed 29-03-PLAN.md
+Last session: 2026-03-12T06:30:40.793Z
+Stopped at: Completed 29-04-PLAN.md
 Resume file: None
