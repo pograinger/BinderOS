@@ -38,6 +38,7 @@ import {
 import {
   generateCorrections,
   applyCorrection,
+  purgeSpuriousRelations,
 } from './correction-emulator.js';
 import { saveCheckpoint } from './checkpoint-store.js';
 import type {
@@ -435,6 +436,10 @@ export async function runAdversarialCycle(
   const QUALITY_COMPARISON_CYCLE = 1;
   const QUALITY_COMPARISON_SAMPLE = 3;
 
+  // Reset co-occurrence state so each cycle scores independently
+  // (prevents cross-cycle noise from creating false "associated" relations)
+  resetHarnessCooccurrence();
+
   console.log(`  [cycle ${cycleNumber}] Generating corpus...`);
 
   // Step 1: Generate corpus
@@ -549,6 +554,16 @@ export async function runAdversarialCycle(
       console.log(`  [cycle ${cycleNumber}] Applied ${corrections.length} corrections`);
     } catch (err) {
       console.warn(`  [cycle ${cycleNumber}] Correction generation failed: ${err}`);
+    }
+  }
+
+  // Step 5b: Purge spurious relations for GT entities
+  // After corrections, remove any inferred relation whose type doesn't match
+  // any GT relationship for that entity (e.g., Pam→friend when GT says spouse)
+  if (!ablation?.disableUserCorrections) {
+    const purged = purgeSpuriousRelations(store, persona.groundTruth);
+    if (purged > 0) {
+      console.log(`  [cycle ${cycleNumber}] Purged ${purged} spurious relations`);
     }
   }
 

@@ -397,9 +397,19 @@ export function scoreEntityGraph(
     }
   }
 
-  // For precision: how many detected relations correspond to GT relationships
-  let correctRelations = 0;
+  // For precision: deduplicate relations by (targetEntityId, relationshipType).
+  // Without dedup, entity fragments like "Marcus" and "Webb" both having reports-to
+  // create 2 raw rows for the same semantic relation, inflating detected count.
+  const seenRelPairs = new Set<string>();
+  const uniqueDetectedCount = { total: 0, correct: 0 };
+
   for (const rel of detectedRelations) {
+    const pairKey = `${rel.targetEntityId}|${rel.relationshipType}`;
+    if (seenRelPairs.has(pairKey)) continue;
+    seenRelPairs.add(pairKey);
+
+    uniqueDetectedCount.total++;
+
     const targetEntityId = rel.targetEntityId;
     const detTarget = store.getEntity(targetEntityId);
     if (!detTarget) continue;
@@ -410,11 +420,11 @@ export function scoreEntityGraph(
         gtEntityIds.includes(targetEntityId) && gtRel.type === rel.relationshipType
       );
     });
-    if (matchesGt) correctRelations++;
+    if (matchesGt) uniqueDetectedCount.correct++;
   }
 
   const relationshipPrecision =
-    detectedRelations.length > 0 ? correctRelations / detectedRelations.length : 0;
+    uniqueDetectedCount.total > 0 ? uniqueDetectedCount.correct / uniqueDetectedCount.total : 0;
   const relationshipRecall =
     gtRelationships.length > 0 ? foundRelations.length / gtRelationships.length : 0;
 
@@ -454,9 +464,9 @@ export function scoreEntityGraph(
     totalDetectedEntities: detectedEntities.length,
     totalGroundTruthEntities: gtEntities.length,
     correctEntities: foundEntities.length,
-    totalDetectedRelations: detectedRelations.length,
+    totalDetectedRelations: uniqueDetectedCount.total,
     totalGroundTruthRelations: gtRelationships.length,
-    correctRelations: foundRelations.length,
+    correctRelations: uniqueDetectedCount.correct,
     foundEntities,
     missedEntities,
     foundRelations,

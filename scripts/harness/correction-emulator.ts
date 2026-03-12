@@ -88,6 +88,71 @@ function findMismatches(
 }
 
 // ---------------------------------------------------------------------------
+// Spurious relation purge
+// ---------------------------------------------------------------------------
+
+/**
+ * Build a set of valid (entityId, relationshipType) pairs from ground truth.
+ * Any detected relation for a GT entity whose type is NOT in this set is spurious.
+ */
+function buildGtRelationSet(
+  store: HarnessEntityStore,
+  groundTruth: GroundTruth,
+): Map<string, Set<string>> {
+  const detectedEntities = store.getEntities();
+  const entityToValidTypes = new Map<string, Set<string>>();
+
+  for (const gtRel of groundTruth.relationships) {
+    const normGt = gtRel.entity.toLowerCase().replace(/^(dr\.|mr\.|mrs\.|ms\.|prof\.)\s+/i, '').trim();
+    for (const det of detectedEntities) {
+      const normCan = det.canonicalName.toLowerCase().replace(/^(dr\.|mr\.|mrs\.|ms\.|prof\.)\s+/i, '').trim();
+      const nameMatch = normCan === normGt || normCan.includes(normGt) || normGt.includes(normCan) ||
+        det.aliases.some((a) => {
+          const normA = a.toLowerCase().replace(/^(dr\.|mr\.|mrs\.|ms\.|prof\.)\s+/i, '').trim();
+          return normA === normGt || normA.includes(normGt) || normGt.includes(normA);
+        });
+      if (nameMatch) {
+        const types = entityToValidTypes.get(det.id) ?? new Set();
+        types.add(gtRel.type);
+        entityToValidTypes.set(det.id, types);
+      }
+    }
+  }
+
+  return entityToValidTypes;
+}
+
+/**
+ * Purge spurious relations: for any GT entity that has been detected,
+ * remove inferred relations whose type does NOT match any GT relationship.
+ * User-corrections are never purged.
+ */
+export function purgeSpuriousRelations(
+  store: HarnessEntityStore,
+  groundTruth: GroundTruth,
+): number {
+  const gtValidTypes = buildGtRelationSet(store, groundTruth);
+  const allRelations = store.getRelations();
+  let purged = 0;
+
+  for (const rel of allRelations) {
+    if (rel.sourceAttribution === 'user-correction') continue;
+
+    // Check if this relation's target entity is a GT entity
+    const validTypes = gtValidTypes.get(rel.targetEntityId);
+    if (!validTypes) continue; // Not a GT entity — leave it alone
+
+    // If the relation type is not in the valid set, it's spurious
+    if (!validTypes.has(rel.relationshipType)) {
+      store.entityRelations.delete(rel.id);
+      purged++;
+    }
+  }
+
+  return purged;
+}
+
+// ---------------------------------------------------------------------------
 // Correction application
 // ---------------------------------------------------------------------------
 

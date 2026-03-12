@@ -147,6 +147,14 @@ const SKIP_WORDS = new Set([
 ]);
 
 /**
+ * Noise phrases that regex picks up as "proper names" from enrichment text.
+ * Matches possessive-prefixed phrases ("my wife", "his son"), article-prefixed
+ * role words ("the boss", "a lawyer"), and standalone role/relation words that
+ * appear capitalized at sentence boundaries.
+ */
+const NOISE_PHRASE_PATTERN = /^(?:my |his |her |your |our |their |the |a |an )|^(?:and |or |but )|^(?:boss|lawyer|wife|husband|son|daughter|mother|father|mom|dad|brother|sister|friend|neighbor|colleague|doctor|nurse|teacher|coach|pastor|client|landlord|accountant|mentor|child|parent|spouse|partner|sibling)$/;
+
+/**
  * Mine entity mentions from an enrichment answer text.
  * Uses lightweight regex-based proper name detection (NER not available offline).
  * Runs keyword patterns and co-occurrence on mined entities.
@@ -172,6 +180,11 @@ async function mineAnswerForEntities(
     const entityText = match[0].trim();
     const firstWord = entityText.split(' ')[0];
     if (SKIP_WORDS.has(firstWord) || SKIP_WORDS.has(entityText)) continue;
+
+    // Filter noise phrases: possessive/article-prefixed phrases and role words
+    // that regex picks up as "proper names" from enrichment answer text
+    const lower = entityText.toLowerCase();
+    if (NOISE_PHRASE_PATTERN.test(lower)) continue;
 
     const entityId = store.findOrCreateEntity(entityText, 'PER', syntheticTimestamp);
     if (!entityId) continue; // Rejected as non-entity word
