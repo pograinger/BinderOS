@@ -24,6 +24,7 @@ import {
   resetHarnessCooccurrence,
   flushHarnessCooccurrence,
   cleanSuppressedRelations,
+  enforceRelationUniqueness,
   runHarnessKeywordPatterns,
 } from './harness-inference.js';
 import { scoreEntityGraph } from './score-graph.js';
@@ -547,6 +548,14 @@ export async function runAdversarialCycle(
   const roleMerges = mergeRoleWordEntities(store);
   if (roleMerges > 0) {
     console.log(`  [cycle ${cycleNumber}] Merged ${roleMerges} role-word entities`);
+  }
+
+  // Step 3.6: Enforce uniqueness for singular relation types (spouse, reports-to, lives-at).
+  // Keeps only the highest-confidence relation per type, eliminating duplicates from
+  // entity fragmentation (e.g., "wife" entity + "Pam" entity both having spouse).
+  const uniquenessRemoved = enforceRelationUniqueness(store);
+  if (uniquenessRemoved > 0) {
+    console.log(`  [cycle ${cycleNumber}] Enforced uniqueness: removed ${uniquenessRemoved} duplicate singular relations`);
   }
 
   // Step 4: Flush co-occurrence and clean suppressed

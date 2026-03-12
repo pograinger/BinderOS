@@ -291,6 +291,33 @@ export async function reRunPatternsForEntity(
   }
 }
 
+// ---------------------------------------------------------------------------
+// Singular relation uniqueness enforcement
+// ---------------------------------------------------------------------------
+
+/**
+ * Relationship types that are inherently singular — a person has only one
+ * spouse, one boss, one home city. When entity fragmentation creates multiple
+ * relations of the same singular type, keep only the highest-confidence one.
+ */
+const SINGULAR_RELATION_TYPES = new Set(['spouse', 'reports-to', 'lives-at']);
+
+export function enforceRelationUniqueness(store: HarnessEntityStore): number {
+  let removed = 0;
+  for (const type of SINGULAR_RELATION_TYPES) {
+    const rels = store.getRelations().filter((r) => r.relationshipType === type);
+    if (rels.length <= 1) continue;
+
+    // Sort by confidence DESC, keep only the best
+    rels.sort((a, b) => b.confidence - a.confidence);
+    for (let i = 1; i < rels.length; i++) {
+      store.entityRelations.delete(rels[i].id);
+      removed++;
+    }
+  }
+  return removed;
+}
+
 export function flushHarnessCooccurrence(store: HarnessEntityStore): void {
   for (const [key, entry] of cooccurrenceMap) {
     if (entry.count < CO_OCCURRENCE_THRESHOLD) continue;

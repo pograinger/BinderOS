@@ -38,16 +38,31 @@ const ROLE_WORDS = new Set([
 // ---------------------------------------------------------------------------
 
 const ROLE_WORD_TO_RELATION = new Map<string, string>([
-  ['wife', 'spouse'], ['husband', 'spouse'],
-  ['boss', 'reports-to'], ['manager', 'reports-to'],
+  // Spouse
+  ['wife', 'spouse'], ['husband', 'spouse'], ['hubby', 'spouse'],
+  ['spouse', 'spouse'], ['partner', 'spouse'],
+  // Reports-to
+  ['boss', 'reports-to'], ['manager', 'reports-to'], ['supervisor', 'reports-to'],
+  // Parent
   ['mom', 'parent'], ['mother', 'parent'], ['mama', 'parent'], ['ma', 'parent'],
   ['dad', 'parent'], ['father', 'parent'], ['papa', 'parent'], ['pop', 'parent'],
+  // Child
   ['son', 'child'], ['daughter', 'child'], ['kid', 'child'], ['kiddo', 'child'],
+  // Healthcare
   ['dentist', 'healthcare-provider'], ['doctor', 'healthcare-provider'],
-  ['therapist', 'healthcare-provider'],
+  ['therapist', 'healthcare-provider'], ['pediatrician', 'healthcare-provider'],
+  ['physician', 'healthcare-provider'], ['psychiatrist', 'healthcare-provider'],
+  ['orthodontist', 'healthcare-provider'], ['dermatologist', 'healthcare-provider'],
+  ['chiropractor', 'healthcare-provider'],
+  // Other
   ['neighbor', 'neighbor'], ['neighbour', 'neighbor'],
   ['lawyer', 'lawyer'], ['attorney', 'lawyer'],
   ['vet', 'veterinarian'], ['veterinarian', 'veterinarian'],
+  ['accountant', 'accountant'], ['cpa', 'accountant'],
+  ['landlord', 'landlord'], ['landlady', 'landlord'],
+  ['coach', 'coach'], ['trainer', 'coach'],
+  ['mentor', 'mentor'],
+  ['teacher', 'teacher'], ['tutor', 'teacher'],
 ]);
 
 // ---------------------------------------------------------------------------
@@ -187,6 +202,19 @@ export async function runHarnessAtom(
       mention.entityText,
       mention.entityType as 'PER' | 'LOC' | 'ORG',
     );
+
+    // Cross-type dedup: if entity was previously registered under the wrong type,
+    // fix it so findOrCreateEntity won't create a duplicate (e.g., "Little Steps Daycare"
+    // as both PER and ORG → just ORG)
+    if (correctedType !== mention.entityType) {
+      const wrongTypeEntities = store.getEntitiesByType(mention.entityType as 'PER' | 'LOC' | 'ORG');
+      const existingWrong = wrongTypeEntities.find(
+        (e) => e.canonicalName.toLowerCase() === mention.entityText.toLowerCase(),
+      );
+      if (existingWrong) {
+        store.updateEntity(existingWrong.id, { type: correctedType });
+      }
+    }
 
     const entityId = store.findOrCreateEntity(mention.entityText, correctedType, timestamp);
     if (!entityId) continue; // Rejected as non-entity word
