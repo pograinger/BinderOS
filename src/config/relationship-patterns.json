@@ -42,12 +42,23 @@
       "scope": "sentence"
     },
     {
-      "id": "healthcare-title",
-      "keywords": ["Dr.", "Doctor", "dentist", "therapist", "physician", "nurse", "psychiatrist", "psychologist", "optometrist", "orthodontist", "chiropractor", "dermatologist", "surgeon", "specialist", "cardiologist", "pediatrician", "oncologist"],
+      "id": "healthcare-title-dr",
+      "keywords": ["Dr.", "Doctor"],
       "relationshipType": "healthcare-provider",
       "targetEntityType": "PER",
       "confidenceBase": 0.70,
-      "scope": "sentence"
+      "scope": "sentence",
+      "entityTextFilter": "^(Dr\\.?|Doctor)\\s",
+      "suppressedByTypes": ["veterinarian"]
+    },
+    {
+      "id": "healthcare-role-title",
+      "keywords": ["dentist", "therapist", "physician", "nurse", "psychiatrist", "psychologist", "optometrist", "orthodontist", "chiropractor", "dermatologist", "surgeon", "specialist", "cardiologist", "pediatrician", "oncologist"],
+      "relationshipType": "healthcare-provider",
+      "targetEntityType": "PER",
+      "confidenceBase": 0.70,
+      "scope": "sentence",
+      "suppressedByTypes": ["veterinarian"]
     },
     {
       "id": "healthcare-context",

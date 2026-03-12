@@ -1,0 +1,518 @@
+{
+  "generatedAt": "2026-03-12T01:59:32.144Z",
+  "totalCheckpoints": 5,
+  "checkpoints": [
+    {
+      "score": {
+        "checkpoint": 11,
+        "entityPrecision": 1,
+        "entityRecall": 0.5625,
+        "entityF1": 0.72,
+        "relationshipPrecision": 0.6666666666666666,
+        "relationshipRecall": 0.4,
+        "relationshipF1": 0.5,
+        "privacyScore": 0.4,
+        "totalDetectedEntities": 10,
+        "totalGroundTruthEntities": 16,
+        "correctEntities": 9,
+        "totalDetectedRelations": 9,
+        "totalGroundTruthRelations": 15,
+        "correctRelations": 6,
+        "foundEntities": [
+          "Priya Kumar",
+          "Arjun Kumar",
+          "Meera Kumar",
+          "Sunita Patel",
+          "Ryan Mitchell",
+          "Jess",
+          "Marco",
+          "Seattle",
+          "Lakeside High"
+        ],
+        "missedEntities": [
+          "Catherine Wells",
+          "Dr. Okafor",
+          "Dr. Singh",
+          "Dr. Yun",
+          "Liz Brennan",
+          "Nexus Technologies",
+          "Seattle Tech Mentors"
+        ],
+        "foundRelations": [
+          {
+            "entity": "Priya Kumar",
+            "type": "spouse"
+          },
+          {
+            "entity": "Meera Kumar",
+            "type": "child"
+          },
+          {
+            "entity": "Sunita Patel",
+            "type": "parent"
+          },
+          {
+            "entity": "Ryan Mitchell",
+            "type": "friend"
+          },
+          {
+            "entity": "Jess",
+            "type": "colleague"
+          },
+          {
+            "entity": "Marco",
+            "type": "colleague"
+          }
+        ],
+        "missedRelations": [
+          {
+            "entity": "Arjun Kumar",
+            "type": "child"
+          },
+          {
+            "entity": "Catherine Wells",
+            "type": "reports-to"
+          },
+          {
+            "entity": "Dr. Okafor",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Singh",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Yun",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Liz Brennan",
+            "type": "lawyer"
+          },
+          {
+            "entity": "Nexus Technologies",
+            "type": "works-at"
+          },
+          {
+            "entity": "Seattle Tech Mentors",
+            "type": "org-member"
+          },
+          {
+            "entity": "Seattle",
+            "type": "lives-at"
+          }
+        ]
+      },
+      "atomsProcessed": 11
+    },
+    {
+      "score": {
+        "checkpoint": 22,
+        "entityPrecision": 1,
+        "entityRecall": 0.875,
+        "entityF1": 0.9333333333333333,
+        "relationshipPrecision": 0.7333333333333333,
+        "relationshipRecall": 0.7333333333333333,
+        "relationshipF1": 0.7333333333333333,
+        "privacyScore": 0.7333333333333333,
+        "totalDetectedEntities": 15,
+        "totalGroundTruthEntities": 16,
+        "correctEntities": 14,
+        "totalDetectedRelations": 15,
+        "totalGroundTruthRelations": 15,
+        "correctRelations": 11,
+        "foundEntities": [
+          "Priya Kumar",
+          "Arjun Kumar",
+          "Meera Kumar",
+          "Sunita Patel",
+          "Ryan Mitchell",
+          "Jess",
+          "Marco",
+          "Catherine Wells",
+          "Dr. Okafor",
+          "Dr. Singh",
+          "Dr. Yun",
+          "Liz Brennan",
+          "Seattle",
+          "Lakeside High"
+        ],
+        "missedEntities": [
+          "Nexus Technologies",
+          "Seattle Tech Mentors"
+        ],
+        "foundRelations": [
+          {
+            "entity": "Priya Kumar",
+            "type": "spouse"
+          },
+          {
+            "entity": "Meera Kumar",
+            "type": "child"
+          },
+          {
+            "entity": "Sunita Patel",
+            "type": "parent"
+          },
+          {
+            "entity": "Ryan Mitchell",
+            "type": "friend"
+          },
+          {
+            "entity": "Jess",
+            "type": "colleague"
+          },
+          {
+            "entity": "Marco",
+            "type": "colleague"
+          },
+          {
+            "entity": "Catherine Wells",
+            "type": "reports-to"
+          },
+          {
+            "entity": "Dr. Okafor",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Singh",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Yun",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Liz Brennan",
+            "type": "lawyer"
+          }
+        ],
+        "missedRelations": [
+          {
+            "entity": "Arjun Kumar",
+            "type": "child"
+          },
+          {
+            "entity": "Nexus Technologies",
+            "type": "works-at"
+          },
+          {
+            "entity": "Seattle Tech Mentors",
+            "type": "org-member"
+          },
+          {
+            "entity": "Seattle",
+            "type": "lives-at"
+          }
+        ]
+      },
+      "atomsProcessed": 22
+    },
+    {
+      "score": {
+        "checkpoint": 33,
+        "entityPrecision": 1,
+        "entityRecall": 1,
+        "entityF1": 1,
+        "relationshipPrecision": 0.5416666666666666,
+        "relationshipRecall": 0.8666666666666667,
+        "relationshipF1": 0.6666666666666667,
+        "privacyScore": 0.8666666666666667,
+        "totalDetectedEntities": 21,
+        "totalGroundTruthEntities": 16,
+        "correctEntities": 16,
+        "totalDetectedRelations": 24,
+        "totalGroundTruthRelations": 15,
+        "correctRelations": 13,
+        "foundEntities": [
+          "Priya Kumar",
+          "Arjun Kumar",
+          "Meera Kumar",
+          "Sunita Patel",
+          "Ryan Mitchell",
+          "Jess",
+          "Marco",
+          "Catherine Wells",
+          "Dr. Okafor",
+          "Dr. Singh",
+          "Dr. Yun",
+          "Liz Brennan",
+          "Nexus Technologies",
+          "Seattle Tech Mentors",
+          "Seattle",
+          "Lakeside High"
+        ],
+        "missedEntities": [],
+        "foundRelations": [
+          {
+            "entity": "Priya Kumar",
+            "type": "spouse"
+          },
+          {
+            "entity": "Arjun Kumar",
+            "type": "child"
+          },
+          {
+            "entity": "Meera Kumar",
+            "type": "child"
+          },
+          {
+            "entity": "Sunita Patel",
+            "type": "parent"
+          },
+          {
+            "entity": "Ryan Mitchell",
+            "type": "friend"
+          },
+          {
+            "entity": "Jess",
+            "type": "colleague"
+          },
+          {
+            "entity": "Marco",
+            "type": "colleague"
+          },
+          {
+            "entity": "Catherine Wells",
+            "type": "reports-to"
+          },
+          {
+            "entity": "Dr. Okafor",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Singh",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Yun",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Liz Brennan",
+            "type": "lawyer"
+          },
+          {
+            "entity": "Nexus Technologies",
+            "type": "works-at"
+          }
+        ],
+        "missedRelations": [
+          {
+            "entity": "Seattle Tech Mentors",
+            "type": "org-member"
+          },
+          {
+            "entity": "Seattle",
+            "type": "lives-at"
+          }
+        ]
+      },
+      "atomsProcessed": 33
+    },
+    {
+      "score": {
+        "checkpoint": 44,
+        "entityPrecision": 1,
+        "entityRecall": 1,
+        "entityF1": 1,
+        "relationshipPrecision": 0.4642857142857143,
+        "relationshipRecall": 0.8666666666666667,
+        "relationshipF1": 0.6046511627906976,
+        "privacyScore": 1,
+        "totalDetectedEntities": 22,
+        "totalGroundTruthEntities": 16,
+        "correctEntities": 16,
+        "totalDetectedRelations": 28,
+        "totalGroundTruthRelations": 15,
+        "correctRelations": 13,
+        "foundEntities": [
+          "Priya Kumar",
+          "Arjun Kumar",
+          "Meera Kumar",
+          "Sunita Patel",
+          "Ryan Mitchell",
+          "Jess",
+          "Marco",
+          "Catherine Wells",
+          "Dr. Okafor",
+          "Dr. Singh",
+          "Dr. Yun",
+          "Liz Brennan",
+          "Nexus Technologies",
+          "Seattle Tech Mentors",
+          "Seattle",
+          "Lakeside High"
+        ],
+        "missedEntities": [],
+        "foundRelations": [
+          {
+            "entity": "Priya Kumar",
+            "type": "spouse"
+          },
+          {
+            "entity": "Arjun Kumar",
+            "type": "child"
+          },
+          {
+            "entity": "Meera Kumar",
+            "type": "child"
+          },
+          {
+            "entity": "Sunita Patel",
+            "type": "parent"
+          },
+          {
+            "entity": "Ryan Mitchell",
+            "type": "friend"
+          },
+          {
+            "entity": "Jess",
+            "type": "colleague"
+          },
+          {
+            "entity": "Marco",
+            "type": "colleague"
+          },
+          {
+            "entity": "Catherine Wells",
+            "type": "reports-to"
+          },
+          {
+            "entity": "Dr. Okafor",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Singh",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Yun",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Liz Brennan",
+            "type": "lawyer"
+          },
+          {
+            "entity": "Nexus Technologies",
+            "type": "works-at"
+          }
+        ],
+        "missedRelations": [
+          {
+            "entity": "Seattle Tech Mentors",
+            "type": "org-member"
+          },
+          {
+            "entity": "Seattle",
+            "type": "lives-at"
+          }
+        ]
+      },
+      "atomsProcessed": 44
+    },
+    {
+      "score": {
+        "checkpoint": 45,
+        "entityPrecision": 1,
+        "entityRecall": 1,
+        "entityF1": 1,
+        "relationshipPrecision": 0.4642857142857143,
+        "relationshipRecall": 0.8666666666666667,
+        "relationshipF1": 0.6046511627906976,
+        "privacyScore": 1,
+        "totalDetectedEntities": 22,
+        "totalGroundTruthEntities": 16,
+        "correctEntities": 16,
+        "totalDetectedRelations": 28,
+        "totalGroundTruthRelations": 15,
+        "correctRelations": 13,
+        "foundEntities": [
+          "Priya Kumar",
+          "Arjun Kumar",
+          "Meera Kumar",
+          "Sunita Patel",
+          "Ryan Mitchell",
+          "Jess",
+          "Marco",
+          "Catherine Wells",
+          "Dr. Okafor",
+          "Dr. Singh",
+          "Dr. Yun",
+          "Liz Brennan",
+          "Nexus Technologies",
+          "Seattle Tech Mentors",
+          "Seattle",
+          "Lakeside High"
+        ],
+        "missedEntities": [],
+        "foundRelations": [
+          {
+            "entity": "Priya Kumar",
+            "type": "spouse"
+          },
+          {
+            "entity": "Arjun Kumar",
+            "type": "child"
+          },
+          {
+            "entity": "Meera Kumar",
+            "type": "child"
+          },
+          {
+            "entity": "Sunita Patel",
+            "type": "parent"
+          },
+          {
+            "entity": "Ryan Mitchell",
+            "type": "friend"
+          },
+          {
+            "entity": "Jess",
+            "type": "colleague"
+          },
+          {
+            "entity": "Marco",
+            "type": "colleague"
+          },
+          {
+            "entity": "Catherine Wells",
+            "type": "reports-to"
+          },
+          {
+            "entity": "Dr. Okafor",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Singh",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Yun",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Liz Brennan",
+            "type": "lawyer"
+          },
+          {
+            "entity": "Nexus Technologies",
+            "type": "works-at"
+          }
+        ],
+        "missedRelations": [
+          {
+            "entity": "Seattle Tech Mentors",
+            "type": "org-member"
+          },
+          {
+            "entity": "Seattle",
+            "type": "lives-at"
+          }
+        ]
+      },
+      "atomsProcessed": 45
+    }
+  ]
+}

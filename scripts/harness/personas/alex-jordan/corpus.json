@@ -1,0 +1,1152 @@
+{
+  "generatedAt": "2026-03-12T00:12:12.474Z",
+  "personaName": "Alex Jordan",
+  "totalItems": 60,
+  "items": [
+    {
+      "id": "item-001",
+      "content": "Need to call Dr. Chen about my crown appointment",
+      "expectedEntities": [
+        "Dr. Chen"
+      ],
+      "expectedRelationships": [
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Chen",
+          "entityType": "PER",
+          "spanStart": 13,
+          "spanEnd": 21,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-002",
+      "content": "Pick up my son Ethan from soccer practice at 4pm",
+      "expectedEntities": [
+        "Ethan Jordan"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Ethan",
+          "entityType": "PER",
+          "spanStart": 15,
+          "spanEnd": 20,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": "item-003",
+      "content": "Pam and I need a date night this weekend",
+      "expectedEntities": [
+        "Pam Jordan"
+      ],
+      "expectedRelationships": [
+        "spouse"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Pam",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-004",
+      "content": "Marcus assigned me the new authentication module",
+      "expectedEntities": [
+        "Marcus Webb"
+      ],
+      "expectedRelationships": [
+        "reports-to"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Marcus",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 6,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-005",
+      "content": "Mom wants to know about Thanksgiving dinner plans",
+      "expectedEntities": [
+        "Linda Jordan"
+      ],
+      "expectedRelationships": [
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Mom",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "id": "item-006",
+      "content": "Schedule standup with Priya for tomorrow morning",
+      "expectedEntities": [
+        "Priya Sharma"
+      ],
+      "expectedRelationships": [
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 22,
+          "spanEnd": 27,
+          "confidence": 0.93
+        }
+      ]
+    },
+    {
+      "id": "item-007",
+      "content": "Grab beers with Jake after work Friday",
+      "expectedEntities": [
+        "Jake Morrison"
+      ],
+      "expectedRelationships": [
+        "friend"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Jake",
+          "entityType": "PER",
+          "spanStart": 16,
+          "spanEnd": 20,
+          "confidence": 0.89
+        }
+      ]
+    },
+    {
+      "id": "item-008",
+      "content": "Tom borrowed my lawnmower - need to get it back",
+      "expectedEntities": [
+        "Tom Nguyen"
+      ],
+      "expectedRelationships": [
+        "neighbor"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Tom",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.87
+        }
+      ]
+    },
+    {
+      "id": "item-009",
+      "content": "Sandra needs the signed documents back by Wednesday",
+      "expectedEntities": [
+        "Sandra Kim"
+      ],
+      "expectedRelationships": [
+        "lawyer"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Sandra",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 6,
+          "confidence": 0.91
+        }
+      ]
+    },
+    {
+      "id": "item-010",
+      "content": "Dog needs shots - call Dr. Patel",
+      "expectedEntities": [
+        "Dr. Patel"
+      ],
+      "expectedRelationships": [
+        "veterinarian"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Patel",
+          "entityType": "PER",
+          "spanStart": 23,
+          "spanEnd": 32,
+          "confidence": 0.94
+        }
+      ]
+    },
+    {
+      "id": "item-011",
+      "content": "Demo for Brian next Tuesday - prepare slides",
+      "expectedEntities": [
+        "Brian Foster"
+      ],
+      "expectedRelationships": [
+        "client"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Brian",
+          "entityType": "PER",
+          "spanStart": 9,
+          "spanEnd": 14,
+          "confidence": 0.86
+        }
+      ]
+    },
+    {
+      "id": "item-012",
+      "content": "Acme all-hands meeting moved to Thursday",
+      "expectedEntities": [
+        "Acme Corp"
+      ],
+      "expectedRelationships": [
+        "works-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Acme",
+          "entityType": "ORG",
+          "spanStart": 0,
+          "spanEnd": 4,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": "item-013",
+      "content": "Checkup with Dr. Rivera on Friday afternoon",
+      "expectedEntities": [
+        "Dr. Rivera"
+      ],
+      "expectedRelationships": [
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Rivera",
+          "entityType": "PER",
+          "spanStart": 13,
+          "spanEnd": 23,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-014",
+      "content": "My daughter Ethan has a school play next week",
+      "expectedEntities": [
+        "Ethan Jordan"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Ethan",
+          "entityType": "PER",
+          "spanStart": 12,
+          "spanEnd": 17,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-015",
+      "content": "Anniversary dinner with my wife Pam at Giuseppe's",
+      "expectedEntities": [
+        "Pam Jordan"
+      ],
+      "expectedRelationships": [
+        "spouse"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Pam",
+          "entityType": "PER",
+          "spanStart": 32,
+          "spanEnd": 35,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-016",
+      "content": "My boss Marcus wants the quarterly report by EOD",
+      "expectedEntities": [
+        "Marcus Webb"
+      ],
+      "expectedRelationships": [
+        "reports-to"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Marcus",
+          "entityType": "PER",
+          "spanStart": 8,
+          "spanEnd": 14,
+          "confidence": 0.91
+        }
+      ]
+    },
+    {
+      "id": "item-017",
+      "content": "Take mom Linda to her doctor appointment",
+      "expectedEntities": [
+        "Linda Jordan"
+      ],
+      "expectedRelationships": [
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Linda",
+          "entityType": "PER",
+          "spanStart": 9,
+          "spanEnd": 14,
+          "confidence": 0.87
+        }
+      ]
+    },
+    {
+      "id": "item-018",
+      "content": "Code review with my colleague Priya on the API changes",
+      "expectedEntities": [
+        "Priya Sharma"
+      ],
+      "expectedRelationships": [
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 30,
+          "spanEnd": 35,
+          "confidence": 0.93
+        }
+      ]
+    },
+    {
+      "id": "item-019",
+      "content": "BBQ at Jake's place this Saturday",
+      "expectedEntities": [
+        "Jake Morrison"
+      ],
+      "expectedRelationships": [
+        "friend"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Jake",
+          "entityType": "PER",
+          "spanStart": 7,
+          "spanEnd": 11,
+          "confidence": 0.89
+        }
+      ]
+    },
+    {
+      "id": "item-020",
+      "content": "My neighbor Tom needs help moving his fence",
+      "expectedEntities": [
+        "Tom Nguyen"
+      ],
+      "expectedRelationships": [
+        "neighbor"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Tom",
+          "entityType": "PER",
+          "spanStart": 12,
+          "spanEnd": 15,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-021",
+      "content": "Contract review with my lawyer Sandra tomorrow",
+      "expectedEntities": [
+        "Sandra Kim"
+      ],
+      "expectedRelationships": [
+        "lawyer"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Sandra",
+          "entityType": "PER",
+          "spanStart": 31,
+          "spanEnd": 37,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": "item-022",
+      "content": "Vet appointment - Dr. Patel wants to check the cat's ear infection",
+      "expectedEntities": [
+        "Dr. Patel"
+      ],
+      "expectedRelationships": [
+        "veterinarian"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Patel",
+          "entityType": "PER",
+          "spanStart": 18,
+          "spanEnd": 27,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-023",
+      "content": "Client Brian needs feedback on the proposal by Monday",
+      "expectedEntities": [
+        "Brian Foster"
+      ],
+      "expectedRelationships": [
+        "client"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Brian",
+          "entityType": "PER",
+          "spanStart": 7,
+          "spanEnd": 12,
+          "confidence": 0.87
+        }
+      ]
+    },
+    {
+      "id": "item-024",
+      "content": "Employee handbook training at Acme Corp next week",
+      "expectedEntities": [
+        "Acme Corp"
+      ],
+      "expectedRelationships": [
+        "works-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Acme Corp",
+          "entityType": "ORG",
+          "spanStart": 30,
+          "spanEnd": 39,
+          "confidence": 0.93
+        }
+      ]
+    },
+    {
+      "id": "item-025",
+      "content": "Portland farmers market on Saturday - get fresh vegetables",
+      "expectedEntities": [
+        "Portland"
+      ],
+      "expectedRelationships": [
+        "lives-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Portland",
+          "entityType": "LOC",
+          "spanStart": 0,
+          "spanEnd": 8,
+          "confidence": 0.91
+        }
+      ]
+    },
+    {
+      "id": "item-026",
+      "content": "Dr. Chen's dental office called about rescheduling",
+      "expectedEntities": [
+        "Dr. Chen"
+      ],
+      "expectedRelationships": [
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Chen",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 8,
+          "confidence": 0.94
+        }
+      ]
+    },
+    {
+      "id": "item-027",
+      "content": "Drop off my kid Ethan at Lincoln Elementary early tomorrow",
+      "expectedEntities": [
+        "Ethan Jordan",
+        "Lincoln Elementary"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Ethan",
+          "entityType": "PER",
+          "spanStart": 16,
+          "spanEnd": 21,
+          "confidence": 0.9
+        },
+        {
+          "entityText": "Lincoln Elementary",
+          "entityType": "ORG",
+          "spanStart": 25,
+          "spanEnd": 43,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-028",
+      "content": "Couples therapy session with Pam and Dr. Rivera",
+      "expectedEntities": [
+        "Pam Jordan",
+        "Dr. Rivera"
+      ],
+      "expectedRelationships": [
+        "spouse",
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Pam",
+          "entityType": "PER",
+          "spanStart": 29,
+          "spanEnd": 32,
+          "confidence": 0.88
+        },
+        {
+          "entityText": "Dr. Rivera",
+          "entityType": "PER",
+          "spanStart": 37,
+          "spanEnd": 47,
+          "confidence": 0.96
+        }
+      ]
+    },
+    {
+      "id": "item-029",
+      "content": "Webb told me to finish the database migration",
+      "expectedEntities": [
+        "Marcus Webb"
+      ],
+      "expectedRelationships": [
+        "reports-to"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Webb",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 4,
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "id": "item-030",
+      "content": "Christmas dinner at mom's house - confirm with Linda",
+      "expectedEntities": [
+        "Linda Jordan"
+      ],
+      "expectedRelationships": [
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Linda",
+          "entityType": "PER",
+          "spanStart": 47,
+          "spanEnd": 52,
+          "confidence": 0.89
+        }
+      ]
+    },
+    {
+      "id": "item-031",
+      "content": "Pair programming session with Priya on the payment module",
+      "expectedEntities": [
+        "Priya Sharma"
+      ],
+      "expectedRelationships": [
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 30,
+          "spanEnd": 35,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": "item-032",
+      "content": "Game night with my buddy Jake next Friday",
+      "expectedEntities": [
+        "Jake Morrison"
+      ],
+      "expectedRelationships": [
+        "friend"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Jake",
+          "entityType": "PER",
+          "spanStart": 25,
+          "spanEnd": 29,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-033",
+      "content": "Garbage day - remind Tom next door about the new schedule",
+      "expectedEntities": [
+        "Tom Nguyen"
+      ],
+      "expectedRelationships": [
+        "neighbor"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Tom",
+          "entityType": "PER",
+          "spanStart": 21,
+          "spanEnd": 24,
+          "confidence": 0.87
+        }
+      ]
+    },
+    {
+      "id": "item-034",
+      "content": "Estate planning documents from Sandra need my signature",
+      "expectedEntities": [
+        "Sandra Kim"
+      ],
+      "expectedRelationships": [
+        "lawyer"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Sandra",
+          "entityType": "PER",
+          "spanStart": 31,
+          "spanEnd": 37,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-035",
+      "content": "Our dog needs to be spayed - schedule with veterinarian Dr. Patel",
+      "expectedEntities": [
+        "Dr. Patel"
+      ],
+      "expectedRelationships": [
+        "veterinarian"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Patel",
+          "entityType": "PER",
+          "spanStart": 56,
+          "spanEnd": 65,
+          "confidence": 0.94
+        }
+      ]
+    },
+    {
+      "id": "item-036",
+      "content": "Invoice Brian for the completed project deliverables",
+      "expectedEntities": [
+        "Brian Foster"
+      ],
+      "expectedRelationships": [
+        "client"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Brian",
+          "entityType": "PER",
+          "spanStart": 8,
+          "spanEnd": 13,
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "id": "item-037",
+      "content": "HR at Acme needs updated emergency contact info",
+      "expectedEntities": [
+        "Acme Corp"
+      ],
+      "expectedRelationships": [
+        "works-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Acme",
+          "entityType": "ORG",
+          "spanStart": 6,
+          "spanEnd": 10,
+          "confidence": 0.91
+        }
+      ]
+    },
+    {
+      "id": "item-038",
+      "content": "Local Portland library has new coding books section",
+      "expectedEntities": [
+        "Portland"
+      ],
+      "expectedRelationships": [
+        "lives-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Portland",
+          "entityType": "LOC",
+          "spanStart": 6,
+          "spanEnd": 14,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-039",
+      "content": "Physical exam with Dr. Chen next month - don't forget",
+      "expectedEntities": [
+        "Dr. Chen"
+      ],
+      "expectedRelationships": [
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Chen",
+          "entityType": "PER",
+          "spanStart": 19,
+          "spanEnd": 27,
+          "confidence": 0.93
+        }
+      ]
+    },
+    {
+      "id": "item-040",
+      "content": "Little league practice for Ethan moved to Wednesday",
+      "expectedEntities": [
+        "Ethan Jordan"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Ethan",
+          "entityType": "PER",
+          "spanStart": 27,
+          "spanEnd": 32,
+          "confidence": 0.91
+        }
+      ]
+    },
+    {
+      "id": "item-041",
+      "content": "Need to book us for dinner reservation - ask Pam about Friday",
+      "expectedEntities": [
+        "Pam Jordan"
+      ],
+      "expectedRelationships": [
+        "spouse"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Pam",
+          "entityType": "PER",
+          "spanStart": 45,
+          "spanEnd": 48,
+          "confidence": 0.87
+        }
+      ]
+    },
+    {
+      "id": "item-042",
+      "content": "My manager Marcus approved my vacation request",
+      "expectedEntities": [
+        "Marcus Webb"
+      ],
+      "expectedRelationships": [
+        "reports-to"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Marcus",
+          "entityType": "PER",
+          "spanStart": 11,
+          "spanEnd": 17,
+          "confidence": 0.89
+        }
+      ]
+    },
+    {
+      "id": "item-043",
+      "content": "Call dad about retirement party planning",
+      "expectedEntities": [
+        "Linda Jordan"
+      ],
+      "expectedRelationships": [
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "dad",
+          "entityType": "PER",
+          "spanStart": 5,
+          "spanEnd": 8,
+          "confidence": 0.82
+        }
+      ]
+    },
+    {
+      "id": "item-044",
+      "content": "Deploy the new feature with teammate Priya tomorrow",
+      "expectedEntities": [
+        "Priya Sharma"
+      ],
+      "expectedRelationships": [
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 37,
+          "spanEnd": 42,
+          "confidence": 0.91
+        }
+      ]
+    },
+    {
+      "id": "item-045",
+      "content": "Catch up with my friend Jake over coffee this weekend",
+      "expectedEntities": [
+        "Jake Morrison"
+      ],
+      "expectedRelationships": [
+        "friend"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Jake",
+          "entityType": "PER",
+          "spanStart": 24,
+          "spanEnd": 28,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-046",
+      "content": "Tom across the street wants to borrow the hedge trimmer",
+      "expectedEntities": [
+        "Tom Nguyen"
+      ],
+      "expectedRelationships": [
+        "neighbor"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Tom",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.86
+        }
+      ]
+    },
+    {
+      "id": "item-047",
+      "content": "Legal consultation with attorney Sandra about the house contract",
+      "expectedEntities": [
+        "Sandra Kim"
+      ],
+      "expectedRelationships": [
+        "lawyer"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Sandra",
+          "entityType": "PER",
+          "spanStart": 33,
+          "spanEnd": 39,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-048",
+      "content": "Annual puppy checkup with the vet Dr. Patel on Thursday",
+      "expectedEntities": [
+        "Dr. Patel"
+      ],
+      "expectedRelationships": [
+        "veterinarian"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Patel",
+          "entityType": "PER",
+          "spanStart": 34,
+          "spanEnd": 43,
+          "confidence": 0.93
+        }
+      ]
+    },
+    {
+      "id": "item-049",
+      "content": "Presentation for client Brian next week - need final slides",
+      "expectedEntities": [
+        "Brian Foster"
+      ],
+      "expectedRelationships": [
+        "client"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Brian",
+          "entityType": "PER",
+          "spanStart": 24,
+          "spanEnd": 29,
+          "confidence": 0.84
+        }
+      ]
+    },
+    {
+      "id": "item-050",
+      "content": "Payroll issues at Acme need to be resolved",
+      "expectedEntities": [
+        "Acme Corp"
+      ],
+      "expectedRelationships": [
+        "works-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Acme",
+          "entityType": "ORG",
+          "spanStart": 18,
+          "spanEnd": 22,
+          "confidence": 0.89
+        }
+      ]
+    },
+    {
+      "id": "item-051",
+      "content": "Downtown Portland restaurant week starts Monday",
+      "expectedEntities": [
+        "Portland"
+      ],
+      "expectedRelationships": [
+        "lives-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Portland",
+          "entityType": "LOC",
+          "spanStart": 9,
+          "spanEnd": 17,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": "item-052",
+      "content": "Buy groceries for dinner party",
+      "expectedEntities": [],
+      "expectedRelationships": [],
+      "entityMentions": []
+    },
+    {
+      "id": "item-053",
+      "content": "Prescription from Dr. Rivera needs to be picked up",
+      "expectedEntities": [
+        "Dr. Rivera"
+      ],
+      "expectedRelationships": [
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Rivera",
+          "entityType": "PER",
+          "spanStart": 18,
+          "spanEnd": 28,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-054",
+      "content": "School homework help for my child Ethan tonight",
+      "expectedEntities": [
+        "Ethan Jordan"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Ethan",
+          "entityType": "PER",
+          "spanStart": 34,
+          "spanEnd": 39,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-055",
+      "content": "Our anniversary celebration dinner with Pam at the new Italian place",
+      "expectedEntities": [
+        "Pam Jordan"
+      ],
+      "expectedRelationships": [
+        "spouse"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Pam",
+          "entityType": "PER",
+          "spanStart": 40,
+          "spanEnd": 43,
+          "confidence": 0.86
+        }
+      ]
+    },
+    {
+      "id": "item-056",
+      "content": "Team lead Marcus needs the sprint report by end of day",
+      "expectedEntities": [
+        "Marcus Webb"
+      ],
+      "expectedRelationships": [
+        "reports-to"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Marcus",
+          "entityType": "PER",
+          "spanStart": 10,
+          "spanEnd": 16,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-057",
+      "content": "Family reunion planning with mother Linda for summer",
+      "expectedEntities": [
+        "Linda Jordan"
+      ],
+      "expectedRelationships": [
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Linda",
+          "entityType": "PER",
+          "spanStart": 36,
+          "spanEnd": 41,
+          "confidence": 0.87
+        }
+      ]
+    },
+    {
+      "id": "item-058",
+      "content": "Sprint planning meeting with coworker Priya and the rest of the team",
+      "expectedEntities": [
+        "Priya Sharma"
+      ],
+      "expectedRelationships": [
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 38,
+          "spanEnd": 43,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-059",
+      "content": "Hang out with Jake and watch the big game Sunday",
+      "expectedEntities": [
+        "Jake Morrison"
+      ],
+      "expectedRelationships": [
+        "friend"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Jake",
+          "entityType": "PER",
+          "spanStart": 14,
+          "spanEnd": 18,
+          "confidence": 0.87
+        }
+      ]
+    },
+    {
+      "id": "item-060",
+      "content": "Fix the mailbox issue with neighbor Tom before the HOA meeting",
+      "expectedEntities": [
+        "Tom Nguyen"
+      ],
+      "expectedRelationships": [
+        "neighbor"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Tom",
+          "entityType": "PER",
+          "spanStart": 36,
+          "spanEnd": 39,
+          "confidence": 0.85
+        }
+      ]
+    }
+  ]
+}

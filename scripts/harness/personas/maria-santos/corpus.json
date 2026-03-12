@@ -1,0 +1,840 @@
+{
+  "generatedAt": "2026-03-12T01:57:28.100Z",
+  "personaName": "Maria Santos",
+  "totalItems": 40,
+  "items": [
+    {
+      "id": "item-001",
+      "content": "Kai and I need a date night this Friday — we haven't had one in weeks",
+      "expectedEntities": [
+        "Kai"
+      ],
+      "expectedRelationships": [
+        "spouse"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Kai",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-002",
+      "content": "Pick up Sofia from school at 3:15, she has a project due tomorrow",
+      "expectedEntities": [
+        "Sofia Santos"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Sofia",
+          "entityType": "PER",
+          "spanStart": 8,
+          "spanEnd": 13,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-003",
+      "content": "Drop off Lucas at daycare by 8am, remember to pack extra clothes",
+      "expectedEntities": [
+        "Lucas Santos"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Lucas",
+          "entityType": "PER",
+          "spanStart": 9,
+          "spanEnd": 14,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-004",
+      "content": "Call Mom about Thanksgiving plans — she wants us there by noon",
+      "expectedEntities": [
+        "Rosa Santos"
+      ],
+      "expectedRelationships": [
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Mom",
+          "entityType": "PER",
+          "spanStart": 5,
+          "spanEnd": 8,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-005",
+      "content": "Text Diego about Christmas — he is flying in from Chicago on the 22nd",
+      "expectedEntities": [
+        "Diego Santos"
+      ],
+      "expectedRelationships": [
+        "sibling"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Diego",
+          "entityType": "PER",
+          "spanStart": 5,
+          "spanEnd": 10,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-006",
+      "content": "Yoga with Aisha tomorrow morning at 7am, do not forget mat",
+      "expectedEntities": [
+        "Aisha Williams"
+      ],
+      "expectedRelationships": [
+        "friend"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Aisha",
+          "entityType": "PER",
+          "spanStart": 10,
+          "spanEnd": 15,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-007",
+      "content": "Coffee with Ellen next week — she has been my mentor since day one and I want her advice on scaling",
+      "expectedEntities": [
+        "Ellen Park"
+      ],
+      "expectedRelationships": [
+        "mentor"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Ellen",
+          "entityType": "PER",
+          "spanStart": 12,
+          "spanEnd": 17,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-008",
+      "content": "Send receipts to Mr. Fujimoto before Friday — taxes are due next month",
+      "expectedEntities": [
+        "Mr. Fujimoto"
+      ],
+      "expectedRelationships": [
+        "accountant"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Mr. Fujimoto",
+          "entityType": "PER",
+          "spanStart": 17,
+          "spanEnd": 29,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-009",
+      "content": "Schedule dentist appointment with Dr. Huang for next Tuesday",
+      "expectedEntities": [
+        "Dr. Huang"
+      ],
+      "expectedRelationships": [
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Huang",
+          "entityType": "PER",
+          "spanStart": 34,
+          "spanEnd": 43,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-010",
+      "content": "Take the dog to Dr. Brooks for her annual shots next week",
+      "expectedEntities": [
+        "Dr. Brooks"
+      ],
+      "expectedRelationships": [
+        "veterinarian"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Brooks",
+          "entityType": "PER",
+          "spanStart": 16,
+          "spanEnd": 26,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-011",
+      "content": "Pay rent to Gene by the 1st — set up auto-pay finally",
+      "expectedEntities": [
+        "Gene"
+      ],
+      "expectedRelationships": [
+        "landlord"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Gene",
+          "entityType": "PER",
+          "spanStart": 12,
+          "spanEnd": 16,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-012",
+      "content": "Send invoice to Tyler Reed for the logo redesign project",
+      "expectedEntities": [
+        "Tyler Reed"
+      ],
+      "expectedRelationships": [
+        "client"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Tyler Reed",
+          "entityType": "PER",
+          "spanStart": 16,
+          "spanEnd": 26,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-013",
+      "content": "Greenleaf Studios deadline is Friday — need to finalize the brand guide",
+      "expectedEntities": [
+        "Greenleaf Studios"
+      ],
+      "expectedRelationships": [
+        "works-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Greenleaf Studios",
+          "entityType": "ORG",
+          "spanStart": 0,
+          "spanEnd": 17,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-014",
+      "content": "Renew my membership — I joined the Austin Freelancers Guild last year and it has been worth it",
+      "expectedEntities": [
+        "Austin Freelancers Guild"
+      ],
+      "expectedRelationships": [
+        "org-member"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Austin Freelancers Guild",
+          "entityType": "ORG",
+          "spanStart": 35,
+          "spanEnd": 59,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-015",
+      "content": "Check out that new local coffee shop in East Austin everyone is talking about",
+      "expectedEntities": [
+        "Austin"
+      ],
+      "expectedRelationships": [
+        "lives-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "East Austin",
+          "entityType": "LOC",
+          "spanStart": 40,
+          "spanEnd": 51,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-016",
+      "content": "Plan dinner together with Kai on Saturday — try that new Thai place",
+      "expectedEntities": [
+        "Kai"
+      ],
+      "expectedRelationships": [
+        "spouse"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Kai",
+          "entityType": "PER",
+          "spanStart": 26,
+          "spanEnd": 29,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-017",
+      "content": "Help Sofia with her homework tonight — she is struggling with fractions",
+      "expectedEntities": [
+        "Sofia Santos"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Sofia",
+          "entityType": "PER",
+          "spanStart": 5,
+          "spanEnd": 10,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-018",
+      "content": "Pick up Lucas from daycare early today — he has a visit at 2",
+      "expectedEntities": [
+        "Lucas Santos"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Lucas",
+          "entityType": "PER",
+          "spanStart": 8,
+          "spanEnd": 13,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-019",
+      "content": "Grab coffee with Aisha on Thursday to catch up — have not seen her since last week",
+      "expectedEntities": [
+        "Aisha Williams"
+      ],
+      "expectedRelationships": [
+        "friend"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Aisha",
+          "entityType": "PER",
+          "spanStart": 17,
+          "spanEnd": 22,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-020",
+      "content": "Follow up with Mr. Fujimoto on the tax return — he said it would be ready by Wednesday",
+      "expectedEntities": [
+        "Mr. Fujimoto"
+      ],
+      "expectedRelationships": [
+        "accountant"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Mr. Fujimoto",
+          "entityType": "PER",
+          "spanStart": 15,
+          "spanEnd": 27,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-021",
+      "content": "Dr. Huang called about rescheduling my cleaning — call them back",
+      "expectedEntities": [
+        "Dr. Huang"
+      ],
+      "expectedRelationships": [
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Huang",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 9,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-022",
+      "content": "Dr. Brooks said the vet bloodwork results should be back by Monday",
+      "expectedEntities": [
+        "Dr. Brooks"
+      ],
+      "expectedRelationships": [
+        "veterinarian"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Brooks",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 10,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-023",
+      "content": "Talk to Gene about the lease renewal — it expires in two months",
+      "expectedEntities": [
+        "Gene"
+      ],
+      "expectedRelationships": [
+        "landlord"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Gene",
+          "entityType": "PER",
+          "spanStart": 8,
+          "spanEnd": 12,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-024",
+      "content": "Finalize deliverable for Tyler — the social media kit needs two more templates",
+      "expectedEntities": [
+        "Tyler Reed"
+      ],
+      "expectedRelationships": [
+        "client"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Tyler",
+          "entityType": "PER",
+          "spanStart": 25,
+          "spanEnd": 30,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-025",
+      "content": "Help Rosa with Christmas dinner prep — she needs us there by 10am",
+      "expectedEntities": [
+        "Rosa Santos"
+      ],
+      "expectedRelationships": [
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Rosa",
+          "entityType": "PER",
+          "spanStart": 5,
+          "spanEnd": 9,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-026",
+      "content": "Kai is handling Sofia's school pickup while I take Lucas to his swim class",
+      "expectedEntities": [
+        "Kai",
+        "Sofia Santos",
+        "Lucas Santos"
+      ],
+      "expectedRelationships": [
+        "spouse",
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Kai",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Sofia",
+          "entityType": "PER",
+          "spanStart": 16,
+          "spanEnd": 21,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Lucas",
+          "entityType": "PER",
+          "spanStart": 51,
+          "spanEnd": 56,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-027",
+      "content": "Meeting with Tyler Reed at Greenleaf Studios on Wednesday to review mockups",
+      "expectedEntities": [
+        "Tyler Reed",
+        "Greenleaf Studios"
+      ],
+      "expectedRelationships": [
+        "client",
+        "works-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Tyler Reed",
+          "entityType": "PER",
+          "spanStart": 13,
+          "spanEnd": 23,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Greenleaf Studios",
+          "entityType": "ORG",
+          "spanStart": 27,
+          "spanEnd": 44,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-028",
+      "content": "Take Sofia to Dr. Huang for her checkup on Thursday morning",
+      "expectedEntities": [
+        "Sofia Santos",
+        "Dr. Huang"
+      ],
+      "expectedRelationships": [
+        "child",
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Sofia",
+          "entityType": "PER",
+          "spanStart": 5,
+          "spanEnd": 10,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Dr. Huang",
+          "entityType": "PER",
+          "spanStart": 14,
+          "spanEnd": 23,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-029",
+      "content": "Mom wants Diego to visit for her birthday — coordinate flights with him",
+      "expectedEntities": [
+        "Rosa Santos",
+        "Diego Santos"
+      ],
+      "expectedRelationships": [
+        "parent",
+        "sibling"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Mom",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Diego",
+          "entityType": "PER",
+          "spanStart": 10,
+          "spanEnd": 15,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-030",
+      "content": "Introduce Aisha to Ellen at the networking event next month — they would hit it off",
+      "expectedEntities": [
+        "Aisha Williams",
+        "Ellen Park"
+      ],
+      "expectedRelationships": [
+        "friend",
+        "mentor"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Aisha",
+          "entityType": "PER",
+          "spanStart": 10,
+          "spanEnd": 15,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Ellen",
+          "entityType": "PER",
+          "spanStart": 19,
+          "spanEnd": 24,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-031",
+      "content": "Kai talked to Gene about the broken dishwasher — he said he would send someone this week",
+      "expectedEntities": [
+        "Kai",
+        "Gene"
+      ],
+      "expectedRelationships": [
+        "spouse",
+        "landlord"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Kai",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Gene",
+          "entityType": "PER",
+          "spanStart": 14,
+          "spanEnd": 18,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-032",
+      "content": "Ask Mr. Fujimoto if the Greenleaf Studios payments count as 1099 income",
+      "expectedEntities": [
+        "Mr. Fujimoto",
+        "Greenleaf Studios"
+      ],
+      "expectedRelationships": [
+        "accountant",
+        "works-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Mr. Fujimoto",
+          "entityType": "PER",
+          "spanStart": 4,
+          "spanEnd": 16,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Greenleaf Studios",
+          "entityType": "ORG",
+          "spanStart": 24,
+          "spanEnd": 41,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-033",
+      "content": "Find a summer camp near us in Austin for Sofia and Lucas — needs to be affordable",
+      "expectedEntities": [
+        "Sofia Santos",
+        "Lucas Santos",
+        "Austin"
+      ],
+      "expectedRelationships": [
+        "child",
+        "lives-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Austin",
+          "entityType": "LOC",
+          "spanStart": 30,
+          "spanEnd": 36,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Sofia",
+          "entityType": "PER",
+          "spanStart": 41,
+          "spanEnd": 46,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Lucas",
+          "entityType": "PER",
+          "spanStart": 51,
+          "spanEnd": 56,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-034",
+      "content": "Sof wants a new backpack for school — check Target this weekend",
+      "expectedEntities": [
+        "Sofia Santos"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Sof",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "id": "item-035",
+      "content": "Call my mom Rosa to confirm Sunday brunch plans",
+      "expectedEntities": [
+        "Rosa Santos"
+      ],
+      "expectedRelationships": [
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Rosa",
+          "entityType": "PER",
+          "spanStart": 12,
+          "spanEnd": 16,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-036",
+      "content": "Buy new ink cartridges for the printer before the next project starts",
+      "expectedEntities": [],
+      "expectedRelationships": [],
+      "entityMentions": []
+    },
+    {
+      "id": "item-037",
+      "content": "Look up that tutorial by Sarah Drasner on SVG animations",
+      "expectedEntities": [],
+      "expectedRelationships": [],
+      "entityMentions": []
+    },
+    {
+      "id": "item-038",
+      "content": "Surprise Kai with concert tickets — my love deserves a break after this week",
+      "expectedEntities": [
+        "Kai"
+      ],
+      "expectedRelationships": [
+        "spouse"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Kai",
+          "entityType": "PER",
+          "spanStart": 9,
+          "spanEnd": 12,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-039",
+      "content": "Wrap up the packaging project for Greenleaf — Tyler wants final files by Thursday",
+      "expectedEntities": [
+        "Greenleaf Studios",
+        "Tyler Reed"
+      ],
+      "expectedRelationships": [
+        "works-at",
+        "client"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Greenleaf",
+          "entityType": "ORG",
+          "spanStart": 34,
+          "spanEnd": 43,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Tyler",
+          "entityType": "PER",
+          "spanStart": 46,
+          "spanEnd": 51,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-040",
+      "content": "Get a birthday gift for my brother Diego — he turns 30 next month",
+      "expectedEntities": [
+        "Diego Santos"
+      ],
+      "expectedRelationships": [
+        "sibling"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Diego",
+          "entityType": "PER",
+          "spanStart": 35,
+          "spanEnd": 40,
+          "confidence": 0.95
+        }
+      ]
+    }
+  ]
+}

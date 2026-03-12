@@ -1,0 +1,57 @@
+{
+  "personaName": "Maria Santos",
+  "bio": "Freelance graphic designer in Austin, TX. Has a partner named Kai (not married). Daughter Sofia (8) attends Riverside Elementary. Son Lucas (5) is in daycare. Mother is Rosa Santos. Father passed away. Brother Diego lives in Chicago. Best friend Aisha Williams is her yoga buddy. Former boss and mentor Ellen Park helped her start freelancing. Accountant is Mr. Fujimoto. Dentist is Dr. Huang. Vet for the dog is Dr. Brooks. Landlord is Gene. Biggest client is Greenleaf Studios (contact: Tyler Reed). Member of the Austin Freelancers Guild. Lives in East Austin.",
+  "groundTruth": {
+    "entities": [
+      { "canonicalName": "Kai", "type": "PER", "aliases": ["Kai"] },
+      { "canonicalName": "Sofia Santos", "type": "PER", "aliases": ["Sofia", "Sof"] },
+      { "canonicalName": "Lucas Santos", "type": "PER", "aliases": ["Lucas"] },
+      { "canonicalName": "Rosa Santos", "type": "PER", "aliases": ["Rosa", "Mom"] },
+      { "canonicalName": "Diego Santos", "type": "PER", "aliases": ["Diego"] },
+      { "canonicalName": "Aisha Williams", "type": "PER", "aliases": ["Aisha"] },
+      { "canonicalName": "Ellen Park", "type": "PER", "aliases": ["Ellen"] },
+      { "canonicalName": "Mr. Fujimoto", "type": "PER", "aliases": ["Fujimoto"] },
+      { "canonicalName": "Dr. Huang", "type": "PER", "aliases": ["Huang"] },
+      { "canonicalName": "Dr. Brooks", "type": "PER", "aliases": ["Brooks"] },
+      { "canonicalName": "Gene", "type": "PER", "aliases": ["Gene"] },
+      { "canonicalName": "Tyler Reed", "type": "PER", "aliases": ["Tyler"] },
+      { "canonicalName": "Greenleaf Studios", "type": "ORG", "aliases": ["Greenleaf"] },
+      { "canonicalName": "Austin Freelancers Guild", "type": "ORG", "aliases": ["Freelancers Guild"] },
+      { "canonicalName": "Austin", "type": "LOC", "aliases": ["Austin, TX", "East Austin"] }
+    ],
+    "relationships": [
+      { "entity": "Kai", "type": "spouse", "confidence": 1.0, "note": "Maria's partner (not married)" },
+      { "entity": "Sofia Santos", "type": "child", "confidence": 1.0, "note": "Maria's daughter, age 8" },
+      { "entity": "Lucas Santos", "type": "child", "confidence": 1.0, "note": "Maria's son, age 5" },
+      { "entity": "Rosa Santos", "type": "parent", "confidence": 1.0, "note": "Maria's mother" },
+      { "entity": "Diego Santos", "type": "sibling", "confidence": 1.0, "note": "Maria's brother, lives in Chicago" },
+      { "entity": "Aisha Williams", "type": "friend", "confidence": 1.0, "note": "Best friend, yoga buddy" },
+      { "entity": "Ellen Park", "type": "mentor", "confidence": 1.0, "note": "Former boss who helped Maria start freelancing" },
+      { "entity": "Mr. Fujimoto", "type": "accountant", "confidence": 1.0, "note": "Maria's CPA" },
+      { "entity": "Dr. Huang", "type": "healthcare-provider", "confidence": 1.0, "note": "Maria's dentist" },
+      { "entity": "Dr. Brooks", "type": "veterinarian", "confidence": 1.0, "note": "Vet for Maria's dog" },
+      { "entity": "Gene", "type": "landlord", "confidence": 1.0, "note": "Maria's landlord" },
+      { "entity": "Tyler Reed", "type": "client", "confidence": 1.0, "note": "Contact at Greenleaf Studios" },
+      { "entity": "Greenleaf Studios", "type": "works-at", "confidence": 1.0, "note": "Maria's biggest client org" },
+      { "entity": "Austin Freelancers Guild", "type": "org-member", "confidence": 1.0, "note": "Professional guild membership" },
+      { "entity": "Austin", "type": "lives-at", "confidence": 1.0, "note": "Maria lives in East Austin" }
+    ],
+    "facts": [
+      "freelance graphic designer in Austin, TX",
+      "partner is Kai (not married)",
+      "daughter Sofia (8) at Riverside Elementary",
+      "son Lucas (5) in daycare",
+      "mother Rosa Santos",
+      "brother Diego in Chicago",
+      "best friend Aisha — yoga buddy",
+      "mentor Ellen Park helped her start freelancing",
+      "accountant Mr. Fujimoto does taxes",
+      "dentist Dr. Huang",
+      "vet Dr. Brooks for the dog",
+      "landlord Gene",
+      "biggest client Greenleaf Studios (contact Tyler Reed)",
+      "member Austin Freelancers Guild",
+      "lives in East Austin"
+    ]
+  }
+}

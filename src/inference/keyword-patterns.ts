@@ -74,7 +74,9 @@ export function splitIntoSentences(
   let processed = text;
   for (const { placeholder, original } of replacements) {
     // Replace "Dr." (case-sensitive for titles) with placeholder
-    processed = processed.replace(new RegExp(`\\b${original}`, 'g'), placeholder);
+    // Escape the dot in the original so "Dr." matches literally (not "Dro", "Drp", etc.)
+    const escapedOriginal = original.replace(/\./g, '\\.');
+    processed = processed.replace(new RegExp(`\\b${escapedOriginal}`, 'g'), placeholder);
   }
 
   // Split on sentence boundaries: after [.!?] + whitespace + uppercase,
@@ -187,6 +189,16 @@ export async function runKeywordPatterns(
 
       // Create a relation for each matching entity
       for (const entity of matchingEntities) {
+        // Check suppression: skip if entity already has a more specific relationship
+        if (pattern.suppressedByTypes?.length) {
+          const suppressed = await isRelationSuppressed(
+            '[SELF]',
+            entity.entityId!,
+            pattern.suppressedByTypes,
+          );
+          if (suppressed) continue;
+        }
+
         await upsertKeywordRelation({
           atomId,
           sourceEntityId: '[SELF]',
@@ -198,6 +210,24 @@ export async function runKeywordPatterns(
       }
     }
   }
+}
+
+// ---------------------------------------------------------------------------
+// Suppression check — skip generic types when a specific type already exists
+// ---------------------------------------------------------------------------
+
+async function isRelationSuppressed(
+  sourceEntityId: string,
+  targetEntityId: string,
+  suppressedByTypes: string[],
+): Promise<boolean> {
+  const existing = await db.entityRelations
+    .where('[sourceEntityId+targetEntityId]')
+    .equals([sourceEntityId, targetEntityId])
+    .toArray()
+    .catch(() => [] as Array<{ relationshipType: string }>);
+
+  return existing.some((r) => suppressedByTypes.includes(r.relationshipType));
 }
 
 // ---------------------------------------------------------------------------

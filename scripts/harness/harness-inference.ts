@@ -141,6 +141,17 @@ export async function runHarnessKeywordPatterns(
       if (!matchingEntities.length) continue;
 
       for (const entity of matchingEntities) {
+        // Check suppression: skip if entity already has a more specific relationship
+        if (pattern.suppressedByTypes?.length) {
+          const existingRels = store.getRelations().filter(
+            (r) =>
+              r.sourceEntityId === '[SELF]' &&
+              r.targetEntityId === entity.entityId &&
+              pattern.suppressedByTypes!.includes(r.relationshipType),
+          );
+          if (existingRels.length > 0) continue;
+        }
+
         await upsertKeywordRelation(store, {
           atomId,
           sourceEntityId: '[SELF]',
@@ -193,6 +204,50 @@ export function updateHarnessCooccurrence(
         cooccurrenceMap.set(key, entry);
       }
     }
+  }
+}
+
+/**
+ * Post-processing: remove relations that are suppressed by more specific types.
+ * E.g., if Dr. Patel has both "veterinarian" and "healthcare-provider",
+ * remove "healthcare-provider" since "veterinarian" is more specific.
+ */
+export function cleanSuppressedRelations(store: HarnessEntityStore): void {
+  // Build suppression rules from pattern config
+  const suppressionRules = new Map<string, string[]>();
+  for (const pattern of COMPILED_PATTERNS) {
+    if (pattern.suppressedByTypes?.length) {
+      const existing = suppressionRules.get(pattern.relationshipType) ?? [];
+      for (const t of pattern.suppressedByTypes) {
+        if (!existing.includes(t)) existing.push(t);
+      }
+      suppressionRules.set(pattern.relationshipType, existing);
+    }
+  }
+
+  if (suppressionRules.size === 0) return;
+
+  const allRelations = store.getRelations();
+  const toDelete: string[] = [];
+
+  for (const rel of allRelations) {
+    const suppressors = suppressionRules.get(rel.relationshipType);
+    if (!suppressors) continue;
+
+    // Check if a suppressing relation exists for the same entity pair
+    const hasSuppressor = allRelations.some(
+      (other) =>
+        other.id !== rel.id &&
+        other.sourceEntityId === rel.sourceEntityId &&
+        other.targetEntityId === rel.targetEntityId &&
+        suppressors.includes(other.relationshipType),
+    );
+
+    if (hasSuppressor) toDelete.push(rel.id);
+  }
+
+  for (const id of toDelete) {
+    store.entityRelations.delete(id);
   }
 }
 

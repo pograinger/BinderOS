@@ -24,6 +24,9 @@ export interface RelationshipPattern {
   /** Optional regex pattern the entity text must match for this pattern to fire.
    *  Used to restrict healthcare-context to entities with "Dr." prefix. */
   entityTextFilter?: string;
+  /** Relationship types that suppress this pattern for the same entity.
+   *  E.g., if "veterinarian" already exists for Dr. Patel, don't also create "healthcare-provider". */
+  suppressedByTypes?: string[];
 }
 
 export interface RelationshipPatternsConfig {

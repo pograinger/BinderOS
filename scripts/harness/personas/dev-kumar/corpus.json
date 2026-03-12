@@ -1,0 +1,1075 @@
+{
+  "generatedAt": "2026-03-12T01:58:27.469Z",
+  "personaName": "Dev Kumar",
+  "totalItems": 45,
+  "items": [
+    {
+      "id": "item-001",
+      "content": "My wife Priya wants to try that new Thai place in Ballard this weekend",
+      "expectedEntities": [
+        "Priya Kumar",
+        "Seattle"
+      ],
+      "expectedRelationships": [
+        "spouse",
+        "lives-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 8,
+          "spanEnd": 13,
+          "confidence": 0.93
+        },
+        {
+          "entityText": "Ballard",
+          "entityType": "LOC",
+          "spanStart": 50,
+          "spanEnd": 57,
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "id": "item-002",
+      "content": "Priya and I need a date night soon, maybe Friday after the kids are with Sunita",
+      "expectedEntities": [
+        "Priya Kumar",
+        "Sunita Patel"
+      ],
+      "expectedRelationships": [
+        "spouse",
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 5,
+          "confidence": 0.9
+        },
+        {
+          "entityText": "Sunita",
+          "entityType": "PER",
+          "spanStart": 73,
+          "spanEnd": 79,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-003",
+      "content": "Pick up Arjun from Lakeside High after basketball practice at 5pm",
+      "expectedEntities": [
+        "Arjun Kumar",
+        "Lakeside High"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Arjun",
+          "entityType": "PER",
+          "spanStart": 8,
+          "spanEnd": 13,
+          "confidence": 0.92
+        },
+        {
+          "entityText": "Lakeside High",
+          "entityType": "ORG",
+          "spanStart": 19,
+          "spanEnd": 32,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-004",
+      "content": "Meera needs help with her science project, due next Wednesday",
+      "expectedEntities": [
+        "Meera Kumar"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Meera",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 5,
+          "confidence": 0.91
+        }
+      ]
+    },
+    {
+      "id": "item-005",
+      "content": "Drop off Meera at Westwood Middle School early for band rehearsal tomorrow",
+      "expectedEntities": [
+        "Meera Kumar"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Meera",
+          "entityType": "PER",
+          "spanStart": 9,
+          "spanEnd": 14,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": "item-006",
+      "content": "Mom is coming over Saturday to watch the kids while we go out",
+      "expectedEntities": [
+        "Sunita Patel"
+      ],
+      "expectedRelationships": [
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Mom",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "id": "item-007",
+      "content": "Call mother-in-law Sunita about Thanksgiving plans, she wants to host this year",
+      "expectedEntities": [
+        "Sunita Patel"
+      ],
+      "expectedRelationships": [
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Sunita",
+          "entityType": "PER",
+          "spanStart": 19,
+          "spanEnd": 25,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-008",
+      "content": "Text Ryan about basketball Thursday night at the usual court",
+      "expectedEntities": [
+        "Ryan Mitchell"
+      ],
+      "expectedRelationships": [
+        "friend"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Ryan",
+          "entityType": "PER",
+          "spanStart": 5,
+          "spanEnd": 9,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-009",
+      "content": "Ryan wants to grab beers after the game this week, maybe that new place on Market St",
+      "expectedEntities": [
+        "Ryan Mitchell"
+      ],
+      "expectedRelationships": [
+        "friend"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Ryan",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 4,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-010",
+      "content": "Standup with Jess at 10am, need to review her API migration progress",
+      "expectedEntities": [
+        "Jess"
+      ],
+      "expectedRelationships": [
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Jess",
+          "entityType": "PER",
+          "spanStart": 13,
+          "spanEnd": 17,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": "item-011",
+      "content": "Marco submitted his PR for the auth module, need to do code review before EOD",
+      "expectedEntities": [
+        "Marco"
+      ],
+      "expectedRelationships": [
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Marco",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 5,
+          "confidence": 0.91
+        }
+      ]
+    },
+    {
+      "id": "item-012",
+      "content": "Sprint planning with Jess and Marco tomorrow at 2pm, prep the backlog",
+      "expectedEntities": [
+        "Jess",
+        "Marco"
+      ],
+      "expectedRelationships": [
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Jess",
+          "entityType": "PER",
+          "spanStart": 21,
+          "spanEnd": 25,
+          "confidence": 0.9
+        },
+        {
+          "entityText": "Marco",
+          "entityType": "PER",
+          "spanStart": 30,
+          "spanEnd": 35,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-013",
+      "content": "Catherine wants the quarterly headcount proposal by Friday, need to finalize numbers",
+      "expectedEntities": [
+        "Catherine Wells"
+      ],
+      "expectedRelationships": [
+        "reports-to"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Catherine",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 9,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-014",
+      "content": "One-on-one with Catherine Wells Wednesday at 3pm, prep talking points on team velocity",
+      "expectedEntities": [
+        "Catherine Wells"
+      ],
+      "expectedRelationships": [
+        "reports-to"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Catherine Wells",
+          "entityType": "PER",
+          "spanStart": 16,
+          "spanEnd": 31,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-015",
+      "content": "Cat approved my PTO request for the week of April 10th, update the team calendar",
+      "expectedEntities": [
+        "Catherine Wells"
+      ],
+      "expectedRelationships": [
+        "reports-to"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Cat",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.72
+        }
+      ]
+    },
+    {
+      "id": "item-016",
+      "content": "Therapist appointment with Dr. Okafor Tuesday at 4pm, journal beforehand",
+      "expectedEntities": [
+        "Dr. Okafor"
+      ],
+      "expectedRelationships": [
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Okafor",
+          "entityType": "PER",
+          "spanStart": 27,
+          "spanEnd": 37,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-017",
+      "content": "Schedule annual physical with Dr. Singh, been over a year since the last one",
+      "expectedEntities": [
+        "Dr. Singh"
+      ],
+      "expectedRelationships": [
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Singh",
+          "entityType": "PER",
+          "spanStart": 30,
+          "spanEnd": 39,
+          "confidence": 0.94
+        }
+      ]
+    },
+    {
+      "id": "item-018",
+      "content": "Bring Arjun to Dr. Singh for his sports physical before the season starts",
+      "expectedEntities": [
+        "Arjun Kumar",
+        "Dr. Singh"
+      ],
+      "expectedRelationships": [
+        "child",
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Arjun",
+          "entityType": "PER",
+          "spanStart": 6,
+          "spanEnd": 11,
+          "confidence": 0.92
+        },
+        {
+          "entityText": "Dr. Singh",
+          "entityType": "PER",
+          "spanStart": 15,
+          "spanEnd": 24,
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "id": "item-019",
+      "content": "The cat is due for shots, call Dr. Yun to schedule a vet appointment",
+      "expectedEntities": [
+        "Dr. Yun"
+      ],
+      "expectedRelationships": [
+        "veterinarian"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Yun",
+          "entityType": "PER",
+          "spanStart": 31,
+          "spanEnd": 38,
+          "confidence": 0.93
+        }
+      ]
+    },
+    {
+      "id": "item-020",
+      "content": "Dr. Yun said the cat needs bloodwork at the next checkup, schedule for March",
+      "expectedEntities": [
+        "Dr. Yun"
+      ],
+      "expectedRelationships": [
+        "veterinarian"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Yun",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 7,
+          "confidence": 0.94
+        }
+      ]
+    },
+    {
+      "id": "item-021",
+      "content": "Email Liz Brennan about updating the estate documents, need to add guardianship clause",
+      "expectedEntities": [
+        "Liz Brennan"
+      ],
+      "expectedRelationships": [
+        "lawyer"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Liz Brennan",
+          "entityType": "PER",
+          "spanStart": 6,
+          "spanEnd": 17,
+          "confidence": 0.93
+        }
+      ]
+    },
+    {
+      "id": "item-022",
+      "content": "Liz sent the updated will and testament draft, review before our next meeting",
+      "expectedEntities": [
+        "Liz Brennan"
+      ],
+      "expectedRelationships": [
+        "lawyer"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Liz",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "id": "item-023",
+      "content": "Nexus all-hands meeting Thursday at 11am, Catherine presenting the Q2 roadmap",
+      "expectedEntities": [
+        "Nexus Technologies",
+        "Catherine Wells"
+      ],
+      "expectedRelationships": [
+        "works-at",
+        "reports-to"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Nexus",
+          "entityType": "ORG",
+          "spanStart": 0,
+          "spanEnd": 5,
+          "confidence": 0.9
+        },
+        {
+          "entityText": "Catherine",
+          "entityType": "PER",
+          "spanStart": 42,
+          "spanEnd": 51,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-024",
+      "content": "Prep slides for the Nexus Tech quarterly review, highlight the platform migration wins",
+      "expectedEntities": [
+        "Nexus Technologies"
+      ],
+      "expectedRelationships": [
+        "works-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Nexus Tech",
+          "entityType": "ORG",
+          "spanStart": 20,
+          "spanEnd": 30,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-025",
+      "content": "Seattle Tech Mentors board meeting next Tuesday, review the mentorship program metrics",
+      "expectedEntities": [
+        "Seattle Tech Mentors"
+      ],
+      "expectedRelationships": [
+        "org-member"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Seattle Tech Mentors",
+          "entityType": "ORG",
+          "spanStart": 0,
+          "spanEnd": 20,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": "item-026",
+      "content": "Prep my presentation for Tech Mentors on engineering leadership paths",
+      "expectedEntities": [
+        "Seattle Tech Mentors"
+      ],
+      "expectedRelationships": [
+        "org-member"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Tech Mentors",
+          "entityType": "ORG",
+          "spanStart": 25,
+          "spanEnd": 37,
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "id": "item-027",
+      "content": "Check out the new coffee shop in Ballard near our place, heard good reviews",
+      "expectedEntities": [
+        "Seattle"
+      ],
+      "expectedRelationships": [
+        "lives-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Ballard",
+          "entityType": "LOC",
+          "spanStart": 33,
+          "spanEnd": 40,
+          "confidence": 0.82
+        }
+      ]
+    },
+    {
+      "id": "item-028",
+      "content": "Our anniversary is coming up in two weeks, plan something special for Priya",
+      "expectedEntities": [
+        "Priya Kumar"
+      ],
+      "expectedRelationships": [
+        "spouse"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 70,
+          "spanEnd": 75,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-029",
+      "content": "Priya is taking Arjun to his dentist appointment, Sunita will pick up Meera from school",
+      "expectedEntities": [
+        "Priya Kumar",
+        "Arjun Kumar",
+        "Sunita Patel",
+        "Meera Kumar"
+      ],
+      "expectedRelationships": [
+        "spouse",
+        "child",
+        "parent"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 5,
+          "confidence": 0.92
+        },
+        {
+          "entityText": "Arjun",
+          "entityType": "PER",
+          "spanStart": 16,
+          "spanEnd": 21,
+          "confidence": 0.91
+        },
+        {
+          "entityText": "Sunita",
+          "entityType": "PER",
+          "spanStart": 50,
+          "spanEnd": 56,
+          "confidence": 0.89
+        },
+        {
+          "entityText": "Meera",
+          "entityType": "PER",
+          "spanStart": 70,
+          "spanEnd": 75,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-030",
+      "content": "Jess and Marco both need performance reviews written by end of month",
+      "expectedEntities": [
+        "Jess",
+        "Marco"
+      ],
+      "expectedRelationships": [
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Jess",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 4,
+          "confidence": 0.9
+        },
+        {
+          "entityText": "Marco",
+          "entityType": "PER",
+          "spanStart": 9,
+          "spanEnd": 14,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-031",
+      "content": "Catherine Wells is restructuring the Nexus Technologies engineering org, discuss my team role",
+      "expectedEntities": [
+        "Catherine Wells",
+        "Nexus Technologies"
+      ],
+      "expectedRelationships": [
+        "reports-to",
+        "works-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Catherine Wells",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 15,
+          "confidence": 0.94
+        },
+        {
+          "entityText": "Nexus Technologies",
+          "entityType": "ORG",
+          "spanStart": 37,
+          "spanEnd": 55,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": "item-032",
+      "content": "Ryan Mitchell is visiting Seattle next weekend, plan dinner in Ballard",
+      "expectedEntities": [
+        "Ryan Mitchell",
+        "Seattle"
+      ],
+      "expectedRelationships": [
+        "friend",
+        "lives-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Ryan Mitchell",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 13,
+          "confidence": 0.94
+        },
+        {
+          "entityText": "Seattle",
+          "entityType": "LOC",
+          "spanStart": 26,
+          "spanEnd": 33,
+          "confidence": 0.88
+        },
+        {
+          "entityText": "Ballard",
+          "entityType": "LOC",
+          "spanStart": 63,
+          "spanEnd": 70,
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "id": "item-033",
+      "content": "Dr. Okafor recommended I talk to Dr. Singh about the sleep issues I mentioned in therapy",
+      "expectedEntities": [
+        "Dr. Okafor",
+        "Dr. Singh"
+      ],
+      "expectedRelationships": [
+        "healthcare-provider"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Dr. Okafor",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 10,
+          "confidence": 0.95
+        },
+        {
+          "entityText": "Dr. Singh",
+          "entityType": "PER",
+          "spanStart": 33,
+          "spanEnd": 42,
+          "confidence": 0.94
+        }
+      ]
+    },
+    {
+      "id": "item-034",
+      "content": "Catherine asked me to pair Jess with the new senior hire on the platform team",
+      "expectedEntities": [
+        "Catherine Wells",
+        "Jess"
+      ],
+      "expectedRelationships": [
+        "reports-to",
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Catherine",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 9,
+          "confidence": 0.88
+        },
+        {
+          "entityText": "Jess",
+          "entityType": "PER",
+          "spanStart": 27,
+          "spanEnd": 31,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-035",
+      "content": "Arjun has a basketball tournament Saturday and Meera has a recital Sunday, logistics nightmare",
+      "expectedEntities": [
+        "Arjun Kumar",
+        "Meera Kumar"
+      ],
+      "expectedRelationships": [
+        "child"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Arjun",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 5,
+          "confidence": 0.92
+        },
+        {
+          "entityText": "Meera",
+          "entityType": "PER",
+          "spanStart": 47,
+          "spanEnd": 52,
+          "confidence": 0.91
+        }
+      ]
+    },
+    {
+      "id": "item-036",
+      "content": "Priya and I need to meet with Liz Brennan to finalize the trust documents",
+      "expectedEntities": [
+        "Priya Kumar",
+        "Liz Brennan"
+      ],
+      "expectedRelationships": [
+        "spouse",
+        "lawyer"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 5,
+          "confidence": 0.9
+        },
+        {
+          "entityText": "Liz Brennan",
+          "entityType": "PER",
+          "spanStart": 30,
+          "spanEnd": 41,
+          "confidence": 0.93
+        }
+      ]
+    },
+    {
+      "id": "item-037",
+      "content": "Ask Nexus HR if they sponsor employee volunteering for Seattle Tech Mentors events",
+      "expectedEntities": [
+        "Nexus Technologies",
+        "Seattle Tech Mentors"
+      ],
+      "expectedRelationships": [
+        "works-at",
+        "org-member"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Nexus",
+          "entityType": "ORG",
+          "spanStart": 4,
+          "spanEnd": 9,
+          "confidence": 0.85
+        },
+        {
+          "entityText": "Seattle Tech Mentors",
+          "entityType": "ORG",
+          "spanStart": 55,
+          "spanEnd": 75,
+          "confidence": 0.92
+        }
+      ]
+    },
+    {
+      "id": "item-038",
+      "content": "Sunita is taking Arjun and Meera to the Ballard farmers market Saturday morning",
+      "expectedEntities": [
+        "Sunita Patel",
+        "Arjun Kumar",
+        "Meera Kumar",
+        "Seattle"
+      ],
+      "expectedRelationships": [
+        "parent",
+        "child",
+        "lives-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Sunita",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 6,
+          "confidence": 0.89
+        },
+        {
+          "entityText": "Arjun",
+          "entityType": "PER",
+          "spanStart": 17,
+          "spanEnd": 22,
+          "confidence": 0.91
+        },
+        {
+          "entityText": "Meera",
+          "entityType": "PER",
+          "spanStart": 27,
+          "spanEnd": 32,
+          "confidence": 0.9
+        },
+        {
+          "entityText": "Ballard",
+          "entityType": "LOC",
+          "spanStart": 40,
+          "spanEnd": 47,
+          "confidence": 0.83
+        }
+      ]
+    },
+    {
+      "id": "item-039",
+      "content": "Cat wants a demo of the new CI pipeline before we roll it out to all teams",
+      "expectedEntities": [
+        "Catherine Wells"
+      ],
+      "expectedRelationships": [
+        "reports-to"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Cat",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 3,
+          "confidence": 0.7
+        }
+      ]
+    },
+    {
+      "id": "item-040",
+      "content": "Jessica mentioned she might transfer to the platform team, discuss in our next one-on-one",
+      "expectedEntities": [
+        "Jess"
+      ],
+      "expectedRelationships": [
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Jessica",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 7,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-041",
+      "content": "Lakeside parent-teacher conference next Thursday, clear my calendar after 3pm",
+      "expectedEntities": [
+        "Lakeside High"
+      ],
+      "expectedRelationships": [],
+      "entityMentions": [
+        {
+          "entityText": "Lakeside",
+          "entityType": "ORG",
+          "spanStart": 0,
+          "spanEnd": 8,
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "id": "item-042",
+      "content": "Sunita wants to take the kids to the Indian festival downtown, coordinate with Priya on timing",
+      "expectedEntities": [
+        "Sunita Patel",
+        "Priya Kumar"
+      ],
+      "expectedRelationships": [
+        "parent",
+        "spouse"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Sunita",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 6,
+          "confidence": 0.88
+        },
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 79,
+          "spanEnd": 84,
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "id": "item-043",
+      "content": "Dinner reservation for Priya and me at that new Italian spot in Ballard, Saturday 7pm",
+      "expectedEntities": [
+        "Priya Kumar",
+        "Seattle"
+      ],
+      "expectedRelationships": [
+        "spouse",
+        "lives-at"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Priya",
+          "entityType": "PER",
+          "spanStart": 23,
+          "spanEnd": 28,
+          "confidence": 0.9
+        },
+        {
+          "entityText": "Ballard",
+          "entityType": "LOC",
+          "spanStart": 64,
+          "spanEnd": 71,
+          "confidence": 0.83
+        }
+      ]
+    },
+    {
+      "id": "item-044",
+      "content": "Ryan wants to start a weekly basketball game night with some guys from his company too",
+      "expectedEntities": [
+        "Ryan Mitchell"
+      ],
+      "expectedRelationships": [
+        "friend"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Ryan",
+          "entityType": "PER",
+          "spanStart": 0,
+          "spanEnd": 4,
+          "confidence": 0.88
+        }
+      ]
+    },
+    {
+      "id": "item-045",
+      "content": "Nexus Tech company offsite next month, make sure Marco and Jess submit their travel requests",
+      "expectedEntities": [
+        "Nexus Technologies",
+        "Marco",
+        "Jess"
+      ],
+      "expectedRelationships": [
+        "works-at",
+        "colleague"
+      ],
+      "entityMentions": [
+        {
+          "entityText": "Nexus Tech",
+          "entityType": "ORG",
+          "spanStart": 0,
+          "spanEnd": 10,
+          "confidence": 0.88
+        },
+        {
+          "entityText": "Marco",
+          "entityType": "PER",
+          "spanStart": 49,
+          "spanEnd": 54,
+          "confidence": 0.9
+        },
+        {
+          "entityText": "Jess",
+          "entityType": "PER",
+          "spanStart": 59,
+          "spanEnd": 63,
+          "confidence": 0.9
+        }
+      ]
+    }
+  ]
+}

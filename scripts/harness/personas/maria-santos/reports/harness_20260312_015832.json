@@ -1,0 +1,411 @@
+{
+  "generatedAt": "2026-03-12T01:58:32.569Z",
+  "totalCheckpoints": 4,
+  "checkpoints": [
+    {
+      "score": {
+        "checkpoint": 10,
+        "entityPrecision": 1,
+        "entityRecall": 0.6666666666666666,
+        "entityF1": 0.8,
+        "relationshipPrecision": 0.875,
+        "relationshipRecall": 0.4666666666666667,
+        "relationshipF1": 0.608695652173913,
+        "privacyScore": 0.4666666666666667,
+        "totalDetectedEntities": 10,
+        "totalGroundTruthEntities": 15,
+        "correctEntities": 10,
+        "totalDetectedRelations": 8,
+        "totalGroundTruthRelations": 15,
+        "correctRelations": 7,
+        "foundEntities": [
+          "Kai",
+          "Sofia Santos",
+          "Lucas Santos",
+          "Rosa Santos",
+          "Diego Santos",
+          "Aisha Williams",
+          "Ellen Park",
+          "Mr. Fujimoto",
+          "Dr. Huang",
+          "Dr. Brooks"
+        ],
+        "missedEntities": [
+          "Gene",
+          "Tyler Reed",
+          "Greenleaf Studios",
+          "Austin Freelancers Guild",
+          "Austin"
+        ],
+        "foundRelations": [
+          {
+            "entity": "Kai",
+            "type": "spouse"
+          },
+          {
+            "entity": "Sofia Santos",
+            "type": "child"
+          },
+          {
+            "entity": "Lucas Santos",
+            "type": "child"
+          },
+          {
+            "entity": "Ellen Park",
+            "type": "mentor"
+          },
+          {
+            "entity": "Mr. Fujimoto",
+            "type": "accountant"
+          },
+          {
+            "entity": "Dr. Huang",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Brooks",
+            "type": "veterinarian"
+          }
+        ],
+        "missedRelations": [
+          {
+            "entity": "Rosa Santos",
+            "type": "parent"
+          },
+          {
+            "entity": "Diego Santos",
+            "type": "sibling"
+          },
+          {
+            "entity": "Aisha Williams",
+            "type": "friend"
+          },
+          {
+            "entity": "Gene",
+            "type": "landlord"
+          },
+          {
+            "entity": "Tyler Reed",
+            "type": "client"
+          },
+          {
+            "entity": "Greenleaf Studios",
+            "type": "works-at"
+          },
+          {
+            "entity": "Austin Freelancers Guild",
+            "type": "org-member"
+          },
+          {
+            "entity": "Austin",
+            "type": "lives-at"
+          }
+        ]
+      },
+      "atomsProcessed": 10
+    },
+    {
+      "score": {
+        "checkpoint": 20,
+        "entityPrecision": 1,
+        "entityRecall": 1,
+        "entityF1": 1,
+        "relationshipPrecision": 0.8333333333333334,
+        "relationshipRecall": 0.6666666666666666,
+        "relationshipF1": 0.7407407407407408,
+        "privacyScore": 0.7333333333333333,
+        "totalDetectedEntities": 15,
+        "totalGroundTruthEntities": 15,
+        "correctEntities": 15,
+        "totalDetectedRelations": 12,
+        "totalGroundTruthRelations": 15,
+        "correctRelations": 10,
+        "foundEntities": [
+          "Kai",
+          "Sofia Santos",
+          "Lucas Santos",
+          "Rosa Santos",
+          "Diego Santos",
+          "Aisha Williams",
+          "Ellen Park",
+          "Mr. Fujimoto",
+          "Dr. Huang",
+          "Dr. Brooks",
+          "Gene",
+          "Tyler Reed",
+          "Greenleaf Studios",
+          "Austin Freelancers Guild",
+          "Austin"
+        ],
+        "missedEntities": [],
+        "foundRelations": [
+          {
+            "entity": "Kai",
+            "type": "spouse"
+          },
+          {
+            "entity": "Sofia Santos",
+            "type": "child"
+          },
+          {
+            "entity": "Lucas Santos",
+            "type": "child"
+          },
+          {
+            "entity": "Aisha Williams",
+            "type": "friend"
+          },
+          {
+            "entity": "Ellen Park",
+            "type": "mentor"
+          },
+          {
+            "entity": "Mr. Fujimoto",
+            "type": "accountant"
+          },
+          {
+            "entity": "Dr. Huang",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Brooks",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Tyler Reed",
+            "type": "client"
+          },
+          {
+            "entity": "Austin Freelancers Guild",
+            "type": "org-member"
+          }
+        ],
+        "missedRelations": [
+          {
+            "entity": "Rosa Santos",
+            "type": "parent"
+          },
+          {
+            "entity": "Diego Santos",
+            "type": "sibling"
+          },
+          {
+            "entity": "Gene",
+            "type": "landlord"
+          },
+          {
+            "entity": "Greenleaf Studios",
+            "type": "works-at"
+          },
+          {
+            "entity": "Austin",
+            "type": "lives-at"
+          }
+        ]
+      },
+      "atomsProcessed": 20
+    },
+    {
+      "score": {
+        "checkpoint": 30,
+        "entityPrecision": 1,
+        "entityRecall": 1,
+        "entityF1": 1,
+        "relationshipPrecision": 0.7333333333333333,
+        "relationshipRecall": 0.7333333333333333,
+        "relationshipF1": 0.7333333333333333,
+        "privacyScore": 0.8666666666666667,
+        "totalDetectedEntities": 16,
+        "totalGroundTruthEntities": 15,
+        "correctEntities": 15,
+        "totalDetectedRelations": 15,
+        "totalGroundTruthRelations": 15,
+        "correctRelations": 11,
+        "foundEntities": [
+          "Kai",
+          "Sofia Santos",
+          "Lucas Santos",
+          "Rosa Santos",
+          "Diego Santos",
+          "Aisha Williams",
+          "Ellen Park",
+          "Mr. Fujimoto",
+          "Dr. Huang",
+          "Dr. Brooks",
+          "Gene",
+          "Tyler Reed",
+          "Greenleaf Studios",
+          "Austin Freelancers Guild",
+          "Austin"
+        ],
+        "missedEntities": [],
+        "foundRelations": [
+          {
+            "entity": "Kai",
+            "type": "spouse"
+          },
+          {
+            "entity": "Sofia Santos",
+            "type": "child"
+          },
+          {
+            "entity": "Lucas Santos",
+            "type": "child"
+          },
+          {
+            "entity": "Rosa Santos",
+            "type": "parent"
+          },
+          {
+            "entity": "Aisha Williams",
+            "type": "friend"
+          },
+          {
+            "entity": "Ellen Park",
+            "type": "mentor"
+          },
+          {
+            "entity": "Mr. Fujimoto",
+            "type": "accountant"
+          },
+          {
+            "entity": "Dr. Huang",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Brooks",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Tyler Reed",
+            "type": "client"
+          },
+          {
+            "entity": "Austin Freelancers Guild",
+            "type": "org-member"
+          }
+        ],
+        "missedRelations": [
+          {
+            "entity": "Diego Santos",
+            "type": "sibling"
+          },
+          {
+            "entity": "Gene",
+            "type": "landlord"
+          },
+          {
+            "entity": "Greenleaf Studios",
+            "type": "works-at"
+          },
+          {
+            "entity": "Austin",
+            "type": "lives-at"
+          }
+        ]
+      },
+      "atomsProcessed": 30
+    },
+    {
+      "score": {
+        "checkpoint": 40,
+        "entityPrecision": 1,
+        "entityRecall": 1,
+        "entityF1": 1,
+        "relationshipPrecision": 0.7058823529411765,
+        "relationshipRecall": 0.8,
+        "relationshipF1": 0.7500000000000001,
+        "privacyScore": 0.8666666666666667,
+        "totalDetectedEntities": 17,
+        "totalGroundTruthEntities": 15,
+        "correctEntities": 15,
+        "totalDetectedRelations": 17,
+        "totalGroundTruthRelations": 15,
+        "correctRelations": 12,
+        "foundEntities": [
+          "Kai",
+          "Sofia Santos",
+          "Lucas Santos",
+          "Rosa Santos",
+          "Diego Santos",
+          "Aisha Williams",
+          "Ellen Park",
+          "Mr. Fujimoto",
+          "Dr. Huang",
+          "Dr. Brooks",
+          "Gene",
+          "Tyler Reed",
+          "Greenleaf Studios",
+          "Austin Freelancers Guild",
+          "Austin"
+        ],
+        "missedEntities": [],
+        "foundRelations": [
+          {
+            "entity": "Kai",
+            "type": "spouse"
+          },
+          {
+            "entity": "Sofia Santos",
+            "type": "child"
+          },
+          {
+            "entity": "Lucas Santos",
+            "type": "child"
+          },
+          {
+            "entity": "Rosa Santos",
+            "type": "parent"
+          },
+          {
+            "entity": "Diego Santos",
+            "type": "sibling"
+          },
+          {
+            "entity": "Aisha Williams",
+            "type": "friend"
+          },
+          {
+            "entity": "Ellen Park",
+            "type": "mentor"
+          },
+          {
+            "entity": "Mr. Fujimoto",
+            "type": "accountant"
+          },
+          {
+            "entity": "Dr. Huang",
+            "type": "healthcare-provider"
+          },
+          {
+            "entity": "Dr. Brooks",
+            "type": "veterinarian"
+          },
+          {
+            "entity": "Tyler Reed",
+            "type": "client"
+          },
+          {
+            "entity": "Austin Freelancers Guild",
+            "type": "org-member"
+          }
+        ],
+        "missedRelations": [
+          {
+            "entity": "Gene",
+            "type": "landlord"
+          },
+          {
+            "entity": "Greenleaf Studios",
+            "type": "works-at"
+          },
+          {
+            "entity": "Austin",
+            "type": "lives-at"
+          }
+        ]
+      },
+      "atomsProcessed": 40
+    }
+  ]
+}

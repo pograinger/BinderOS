@@ -1,0 +1,55 @@
+{
+  "personaName": "Alex Jordan",
+  "bio": "Software engineer at Acme Corp in Portland, OR. Married to Pam. Has a son named Ethan who attends Lincoln Elementary. Mom is Linda. Boss is Marcus Webb. Sees Dr. Chen for dental care and Dr. Rivera for therapy. Works with colleague Priya Sharma and client Brian Foster. Friend is Jake Morrison. Neighbor Tom Nguyen. Lawyer Sandra Kim handles legal matters. Dr. Patel is the family vet.",
+  "groundTruth": {
+    "entities": [
+      { "canonicalName": "Pam Jordan", "type": "PER", "aliases": ["Pam", "Pamela", "Pamela Jordan"] },
+      { "canonicalName": "Dr. Chen", "type": "PER", "aliases": ["Chen", "Dr Chen"] },
+      { "canonicalName": "Marcus Webb", "type": "PER", "aliases": ["Marcus", "Webb"] },
+      { "canonicalName": "Linda Jordan", "type": "PER", "aliases": ["Linda", "Mom"] },
+      { "canonicalName": "Ethan Jordan", "type": "PER", "aliases": ["Ethan"] },
+      { "canonicalName": "Priya Sharma", "type": "PER", "aliases": ["Priya"] },
+      { "canonicalName": "Jake Morrison", "type": "PER", "aliases": ["Jake"] },
+      { "canonicalName": "Dr. Rivera", "type": "PER", "aliases": ["Rivera"] },
+      { "canonicalName": "Tom Nguyen", "type": "PER", "aliases": ["Tom"] },
+      { "canonicalName": "Sandra Kim", "type": "PER", "aliases": ["Sandra", "Ms. Kim"] },
+      { "canonicalName": "Dr. Patel", "type": "PER", "aliases": ["Patel"] },
+      { "canonicalName": "Brian Foster", "type": "PER", "aliases": ["Brian"] },
+      { "canonicalName": "Acme Corp", "type": "ORG", "aliases": ["Acme"] },
+      { "canonicalName": "Lincoln Elementary", "type": "ORG", "aliases": ["Lincoln Elementary School"] },
+      { "canonicalName": "Portland", "type": "LOC", "aliases": ["Portland OR", "Portland, OR"] }
+    ],
+    "relationships": [
+      { "entity": "Pam Jordan", "type": "spouse", "confidence": 1.0, "note": "Alex's wife" },
+      { "entity": "Marcus Webb", "type": "reports-to", "confidence": 1.0, "note": "Alex's boss at Acme" },
+      { "entity": "Linda Jordan", "type": "parent", "confidence": 1.0, "note": "Alex's mother" },
+      { "entity": "Ethan Jordan", "type": "child", "confidence": 1.0, "note": "Alex's son" },
+      { "entity": "Dr. Chen", "type": "healthcare-provider", "confidence": 1.0, "note": "Alex's dentist" },
+      { "entity": "Dr. Rivera", "type": "healthcare-provider", "confidence": 1.0, "note": "Alex's therapist" },
+      { "entity": "Priya Sharma", "type": "colleague", "confidence": 1.0, "note": "Co-worker at Acme" },
+      { "entity": "Jake Morrison", "type": "friend", "confidence": 1.0, "note": "Personal friend" },
+      { "entity": "Tom Nguyen", "type": "neighbor", "confidence": 1.0, "note": "Next-door neighbor" },
+      { "entity": "Sandra Kim", "type": "lawyer", "confidence": 1.0, "note": "Legal counsel" },
+      { "entity": "Dr. Patel", "type": "veterinarian", "confidence": 1.0, "note": "Family vet for Alex's dog" },
+      { "entity": "Brian Foster", "type": "client", "confidence": 1.0, "note": "Business client" },
+      { "entity": "Acme Corp", "type": "works-at", "confidence": 1.0, "note": "Alex's employer" },
+      { "entity": "Portland", "type": "lives-at", "confidence": 1.0, "note": "Alex's city of residence" }
+    ],
+    "facts": [
+      "lives in Portland, OR",
+      "works at Acme Corp as a software engineer",
+      "married to Pam (Pamela Jordan)",
+      "son Ethan attends Lincoln Elementary",
+      "mother is Linda Jordan",
+      "dentist is Dr. Chen",
+      "therapist is Dr. Rivera",
+      "colleague Priya Sharma works at Acme",
+      "friend Jake Morrison — personal, not work",
+      "neighbor Tom Nguyen lives next door",
+      "lawyer Sandra Kim handles legal matters",
+      "family vet is Dr. Patel",
+      "client Brian Foster is a business contact",
+      "boss Marcus Webb at Acme Corp"
+    ]
+  }
+}

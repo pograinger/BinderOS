@@ -1,0 +1,57 @@
+{
+  "personaName": "Dev Kumar",
+  "bio": "Engineering manager at Nexus Technologies in Seattle, WA. Married to Priya. Has a teenage son Arjun (15) at Lakeside High and daughter Meera (11) at Westwood Middle School. Mother-in-law Sunita Patel lives nearby and helps with the kids. College friend Ryan Mitchell — basketball buddies. Direct reports are Jess and Marco. Boss is Catherine Wells (VP of Engineering). Therapist is Dr. Okafor. Family doctor is Dr. Singh. Vet is Dr. Yun for the family cat. Lawyer Liz Brennan handles estate planning. Board member of Seattle Tech Mentors. Lives in Ballard, Seattle.",
+  "groundTruth": {
+    "entities": [
+      { "canonicalName": "Priya Kumar", "type": "PER", "aliases": ["Priya"] },
+      { "canonicalName": "Arjun Kumar", "type": "PER", "aliases": ["Arjun"] },
+      { "canonicalName": "Meera Kumar", "type": "PER", "aliases": ["Meera"] },
+      { "canonicalName": "Sunita Patel", "type": "PER", "aliases": ["Sunita", "Mom"] },
+      { "canonicalName": "Ryan Mitchell", "type": "PER", "aliases": ["Ryan"] },
+      { "canonicalName": "Jess", "type": "PER", "aliases": ["Jess", "Jessica"] },
+      { "canonicalName": "Marco", "type": "PER", "aliases": ["Marco"] },
+      { "canonicalName": "Catherine Wells", "type": "PER", "aliases": ["Catherine", "Cat"] },
+      { "canonicalName": "Dr. Okafor", "type": "PER", "aliases": ["Okafor"] },
+      { "canonicalName": "Dr. Singh", "type": "PER", "aliases": ["Singh"] },
+      { "canonicalName": "Dr. Yun", "type": "PER", "aliases": ["Yun"] },
+      { "canonicalName": "Liz Brennan", "type": "PER", "aliases": ["Liz"] },
+      { "canonicalName": "Nexus Technologies", "type": "ORG", "aliases": ["Nexus", "Nexus Tech"] },
+      { "canonicalName": "Seattle Tech Mentors", "type": "ORG", "aliases": ["Tech Mentors"] },
+      { "canonicalName": "Seattle", "type": "LOC", "aliases": ["Seattle, WA", "Ballard"] },
+      { "canonicalName": "Lakeside High", "type": "ORG", "aliases": ["Lakeside"] }
+    ],
+    "relationships": [
+      { "entity": "Priya Kumar", "type": "spouse", "confidence": 1.0, "note": "Dev's wife" },
+      { "entity": "Arjun Kumar", "type": "child", "confidence": 1.0, "note": "Dev's son, age 15" },
+      { "entity": "Meera Kumar", "type": "child", "confidence": 1.0, "note": "Dev's daughter, age 11" },
+      { "entity": "Sunita Patel", "type": "parent", "confidence": 1.0, "note": "Dev's mother-in-law" },
+      { "entity": "Ryan Mitchell", "type": "friend", "confidence": 1.0, "note": "College friend, basketball" },
+      { "entity": "Jess", "type": "colleague", "confidence": 1.0, "note": "Direct report at Nexus" },
+      { "entity": "Marco", "type": "colleague", "confidence": 1.0, "note": "Direct report at Nexus" },
+      { "entity": "Catherine Wells", "type": "reports-to", "confidence": 1.0, "note": "VP of Engineering at Nexus" },
+      { "entity": "Dr. Okafor", "type": "healthcare-provider", "confidence": 1.0, "note": "Dev's therapist" },
+      { "entity": "Dr. Singh", "type": "healthcare-provider", "confidence": 1.0, "note": "Dev's family doctor" },
+      { "entity": "Dr. Yun", "type": "veterinarian", "confidence": 1.0, "note": "Vet for the family cat" },
+      { "entity": "Liz Brennan", "type": "lawyer", "confidence": 1.0, "note": "Estate planning attorney" },
+      { "entity": "Nexus Technologies", "type": "works-at", "confidence": 1.0, "note": "Dev's employer" },
+      { "entity": "Seattle Tech Mentors", "type": "org-member", "confidence": 1.0, "note": "Board member" },
+      { "entity": "Seattle", "type": "lives-at", "confidence": 1.0, "note": "Lives in Ballard, Seattle" }
+    ],
+    "facts": [
+      "engineering manager at Nexus Technologies in Seattle",
+      "married to Priya",
+      "son Arjun (15) at Lakeside High",
+      "daughter Meera (11) at Westwood Middle School",
+      "mother-in-law Sunita helps with kids",
+      "college friend Ryan Mitchell — basketball buddies",
+      "direct reports Jess and Marco",
+      "boss Catherine Wells (VP Engineering)",
+      "therapist Dr. Okafor",
+      "family doctor Dr. Singh",
+      "vet Dr. Yun for the cat",
+      "lawyer Liz Brennan for estate planning",
+      "board member Seattle Tech Mentors",
+      "lives in Ballard, Seattle"
+    ]
+  }
+}
