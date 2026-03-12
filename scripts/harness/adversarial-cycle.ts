@@ -32,6 +32,8 @@ import type { CorpusItem } from './generate-corpus.js';
 import {
   emulateEnrichmentSession,
   buildEntitySummary,
+  compareEnrichmentQuality,
+  emulateBaselineEnrichmentSession,
 } from './enrichment-emulator.js';
 import {
   generateCorrections,
@@ -427,6 +429,11 @@ export async function runAdversarialCycle(
 ): Promise<CycleState> {
   const cycleStart = Date.now();
   const attribution = emptyAttribution();
+  const enrichmentQualityScores: number[] = [];
+
+  // Sample quality comparison on first 3 atoms of cycle 1 only (cost control)
+  const QUALITY_COMPARISON_CYCLE = 1;
+  const QUALITY_COMPARISON_SAMPLE = 3;
 
   console.log(`  [cycle ${cycleNumber}] Generating corpus...`);
 
@@ -485,6 +492,38 @@ export async function runAdversarialCycle(
           syntheticTs,
         );
         enrichmentEmulations.push(emulation);
+
+        // Enrichment quality comparison: sample first N atoms of cycle 1 only (cost control)
+        if (
+          cycleNumber === QUALITY_COMPARISON_CYCLE &&
+          enrichmentQualityScores.length < QUALITY_COMPARISON_SAMPLE &&
+          mentionedEntityIds.length > 0 &&
+          entitySummary !== 'No entities detected yet.' &&
+          entitySummary !== 'No entity relationships known yet.'
+        ) {
+          try {
+            const baselineQA = await emulateBaselineEnrichmentSession(
+              {
+                atomId: item.id,
+                atomContent: item.content,
+                atomType: item.expectedRelationships[0] ?? 'general',
+                priorQA: [],
+              },
+              persona.bio,
+              client,
+            );
+            const qualityScore = await compareEnrichmentQuality(
+              item.content,
+              item.expectedRelationships[0] ?? 'general',
+              emulation.simulatedQA,
+              baselineQA,
+              client,
+            );
+            enrichmentQualityScores.push(qualityScore);
+          } catch {
+            // Non-fatal: quality comparison failure doesn't stop the cycle
+          }
+        }
       } catch {
         // Non-fatal: enrichment emulation failures don't stop the cycle
       }
@@ -533,6 +572,14 @@ export async function runAdversarialCycle(
 
   const durationMs = Date.now() - cycleStart;
 
+  const avgEnrichmentQuality = enrichmentQualityScores.length > 0
+    ? enrichmentQualityScores.reduce((a, b) => a + b, 0) / enrichmentQualityScores.length
+    : undefined;
+
+  if (avgEnrichmentQuality !== undefined) {
+    console.log(`  [cycle ${cycleNumber}] Enrichment quality (entity context vs baseline): ${avgEnrichmentQuality.toFixed(2)}/5`);
+  }
+
   const cycleState: CycleState = {
     personaName: persona.personaName,
     cycleNumber,
@@ -546,6 +593,7 @@ export async function runAdversarialCycle(
     attribution,
     durationMs,
     syntheticStartTimestamp: syntheticTimestampStr,
+    enrichmentQualityScore: avgEnrichmentQuality,
   };
 
   // Save checkpoint

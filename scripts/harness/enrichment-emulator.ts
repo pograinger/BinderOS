@@ -172,6 +172,143 @@ async function mineAnswerForEntities(
 }
 
 // ---------------------------------------------------------------------------
+// Enrichment quality comparison (ENTC-01 validation)
+// ---------------------------------------------------------------------------
+
+export interface EnrichmentQualityComparison {
+  atomId: string;
+  withEntityContext: string; // summary of enrichment with entity context injected
+  withoutEntityContext: string; // summary of enrichment without entity context
+  qualityScore: number; // 1-5 rated by Sonnet: how much better was context-enriched?
+}
+
+/**
+ * Compare enrichment quality with vs without entity context injection.
+ * Uses Sonnet to evaluate: given the same atom and two enrichment sessions,
+ * which extracted more useful GTD-relevant information?
+ * Returns a 1-5 score where 5 = entity context significantly improved enrichment.
+ */
+export async function compareEnrichmentQuality(
+  atomContent: string,
+  atomTopic: string,
+  withContextAnswers: SimulatedQA[],
+  withoutContextAnswers: SimulatedQA[],
+  client: Anthropic,
+): Promise<number> {
+  const formatAnswers = (answers: SimulatedQA[]) =>
+    answers.map((qa) => `Q: ${qa.question}\nA: ${qa.answer}`).join('\n\n');
+
+  const prompt = `You are evaluating two enrichment sessions for a GTD inbox item.
+
+**Inbox item:** "${atomContent}"
+**Topic area:** ${atomTopic}
+
+**Session A (with entity context injected):**
+${formatAnswers(withContextAnswers)}
+
+**Session B (without entity context):**
+${formatAnswers(withoutContextAnswers)}
+
+Rate how much better Session A is compared to Session B for GTD purposes.
+Consider: Does Session A provide more specific, actionable information? Does it reference people and relationships more precisely? Does it reduce ambiguity?
+
+Score: 1 = Session B is better or equal, 3 = Session A slightly better, 5 = Session A clearly superior
+
+Respond with JSON only:
+{"score": <1-5>, "reason": "<one sentence>"}`;
+
+  try {
+    const message = await client.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 256,
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    const responseText = message.content[0].type === 'text' ? message.content[0].text : '';
+    const cleaned = responseText
+      .replace(/^```json\s*/m, '')
+      .replace(/^```\s*/m, '')
+      .replace(/```\s*$/m, '')
+      .trim();
+
+    const parsed = JSON.parse(cleaned) as { score: number; reason: string };
+    const score = typeof parsed.score === 'number' ? Math.min(5, Math.max(1, parsed.score)) : 3;
+    return score;
+  } catch {
+    return 3; // default neutral score on failure
+  }
+}
+
+/**
+ * Generate baseline enrichment answers WITHOUT entity context.
+ * Used for comparison against context-injected enrichment.
+ */
+export async function emulateBaselineEnrichmentSession(
+  context: Omit<HarnessEnrichmentContext, 'entitySummary'>,
+  personaBio: string,
+  client: Anthropic,
+): Promise<SimulatedQA[]> {
+  const questions = selectQuestions(context.priorQA);
+
+  const questionsText = questions
+    .map((q, i) => `Question ${i + 1}: ${q.question}`)
+    .join('\n');
+
+  const personaFirstSentence = personaBio.split('.')[0].trim();
+
+  const prompt = `You are ${personaFirstSentence}.
+
+Here is a GTD inbox item you captured:
+"${context.atomContent}"
+
+Please answer these 3 enrichment questions naturally, as YOU would answer them in your own words.
+Do NOT use abstract labels like "my spouse" or "my boss" — reference people by their actual first name or nickname.
+Be brief and conversational (1-3 sentences per answer).
+
+${questionsText}
+
+Respond with JSON only:
+{
+  "answers": [
+    {"question": "...", "answer": "..."},
+    {"question": "...", "answer": "..."},
+    {"question": "...", "answer": "..."}
+  ]
+}`;
+
+  try {
+    const message = await client.messages.create({
+      model: 'claude-haiku-4-5',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    const responseText = message.content[0].type === 'text' ? message.content[0].text : '';
+    const cleaned = responseText
+      .replace(/^```json\s*/m, '')
+      .replace(/^```\s*/m, '')
+      .replace(/```\s*$/m, '')
+      .trim();
+
+    const parsed = JSON.parse(cleaned) as {
+      answers: Array<{ question: string; answer: string }>;
+    };
+
+    return parsed.answers.map((a, i) => ({
+      question: a.question || questions[i]?.question || '',
+      answer: a.answer || '',
+      category: questions[i]?.category || 'general',
+    }));
+  } catch {
+    return questions.map((q) => ({
+      question: q.question,
+      answer: '(no answer generated)',
+      category: q.category,
+    }));
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Main emulation function
 // ---------------------------------------------------------------------------
 

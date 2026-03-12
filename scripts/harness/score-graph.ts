@@ -254,6 +254,61 @@ export function computeLearningCurve(cycles: Array<{ cycleNumber: number; score:
 }
 
 // ---------------------------------------------------------------------------
+// Ablation comparison utilities (re-exported from ablation-engine for convenience)
+// ---------------------------------------------------------------------------
+
+import type { AblationSuiteResult, AblationDelta, ComponentRanking } from './ablation-engine.js';
+export type { AblationDelta, ComponentRanking };
+
+/**
+ * Compute per-metric delta showing exactly how much each component contributes.
+ * Exported from score-graph for convenience — delegates to ablation-engine.
+ */
+export function computeAblationDelta(
+  fullScore: GraphScore,
+  ablatedScore: GraphScore,
+): AblationDelta {
+  const entityF1Delta = ablatedScore.entityF1 - fullScore.entityF1;
+  const relationshipF1Delta = ablatedScore.relationshipF1 - fullScore.relationshipF1;
+  const privacyScoreDelta = ablatedScore.privacyScore - fullScore.privacyScore;
+  const overallImpact = entityF1Delta * 0.3 + relationshipF1Delta * 0.5 + privacyScoreDelta * 0.2;
+  return { entityF1Delta, relationshipF1Delta, privacyScoreDelta, overallImpact };
+}
+
+/**
+ * Rank components by their impact on the final score.
+ * Uses ablation suite results — largest absolute F1 delta = most load-bearing.
+ */
+export function rankComponents(suiteResult: AblationSuiteResult): ComponentRanking[] {
+  const rankings: ComponentRanking[] = [];
+
+  for (const [componentName, ablationResults] of suiteResult.perComponentResults.entries()) {
+    if (ablationResults.length === 0) continue;
+
+    const avgRelF1Delta =
+      ablationResults.reduce((sum, r) => sum + r.comparisonToFull.relationshipF1Delta, 0) /
+      ablationResults.length;
+
+    const avgEntF1Delta =
+      ablationResults.reduce((sum, r) => sum + r.comparisonToFull.entityF1Delta, 0) /
+      ablationResults.length;
+
+    const avgOverallImpact =
+      ablationResults.reduce((sum, r) => sum + r.comparisonToFull.overallImpact, 0) /
+      ablationResults.length;
+
+    rankings.push({
+      componentName,
+      impactScore: Math.abs(avgOverallImpact),
+      relationshipF1Delta: avgRelF1Delta,
+      entityF1Delta: avgEntF1Delta,
+    });
+  }
+
+  return rankings.sort((a, b) => b.impactScore - a.impactScore);
+}
+
+// ---------------------------------------------------------------------------
 // Main scoring function
 // ---------------------------------------------------------------------------
 

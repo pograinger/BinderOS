@@ -115,6 +115,8 @@ export interface CycleState {
   attribution: ComponentAttribution;
   durationMs: number;
   syntheticStartTimestamp: string; // ISO — start of corpus items in this cycle
+  /** Average quality improvement score (1-5) from entity context injection vs baseline (ENTC-01 validation) */
+  enrichmentQualityScore?: number;
 }
 
 // ---------------------------------------------------------------------------
