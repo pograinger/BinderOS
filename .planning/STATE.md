@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v5.0
 milestone_name: Entity Intelligence & Knowledge Graph
 status: executing
-stopped_at: Completed 29-01-PLAN.md
-last_updated: "2026-03-12T05:46:21.532Z"
-last_activity: 2026-03-11 — Phase 28 Plan 02 complete
+stopped_at: Completed 29-03-PLAN.md
+last_updated: "2026-03-12T05:58:00.000Z"
+last_activity: 2026-03-12 — Phase 29 Plan 03 complete
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 9
-  completed_plans: 8
-  percent: 95
+  completed_plans: 9
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Every piece of stored information must encode predictive value about future actions, decisions, or understanding — if it doesn't change behavior, it's noise, and the system actively manages this boundary.
-**Current focus:** Phase 28 — Relationship Inference + Cognitive Harness
+**Current focus:** Phase 29 — Entity Consumers + Trained Agent Validation (COMPLETE)
 
 ## Current Position
 
-Phase: 28 — third of 4 v5.0 phases (26-29)
-Plan: 2 of 2 in current phase (complete)
-Status: Executing Phase 28
-Last activity: 2026-03-11 — Phase 28 Plan 02 complete
+Phase: 29 — fourth of 4 v5.0 phases (26-29)
+Plan: 3 of 3 in current phase (complete)
+Status: v5.0 COMPLETE
+Last activity: 2026-03-12 — Phase 29 Plan 03 complete
 
-Progress: [███████████████████████░] 95% (v5.0 Phase 28: 2/2 plans)
+Progress: [████████████████████████] 100% (v5.0 Phase 29: 3/3 plans)
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Progress: [███████████████████████
 | Phase 28 P02 | 584 | 3 tasks | 9 files |
 | Phase 29 P02 | 364 | 2 tasks | 10 files |
 | Phase 29 P01 | 16 | 3 tasks | 20 files |
+| Phase 29 P03 | 10 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,11 @@ Recent decisions affecting v5.0:
 - [Phase 29-01]: Component attribution uses Map serialized to array for JSON checkpoint persistence
 - [Phase 29-01]: Enrichment answer entity mining uses regex-based proper name extraction (offline, no BERT NER)
 - [Phase 29-01]: Atom content cached in atomIntelligence._content for correction ripple pattern re-run
+- [Phase 29-03]: Ablation reuses pre-generated corpora — no new corpus API calls, only pipeline re-execution
+- [Phase 29-03]: 2 representative personas (low + high complexity) for ablation, 3 cycles — cost control
+- [Phase 29-03]: Enrichment quality sampled on first 3 atoms of cycle 1 only — Sonnet rates 1-5 vs Haiku baseline
+- [Phase 29-03]: Auto-tune precision > 70% boosts +0.05, < 40% halves and flags — research-derived thresholds
+- [Phase 29-03]: Post-run analysis (ablation + tune + report) is non-fatal — CI pass/fail from persona F1 only
 
 ### Pending Todos
 
@@ -101,6 +107,6 @@ Recent decisions affecting v5.0:
 
 ## Session Continuity
 
-Last session: 2026-03-12T05:46:21.530Z
-Stopped at: Completed 29-01-PLAN.md
+Last session: 2026-03-12T05:58:00.000Z
+Stopped at: Completed 29-03-PLAN.md
 Resume file: None

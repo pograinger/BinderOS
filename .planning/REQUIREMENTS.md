@@ -115,16 +115,16 @@ Requirements for v5.0 Entity Intelligence & Knowledge Graph. Each maps to roadma
 
 ### Entity Intelligence Consumers
 
-- [ ] **ENTC-01**: Entity context injected into enrichment questions — "You mentioned Sarah (your wife) — is this related to your anniversary planning?"
+- [x] **ENTC-01**: Entity context injected into enrichment questions — "You mentioned Sarah (your wife) — is this related to your anniversary planning?"
 - [x] **ENTC-02**: User correction UX with inline entity cards, editable relationships; corrections stored as ground truth (confidence 1.0) overriding all inference
-- [ ] **ENTC-03**: Entity relationships inform GTD context tag suggestions — "Meeting with Dr. Chen" -> @health context
+- [x] **ENTC-03**: Entity relationships inform GTD context tag suggestions — "Meeting with Dr. Chen" -> @health context
 - [x] **ENTC-04**: Recency-weighted entity relevance with exponential decay (MunninDB-style, ~30 day half-life)
 - [x] **ENTC-05**: Entity timeline view showing all atoms mentioning a specific entity, ordered chronologically
 
 ### Trained Agent Validation
 
-- [ ] **TVAL-01**: Multi-cycle adversarial training loop with 10+ diverse synthetic personas processes 150-250 items per persona through the local cognitive stack (triage, enrichment emulation, entity detection, relationship inference, corrections), achieving >80% relationship F1 after cycle 1 and >90% after 5 cycles
-- [ ] **TVAL-02**: Investment report with component ablation testing, auto-tuned pattern optimization, and ranked ONNX agent recommendations with impact+complexity matrix — derived from cross-persona training results and gap analysis
+- [x] **TVAL-01**: Multi-cycle adversarial training loop with 10+ diverse synthetic personas processes 150-250 items per persona through the local cognitive stack (triage, enrichment emulation, entity detection, relationship inference, corrections), achieving >80% relationship F1 after cycle 1 and >90% after 5 cycles
+- [x] **TVAL-02**: Investment report with component ablation testing, auto-tuned pattern optimization, and ranked ONNX agent recommendations with impact+complexity matrix — derived from cross-persona training results and gap analysis
 
 ### Future Goals (accommodate in v5.0 schema design)
 
@@ -251,13 +251,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RELI-01 | Phase 28 | Complete |
 | RELI-02 | Phase 28 | Complete |
 | RELI-03 | Phase 28 | Complete |
-| ENTC-01 | Phase 29 | Pending |
+| ENTC-01 | Phase 29 | Complete |
 | ENTC-02 | Phase 29 | Complete |
-| ENTC-03 | Phase 29 | Pending |
+| ENTC-03 | Phase 29 | Complete |
 | ENTC-04 | Phase 29 | Complete |
 | ENTC-05 | Phase 29 | Complete |
-| TVAL-01 | Phase 29 | Pending |
-| TVAL-02 | Phase 29 | Pending |
+| TVAL-01 | Phase 29 | Complete |
+| TVAL-02 | Phase 29 | Complete |
 
 **Coverage:**
 - v4.0 requirements: 48 total, 48 mapped

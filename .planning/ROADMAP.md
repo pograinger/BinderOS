@@ -73,7 +73,7 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 - [x] **Phase 26: Intelligence Sidecar + Schema** - Dexie migration with atomIntelligence sidecar, entity/relation tables, enrichment refactor to structured records, smart links field (completed 2026-03-11)
 - [x] **Phase 27: Entity Detection + Registry** - Sanitization worker extended for entity detection, detection lifecycle, entity-atom linking, dedup/normalization, entity badges (completed 2026-03-11)
 - [x] **Phase 28: Relationship Inference + Cognitive Harness** - T1 keyword pattern engine, co-occurrence accumulation, evidence scoring, headless testing harness, synthetic user profile, cloud adversarial scoring (completed 2026-03-11)
-- [ ] **Phase 29: Entity Consumers + Trained Agent Validation** - Entity-aware enrichment, user correction UX, GTD context suggestions, cloud-as-user training loop, local stack benchmark proving emergent user learning
+- [x] **Phase 29: Entity Consumers + Trained Agent Validation** - Entity-aware enrichment, user correction UX, GTD context suggestions, cloud-as-user training loop, local stack benchmark proving emergent user learning (completed 2026-03-12)
 
 ## Phase Details
 
@@ -174,4 +174,4 @@ Plans:
 | 26. Intelligence Sidecar + Schema | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 27. Entity Detection + Registry | 2/2 | Complete   | 2026-03-11 | - |
 | 28. Relationship Inference | 2/2 | Complete   | 2026-03-11 | - |
-| 29. Entity Intelligence Consumers | 2/3 | In Progress|  | - |
+| 29. Entity Intelligence Consumers | 3/3 | Complete   | 2026-03-12 | - |
