@@ -584,13 +584,21 @@ async function main(): Promise<void> {
   console.log(`Report: ${reportPath}`);
 }
 
-main().catch((err) => {
-  const isDryRun = process.argv.includes('--dry-run');
-  if (isDryRun) {
-    // In dry-run, we might fail because ANTHROPIC_API_KEY isn't set — that's OK
-    console.log('[investment-report] dry-run PASSED — schema valid, report generator ready');
-    process.exit(0);
-  }
-  console.error('[investment-report] Fatal error:', err);
-  process.exit(1);
-});
+// Only run main() when invoked directly (not when imported as a module)
+const isMain = process.argv[1] && (
+  process.argv[1].endsWith('generate-investment-report.ts') ||
+  process.argv[1].endsWith('generate-investment-report.js')
+);
+
+if (isMain) {
+  main().catch((err) => {
+    const isDryRun = process.argv.includes('--dry-run');
+    if (isDryRun) {
+      // In dry-run, we might fail because ANTHROPIC_API_KEY isn't set — that's OK
+      console.log('[investment-report] dry-run PASSED — schema valid, report generator ready');
+      process.exit(0);
+    }
+    console.error('[investment-report] Fatal error:', err);
+    process.exit(1);
+  });
+}
