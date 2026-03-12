@@ -13,6 +13,28 @@ import { getMatcherForType } from '../../src/entity/entity-matcher.js';
 
 export const MERGE_CANDIDATE_THRESHOLD = 0.7;
 
+/**
+ * Common English words that get capitalized at sentence start and are NOT entity names.
+ * Used as a safety net in findOrCreateEntity to prevent registry pollution.
+ */
+const NON_ENTITY_WORDS = new Set([
+  'not', 'though', 'should', 'probably', 'maybe', 'just', 'also', 'still',
+  'already', 'really', 'actually', 'might', 'would', 'could', 'been', 'have',
+  'about', 'after', 'before', 'between', 'during', 'each', 'every', 'from',
+  'into', 'most', 'only', 'other', 'over', 'same', 'some', 'such', 'than',
+  'then', 'these', 'those', 'through', 'under', 'very', 'when', 'where',
+  'while', 'with', 'the', 'this', 'that', 'there', 'yeah', 'depends',
+  'whoever', 'however', 'since', 'because', 'although', 'unless', 'until',
+  'whether', 'anyway', 'besides', 'certainly', 'definitely', 'eventually',
+  'finally', 'generally', 'honestly', 'ideally', 'lately', 'likely', 'mainly',
+  'mostly', 'obviously', 'perhaps', 'personally', 'specifically', 'unfortunately',
+  'usually', 'basically', 'call', 'check', 'get', 'got', 'let', 'make', 'need',
+  'put', 'set', 'try', 'want', 'going', 'think', 'know', 'like', 'look', 'take',
+  'come', 'give', 'tell', 'ask', 'use', 'find', 'keep', 'bring', 'send', 'talk',
+  'pick', 'plan', 'work', 'done', 'sure', 'well', 'okay', 'son', 'but', 'she',
+  'her', 'his', 'him', 'they', 'them', 'our', 'your', 'its', 'who', 'what',
+]);
+
 // ---------------------------------------------------------------------------
 // HarnessEntityStore
 // ---------------------------------------------------------------------------
@@ -57,6 +79,12 @@ export class HarnessEntityStore {
   // -------------------------------------------------------------------------
 
   findOrCreateEntity(text: string, type: 'PER' | 'LOC' | 'ORG', syntheticTimestamp?: number): string {
+    // Reject obvious non-entity words (sentence-starting common words)
+    const singleWord = text.trim().split(/\s+/).length === 1;
+    if (singleWord && NON_ENTITY_WORDS.has(text.toLowerCase())) {
+      return ''; // Signal: not an entity — callers should check for empty string
+    }
+
     const matcher = getMatcherForType(type);
     const allOfType = this.getEntitiesByType(type);
 

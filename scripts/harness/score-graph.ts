@@ -75,12 +75,25 @@ function normalizeText(text: string): string {
 /**
  * Check if two normalized strings match (exact or substring).
  * Substring: "pam" matches "pam jordan", "chen" matches "dr chen".
+ * Requires the shorter string to be at least 3 chars AND at least 60% of
+ * the longer string's length, preventing "not" from matching "nottingham".
  */
 function fuzzyMatch(a: string, b: string): boolean {
   if (a === b) return true;
-  // Substring match — one must be at least 3 chars to avoid "a" matching "pam"
-  if (a.length >= 3 && b.includes(a)) return true;
-  if (b.length >= 3 && a.includes(b)) return true;
+  const shorter = a.length <= b.length ? a : b;
+  const longer = a.length <= b.length ? b : a;
+  // Substring match: shorter must be 3+ chars and cover a significant portion of the longer
+  if (shorter.length >= 3 && longer.includes(shorter)) {
+    // Require the substring to be at least 60% of the containing string's length
+    // This allows "pam" (3) to match "pam jordan" (10) → 30% BUT we still want that.
+    // Really we want to prevent "son" matching "johnson" or "not" matching "nothing".
+    // Solution: substring must match as a whole word boundary OR be ≥ 60% of longer.
+    const ratio = shorter.length / longer.length;
+    if (ratio >= 0.6) return true;
+    // Word-boundary check: the substring appears as a complete word in the longer string
+    const wordBoundaryPattern = new RegExp(`(?:^|\\s)${shorter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:\\s|$)`);
+    if (wordBoundaryPattern.test(longer)) return true;
+  }
   return false;
 }
 

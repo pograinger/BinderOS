@@ -121,10 +121,29 @@ function selectQuestions(
 // ---------------------------------------------------------------------------
 
 const SKIP_WORDS = new Set([
+  // Days & months
   'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
   'September', 'October', 'November', 'December',
+  // Pronouns & determiners
   'GTD', 'The', 'This', 'That', 'There', 'I', 'My', 'Our', 'Your', 'Their', 'Its',
+  'He', 'She', 'They', 'We', 'It', 'Who', 'What', 'Which', 'Whom', 'Whose',
+  // Common sentence-starting words (capitalized but not names)
+  'Not', 'Though', 'Should', 'Probably', 'Maybe', 'Just', 'Also', 'Still',
+  'Already', 'Really', 'Actually', 'Might', 'Would', 'Could', 'Been', 'Have',
+  'About', 'After', 'Before', 'Between', 'During', 'Each', 'Every', 'From',
+  'Into', 'Most', 'Only', 'Other', 'Over', 'Same', 'Some', 'Such', 'Than',
+  'Then', 'These', 'Those', 'Through', 'Under', 'Very', 'When', 'Where',
+  'While', 'With', 'Yes', 'Yeah', 'Depends', 'Whoever', 'However', 'Since',
+  'Because', 'Although', 'Unless', 'Until', 'Whether', 'Anyway', 'Besides',
+  'Certainly', 'Definitely', 'Eventually', 'Finally', 'Generally', 'Honestly',
+  'Ideally', 'Lately', 'Likely', 'Mainly', 'Mostly', 'Obviously', 'Perhaps',
+  'Personally', 'Specifically', 'Unfortunately', 'Usually', 'Basically',
+  // Verbs that start sentences
+  'Call', 'Check', 'Get', 'Got', 'Let', 'Make', 'Need', 'Put', 'Set', 'Try',
+  'Want', 'Going', 'Think', 'Know', 'Like', 'Look', 'Take', 'Come', 'Give',
+  'Tell', 'Ask', 'Use', 'Find', 'Keep', 'Bring', 'Send', 'Talk', 'Pick',
+  'Plan', 'Work', 'Done', 'Sure', 'Well', 'Okay',
 ]);
 
 /**
@@ -142,8 +161,11 @@ async function mineAnswerForEntities(
 
   const mentions: EntityMention[] = [];
 
-  // Match proper names: titles + name, or multi-word capitalized names, or single 3+ char caps
-  const namePattern = /(?:Dr\.|Mr\.|Mrs\.|Ms\.|Prof\.)\s*[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?|[A-Z][a-z]{2,}(?:\s+[A-Z][a-z]+){1,2}|[A-Z][a-z]{2,}/g;
+  // Match proper names: titles + name, or multi-word capitalized names.
+  // Single capitalized words are NOT matched — they're almost always sentence-starting
+  // common words ("Not", "Though", "Maybe") rather than names.
+  // Known single-word names get picked up via corpus pre-annotations and alias resolution.
+  const namePattern = /(?:Dr\.|Mr\.|Mrs\.|Ms\.|Prof\.)\s*[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?|[A-Z][a-z]{2,}(?:\s+[A-Z][a-z]+){1,2}/g;
   let match;
 
   while ((match = namePattern.exec(answer)) !== null) {
@@ -152,6 +174,7 @@ async function mineAnswerForEntities(
     if (SKIP_WORDS.has(firstWord) || SKIP_WORDS.has(entityText)) continue;
 
     const entityId = store.findOrCreateEntity(entityText, 'PER', syntheticTimestamp);
+    if (!entityId) continue; // Rejected as non-entity word
     mentions.push({
       entityText,
       entityType: 'PER',

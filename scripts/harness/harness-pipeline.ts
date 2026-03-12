@@ -151,6 +151,7 @@ export async function runHarnessAtom(
     }
 
     const entityId = store.findOrCreateEntity(mention.entityText, mention.entityType, timestamp);
+    if (!entityId) continue; // Rejected as non-entity word
     resolvedMentions.push({ ...mention, entityId });
 
     // Extract role-word context for deferred merging (e.g., "mom Linda" → link "mom" to Linda)
