@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Phase 37 context gathered
-last_updated: "2026-03-13T21:08:21.186Z"
+stopped_at: Completed 37-01-PLAN.md
+last_updated: "2026-03-13T22:24:30.332Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 13
   completed_phases: 9
-  total_plans: 26
-  completed_plans: 25
+  total_plans: 28
+  completed_plans: 26
 ---
 
 # Project State
@@ -67,6 +67,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | Phase 36 P01 | 12 minutes | 2 tasks | 6 files |
 | Phase 36-consensus-wired-gate-and-enrichment P02 | 7 | 1 tasks | 5 files |
 | Phase 36 P03 | 5 | 2 tasks | 4 files |
+| Phase 37-consensus-ablation-harness P01 | 18 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -124,6 +125,9 @@ Recent decisions affecting future work:
 - [Phase 36]: Worker receives full 84-dim vector + slices array per call — keeps worker generic, no TypeScript src/ imports in workers
 - [Phase 36]: vectorCountCache initialized lazily from Dexie on first call per binder — avoids O(n) query on every runConsensusForAtom invocation
 - [Phase 36]: binderId optional on writeCanonicalVector (backward-compatible); recomputeAndCacheVector passes atom.binderId for accurate per-binder cold-start counting
+- [Phase 37]: EII coherence = std-dev of weightedProbability (NOT AUC); EII = equal-weight composite of coherence + stability + impact
+- [Phase 37]: updateBinderEII uses full-recompute strategy — simpler than incremental, correct for small per-binder atomIntelligence tables
+- [Phase 37]: harness-onnx.ts loads only 4 specialist models (not all 14 T2 classifiers) — existing harness pipeline handles T2 classifiers
 
 ### Roadmap Evolution
 
@@ -149,7 +153,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T21:08:21.156Z
-Stopped at: Phase 37 context gathered
-Resume file: .planning/phases/37-consensus-ablation-harness/37-CONTEXT.md
+Last session: 2026-03-13T22:24:30.329Z
+Stopped at: Completed 37-01-PLAN.md
+Resume file: None
 Next action: `/gsd:plan-phase 30`
