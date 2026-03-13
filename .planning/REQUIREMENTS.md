@@ -50,7 +50,7 @@ Requirements for v5.5 Cortical Intelligence milestone. Each maps to roadmap phas
 - [x] **CONS-01**: 4+ specialist ONNX risk models trained on non-overlapping canonical vector slices (time-pressure, dependency, staleness, energy-context) — each under 20KB, exported via Python pipeline
 - [x] **CONS-02**: `computeConsensus()` returns weighted-average probability + pairwise agreement score + majority vote from specialist outputs — pure function, no side effects
 - [x] **CONS-03**: Consensus result stored in `atomIntelligence.consensusRisk` with per-specialist probability contributions for downstream explainability
-- [ ] **CONS-04**: Cold-start guard prevents consensus from activating until binder has 15+ atoms with cached canonical vectors — avoids misleading early predictions
+- [x] **CONS-04**: Cold-start guard prevents consensus from activating until binder has 15+ atoms with cached canonical vectors — avoids misleading early predictions
 
 ### Emergent Intelligence Index
 
@@ -124,7 +124,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONS-01 | Phase 36 | Complete |
 | CONS-02 | Phase 36 | Complete |
 | CONS-03 | Phase 36 | Complete |
-| CONS-04 | Phase 36 | Pending |
+| CONS-04 | Phase 36 | Complete |
 | EII-01 | Phase 37 | Pending |
 | EII-02 | Phase 37 | Pending |
 | EII-03 | Phase 37 | Pending |

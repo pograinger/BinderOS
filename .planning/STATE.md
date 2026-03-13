@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Completed 36-02-PLAN.md
-last_updated: "2026-03-13T19:56:04.715Z"
+stopped_at: Completed 36-03-PLAN.md
+last_updated: "2026-03-13T20:04:33.781Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 13
-  completed_phases: 8
+  completed_phases: 9
   total_plans: 26
-  completed_plans: 24
+  completed_plans: 25
 ---
 
 # Project State
@@ -66,6 +66,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | Phase 35 P02 | 18 minutes | 1 tasks | 4 files |
 | Phase 36 P01 | 12 minutes | 2 tasks | 6 files |
 | Phase 36-consensus-wired-gate-and-enrichment P02 | 7 | 1 tasks | 5 files |
+| Phase 36 P03 | 5 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -120,6 +121,9 @@ Recent decisions affecting future work:
 - [Phase Phase 36]: ConsensusResult imported directly from types (not barrel) in atom-intelligence.ts to avoid circular dependency risk
 - [Phase Phase 36]: ONNX output[1] is probabilities (N,2); output[0] is label (N,) — consensus worker must index result[1] for probability scores
 - [Phase Phase 36]: vectors.json loaded at training runtime for idx() name-based lookups — feature slices never hardcoded integers
+- [Phase 36]: Worker receives full 84-dim vector + slices array per call — keeps worker generic, no TypeScript src/ imports in workers
+- [Phase 36]: vectorCountCache initialized lazily from Dexie on first call per binder — avoids O(n) query on every runConsensusForAtom invocation
+- [Phase 36]: binderId optional on writeCanonicalVector (backward-compatible); recomputeAndCacheVector passes atom.binderId for accurate per-binder cold-start counting
 
 ### Roadmap Evolution
 
@@ -145,7 +149,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T19:56:04.712Z
-Stopped at: Completed 36-02-PLAN.md
+Last session: 2026-03-13T20:04:33.778Z
+Stopped at: Completed 36-03-PLAN.md
 Resume file: None
 Next action: `/gsd:plan-phase 30`
