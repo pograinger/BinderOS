@@ -38,14 +38,11 @@ created: 2026-03-13
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 32-01-01 | 01 | 1 | PRED-01 | unit | `pnpm test --run src/ai/enrichment/predictive-scorer.test.ts` | ❌ W0 | ⬜ pending |
-| 32-01-02 | 01 | 1 | PRED-02 | unit | `pnpm test --run src/ai/enrichment/predictive-scorer.test.ts` | ❌ W0 | ⬜ pending |
-| 32-01-03 | 01 | 1 | PRED-03 | unit | `pnpm test --run src/ai/enrichment/predictive-scorer.test.ts` | ❌ W0 | ⬜ pending |
-| 32-02-01 | 02 | 1 | PRED-01 | unit | `pnpm test --run src/ai/enrichment/momentum-builder.test.ts` | ❌ W0 | ⬜ pending |
-| 32-02-02 | 02 | 1 | PRED-03 | unit | `pnpm test --run src/ai/enrichment/momentum-builder.test.ts` | ❌ W0 | ⬜ pending |
-| 32-03-01 | 03 | 2 | PRED-01, PRED-02 | integration | `pnpm test --run src/ai/enrichment/enrichment-engine.test.ts` | ❌ W0 | ⬜ pending |
+| 32-01-01 | 01 | 1 | PRED-01 | unit | `pnpm test --run src/ai/enrichment/predictive-scorer.test.ts` | W0 | pending |
+| 32-01-02 | 01 | 1 | PRED-02 | unit | `pnpm test --run src/ai/enrichment/momentum-builder.test.ts` | W0 | pending |
+| 32-02-01 | 02 | 2 | PRED-01, PRED-02, PRED-03 | integration | `pnpm test --run src/ai/enrichment/enrichment-engine.test.ts` | yes | pending |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+*Status: pending / green / red / flaky*
 
 ---
 
@@ -54,7 +51,7 @@ created: 2026-03-13
 - [ ] `src/ai/enrichment/predictive-scorer.test.ts` — stubs for PRED-01, PRED-02, PRED-03 (pure function tests: dynamic ordering, cold-start guard, entity boost, zero-signal base)
 - [ ] `src/ai/enrichment/momentum-builder.test.ts` — stubs for cache TTL, cache invalidation, windowed query logic (mocked Dexie)
 
-*Existing infrastructure covers framework setup.*
+*Existing infrastructure covers framework setup. `enrichment-engine.test.ts` already exists — wiring tests added in Plan 02.*
 
 ---
 
@@ -62,8 +59,8 @@ created: 2026-03-13
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
-| Budget atoms → deadline questions lead | PRED-01+02 | Requires harness with seeded persona data | Run harness with alex-jordan persona, enrich budget-related atom after triage |
-| Entity-active atom → entity category promoted | PRED-01 | Requires entity registry with trajectory data | Run harness, verify entity enrichment category ordering |
+| Budget atoms -> deadline questions lead | PRED-01+02 | Requires harness with seeded persona data | Run harness with alex-jordan persona, enrich budget-related atom after triage |
+| Entity-active atom -> entity category promoted | PRED-01 | Requires entity registry with trajectory data | Run harness, verify entity enrichment category ordering |
 
 ---
 
