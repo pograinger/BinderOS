@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Completed 35-02-PLAN.md
-last_updated: "2026-03-13T19:02:50.250Z"
+stopped_at: Completed 36-01-PLAN.md
+last_updated: "2026-03-13T19:53:25.096Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 13
   completed_phases: 8
-  total_plans: 23
-  completed_plans: 22
+  total_plans: 26
+  completed_plans: 23
 ---
 
 # Project State
@@ -64,6 +64,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | Phase 33-sequence-context-onnx-model P03 | 20 | 2 tasks | 26 files |
 | Phase 35 P01 | 11 | 2 tasks | 13 files |
 | Phase 35 P02 | 18 minutes | 1 tasks | 4 files |
+| Phase 36 P01 | 12 minutes | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -113,6 +114,9 @@ Recent decisions affecting future work:
 - [Phase Phase 35]: dirtyCheckTaskFields accepts Partial<TaskAtom> as prev — callers without full prev state can pass only the fields they tracked
 - [Phase Phase 35]: applyGTDRecommendation is the canonical atom save site in store.ts — only fires recompute when vector-feeding keys are present in changes
 - [Phase Phase 35]: Dynamic import() at invalidation sites keeps vector-cache off critical render path — lazy load after first call is cached by runtime
+- [Phase Phase 36]: SPECIALIST_FEATURE_SLICES derives all indices from TASK/PERSON/CALENDAR_DIMENSION_NAMES — catches mismatches at module load time via indexByName() throw
+- [Phase Phase 36]: Agreement score = agreeing pairs / total pairs; single specialist → 1.0 (no pairs to disagree)
+- [Phase Phase 36]: ConsensusResult imported directly from types (not barrel) in atom-intelligence.ts to avoid circular dependency risk
 
 ### Roadmap Evolution
 
@@ -138,7 +142,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T18:53:23.171Z
-Stopped at: Completed 35-02-PLAN.md
+Last session: 2026-03-13T19:53:03.712Z
+Stopped at: Completed 36-01-PLAN.md
 Resume file: None
 Next action: `/gsd:plan-phase 30`
