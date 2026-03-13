@@ -54,6 +54,8 @@ interface CycleCheckpointData {
     graphDiff: unknown;
     graphSnapshot: unknown;
     // corpus excluded for size — can be regenerated
+    /** EII snapshot stored as 4 numbers — full consensusResults[] excluded for size (Research pitfall 5) */
+    cycleEII?: { coherence: number; stability: number; impact: number; eii: number };
   };
 }
 
@@ -99,6 +101,15 @@ export function saveCheckpoint(
       syntheticStartTimestamp: cycleState.syntheticStartTimestamp,
       graphDiff: cycleState.graphDiff,
       graphSnapshot: cycleState.graphSnapshot,
+      // Store cycleEII (4 numbers) but NOT full consensusResults[] — avoids checkpoint bloat
+      cycleEII: cycleState.cycleEII
+        ? {
+            coherence: cycleState.cycleEII.coherence,
+            stability: cycleState.cycleEII.stability,
+            impact: cycleState.cycleEII.impact,
+            eii: cycleState.cycleEII.eii,
+          }
+        : undefined,
     },
   };
 

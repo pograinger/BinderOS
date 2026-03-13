@@ -13,8 +13,16 @@ import path from 'node:path';
 import type { GraphScore } from './score-graph.js';
 import type { ExperimentResult, PersonaAdversarialResult } from './harness-types.js';
 import { computeAggregateScore, computeLearningCurve } from './score-graph.js';
-import type { AblationSuiteResult } from './ablation-engine.js';
+import type { AblationSuiteResult, SpecialistAblationResult } from './ablation-engine.js';
 import { formatEVSReport } from './enrichment-value-score.js';
+import type { EIIResult } from '../../src/ai/eii/types.js';
+import type { ConsensusResult } from '../../src/ai/consensus/types.js';
+import {
+  buildEIISummaryTable,
+  buildEIICurveSection,
+  buildSpecialistAblationSection,
+  buildCorrelationMatrix,
+} from './eii-report.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -23,6 +31,35 @@ import { formatEVSReport } from './enrichment-value-score.js';
 export interface CheckpointResult {
   score: GraphScore;
   atomsProcessed: number;
+}
+
+/**
+ * EII report data bundle — collected by run-adversarial.ts after all personas complete.
+ * Passed to writeExperimentReport() for inclusion in the experiment markdown.
+ */
+export interface EIIReportData {
+  /** Per-persona final EII results */
+  personaEIIs: Array<{
+    personaName: string;
+    atomCount: number;
+    finalEII: EIIResult;
+    meetsThreshold: boolean;
+  }>;
+  /** Per-persona corpus size curves (5 levels) */
+  corpusCurves: Array<{
+    personaName: string;
+    curvePoints: Array<{
+      fraction: number;
+      coherence: number;
+      stability: number;
+      impact: number;
+      eii: number;
+    }>;
+  }>;
+  /** Specialist leave-one-out ablation results */
+  ablation: SpecialistAblationResult[];
+  /** All ConsensusResult[] from the experiment (for correlation matrix) */
+  allConsensusResults: ConsensusResult[];
 }
 
 // ---------------------------------------------------------------------------
@@ -147,7 +184,7 @@ function buildMarkdown(results: CheckpointResult[], runTimestamp: string): strin
 // Experiment-level report
 // ---------------------------------------------------------------------------
 
-function buildExperimentMarkdown(result: ExperimentResult, ablation?: AblationSuiteResult): string {
+function buildExperimentMarkdown(result: ExperimentResult, ablation?: AblationSuiteResult, eiiData?: EIIReportData): string {
   const lines: string[] = [];
 
   lines.push(`# Adversarial Training Experiment: ${result.experimentName}`);
@@ -265,6 +302,53 @@ function buildExperimentMarkdown(result: ExperimentResult, ablation?: AblationSu
     lines.push(buildAblationSection(ablation));
   }
 
+  // EII sections (if provided)
+  if (eiiData) {
+    lines.push('## Emergent Intelligence Index (EII)');
+    lines.push('');
+    lines.push('The EII measures how coherent, stable, and impactful the specialist consensus is');
+    lines.push('across this experiment. EII > 0.80 is diagnostic (not a hard gate) for 50+ atom personas.');
+    lines.push('');
+
+    // EII Summary Table
+    lines.push(buildEIISummaryTable(eiiData.personaEIIs));
+
+    // EII Corpus Size Curves (per persona)
+    lines.push('## EII Corpus Size Curves');
+    lines.push('');
+    lines.push('Shows how EII components change as more atoms are processed (cold-start guard: min 15 atoms).');
+    lines.push('Positive slope = EII improves with more data = system is learning.');
+    lines.push('');
+    for (const curve of eiiData.corpusCurves) {
+      lines.push(buildEIICurveSection(curve.curvePoints, curve.personaName));
+    }
+
+    // Specialist Ablation
+    lines.push('## Specialist Ablation (EII)');
+    lines.push('');
+    lines.push(buildSpecialistAblationSection(eiiData.ablation));
+
+    // Correlation Matrix
+    lines.push('## Specialist Correlation Matrix');
+    lines.push('');
+    lines.push(buildCorrelationMatrix(eiiData.allConsensusResults));
+
+    // Threshold diagnostic summary
+    const flaggedPersonas = eiiData.personaEIIs.filter((p) => p.meetsThreshold && p.atomCount >= 50);
+    if (flaggedPersonas.length > 0) {
+      lines.push('## EII Threshold Diagnostics');
+      lines.push('');
+      lines.push('The following personas with 50+ atoms achieved EII > 0.80 (diagnostic flag):');
+      lines.push('');
+      for (const p of flaggedPersonas) {
+        lines.push(`  - **${p.personaName}** (${p.atomCount} atoms): EII = ${p.finalEII.eii.toFixed(3)}`);
+      }
+      lines.push('');
+      lines.push('*These are investigative flags, not failures. High EII indicates strong specialist agreement.*');
+      lines.push('');
+    }
+  }
+
   // Worst-performing personas
   const sortedByRelF1 = [...result.personas].sort(
     (a, b) => a.finalScore.relationshipF1 - b.finalScore.relationshipF1,
@@ -364,6 +448,7 @@ export function writeExperimentReport(
   result: ExperimentResult,
   outputDir: string,
   ablation?: AblationSuiteResult,
+  eiiData?: EIIReportData,
 ): { jsonPath: string; mdPath: string } {
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
@@ -374,7 +459,7 @@ export function writeExperimentReport(
 
   fs.writeFileSync(jsonPath, JSON.stringify(result, null, 2), 'utf-8');
 
-  const mdContent = buildExperimentMarkdown(result, ablation);
+  const mdContent = buildExperimentMarkdown(result, ablation, eiiData);
   fs.writeFileSync(mdPath, mdContent, 'utf-8');
 
   return { jsonPath, mdPath };

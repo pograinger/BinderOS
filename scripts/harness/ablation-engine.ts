@@ -28,10 +28,143 @@ import type {
   CycleState,
 } from './harness-types.js';
 import type { CorpusItem } from './generate-corpus.js';
+import { computeConsensus } from '../../src/ai/consensus/consensus-voter.js';
+import { computeEII } from '../../src/ai/eii/index.js';
+import type { ConsensusResult } from '../../src/ai/consensus/types.js';
+import { computeHarnessImpact } from './harness-consensus.js';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// SpecialistAblationResult — EII impact of each specialist
+// ---------------------------------------------------------------------------
+
+/**
+ * Per-specialist leave-one-out ablation result.
+ *
+ * Computed entirely post-hoc from stored specialistContributions — zero
+ * re-inference cost. The ablation filters contributions and re-calls
+ * computeConsensus() to produce ablated ConsensusResult[].
+ *
+ * eiiDelta = ablatedEII - fullEII.
+ *   Negative = removing this specialist hurt EII (specialist was contributing).
+ *   Matches convention of computeAblationDelta: ablatedScore - fullScore.
+ *
+ * consensusLift = fullEII - singleSpecialistEII.
+ *   Positive = ensemble beats running any single specialist alone.
+ */
+export interface SpecialistAblationResult {
+  /** Name of the specialist removed in this pass */
+  specialistRemoved: string;
+  /** Full-ensemble EII before removal */
+  fullConsensusEII: number;
+  /** EII computed with this specialist excluded */
+  ablatedConsensusEII: number;
+  /** ablated - full (negative = specialist was helping) */
+  eiiDelta: number;
+  /** true positive rate delta between full and ablated runs */
+  accuracyDelta: number;
+  /** full ensemble EII minus single-specialist EII (positive = ensemble wins) */
+  consensusLift: number;
+}
+
+// ---------------------------------------------------------------------------
+// runSpecialistAblation — post-hoc leave-one-out ablation
+// ---------------------------------------------------------------------------
+
+/**
+ * Run leave-one-out specialist ablation on stored ConsensusResult[].
+ *
+ * Post-hoc: zero re-inference. Filters specialistContributions and re-calls
+ * computeConsensus() to produce ablated results. Returns specialists sorted
+ * by |eiiDelta| descending (most impactful first).
+ *
+ * @param allConsensusResults - Accumulated ConsensusResult[] from the experiment
+ * @param riskLabels          - Boolean risk labels aligned with consensusResults
+ */
+export function runSpecialistAblation(
+  allConsensusResults: ConsensusResult[],
+  riskLabels: boolean[],
+): SpecialistAblationResult[] {
+  if (allConsensusResults.length === 0) return [];
+
+  // Discover specialist names from the first result with contributions
+  const firstWithContribs = allConsensusResults.find(
+    (r) => r.specialistContributions && r.specialistContributions.length > 0,
+  );
+  if (!firstWithContribs) return [];
+
+  const specialistNames = firstWithContribs.specialistContributions.map((s) => s.name);
+
+  // Compute full EII baseline
+  const fullProbs = allConsensusResults.map((r) => r.weightedProbability);
+  const fullImpact = computeHarnessImpact(riskLabels, fullProbs);
+  const fullEIIResult = computeEII(allConsensusResults, fullImpact);
+  const fullEII = fullEIIResult.eii;
+
+  const ablationResults: SpecialistAblationResult[] = [];
+
+  for (const removeSpecialist of specialistNames) {
+    // Leave-one-out: filter contributions for each result
+    const ablatedResults: ConsensusResult[] = [];
+    for (const result of allConsensusResults) {
+      const remaining = (result.specialistContributions ?? []).filter(
+        (s) => s.name !== removeSpecialist,
+      );
+      if (remaining.length === 0) {
+        // No specialists left — keep original result as fallback
+        ablatedResults.push(result);
+        continue;
+      }
+      ablatedResults.push(computeConsensus(remaining));
+    }
+
+    // Compute ablated EII
+    const ablatedProbs = ablatedResults.map((r) => r.weightedProbability);
+    const ablatedImpact = computeHarnessImpact(riskLabels, ablatedProbs);
+    const ablatedEIIResult = computeEII(ablatedResults, ablatedImpact);
+    const ablatedEII = ablatedEIIResult.eii;
+
+    // Compute single-specialist EII (consensus_lift denominator)
+    const singleResults: ConsensusResult[] = [];
+    for (const result of allConsensusResults) {
+      const onlyThis = (result.specialistContributions ?? []).filter(
+        (s) => s.name === removeSpecialist,
+      );
+      if (onlyThis.length === 0) {
+        singleResults.push(result);
+        continue;
+      }
+      singleResults.push(computeConsensus(onlyThis));
+    }
+    const singleProbs = singleResults.map((r) => r.weightedProbability);
+    const singleImpact = computeHarnessImpact(riskLabels, singleProbs);
+    const singleEIIResult = computeEII(singleResults, singleImpact);
+    const singleEII = singleEIIResult.eii;
+
+    const eiiDelta = ablatedEII - fullEII;
+    const consensusLift = fullEII - singleEII;
+
+    // Accuracy delta: compare true positive rates (probs-based approximation)
+    const fullTPR = computeHarnessImpact(riskLabels, fullProbs);
+    const ablatedTPR = computeHarnessImpact(riskLabels, ablatedProbs);
+    const accuracyDelta = ablatedTPR - fullTPR;
+
+    ablationResults.push({
+      specialistRemoved: removeSpecialist,
+      fullConsensusEII: fullEII,
+      ablatedConsensusEII: ablatedEII,
+      eiiDelta,
+      accuracyDelta,
+      consensusLift,
+    });
+  }
+
+  // Sort by absolute EII delta (most impactful specialist first)
+  return ablationResults.sort((a, b) => Math.abs(b.eiiDelta) - Math.abs(a.eiiDelta));
+}
 
 /**
  * Result from sequence context ablation (Phase 33 / SEQ-04).
