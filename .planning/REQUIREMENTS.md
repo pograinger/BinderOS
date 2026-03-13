@@ -9,11 +9,11 @@ Requirements for v5.5 Cortical Intelligence milestone. Each maps to roadmap phas
 
 ### Context Gating
 
-- [ ] **GATE-01**: Agents activate only when relevant — a pre-dispatch `ActivationGate` filter in `dispatchTiered()` evaluates context predicates before any handler runs, without modifying the `TierHandler.canHandle()` interface
+- [x] **GATE-01**: Agents activate only when relevant — a pre-dispatch `ActivationGate` filter in `dispatchTiered()` evaluates context predicates before any handler runs, without modifying the `TierHandler.canHandle()` interface
 - [ ] **GATE-02**: Route-aware gating skips triage and enrichment agents when user is on Insights, Archive, or Settings views — reads SolidJS `useLocation().pathname` reactively
 - [ ] **GATE-03**: Time-of-day gating suppresses deep-cognitive agents during low-energy windows based on hour of day — no new model, reads `Date.now()` only
-- [ ] **GATE-04**: Recent atom history gating skips re-enrichment when `atomIntelligence.enrichment.depth >= 2` and no content change within 7 days — reads sidecar, respects atom edits
-- [ ] **GATE-05**: Gate activation decisions are logged to a sidecar audit table so the harness can measure activation rates and tune predicate thresholds via Optuna
+- [x] **GATE-04**: Recent atom history gating skips re-enrichment when `atomIntelligence.enrichment.depth >= 2` and no content change within 7 days — reads sidecar, respects atom edits
+- [x] **GATE-05**: Gate activation decisions are logged to a sidecar audit table so the harness can measure activation rates and tune predicate thresholds via Optuna
 
 ### Predictive Enrichment
 
@@ -75,11 +75,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | SCHM-01 | Phase 30 | Complete |
 | BTYPE-01 | Phase 30 | Complete |
-| GATE-01 | Phase 31 | Pending |
+| GATE-01 | Phase 31 | Complete |
 | GATE-02 | Phase 31 | Pending |
 | GATE-03 | Phase 31 | Pending |
-| GATE-04 | Phase 31 | Pending |
-| GATE-05 | Phase 31 | Pending |
+| GATE-04 | Phase 31 | Complete |
+| GATE-05 | Phase 31 | Complete |
 | PRED-01 | Phase 32 | Pending |
 | PRED-02 | Phase 32 | Pending |
 | PRED-03 | Phase 32 | Pending |

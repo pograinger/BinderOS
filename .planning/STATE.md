@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Phase 31 context gathered
-last_updated: "2026-03-13T02:27:43.266Z"
+stopped_at: Completed 31-01-PLAN.md
+last_updated: "2026-03-13T03:02:30.765Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 9
   completed_phases: 4
-  total_plans: 14
-  completed_plans: 13
+  total_plans: 16
+  completed_plans: 14
 ---
 
 # Project State
@@ -55,6 +55,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | Phase 30-schema-bindertypeconfig-protocol P01 | 30 | 2 tasks | 14 files |
 | Phase 30 P03 | 8 | 2 tasks | 11 files |
 | Phase 30-schema-bindertypeconfig-protocol P02 | 25 | 2 tasks | 9 files |
+| Phase 31-context-gate-evaluator P01 | 9 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,9 @@ Recent decisions affecting future work:
 - [Phase 30]: canActivate() is the single Phase 31 integration point — import from activation-gate.ts, call before handler loop in dispatchTiered() pre-filter
 - [Phase 30]: Static imports not virtual module for binder-type JSON merge — Vite natively hot-reloads JSON files, no plugin complexity needed
 - [Phase 30]: hydrateCompositorRules(configs) parameter pattern — cognitive-signals.ts never imports from binder-types, one-directional dep preserved
+- [Phase 31]: TieredRequest.context is required (not optional) — TypeScript enforces caller migration in Plan 02
+- [Phase 31]: isStale defaults false when lastEnrichedAt undefined — conservative, no re-enrichment without timestamp
+- [Phase 31]: Gate pre-filter: canActivate() before handler loop, blocked returns skip all handlers, gateResult on all responses
 
 ### Pending Todos
 
@@ -98,7 +102,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T02:27:43.263Z
-Stopped at: Phase 31 context gathered
-Resume file: .planning/phases/31-context-gate-evaluator/31-CONTEXT.md
+Last session: 2026-03-13T03:02:30.763Z
+Stopped at: Completed 31-01-PLAN.md
+Resume file: None
 Next action: `/gsd:plan-phase 30`
