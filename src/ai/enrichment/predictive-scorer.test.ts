@@ -434,7 +434,7 @@ describe('generateEntityQuestions', () => {
       2
     );
 
-    expect(candidates[0].entityId).toBe('entity-org-1');
-    expect(candidates[1].entityId).toBe('entity-per-1');
+    expect(candidates[0]?.entityId).toBe('entity-org-1');
+    expect(candidates[1]?.entityId).toBe('entity-per-1');
   });
 });
