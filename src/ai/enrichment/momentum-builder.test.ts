@@ -154,7 +154,7 @@ describe('computeMomentumVector', () => {
     // cognitive-load appears once → lower frequency than priority-matrix
     expect(momentum.signalFrequency['cognitive-load']).toBeGreaterThan(0);
     expect(momentum.signalFrequency['priority-matrix']).toBeGreaterThan(
-      momentum.signalFrequency['cognitive-load']
+      momentum.signalFrequency['cognitive-load'] ?? 0
     );
   });
 
@@ -179,7 +179,7 @@ describe('computeMomentumVector', () => {
 
     expect(momentum.signalStrength['priority-matrix']).toBeCloseTo(weight0 * 1.0, 5);
     expect(momentum.signalStrength['cognitive-load']).toBeCloseTo(weight1 * 1.0, 5);
-    expect(momentum.signalStrength['priority-matrix']).toBeGreaterThan(momentum.signalStrength['cognitive-load']);
+    expect(momentum.signalStrength['priority-matrix']).toBeGreaterThan(momentum.signalStrength['cognitive-load'] ?? 0);
   });
 
   it('sets coldStart: true when atom count with signals < coldStartThreshold', async () => {
@@ -306,9 +306,9 @@ describe('cache management', () => {
 
     const log = getInvalidationLog();
     expect(log).toHaveLength(2);
-    expect(log[0].binderId).toBe('binder-log');
-    expect(log[0].reason).toBe('atom-added');
-    expect(log[1].reason).toBe('entity-updated');
+    expect(log[0]?.binderId).toBe('binder-log');
+    expect(log[0]?.reason).toBe('atom-added');
+    expect(log[1]?.reason).toBe('entity-updated');
   });
 });
 
@@ -351,7 +351,7 @@ describe('computeEntityTrajectory', () => {
     });
 
     // entity-1 (seen today) should score higher than entity-2 (seen 30 days ago)
-    expect(scores['entity-1']).toBeGreaterThan(scores['entity-2']);
+    expect(scores['entity-1']).toBeGreaterThan(scores['entity-2'] ?? 0);
     // entity-2 should be about half of entity-1 (half-life = momentumHalfLife = 5 atoms,
     // but we're using days here with the decay formula)
     expect(scores['entity-1']).toBeGreaterThan(0);
@@ -382,6 +382,6 @@ describe('computeEntityTrajectory', () => {
     // entity-1 should score ~2x entity-2 (same mentionCount + lastSeen, but correction boost)
     expect(scores['entity-1']).toBeGreaterThan(0);
     expect(scores['entity-2']).toBeGreaterThan(0);
-    expect(scores['entity-1'] / scores['entity-2']).toBeCloseTo(2.0, 1);
+    expect((scores['entity-1'] ?? 0) / (scores['entity-2'] ?? 1)).toBeCloseTo(2.0, 1);
   });
 });
