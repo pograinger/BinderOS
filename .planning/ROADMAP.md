@@ -269,7 +269,7 @@ Plans:
 | 34. Harness SDK + Second Binder Type Validation | v5.5 | 0/? | Not started | - |
 | 35. Canonical Feature Vectors | 2/2 | Complete    | 2026-03-13 | - |
 | 36. Specialist Consensus Layer | 3/3 | Complete    | 2026-03-13 | - |
-| 37. EII Diagnostic + Consensus Ablation | 2/2 | Complete   | 2026-03-13 | - |
+| 37. EII Diagnostic + Consensus Ablation | 2/2 | Complete    | 2026-03-13 | - |
 | 38. Risk Surface + Proactive Alerts | v5.5 | 0/? | Not started | - |
 
 ### Phase 35: Canonical Feature Vectors
