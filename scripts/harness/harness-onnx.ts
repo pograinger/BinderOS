@@ -23,7 +23,11 @@
  */
 
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import * as ort from 'onnxruntime-node';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ---------------------------------------------------------------------------
 // HarnessONNXSessions — loaded specialist sessions
