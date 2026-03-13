@@ -16,10 +16,13 @@
  *   { type: 'EMBED_ATOMS'; atoms: { id: string; text: string }[] }
  *   { type: 'CLASSIFY_TYPE'; id: string; text: string; centroids: Record<string, number[]> }
  *   { type: 'ROUTE_SECTION'; id: string; text: string; centroids: Record<string, number[]> }
- *   { type: 'CLASSIFY_ONNX'; id: string; text: string }
+ *   { type: 'CLASSIFY_ONNX'; id: string; text: string; binderId?: string }
  *   { type: 'CLASSIFY_GTD'; id: string; text: string }
  *   { type: 'CLASSIFY_DECOMPOSE'; id: string; text: string }
  *   { type: 'LOAD_CLASSIFIER' }
+ *   { type: 'LOAD_RING_BUFFER'; binderId: string; embeddings: number[][] }
+ *   { type: 'UPDATE_RING_BUFFER'; binderId: string; embedding: number[]; windowSize: number }
+ *   { type: 'GET_SEQUENCE_CONTEXT'; id: string; binderId: string; windowSize: number }
  * Outgoing:
  *   { type: 'EMBED_RESULT'; id: string; vectors: number[][]; atomIds?: string[] }
  *   { type: 'EMBED_ERROR'; id: string; error: string }
@@ -38,6 +41,9 @@
  *   { type: 'DECOMPOSE_RESULT'; id: string; scores: Record<string, number>; vector: number[] }
  *   { type: 'DECOMPOSE_ERROR'; id: string; error: string }
  *   { type: 'DECOMPOSITION_CLASSIFIER_READY' }
+ *   { type: 'RING_BUFFER_UPDATED'; binderId: string; embeddings: number[][] }
+ *   { type: 'SEQUENCE_CONTEXT_RESULT'; id: string; context: number[] }
+ *   { type: 'SEQUENCE_CONTEXT_ERROR'; id: string; error: string }
  *
  * Graceful degradation: all errors are caught and returned as EMBED_ERROR,
  * never thrown — the main thread never blocks waiting for embeddings.
@@ -45,6 +51,7 @@
 
 import { pipeline, env } from '@huggingface/transformers';
 import * as ort from 'onnxruntime-web';
+import { updateRingBuffer, getRingBuffer, setRingBuffer } from './ring-buffer';
 
 // --- Configure for local-only model loading ---
 
@@ -196,6 +203,15 @@ const COMPLETENESS_GATE: ClassifierConfig = {
   name: 'completeness-gate',
   modelPath: 'models/classifiers/completeness-gate.onnx',
   classesPath: 'models/classifiers/completeness-gate-classes.json',
+  session: null, classMap: null, loading: false,
+};
+
+// Sequence context LSTM model loads lazily on first GET_SEQUENCE_CONTEXT request
+// (Phase 33: runs in the same worker to avoid a 4th concurrent ORT instance — RESEARCH decision)
+const SEQUENCE_MODEL: ClassifierConfig = {
+  name: 'sequence-context',
+  modelPath: 'models/sequence-context.onnx',
+  classesPath: '',
   session: null, classMap: null, loading: false,
 };
 
@@ -455,6 +471,64 @@ async function loadCompletenessGate(): Promise<void> {
   }
 }
 
+// --- Sequence context LSTM lazy loading ---
+
+/**
+ * Load the sequence context LSTM model lazily on first GET_SEQUENCE_CONTEXT request.
+ * Fails silently when the model file does not exist yet (pre-training).
+ */
+async function loadSequenceModel(): Promise<void> {
+  if (SEQUENCE_MODEL.loading || SEQUENCE_MODEL.session) return;
+  SEQUENCE_MODEL.loading = true;
+  try {
+    const base = resolveBase();
+    const modelUrl = `${base}${SEQUENCE_MODEL.modelPath}`;
+    const modelBuffer = await fetchWithCache(modelUrl);
+    SEQUENCE_MODEL.session = await ort.InferenceSession.create(
+      new Uint8Array(modelBuffer),
+      { executionProviders: ['wasm'] },
+    );
+  } catch (err) {
+    // Model may not exist yet — degrade gracefully to zero-pad fallback
+    console.warn('[embedding-worker] Sequence context model not found — using zero-pad fallback:', err);
+  }
+  SEQUENCE_MODEL.loading = false;
+}
+
+/**
+ * Run LSTM inference over a sequence of 384-dim embeddings.
+ * Returns a 128-dim context vector, or all-zeros when model is not loaded.
+ *
+ * @param embeddings Array of 384-dim embedding vectors (ring buffer contents)
+ */
+async function runSequenceInference(embeddings: number[][]): Promise<number[]> {
+  if (!SEQUENCE_MODEL.session || embeddings.length === 0) {
+    return new Array(128).fill(0);
+  }
+  try {
+    const seqLen = embeddings.length;
+    const inputDim = 384;
+    // Flatten [seq_len, 384] → Float32Array, LSTM expects [seq_len, 1, inputDim]
+    const flat = new Float32Array(seqLen * inputDim);
+    for (let i = 0; i < seqLen; i++) {
+      const emb = embeddings[i]!;
+      for (let j = 0; j < inputDim; j++) {
+        flat[i * inputDim + j] = emb[j] ?? 0;
+      }
+    }
+    const inputTensor = new ort.Tensor('float32', flat, [seqLen, 1, inputDim]);
+    const results = await SEQUENCE_MODEL.session.run(
+      { [SEQUENCE_MODEL.session.inputNames[0]!]: inputTensor },
+    );
+    const outputName = SEQUENCE_MODEL.session.outputNames[0]!;
+    const contextData = results[outputName]!.data as Float32Array;
+    return Array.from(contextData).slice(0, 128);
+  } catch (err) {
+    console.warn('[embedding-worker] Sequence inference error — returning zero-pad:', err);
+    return new Array(128).fill(0);
+  }
+}
+
 // --- Missing info classifiers lazy loading ---
 
 let missingInfoClassifiersLoaded = false;
@@ -493,12 +567,15 @@ type WorkerIncoming =
   | { type: 'EMBED_ATOMS'; atoms: { id: string; text: string }[] }
   | { type: 'CLASSIFY_TYPE'; id: string; text: string; centroids: Record<string, number[]> }
   | { type: 'ROUTE_SECTION'; id: string; text: string; centroids: Record<string, number[]> }
-  | { type: 'CLASSIFY_ONNX'; id: string; text: string }
+  | { type: 'CLASSIFY_ONNX'; id: string; text: string; binderId?: string }
   | { type: 'CLASSIFY_GTD'; id: string; text: string }
   | { type: 'CLASSIFY_DECOMPOSE'; id: string; text: string }
   | { type: 'CHECK_COMPLETENESS'; id: string; text: string }
   | { type: 'CLASSIFY_MISSING_INFO'; id: string; text: string }
-  | { type: 'LOAD_CLASSIFIER' };
+  | { type: 'LOAD_CLASSIFIER' }
+  | { type: 'LOAD_RING_BUFFER'; binderId: string; embeddings: number[][] }
+  | { type: 'UPDATE_RING_BUFFER'; binderId: string; embedding: number[]; windowSize: number }
+  | { type: 'GET_SEQUENCE_CONTEXT'; id: string; binderId: string; windowSize: number };
 
 self.onmessage = async (event: MessageEvent) => {
   const msg = event.data as WorkerIncoming;
@@ -553,12 +630,25 @@ self.onmessage = async (event: MessageEvent) => {
     try {
       // Embed the text using the existing MiniLM pipeline
       const vectors = await embedTexts([msg.text]);
-      const vector = vectors[0] ?? [];
+      const miniLMVector = vectors[0] ?? [];
 
-      // Run ONNX inference on the 384-dim embedding
-      const scores = await runClassifierInference(vector);
+      // Phase 33: When binderId provided, concatenate 128-dim sequence context
+      // before classifier inference (SIMPLER path — concatenation happens in worker).
+      let inferenceVector = miniLMVector;
+      if (msg.binderId) {
+        const ringBuffer = getRingBuffer(msg.binderId);
+        if (ringBuffer.length > 0 && SEQUENCE_MODEL.session) {
+          const seqContext = await runSequenceInference(ringBuffer);
+          // Concatenate: [384-dim MiniLM] + [128-dim sequence context] = 512-dim
+          inferenceVector = [...miniLMVector, ...seqContext];
+        }
+      }
 
-      self.postMessage({ type: 'ONNX_RESULT', id: msg.id, scores, vector });
+      // Run ONNX inference on the (potentially 512-dim) embedding
+      const scores = await runClassifierInference(inferenceVector);
+
+      // Always return the original 384-dim MiniLM vector for centroid building / ring buffer
+      self.postMessage({ type: 'ONNX_RESULT', id: msg.id, scores, vector: miniLMVector });
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       self.postMessage({ type: 'ONNX_ERROR', id: msg.id, error });
@@ -725,6 +815,40 @@ self.onmessage = async (event: MessageEvent) => {
     } catch (err) {
       const error = err instanceof Error ? err.message : String(err);
       self.postMessage({ type: 'DECOMPOSE_ERROR', id: msg.id, error });
+    }
+    return;
+  }
+
+  // --- Phase 33: Ring buffer message handlers ---
+
+  if (msg.type === 'LOAD_RING_BUFFER') {
+    // Hydrate in-memory buffer from main thread data (Dexie restore on startup).
+    // No response needed — worker silently sets buffer state.
+    setRingBuffer(msg.binderId, msg.embeddings);
+    return;
+  }
+
+  if (msg.type === 'UPDATE_RING_BUFFER') {
+    // Append new embedding to the ring buffer and notify main thread to persist.
+    updateRingBuffer(msg.binderId, msg.embedding, msg.windowSize);
+    const embeddings = getRingBuffer(msg.binderId);
+    self.postMessage({ type: 'RING_BUFFER_UPDATED', binderId: msg.binderId, embeddings });
+    return;
+  }
+
+  if (msg.type === 'GET_SEQUENCE_CONTEXT') {
+    // Run LSTM inference over ring buffer and return 128-dim context vector.
+    // Falls back to zero-pad when buffer is empty or model is not loaded.
+    try {
+      if (!SEQUENCE_MODEL.session) {
+        await loadSequenceModel();
+      }
+      const ringBuffer = getRingBuffer(msg.binderId);
+      const context = await runSequenceInference(ringBuffer);
+      self.postMessage({ type: 'SEQUENCE_CONTEXT_RESULT', id: msg.id, context });
+    } catch (err) {
+      const error = err instanceof Error ? err.message : String(err);
+      self.postMessage({ type: 'SEQUENCE_CONTEXT_ERROR', id: msg.id, error });
     }
     return;
   }
