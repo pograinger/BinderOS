@@ -71,7 +71,10 @@ export async function loadSpecialistSessions(
     SPECIALIST_MODEL_NAMES.map(async (name) => {
       const modelPath = path.join(modelsRoot, `${name}.onnx`);
       const session = await ort.InferenceSession.create(modelPath);
-      return [name, session] as const;
+      // Strip '-risk' suffix so keys match SPECIALIST_FEATURE_SLICES
+      // (model files: 'time-pressure-risk.onnx', slice keys: 'time-pressure')
+      const sliceKey = name.replace(/-risk$/, '');
+      return [sliceKey, session] as const;
     }),
   );
 
