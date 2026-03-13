@@ -87,7 +87,7 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 - [x] **Phase 33: Sequence Context ONNX Model** - Embedding ring buffer, LSTM training pipeline, sequence context signal wired to T2 classifiers, harness ablation validation (completed 2026-03-13)
 - [ ] **Phase 34: Harness SDK + Second Binder Type Validation** - Harness parameterized on BinderTypeConfig, non-GTD stub binder type exercised through full adversarial cycle
 - [x] **Phase 35: Canonical Feature Vectors** - Structured per-atom-type vectors from metadata + sidecar + entities, cached in atomIntelligence, BinderTypeConfig-driven dimensions (completed 2026-03-13)
-- [x] **Phase 36: Specialist Consensus Layer** - Train specialist risk models on non-overlapping vector slices, ONNX export, consensus voter, dispatchTiered wiring (completed 2026-03-13)
+- [x] **Phase 36: Specialist Consensus Layer** - Train specialist risk models on non-overlapping vector slices, ONNX export, consensus voter, dispatchTiered wiring (completed 2026-03-13)
 - [ ] **Phase 37: EII Diagnostic + Consensus Ablation** - Emergent Intelligence Index per binder, consensus vs specialist ablation proof, harness integration
 - [ ] **Phase 38: Risk Surface + Proactive Alerts** - Consensus risk scores surface high-risk atoms, risk badges with explanations, staleness prediction model
 
@@ -269,7 +269,7 @@ Plans:
 | 34. Harness SDK + Second Binder Type Validation | v5.5 | 0/? | Not started | - |
 | 35. Canonical Feature Vectors | 2/2 | Complete    | 2026-03-13 | - |
 | 36. Specialist Consensus Layer | 3/3 | Complete    | 2026-03-13 | - |
-| 37. EII Diagnostic + Consensus Ablation | v5.5 | 0/? | Not started | - |
+| 37. EII Diagnostic + Consensus Ablation | v5.5 | 0/2 | Not started | - |
 | 38. Risk Surface + Proactive Alerts | v5.5 | 0/? | Not started | - |
 
 ### Phase 35: Canonical Feature Vectors
@@ -313,9 +313,10 @@ Plans:
   3. Ablation engine measures consensus vs each specialist independently — ablation report includes a `consensus_lift` metric
   4. EII curve across corpus sizes (10%, 25%, 50%, 75%, 100%) shows positive slope — if not, the report flags which component is flat and why
   5. Harness personas with 50+ atoms achieve EII > 0.80
-**Plans**: TBD
+**Plans**: 2 plans
 Plans:
-- [ ] TBD (run /gsd:plan-phase 37 to break down)
+- [ ] 37-01-PLAN.md — EII types, pure computation, v11 migration, production trigger, harness ONNX loader
+- [ ] 37-02-PLAN.md — Harness consensus pipeline, EII reporting, specialist ablation, corpus curve
 
 ### Phase 38: Risk Surface + Proactive Alerts
 **Goal**: Consensus risk scores surface high-risk atoms proactively — the first consumer of the consensus layer that changes user-visible behavior. Tasks that are overdue + blocked + energy-mismatched float to the top without the user asking.
