@@ -112,6 +112,12 @@ export interface GateContext {
   enrichmentDepth?: number;
   /** Active binder type slug */
   binderType?: string;
+  /**
+   * Unix epoch ms of atom's last enrichment — for staleDays check in historyPredicate.
+   * When present and atom is older than staleDays, historyPredicate re-allows enrichment
+   * even if depth >= maxDepth.
+   */
+  lastEnrichedAt?: number;
   /** Arbitrary extension fields for custom predicate dimensions */
   customFields?: Record<string, unknown>;
 }

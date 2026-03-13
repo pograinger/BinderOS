@@ -30,18 +30,37 @@ export function historyPredicate(
     };
   }
 
-  const { maxDepth } = config.predicateConfig.historyGating;
+  const { maxDepth, staleDays } = config.predicateConfig.historyGating;
   const currentDepth = ctx.enrichmentDepth;
   const exceedsMax = currentDepth >= maxDepth;
 
-  // TODO (Phase 31): Add staleDays check — if atom is stale (last enriched > staleDays ago),
-  // re-allow enrichment even if depth >= maxDepth. Requires atom's lastEnrichedAt timestamp.
+  if (!exceedsMax) {
+    return {
+      activated: true,
+      reason: `Enrichment depth ${currentDepth} is below maxDepth ${maxDepth}`,
+      metadata: { maxDepth, currentDepth },
+    };
+  }
+
+  // Depth has reached maxDepth — check staleDays to allow re-enrichment of stale atoms.
+  // Conservative default: if no lastEnrichedAt timestamp, treat as NOT stale (do not re-enrich).
+  const staleDaysMs = staleDays * 86400000;
+  const isStale =
+    ctx.lastEnrichedAt !== undefined
+      ? Date.now() - ctx.lastEnrichedAt > staleDaysMs
+      : false;
+
+  if (isStale) {
+    return {
+      activated: true,
+      reason: `Re-enrichment allowed: atom is stale (last enriched > ${staleDays} days ago)`,
+      metadata: { maxDepth, currentDepth, staleDays, lastEnrichedAt: ctx.lastEnrichedAt, isStale },
+    };
+  }
 
   return {
-    activated: !exceedsMax,
-    reason: exceedsMax
-      ? `Enrichment depth ${currentDepth} has reached maxDepth ${maxDepth}`
-      : `Enrichment depth ${currentDepth} is below maxDepth ${maxDepth}`,
-    metadata: { maxDepth, currentDepth },
+    activated: false,
+    reason: `Enrichment depth ${currentDepth} has reached maxDepth ${maxDepth} and atom is not stale`,
+    metadata: { maxDepth, currentDepth, staleDays, lastEnrichedAt: ctx.lastEnrichedAt, isStale },
   };
 }

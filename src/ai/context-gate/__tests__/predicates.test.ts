@@ -1,14 +1,16 @@
 /**
  * Tests for the four config-reading predicate stubs.
  * Phase 30 Plan 03: context-gate scaffold.
+ * Phase 31 Plan 01: staleDays tests added.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { routePredicate } from '../predicates/route-predicate';
 import { timePredicate } from '../predicates/time-predicate';
 import { historyPredicate } from '../predicates/history-predicate';
 import { binderTypePredicate } from '../predicates/binder-type-predicate';
 import { clearPredicates } from '../predicate-registry';
+import { makePermissiveContext } from '../../tier2/__tests__/test-helpers';
 import type { ExpandedBinderTypeConfig } from '../../../config/binder-types/schema';
 
 // Minimal config for predicate tests
@@ -75,6 +77,56 @@ describe('history-predicate', () => {
   });
 });
 
+describe('history-predicate staleDays', () => {
+  const NOW = 1_700_000_000_000; // fixed epoch ms
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(NOW);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('blocks when enrichmentDepth >= maxDepth AND lastEnrichedAt is recent (not stale)', () => {
+    // enriched 1 day ago — within 7-day staleDays window
+    const recentlyEnriched = NOW - 1 * 86400000;
+    const result = historyPredicate(
+      { enrichmentDepth: 3, lastEnrichedAt: recentlyEnriched },
+      stubConfig
+    );
+    expect(result.activated).toBe(false);
+    expect(result.reason).toMatch(/not stale/i);
+    expect(result.metadata?.isStale).toBe(false);
+  });
+
+  it('allows when enrichmentDepth >= maxDepth AND lastEnrichedAt is older than staleDays (stale)', () => {
+    // enriched 10 days ago — beyond 7-day staleDays window
+    const staleEnriched = NOW - 10 * 86400000;
+    const result = historyPredicate(
+      { enrichmentDepth: 3, lastEnrichedAt: staleEnriched },
+      stubConfig
+    );
+    expect(result.activated).toBe(true);
+    expect(result.reason).toMatch(/stale/i);
+    expect(result.metadata?.isStale).toBe(true);
+  });
+
+  it('blocks (conservative) when enrichmentDepth >= maxDepth AND lastEnrichedAt is undefined', () => {
+    // No timestamp — treat as not stale (do not re-enrich)
+    const result = historyPredicate({ enrichmentDepth: 3 }, stubConfig);
+    expect(result.activated).toBe(false);
+    expect(result.metadata?.isStale).toBe(false);
+  });
+
+  it('allows when enrichmentDepth is undefined (existing behavior preserved)', () => {
+    const result = historyPredicate({}, stubConfig);
+    expect(result.activated).toBe(true);
+    expect(result.reason).toMatch(/No enrichment depth/i);
+  });
+});
+
 describe('binder-type-predicate', () => {
   it('returns activated: true when binderType matches config slug', () => {
     const result = binderTypePredicate({ binderType: 'gtd-personal' }, stubConfig);
@@ -84,6 +136,21 @@ describe('binder-type-predicate', () => {
   it('returns activated: true when no binderType in context', () => {
     const result = binderTypePredicate({}, stubConfig);
     expect(result.activated).toBe(true);
+  });
+});
+
+describe('makePermissiveContext', () => {
+  it('returns a context that passes all four core predicates', () => {
+    const ctx = makePermissiveContext();
+    const routeResult = routePredicate(ctx, stubConfig);
+    const timeResult = timePredicate(ctx, stubConfig);
+    const historyResult = historyPredicate(ctx, stubConfig);
+    const binderResult = binderTypePredicate(ctx, stubConfig);
+
+    expect(routeResult.activated).toBe(true);
+    expect(timeResult.activated).toBe(true);
+    expect(historyResult.activated).toBe(true);
+    expect(binderResult.activated).toBe(true);
   });
 });
 

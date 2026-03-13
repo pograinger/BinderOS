@@ -12,6 +12,7 @@
 import type { AtomType } from '../../types/atoms';
 import type { DecomposedStep } from '../decomposition/categories';
 import type { CompletenessGateResult, MissingInfoResult } from '../clarification/types';
+import type { GateContext, GateResult } from '../../types/gate';
 
 // --- AI task types ---
 
@@ -123,6 +124,10 @@ export interface TieredFeatures {
 
 /**
  * A request to the tiered AI pipeline.
+ *
+ * context is REQUIRED — every dispatch must carry gate context so the pre-filter
+ * can evaluate route, time-of-day, atom history, and binder-type predicates before
+ * any handler runs.
  */
 export interface TieredRequest {
   /** Unique request identifier */
@@ -131,6 +136,13 @@ export interface TieredRequest {
   task: AITaskType;
   /** Features/context for the task */
   features: TieredFeatures;
+  /**
+   * Gate context for the pre-dispatch filter. Required.
+   * All four predicates (route, time-of-day, atom-history, binder-type) read from this.
+   * Callers that have no meaningful context should pass makePermissiveContext() from test-helpers,
+   * or construct a minimal GateContext with the fields they know.
+   */
+  context: GateContext;
 }
 
 // --- Tiered response ---
@@ -188,6 +200,16 @@ export interface TieredResponse {
   escalated: boolean;
   /** Total time across all tier attempts (ms) */
   totalMs: number;
+  /**
+   * True when the context gate blocked this dispatch — no handler ran.
+   * Undefined (falsy) on normal passing dispatches.
+   */
+  gateBlocked?: boolean;
+  /**
+   * Gate evaluation result — populated on ALL dispatches (blocked and passing).
+   * Includes per-predicate activated/blocked reasons for harness analysis.
+   */
+  gateResult?: GateResult;
 }
 
 // --- Minimum samples for Tier 2 activation ---
