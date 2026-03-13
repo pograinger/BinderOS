@@ -21,6 +21,7 @@ import type { AtomType, InboxItem } from '../types/atoms';
 import type { MissingInfoCategory } from './clarification/types';
 import type { AtomScore, EntropyScore } from '../types/config';
 import type { SectionItem, Section } from '../types/sections';
+import type { GateContext } from '../types/gate';
 import { dispatchAI } from './router';
 import { findRelatedAtoms } from './similarity';
 import { dispatchTiered } from './tier2';
@@ -199,6 +200,7 @@ export function parseTriageResponse(
  * @param onSuggestion - Called for each item: first with pending placeholder, then with result
  * @param onError - Called when an individual item fails (not aborted)
  * @param useTiered - When true, uses dispatchTiered() for classify-type (Phase 8)
+ * @param gateContext - Optional route context from the caller for gate evaluation (Phase 31)
  */
 export async function triageInbox(
   inboxItems: InboxItem[],
@@ -210,6 +212,7 @@ export async function triageInbox(
   onSuggestion: (suggestion: TriageSuggestion) => void,
   onError: (itemId: string, error: string) => void,
   useTiered = false,
+  gateContext?: { route?: string },
 ): Promise<void> {
   // Cancel any previous in-flight triage
   triageAbortController?.abort();
@@ -251,6 +254,15 @@ export async function triageInbox(
 
       // Phase 8: Use tiered pipeline when enabled — tries Tier 1/2 before Tier 3
       if (useTiered) {
+        // Build per-item GateContext for route, time, and atom-history predicates (Phase 31)
+        const itemGateContext: GateContext = {
+          route: gateContext?.route ?? '/binder',
+          timeOfDay: new Date().getHours(),
+          atomId: item.id,
+          binderType: 'gtd-personal',
+          enrichmentDepth: 0, // triage items are inbox — depth 0
+        };
+
         const tieredResponse = await dispatchTiered({
           requestId: crypto.randomUUID(),
           task: 'classify-type',
@@ -261,7 +273,13 @@ export async function triageInbox(
             promptOverride: prompt,
             signal,
           },
+          context: itemGateContext,
         });
+
+        // Gate-blocked: route predicate blocked this item — skip silently, not an error
+        if (tieredResponse.gateBlocked) {
+          continue;
+        }
 
         if (signal.aborted) break;
 
@@ -289,6 +307,7 @@ export async function triageInbox(
                 requestId: crypto.randomUUID(),
                 task: 'classify-gtd',
                 features: { content: item.content, title: item.title, signal },
+                context: itemGateContext,
               });
               if (gtdResponse.result.gtd) {
                 const g = gtdResponse.result.gtd;
@@ -325,6 +344,7 @@ export async function triageInbox(
               requestId: crypto.randomUUID(),
               task: 'check-completeness',
               features: { content: item.content, title: item.title },
+              context: itemGateContext,
             });
             if (completenessResponse.result.completeness?.isIncomplete &&
                 completenessResponse.result.completeness.confidence >= 0.75) {

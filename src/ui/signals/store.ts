@@ -1370,6 +1370,7 @@ export async function startTriageInbox(): Promise<void> {
         });
       },
       tieredEnabled(),  // Phase 8: use tiered pipeline when initialized
+      { route: window.location.pathname }, // Phase 31: pass route for gate evaluation
     );
     setTriageStatus('complete');
     setOrbState('idle');
@@ -2574,6 +2575,7 @@ export function handleClarificationComplete(result: ClarificationResult): void {
         console.warn('[handleClarificationComplete] Re-triage failed for', itemId, error);
       },
       true, // useTiered
+      { route: window.location.pathname }, // Phase 31: pass route for gate evaluation
     );
   }
 }
