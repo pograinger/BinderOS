@@ -86,7 +86,7 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 - [x] **Phase 32: Predictive Enrichment Scorer** - Entity trajectory + cognitive signal delta scoring, predictionCache with TTL, cold-start guard, enrichment question reordering (completed 2026-03-13)
 - [x] **Phase 33: Sequence Context ONNX Model** - Embedding ring buffer, LSTM training pipeline, sequence context signal wired to T2 classifiers, harness ablation validation (completed 2026-03-13)
 - [ ] **Phase 34: Harness SDK + Second Binder Type Validation** - Harness parameterized on BinderTypeConfig, non-GTD stub binder type exercised through full adversarial cycle
-- [x] **Phase 35: Canonical Feature Vectors** - Structured per-atom-type vectors from metadata + sidecar + entities, cached in atomIntelligence, BinderTypeConfig-driven dimensions (completed 2026-03-13)
+- [x] **Phase 35: Canonical Feature Vectors** - Structured per-atom-type vectors from metadata + sidecar + entities, cached in atomIntelligence, BinderTypeConfig-driven dimensions (completed 2026-03-13)
 - [ ] **Phase 36: Specialist Consensus Layer** - Train specialist risk models on non-overlapping vector slices, ONNX export, consensus voter, dispatchTiered wiring
 - [ ] **Phase 37: EII Diagnostic + Consensus Ablation** - Emergent Intelligence Index per binder, consensus vs specialist ablation proof, harness integration
 - [ ] **Phase 38: Risk Surface + Proactive Alerts** - Consensus risk scores surface high-risk atoms, risk badges with explanations, staleness prediction model
@@ -268,7 +268,7 @@ Plans:
 | 33. Sequence Context ONNX Model | 3/3 | Complete    | 2026-03-13 | - |
 | 34. Harness SDK + Second Binder Type Validation | v5.5 | 0/? | Not started | - |
 | 35. Canonical Feature Vectors | 2/2 | Complete    | 2026-03-13 | - |
-| 36. Specialist Consensus Layer | v5.5 | 0/? | Not started | - |
+| 36. Specialist Consensus Layer | v5.5 | 0/3 | Not started | - |
 | 37. EII Diagnostic + Consensus Ablation | v5.5 | 0/? | Not started | - |
 | 38. Risk Surface + Proactive Alerts | v5.5 | 0/? | Not started | - |
 
@@ -284,8 +284,8 @@ Plans:
   5. Vector dimension schemas are defined in `BinderTypeConfig` so non-GTD binder types can define their own canonical dimensions
 **Plans**: 2 plans
 Plans:
-- [ ] 35-01-PLAN.md � Types, schema extensions, vectors.json config, three compute functions (task/person/calendar) with tests
-- [ ] 35-02-PLAN.md � Vector cache module, dirty-check, store.ts invalidation wiring at save/triage/enrichment
+- [x] 35-01-PLAN.md — Types, schema extensions, vectors.json config, three compute functions (task/person/calendar) with tests
+- [x] 35-02-PLAN.md — Vector cache module, dirty-check, store.ts invalidation wiring at save/triage/enrichment
 
 ### Phase 36: Specialist Consensus Layer
 **Goal**: Train specialist risk models on non-overlapping slices of canonical feature vectors, deploy as ONNX, and wire a consensus voter that combines their outputs — proving that differentiated specialists in consensus outperform any single model, as validated by the EII experiment (`scripts/eii-experiment.py`)
@@ -297,9 +297,11 @@ Plans:
   3. Consensus result stored in `atomIntelligence.consensusRisk` with per-specialist contributions for explainability
   4. `dispatchTiered()` calls consensus after specialist handlers fire — single composite risk score available to all downstream consumers
   5. Cold-start guard: consensus not computed until binder has 15+ atoms with canonical vectors
-**Plans**: TBD
+**Plans**: 3 plans
 Plans:
-- [ ] TBD (run /gsd:plan-phase 36 to break down)
+- [ ] 36-01-PLAN.md — Consensus types, voter function with tests, schema extension, sidecar write helper
+- [ ] 36-02-PLAN.md — Python specialist training pipeline, 4 ONNX model export
+- [ ] 36-03-PLAN.md — Consensus worker, specialist runner with cold-start guard, vector-cache trigger wiring
 
 ### Phase 37: EII Diagnostic + Consensus Ablation
 **Goal**: Compute the Emergent Intelligence Index per binder as a live diagnostic, and prove via ablation that consensus outperforms individual specialists — the EII curve must show monotonic growth with corpus size, matching the synthetic experiment
