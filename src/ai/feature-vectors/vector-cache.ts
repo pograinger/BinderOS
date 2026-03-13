@@ -72,11 +72,19 @@ export function dirtyCheckTaskFields(prev: Partial<TaskAtom>, next: TaskAtom): b
  * Fire-and-forget: returns void immediately. Dexie write happens in background.
  * Converts Float32Array to plain number[] for JSON-safe serialization.
  * Failures are logged to console.warn and never propagated.
+ *
+ * After writing a task vector, triggers consensus inference via the consensus
+ * specialist runner (fire-and-forget, non-blocking).
+ *
+ * @param binderId Optional binder context for cold-start guard tracking. If
+ *   omitted, falls back to 'default'. Passed through from recomputeAndCacheVector
+ *   which has the atom's binderId in scope.
  */
 export function writeCanonicalVector(
   atomId: string,
   vectorType: 'task' | 'person' | 'calendar',
   vector: Float32Array,
+  binderId?: string,  // Phase 36: for consensus cold-start guard
 ): void {
   (async () => {
     try {
@@ -91,6 +99,18 @@ export function writeCanonicalVector(
       intel.version++;
       intel.lastUpdated = Date.now();
       await db.atomIntelligence.put(intel);
+
+      // Fire-and-forget consensus computation for task atoms only.
+      // Dynamic import keeps the consensus module off the critical render path.
+      if (vectorType === 'task') {
+        import('../consensus/specialist-runner').then(({ runConsensusForAtom, incrementVectorCount }) => {
+          const effectiveBinderId = binderId ?? 'default';
+          incrementVectorCount(effectiveBinderId);
+          void runConsensusForAtom(atomId, effectiveBinderId);
+        }).catch(() => {
+          // Swallow import errors — consensus is non-fatal
+        });
+      }
     } catch (err) {
       console.warn('[vector-cache] writeCanonicalVector failed (non-fatal):', err);
     }
@@ -118,7 +138,7 @@ export function recomputeAndCacheVector(
   if (atom.type === 'task') {
     import('./task-vector').then(({ computeTaskVector }) => {
       const result = computeTaskVector(atom as TaskAtom, sidecar, entities, relations);
-      writeCanonicalVector(atom.id, 'task', result);
+      writeCanonicalVector(atom.id, 'task', result, (atom as any).binderId as string | undefined);
     }).catch((err) => {
       console.warn('[vector-cache] recomputeAndCacheVector (task) import failed:', err);
     });
