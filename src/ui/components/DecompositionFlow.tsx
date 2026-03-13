@@ -18,6 +18,7 @@ import { dispatchTiered } from '../../ai/tier2/pipeline';
 import { decomposeAtom } from '../../ai/decomposition/decomposer';
 import type { DecomposedStep } from '../../ai/decomposition/decomposer';
 import type { AtomType } from '../../types/atoms';
+import type { GateContext } from '../../types/gate';
 
 // --- Types ---
 
@@ -61,10 +62,21 @@ export async function startDecomposition(
   atomType: 'task' | 'decision',
 ): Promise<void> {
   try {
+    // Build GateContext for the decomposition dispatch (Phase 31)
+    // Decomposition is user-triggered from the binder view — gate should pass on /binder.
+    const decompositionGateContext: GateContext = {
+      route: typeof window !== 'undefined' ? window.location.pathname : '/binder',
+      timeOfDay: new Date().getHours(),
+      atomId,
+      binderType: 'gtd-personal',
+      enrichmentDepth: 0,
+    };
+
     const response = await dispatchTiered({
       requestId: `decompose-${atomId}-${Date.now()}`,
       task: 'decompose',
       features: { content: text, atomType },
+      context: decompositionGateContext,
     });
 
     let steps = response.result.decomposition ?? [];

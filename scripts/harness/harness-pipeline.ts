@@ -12,6 +12,7 @@
  */
 
 import type { AtomIntelligence, EntityMention } from '../../src/types/intelligence.js';
+import type { GateContext } from '../../src/types/gate.js';
 import type { CorpusItem } from './generate-corpus.js';
 import { HarnessEntityStore } from './harness-entity-store.js';
 import {
@@ -166,6 +167,39 @@ function mergeEntities(store: HarnessEntityStore, sourceId: string, targetId: st
 
   // Remove source entity
   store.entities.delete(sourceId);
+}
+
+// ---------------------------------------------------------------------------
+// Gate context builder — Phase 31
+// ---------------------------------------------------------------------------
+
+/**
+ * Build a GateContext for harness dispatches.
+ *
+ * The harness runs in a headless Node.js environment with no browser routing.
+ * Route is always '/binder' and timeOfDay is fixed to midday (10) for deterministic
+ * replay — harness results should not vary by clock time.
+ *
+ * If the atom has been enriched before (atomIntelligence exists), lastEnrichedAt
+ * and enrichmentDepth are populated from the sidecar so the history predicate
+ * evaluates correctly during ablation replays.
+ *
+ * @param atomId - The atom being dispatched
+ * @param store  - HarnessEntityStore for reading existing sidecar data
+ */
+export function buildHarnessGateContext(
+  atomId: string,
+  store: HarnessEntityStore,
+): GateContext {
+  const intel = store.atomIntelligence?.get(atomId);
+  return {
+    route: '/binder',
+    timeOfDay: 10, // Fixed midday — harness results must not vary by wall-clock time
+    atomId,
+    binderType: 'gtd-personal',
+    enrichmentDepth: intel?.enrichment?.length ?? 0,
+    lastEnrichedAt: intel?.lastUpdated,
+  };
 }
 
 // ---------------------------------------------------------------------------
