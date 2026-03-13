@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Completed 30-01-PLAN.md
-last_updated: "2026-03-13T00:17:16.542Z"
+stopped_at: Completed 30-03-PLAN.md
+last_updated: "2026-03-13T00:28:02.934Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 9
   completed_phases: 3
   total_plans: 14
-  completed_plans: 11
+  completed_plans: 12
 ---
 
 # Project State
@@ -53,6 +53,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | v5.0 | 4 | 11 | 2 days |
 | v5.5 | 5 | TBD | in progress |
 | Phase 30-schema-bindertypeconfig-protocol P01 | 30 | 2 tasks | 14 files |
+| Phase 30 P03 | 8 | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,8 @@ Recent decisions affecting future work:
 - [Phase 30]: BinderTypeConfigEntry stores full config as configJson blob string — enables harness injection without rebuild
 - [Phase 30]: CompositorRuleConfig uses declarative AND/OR condition DSL — JSON is source of truth for Python training and TypeScript runtime
 - [Phase 30]: GTD config split into 7 per-concern JSON files under gtd-personal/ — manifest-driven binder-type-as-plugin architecture
+- [Phase 30]: staleDays stale-atom check stubbed as always-allow in historyPredicate — requires atom lastEnrichedAt timestamp in GateContext; deferred to Phase 31 when gate is wired into dispatchTiered()
+- [Phase 30]: canActivate() is the single Phase 31 integration point — import from activation-gate.ts, call before handler loop in dispatchTiered() pre-filter
 
 ### Pending Todos
 
@@ -92,7 +95,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T00:17:16.540Z
-Stopped at: Completed 30-01-PLAN.md
+Last session: 2026-03-13T00:27:40.793Z
+Stopped at: Completed 30-03-PLAN.md
 Resume file: None
 Next action: `/gsd:plan-phase 30`
