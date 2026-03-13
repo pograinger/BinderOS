@@ -30,13 +30,13 @@ Requirements for v5.5 Cortical Intelligence milestone. Each maps to roadmap phas
 
 ### Binder-Type Specialization
 
-- [ ] **BTYPE-01**: `BinderTypeConfig` interface formalized with column set (ONNX model IDs), compositor rules, enrichment categories, relationship patterns, entity types, and context gate predicates — GTD updated as first implementation
+- [x] **BTYPE-01**: `BinderTypeConfig` interface formalized with column set (ONNX model IDs), compositor rules, enrichment categories, relationship patterns, entity types, and context gate predicates — GTD updated as first implementation
 - [ ] **BTYPE-02**: Harness parameterized on `BinderTypeConfig` so training, adversarial cycles, and ablation reporting are config-driven — the harness becomes an SDK for training custom binder-type local stacks
 - [ ] **BTYPE-03**: A stub non-GTD binder type (e.g., ProjectBinder) exercises the full adversarial cycle to validate the protocol isn't GTD-shaped — interface is proven pluggable before shipping
 
 ### Schema
 
-- [ ] **SCHM-01**: Dexie v10 migration adds `gateActivationLog`, `sequenceContext`, and `binderTypeConfig` tables — fully additive, no mutations to v1-v9 tables
+- [x] **SCHM-01**: Dexie v10 migration adds `gateActivationLog`, `sequenceContext`, and `binderTypeConfig` tables — fully additive, no mutations to v1-v9 tables
 
 ## Future Requirements
 
@@ -73,8 +73,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SCHM-01 | Phase 30 | Pending |
-| BTYPE-01 | Phase 30 | Pending |
+| SCHM-01 | Phase 30 | Complete |
+| BTYPE-01 | Phase 30 | Complete |
 | GATE-01 | Phase 31 | Pending |
 | GATE-02 | Phase 31 | Pending |
 | GATE-03 | Phase 31 | Pending |

@@ -248,7 +248,7 @@ Plans:
 | 27. Entity Detection + Registry | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 28. Relationship Inference + Cognitive Harness | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 29. Entity Consumers + Trained Agent Validation | v5.0 | 4/5 | Complete | 2026-03-12 |
-| 30. Schema + BinderTypeConfig Protocol | v5.5 | 0/3 | Not started | - |
+| 30. Schema + BinderTypeConfig Protocol | 1/3 | In Progress|  | - |
 | 31. Context Gate Evaluator | v5.5 | 0/? | Not started | - |
 | 32. Predictive Enrichment Scorer | v5.5 | 0/? | Not started | - |
 | 33. Sequence Context ONNX Model | v5.5 | 0/? | Not started | - |

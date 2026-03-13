@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Phase 30 context gathered
-last_updated: "2026-03-12T23:29:33.095Z"
+stopped_at: Completed 30-01-PLAN.md
+last_updated: "2026-03-13T00:17:16.542Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 9
   completed_phases: 3
-  total_plans: 11
-  completed_plans: 10
+  total_plans: 14
+  completed_plans: 11
 ---
 
 # Project State
@@ -52,6 +52,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | v4.0 | 14 | 32 | 5 days |
 | v5.0 | 4 | 11 | 2 days |
 | v5.5 | 5 | TBD | in progress |
+| Phase 30-schema-bindertypeconfig-protocol P01 | 30 | 2 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,9 @@ Recent decisions affecting future work:
 - [v5.5]: dynamo=True with opset 18 is the only stable PyTorch ONNX export path for LSTM with dynamic sequence length
 - [v5.5]: Production MLP classifiers only replaced after harness ablation confirms F1 improvement
 - [v5.5]: Prediction is lazy + TTL-cached, never timer-based — no background agents, no conductors
+- [Phase 30]: BinderTypeConfigEntry stores full config as configJson blob string — enables harness injection without rebuild
+- [Phase 30]: CompositorRuleConfig uses declarative AND/OR condition DSL — JSON is source of truth for Python training and TypeScript runtime
+- [Phase 30]: GTD config split into 7 per-concern JSON files under gtd-personal/ — manifest-driven binder-type-as-plugin architecture
 
 ### Pending Todos
 
@@ -88,7 +92,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-12T23:29:33.093Z
-Stopped at: Phase 30 context gathered
-Resume file: .planning/phases/30-schema-bindertypeconfig-protocol/30-CONTEXT.md
+Last session: 2026-03-13T00:17:16.540Z
+Stopped at: Completed 30-01-PLAN.md
+Resume file: None
 Next action: `/gsd:plan-phase 30`
