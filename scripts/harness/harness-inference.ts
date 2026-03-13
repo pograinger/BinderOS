@@ -24,7 +24,7 @@ import fs from 'node:fs';
 // ---------------------------------------------------------------------------
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const patternsPath = path.join(__dirname, '../../src/config/relationship-patterns.json');
+const patternsPath = path.join(__dirname, '../../src/config/binder-types/gtd-personal/relationships.json');
 const PATTERNS_CONFIG: RelationshipPatternsConfig = JSON.parse(
   fs.readFileSync(patternsPath, 'utf-8'),
 );

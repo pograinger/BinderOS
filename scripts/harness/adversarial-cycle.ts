@@ -72,7 +72,7 @@ async function generateNaturalCorpus(
   persona: { personaName: string; bio: string; groundTruth: GroundTruth },
   client: Anthropic,
 ): Promise<CorpusItem[]> {
-  const patternsPath = path.join(__dirname, '../../src/config/relationship-patterns.json');
+  const patternsPath = path.join(__dirname, '../../src/config/binder-types/gtd-personal/relationships.json');
   const patterns = JSON.parse(fs.readFileSync(patternsPath, 'utf-8')) as {
     patterns: Array<{ id: string; keywords: string[]; relationshipType: string }>;
   };
@@ -143,7 +143,7 @@ async function generateGapTargetedCorpus(
   cycleNumber: number,
   client: Anthropic,
 ): Promise<CorpusItem[]> {
-  const patternsPath = path.join(__dirname, '../../src/config/relationship-patterns.json');
+  const patternsPath = path.join(__dirname, '../../src/config/binder-types/gtd-personal/relationships.json');
   const patterns = JSON.parse(fs.readFileSync(patternsPath, 'utf-8')) as {
     patterns: Array<{ id: string; keywords: string[]; relationshipType: string }>;
   };

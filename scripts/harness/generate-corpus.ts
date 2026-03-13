@@ -106,7 +106,7 @@ function buildPrompt(syntheticUser: Record<string, unknown>): string {
   const facts = JSON.stringify(gt.facts, null, 2);
 
   // Load relationship patterns so the LLM knows what keywords to use
-  const patternsPath = path.join(__dirname, '../../src/config/relationship-patterns.json');
+  const patternsPath = path.join(__dirname, '../../src/config/binder-types/gtd-personal/relationships.json');
   const patterns = JSON.parse(fs.readFileSync(patternsPath, 'utf-8'));
   const patternSummary = (patterns.patterns as Array<{ id: string; keywords: string[]; relationshipType: string }>)
     .map((p) => `  - ${p.relationshipType} (${p.id}): ${p.keywords.slice(0, 8).join(', ')}`)

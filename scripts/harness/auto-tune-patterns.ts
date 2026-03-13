@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 import type { PersonaAdversarialResult, RelationshipGap, CycleState } from './harness-types.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PATTERNS_PATH = path.join(__dirname, '../../src/config/relationship-patterns.json');
+const PATTERNS_PATH = path.join(__dirname, '../../src/config/binder-types/gtd-personal/relationships.json');
 const TUNED_PATTERNS_PATH = path.join(__dirname, 'tuned-patterns.json');
 const PATTERN_SUGGESTIONS_PATH = path.join(__dirname, 'pattern-suggestions.json');
 

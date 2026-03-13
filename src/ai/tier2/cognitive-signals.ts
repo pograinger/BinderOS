@@ -353,13 +353,113 @@ export const COMPOSITOR_RULES: CompositorRule[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Hydrate compositor rules from JSON config
+// ---------------------------------------------------------------------------
+
+/**
+ * Import the CompositorRuleConfig type only.
+ * Type-only imports do not create runtime circular deps.
+ * cognitive-signals.ts NEVER imports from binder-types at runtime.
+ */
+import type { CompositorRuleConfig } from '../../config/binder-types/schema';
+
+/**
+ * Convert JSON-serializable CompositorRuleConfig objects into runtime
+ * CompositorRule objects with evaluate() functions.
+ *
+ * The hydration function interprets the declarative condition DSL:
+ *   - For each clause, checks signals[modelId]?.accepted && topLabel comparison.
+ *   - AND = all clauses must evaluate true.
+ *   - OR = any clause must evaluate true.
+ *
+ * CRITICAL: This function accepts CompositorRuleConfig[] as a parameter.
+ * It does NOT call getBinderConfig() — the caller provides the configs.
+ * This keeps cognitive-signals.ts free from any binder-types import.
+ *
+ * @example
+ *   const rules = hydrateCompositorRules(getBinderConfig().compositorRules);
+ *   const composites = evaluateComposites(signals, rules);
+ */
+export function hydrateCompositorRules(configs: CompositorRuleConfig[]): CompositorRule[] {
+  return configs.map((cfg) => ({
+    name: cfg.name,
+    inputs: cfg.inputs,
+    outputSignal: cfg.outputSignal as CompositeSignalName,
+    evaluate: (signals: SignalVector['signals']): CompositeSignal | null => {
+      const { operator, clauses } = cfg.condition;
+
+      const clauseResults = clauses.map((clause) => {
+        const signal = signals[clause.modelId];
+        if (!signal?.accepted) return false;
+        const topLabel = signal.topLabel;
+        if (clause.op === '==') {
+          return topLabel === clause.label;
+        } else if (clause.op === 'in') {
+          return Array.isArray(clause.label) && clause.label.includes(topLabel);
+        } else if (clause.op === '!=') {
+          return topLabel !== clause.label;
+        }
+        return false;
+      });
+
+      const conditionMet =
+        operator === 'AND'
+          ? clauseResults.every(Boolean)
+          : clauseResults.some(Boolean);
+
+      if (!conditionMet) return null;
+
+      // Determine output value: use outputValue if specified, else true
+      let value: boolean | string | number = true;
+      if (cfg.outputValue !== undefined) {
+        // Handle template interpolation: {knowledge-domain.top_label}
+        const tmpl = cfg.outputValue;
+        if (tmpl.startsWith('{') && tmpl.endsWith('}')) {
+          const expr = tmpl.slice(1, -1); // e.g. "knowledge-domain.top_label"
+          const [modelId, field] = expr.split('.');
+          if (modelId && field === 'top_label' && modelId in signals) {
+            const s = signals[modelId as CognitiveModelId];
+            value = s?.topLabel ?? tmpl;
+          } else {
+            value = tmpl;
+          }
+        } else {
+          value = tmpl;
+        }
+      }
+
+      return {
+        ruleName: cfg.name,
+        signal: cfg.outputSignal as CompositeSignalName,
+        value,
+        inputs: cfg.inputs,
+      };
+    },
+  }));
+}
+
+// ---------------------------------------------------------------------------
 // Evaluate all compositor rules against a signal vector
 // ---------------------------------------------------------------------------
+
+/**
+ * Evaluate compositor rules against a signal vector.
+ *
+ * @param signals - The signal vector to evaluate.
+ * @param rules - Optional rule set. When provided (e.g. hydrated from binder config),
+ *   those rules are used. When omitted, falls back to the built-in COMPOSITOR_RULES.
+ *
+ * The `rules` parameter enables binder-type-specific compositor logic while
+ * preserving backward compatibility for callers that don't pass rules.
+ */
 export function evaluateComposites(
-  signals: SignalVector['signals']
+  signals: SignalVector['signals'],
+  /** @deprecated Use hydrateCompositorRules(getBinderConfig().compositorRules) and pass here */
+  rules?: CompositorRule[],
 ): CompositeSignal[] {
+  const activeRules = rules ?? COMPOSITOR_RULES;
   const results: CompositeSignal[] = [];
-  for (const rule of COMPOSITOR_RULES) {
+  for (const rule of activeRules) {
     const result = rule.evaluate(signals);
     if (result) results.push(result);
   }

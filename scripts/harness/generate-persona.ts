@@ -289,7 +289,7 @@ function validateCoverageMatrix(
 // ---------------------------------------------------------------------------
 
 function loadPatternSummary(): string {
-  const patternsPath = path.join(__dirname, '../../src/config/relationship-patterns.json');
+  const patternsPath = path.join(__dirname, '../../src/config/binder-types/gtd-personal/relationships.json');
   const patterns = JSON.parse(fs.readFileSync(patternsPath, 'utf-8')) as {
     patterns: Array<{ id: string; keywords: string[]; relationshipType: string }>;
   };

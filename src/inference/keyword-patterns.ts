@@ -24,13 +24,19 @@ import { db } from '../storage/db';
 import { createRelation } from '../storage/entity-helpers';
 import type { EntityMention } from '../types/intelligence';
 import type { RelationshipPattern, RelationshipPatternsConfig } from './types';
-import patternsJson from '../config/relationship-patterns.json';
+import { getBinderConfig } from '../config/binder-types/index';
 
 // ---------------------------------------------------------------------------
-// Pattern config — loaded once at module init
+// Pattern config — loaded once at module init from BinderTypeConfig
 // ---------------------------------------------------------------------------
 
-const PATTERNS_CONFIG = patternsJson as RelationshipPatternsConfig;
+const PATTERNS_CONFIG: RelationshipPatternsConfig = {
+  version: 2,
+  // Cast: ExpandedBinderTypeConfig.relationshipPatterns uses z.string() for targetEntityType
+  // while RelationshipPattern uses the narrower 'PER'|'LOC'|'ORG' union. The JSON values
+  // are always one of those three literals; the cast is safe.
+  patterns: getBinderConfig().relationshipPatterns as RelationshipPattern[],
+};
 
 // Pre-build regexes for each pattern (avoid re-compiling on every call)
 interface CompiledPattern extends RelationshipPattern {
