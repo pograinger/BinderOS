@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Completed 32-02-PLAN.md
-last_updated: "2026-03-13T06:05:47.439Z"
+stopped_at: Phase 33 context gathered
+last_updated: "2026-03-13T07:09:56.977Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 13
@@ -98,10 +98,10 @@ Recent decisions affecting future work:
 
 ### Roadmap Evolution
 
-- Phase 35 added: Signal Consensus Layer — Thousand Brains voting over 10 cognitive ONNX models
-- Phase 36 added: Consensus-Wired Gate and Enrichment — wire composite scores into context gate + enrichment
-- Phase 37 added: Consensus Ablation Harness — prove consensus > individual signals via ablation
-- Phase 38 added: Staleness Prediction Model — first predictive model, gated on ablation proof
+- Phase 35 reshaped: Canonical Feature Vectors — structured per-atom-type vectors from metadata + sidecar + entities (EII experiment validated canonical vectors as more expressive than raw embeddings)
+- Phase 36 reshaped: Specialist Consensus Layer — train specialist risk models on non-overlapping vector slices, consensus voter (EII experiment: +0.030 AUC lift from specialist consensus)
+- Phase 37 reshaped: EII Diagnostic + Consensus Ablation — live Emergent Intelligence Index per binder, prove consensus on real harness data
+- Phase 38 reshaped: Risk Surface + Proactive Alerts — first user-visible consumer of consensus, risk badges with explanations, staleness prediction
 - [Phase 31]: Gate pre-filter: canActivate() before handler loop, blocked returns skip all handlers, gateResult on all responses
 - [Phase 31]: triageInbox() gateContext param is optional at function signature, builds required GateContext internally — backwards compat without leaking TieredRequest types into function signature
 - [Phase 31]: gateBlocked at classify-type level triggers silent continue in item loop, not onError — gate-blocking is intentional flow control
@@ -120,7 +120,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T06:05:47.436Z
-Stopped at: Completed 32-02-PLAN.md
-Resume file: None
+Last session: 2026-03-13T07:09:56.973Z
+Stopped at: Phase 33 context gathered
+Resume file: .planning/phases/33-sequence-context-onnx-model/33-CONTEXT.md
 Next action: `/gsd:plan-phase 30`
