@@ -160,6 +160,6 @@ describe('GateResult', () => {
     };
     expect(result.canActivate).toBe(true);
     expect(result.predicateResults).toHaveLength(2);
-    expect(result.predicateResults[0].name).toBe('route-gate');
+    expect(result.predicateResults[0]?.name).toBe('route-gate');
   });
 });

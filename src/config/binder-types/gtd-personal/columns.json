@@ -1,0 +1,14 @@
+{
+  "columnSet": [
+    "cognitive-load",
+    "collaboration-type",
+    "emotional-valence",
+    "energy-level",
+    "gtd-horizon",
+    "information-lifecycle",
+    "knowledge-domain",
+    "priority-matrix",
+    "review-cadence",
+    "time-estimate"
+  ]
+}

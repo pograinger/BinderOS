@@ -1,0 +1,127 @@
+{
+  "compositorRules": [
+    {
+      "name": "quick-win-detector",
+      "inputs": ["priority-matrix", "time-estimate"],
+      "outputSignal": "quick-win",
+      "condition": {
+        "operator": "AND",
+        "clauses": [
+          { "modelId": "priority-matrix", "label": "urgent-important", "op": "==" },
+          { "modelId": "time-estimate", "label": "quick", "op": "==" }
+        ]
+      }
+    },
+    {
+      "name": "delegation-candidate",
+      "inputs": ["collaboration-type", "priority-matrix"],
+      "outputSignal": "delegate-now",
+      "condition": {
+        "operator": "AND",
+        "clauses": [
+          { "modelId": "collaboration-type", "label": "delegation", "op": "==" },
+          { "modelId": "priority-matrix", "label": "urgent-not-important", "op": "==" }
+        ]
+      }
+    },
+    {
+      "name": "deep-work-batch",
+      "inputs": ["energy-level", "cognitive-load", "time-estimate"],
+      "outputSignal": "deep-work-block",
+      "condition": {
+        "operator": "AND",
+        "clauses": [
+          { "modelId": "energy-level", "label": "high-focus", "op": "==" },
+          { "modelId": "cognitive-load", "label": "deep", "op": "==" },
+          { "modelId": "time-estimate", "label": ["medium", "long"], "op": "in" }
+        ]
+      }
+    },
+    {
+      "name": "stress-flag",
+      "inputs": ["emotional-valence", "priority-matrix", "time-estimate"],
+      "outputSignal": "stress-risk",
+      "condition": {
+        "operator": "AND",
+        "clauses": [
+          { "modelId": "emotional-valence", "label": "anxious", "op": "==" },
+          { "modelId": "priority-matrix", "label": ["urgent-important", "urgent-not-important"], "op": "in" }
+        ]
+      }
+    },
+    {
+      "name": "stale-item-alert",
+      "inputs": ["information-lifecycle", "review-cadence"],
+      "outputSignal": "stale-risk",
+      "condition": {
+        "operator": "AND",
+        "clauses": [
+          { "modelId": "information-lifecycle", "label": "ephemeral", "op": "==" },
+          { "modelId": "review-cadence", "label": "daily", "op": "!=" }
+        ]
+      }
+    },
+    {
+      "name": "strategic-review",
+      "inputs": ["gtd-horizon", "review-cadence"],
+      "outputSignal": "review-cadence-mismatch",
+      "condition": {
+        "operator": "AND",
+        "clauses": [
+          { "modelId": "gtd-horizon", "label": ["30k-goals", "40k-vision"], "op": "in" },
+          { "modelId": "review-cadence", "label": ["daily", "weekly"], "op": "in" }
+        ]
+      },
+      "outputValue": "suggest-monthly"
+    },
+    {
+      "name": "low-energy-batch",
+      "inputs": ["energy-level", "cognitive-load"],
+      "outputSignal": "low-energy-batch",
+      "condition": {
+        "operator": "AND",
+        "clauses": [
+          { "modelId": "energy-level", "label": "low-energy", "op": "==" },
+          { "modelId": "cognitive-load", "label": "trivial", "op": "==" }
+        ]
+      }
+    },
+    {
+      "name": "context-switch-cost",
+      "inputs": ["knowledge-domain", "cognitive-load"],
+      "outputSignal": "context-switch-cost",
+      "condition": {
+        "operator": "AND",
+        "clauses": [
+          { "modelId": "cognitive-load", "label": ["complex", "deep"], "op": "in" }
+        ]
+      },
+      "outputValue": "high"
+    },
+    {
+      "name": "project-promotion",
+      "inputs": ["gtd-horizon", "time-estimate", "cognitive-load"],
+      "outputSignal": "promote-to-project",
+      "condition": {
+        "operator": "AND",
+        "clauses": [
+          { "modelId": "gtd-horizon", "label": "runway", "op": "==" },
+          { "modelId": "time-estimate", "label": "long", "op": "==" },
+          { "modelId": "cognitive-load", "label": ["complex", "deep"], "op": "in" }
+        ]
+      }
+    },
+    {
+      "name": "meeting-prep",
+      "inputs": ["collaboration-type", "knowledge-domain"],
+      "outputSignal": "meeting-prep-domain",
+      "condition": {
+        "operator": "AND",
+        "clauses": [
+          { "modelId": "collaboration-type", "label": "collaboration", "op": "==" }
+        ]
+      },
+      "outputValue": "{knowledge-domain.top_label}"
+    }
+  ]
+}

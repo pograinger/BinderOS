@@ -31,8 +31,10 @@ import { applyV6Migration } from './migrations/v6';
 import { applyV7Migration } from './migrations/v7';
 import { applyV8Migration } from './migrations/v8';
 import { applyV9Migration } from './migrations/v9';
+import { applyV10Migration } from './migrations/v10';
 import type { EntityRegistryEntry } from '../ai/sanitization/types';
 import type { AtomIntelligence, Entity, EntityRelation } from '../types/intelligence';
+import type { GateActivationLogEntry, SequenceContextEntry, BinderTypeConfigEntry } from '../types/gate';
 
 export interface ConfigEntry {
   key: string;
@@ -93,6 +95,10 @@ export class BinderDB extends Dexie {
   atomIntelligence!: Table<AtomIntelligence, string>;
   entities!: Table<Entity, string>;
   entityRelations!: Table<EntityRelation, string>;
+  // Phase 30: context gate log, sequence context, binder type config
+  gateActivationLog!: Table<GateActivationLogEntry, string>;
+  sequenceContext!: Table<SequenceContextEntry, string>;
+  binderTypeConfig!: Table<BinderTypeConfigEntry, string>;
 
   constructor() {
     super('BinderOS');
@@ -129,6 +135,9 @@ export class BinderDB extends Dexie {
 
     // Phase 26: v9 migration — intelligence sidecar, entity tables, drop entityGraph
     applyV9Migration(this);
+
+    // Phase 30: v10 migration — gate activation log, sequence context, binder type config
+    applyV10Migration(this);
 
     // Seed the four stable sections on first database creation
     this.on('populate', (tx) => {

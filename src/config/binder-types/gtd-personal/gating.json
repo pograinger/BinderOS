@@ -1,0 +1,7 @@
+{
+  "predicateConfig": {
+    "routeGating": { "blockedRoutes": ["/insights", "/archive", "/settings"] },
+    "timeGating": { "lowEnergyHours": [22, 23, 0, 1, 2, 3, 4, 5] },
+    "historyGating": { "maxDepth": 2, "staleDays": 7 }
+  }
+}
