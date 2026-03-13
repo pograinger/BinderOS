@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Completed 35-01-PLAN.md
-last_updated: "2026-03-13T18:29:23.607Z"
+stopped_at: Completed 35-02-PLAN.md
+last_updated: "2026-03-13T18:53:23.175Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 13
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 23
-  completed_plans: 21
+  completed_plans: 22
 ---
 
 # Project State
@@ -63,6 +63,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | Phase 33 P02 | 30 | 2 tasks | 50 files |
 | Phase 33-sequence-context-onnx-model P03 | 20 | 2 tasks | 26 files |
 | Phase 35 P01 | 11 | 2 tasks | 13 files |
+| Phase 35 P02 | 18 minutes | 1 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -109,6 +110,9 @@ Recent decisions affecting future work:
 - [Phase 35]: vectors.json is authoritative dimension source — constants derived via import, never hardcoded
 - [Phase 35]: 'waiting' status maps to status_open slot — waiting is an active state, not dropped
 - [Phase 35]: canonicalVector added to AtomIntelligenceSchema as optional field — no Dexie migration needed (non-indexed)
+- [Phase Phase 35]: dirtyCheckTaskFields accepts Partial<TaskAtom> as prev — callers without full prev state can pass only the fields they tracked
+- [Phase Phase 35]: applyGTDRecommendation is the canonical atom save site in store.ts — only fires recompute when vector-feeding keys are present in changes
+- [Phase Phase 35]: Dynamic import() at invalidation sites keeps vector-cache off critical render path — lazy load after first call is cached by runtime
 
 ### Roadmap Evolution
 
@@ -134,7 +138,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T18:29:23.604Z
-Stopped at: Completed 35-01-PLAN.md
+Last session: 2026-03-13T18:53:23.171Z
+Stopped at: Completed 35-02-PLAN.md
 Resume file: None
 Next action: `/gsd:plan-phase 30`
