@@ -166,9 +166,9 @@ Plans:
   4. The predicate registry scaffold in `src/ai/context-gate/predicates/` exists with typed stubs that compile, ready to receive Phase 31 implementations
 **Plans**: 3 plans
 Plans:
-- [ ] 30-01-PLAN.md — Types, Zod schema, v10 migration, GTD config split into per-concern JSON files
-- [ ] 30-02-PLAN.md — Registry API expansion, consumer migration, compositor hydration, old file deletion
-- [ ] 30-03-PLAN.md — Context gate predicate scaffold with registry and four config-reading stubs
+- [x] 30-01-PLAN.md — Types, Zod schema, v10 migration, GTD config split into per-concern JSON files
+- [x] 30-02-PLAN.md — Registry API expansion, consumer migration, compositor hydration, old file deletion
+- [x] 30-03-PLAN.md — Context gate predicate scaffold with registry and four config-reading stubs
 
 ### Phase 31: Context Gate Evaluator
 **Goal**: Agents activate only when relevant — a pre-dispatch `ActivationGate` filter in `dispatchTiered()` evaluates route, time-of-day, binder type, and atom history predicates before any handler runs, with all gate decisions logged for harness measurement
@@ -180,7 +180,10 @@ Plans:
   3. An atom that already has `enrichment.depth >= 2` and was last updated 8 days ago is submitted for re-enrichment — the atom history predicate blocks the redundant enrichment pass
   4. All gate activation decisions are written to `gateActivationLog` with predicate name, outcome, and context snapshot — harness can query the table and compute per-predicate activation rates
   5. The harness test suite passes all existing handler tests unchanged — `dispatchTiered()` without a `context` field behaves identically to pre-Phase 31 behavior (full backwards compatibility)
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 31-01-PLAN.md — Types, staleDays completion, pipeline gate pre-filter, fire-and-forget log writer
+- [ ] 31-02-PLAN.md — Caller updates (triage, decomposition, harness), existing test fixes
 
 ### Phase 32: Predictive Enrichment Scorer
 **Goal**: Enrichment question ordering shifts from static signal relevance to dynamic prediction — a scoring function over entity graph trajectory and cognitive signal delta trends predicts what the user will need next, with a cold-start guard preventing premature predictions from eroding trust
@@ -248,8 +251,8 @@ Plans:
 | 27. Entity Detection + Registry | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 28. Relationship Inference + Cognitive Harness | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 29. Entity Consumers + Trained Agent Validation | v5.0 | 4/5 | Complete | 2026-03-12 |
-| 30. Schema + BinderTypeConfig Protocol | 3/3 | Complete    | 2026-03-13 | - |
-| 31. Context Gate Evaluator | v5.5 | 0/? | Not started | - |
+| 30. Schema + BinderTypeConfig Protocol | v5.5 | 3/3 | Complete | 2026-03-13 |
+| 31. Context Gate Evaluator | v5.5 | 0/2 | Not started | - |
 | 32. Predictive Enrichment Scorer | v5.5 | 0/? | Not started | - |
 | 33. Sequence Context ONNX Model | v5.5 | 0/? | Not started | - |
 | 34. Harness SDK + Second Binder Type Validation | v5.5 | 0/? | Not started | - |
