@@ -235,6 +235,19 @@ export const BinderTypeConfigSchema = z.object({
   entityCategoryMap: z.record(z.string(), z.array(z.string())).optional(),
   /** Type-level weight multipliers for entity momentum scoring */
   entityTypePriorityWeights: z.record(z.string(), z.number()).optional(),
+
+  // --- Phase 35: Canonical feature vector schema (dimension name declarations) ---
+  /**
+   * Named dimension arrays for each canonical vector type.
+   * GTD vectors.json is the authoritative source — consumed by compute functions.
+   */
+  vectorSchema: z
+    .object({
+      task: z.array(z.string()).optional(),
+      person: z.array(z.string()).optional(),
+      calendar: z.array(z.string()).optional(),
+    })
+    .optional(),
 });
 
 /**

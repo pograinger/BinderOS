@@ -1,9 +1,17 @@
 /**
  * Tests for the expanded BinderTypeConfig Zod schema.
  * Validates schema shape, required fields, and type safety.
+ *
+ * Phase 35: added vectorSchema tests and dimension constant tests.
  */
 import { describe, it, expect } from 'vitest';
 import { BinderTypeConfigSchema, CompositorRuleConfigSchema } from './schema';
+import {
+  TASK_DIMENSION_NAMES,
+  PERSON_DIMENSION_NAMES,
+  CALENDAR_DIMENSION_NAMES,
+} from '../../ai/feature-vectors/types';
+import { getBinderConfig } from './index';
 
 // Minimal valid GTD config for testing
 const validGtdConfig = {
@@ -117,6 +125,92 @@ describe('BinderTypeConfigSchema', () => {
     };
     const result = BinderTypeConfigSchema.safeParse(withMeta);
     expect(result.success).toBe(true);
+  });
+});
+
+describe('vectorSchema in BinderTypeConfigSchema', () => {
+  it('accepts config with optional vectorSchema', () => {
+    const withVectors = {
+      ...validGtdConfig,
+      vectorSchema: {
+        task: Array.from({ length: 27 }, (_, i) => `dim_${i}`),
+        person: Array.from({ length: 23 }, (_, i) => `dim_${i}`),
+        calendar: Array.from({ length: 34 }, (_, i) => `dim_${i}`),
+      },
+    };
+    const result = BinderTypeConfigSchema.safeParse(withVectors);
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts config without vectorSchema (optional field)', () => {
+    const result = BinderTypeConfigSchema.safeParse(validGtdConfig);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.vectorSchema).toBeUndefined();
+    }
+  });
+
+  it('accepts vectorSchema with only some sub-types defined', () => {
+    const withPartialVectors = {
+      ...validGtdConfig,
+      vectorSchema: {
+        task: Array.from({ length: 27 }, (_, i) => `dim_${i}`),
+      },
+    };
+    const result = BinderTypeConfigSchema.safeParse(withPartialVectors);
+    expect(result.success).toBe(true);
+  });
+});
+
+describe('Dimension name constants', () => {
+  it('TASK_DIMENSION_NAMES has exactly 27 entries', () => {
+    expect(TASK_DIMENSION_NAMES.length).toBe(27);
+  });
+
+  it('PERSON_DIMENSION_NAMES has exactly 23 entries', () => {
+    expect(PERSON_DIMENSION_NAMES.length).toBe(23);
+  });
+
+  it('CALENDAR_DIMENSION_NAMES has exactly 34 entries', () => {
+    expect(CALENDAR_DIMENSION_NAMES.length).toBe(34);
+  });
+
+  it('TASK_DIMENSION_NAMES contains expected GTD names', () => {
+    expect(TASK_DIMENSION_NAMES).toContain('age_norm');
+    expect(TASK_DIMENSION_NAMES).toContain('has_deadline');
+    expect(TASK_DIMENSION_NAMES).toContain('energy_high');
+    expect(TASK_DIMENSION_NAMES).toContain('entity_reliability');
+  });
+
+  it('PERSON_DIMENSION_NAMES contains expected relationship names', () => {
+    expect(PERSON_DIMENSION_NAMES).toContain('rel_spouse');
+    expect(PERSON_DIMENSION_NAMES).toContain('rel_unknown');
+    expect(PERSON_DIMENSION_NAMES).toContain('mention_count_norm');
+    expect(PERSON_DIMENSION_NAMES).toContain('confidence_norm');
+  });
+
+  it('CALENDAR_DIMENSION_NAMES contains expected event names', () => {
+    expect(CALENDAR_DIMENSION_NAMES).toContain('start_tod_norm');
+    expect(CALENDAR_DIMENSION_NAMES).toContain('entity_is_high_priority');
+    expect(CALENDAR_DIMENSION_NAMES).toContain('has_person_entity');
+    expect(CALENDAR_DIMENSION_NAMES).toContain('has_loc_entity');
+  });
+});
+
+describe('getBinderConfig vectorSchema', () => {
+  it('gtd-personal vectorSchema.task has 27 entries', () => {
+    const config = getBinderConfig('gtd-personal');
+    expect(config.vectorSchema?.task?.length).toBe(27);
+  });
+
+  it('gtd-personal vectorSchema.person has 23 entries', () => {
+    const config = getBinderConfig('gtd-personal');
+    expect(config.vectorSchema?.person?.length).toBe(23);
+  });
+
+  it('gtd-personal vectorSchema.calendar has 34 entries', () => {
+    const config = getBinderConfig('gtd-personal');
+    expect(config.vectorSchema?.calendar?.length).toBe(34);
   });
 });
 

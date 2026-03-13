@@ -125,6 +125,15 @@ export const AtomIntelligenceSchema = z.object({
       computedAt: z.number(),
     })
     .optional(),
+  // Phase 35: cached canonical feature vector snapshot — non-indexed, no migration needed
+  canonicalVector: z
+    .object({
+      vectorType: z.enum(['task', 'person', 'calendar']),
+      data: z.array(z.number()),
+      lastComputed: z.number(),
+      schemaVersion: z.number(),
+    })
+    .optional(),
 });
 export type AtomIntelligence = z.infer<typeof AtomIntelligenceSchema>;
 

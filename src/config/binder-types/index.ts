@@ -48,6 +48,7 @@ import relationships from './gtd-personal/relationships.json';
 import gating from './gtd-personal/gating.json';
 import entities from './gtd-personal/entities.json';
 import prediction from './gtd-personal/prediction.json';
+import vectors from './gtd-personal/vectors.json';
 
 // ---------------------------------------------------------------------------
 // Merge and validate at module init
@@ -99,6 +100,9 @@ function mergeGtdPersonalConfig(): ExpandedBinderTypeConfig {
     signalCategoryMap: prediction.signalCategoryMap,
     entityCategoryMap: prediction.entityCategoryMap,
     entityTypePriorityWeights: prediction.entityTypePriorityWeights,
+
+    // Phase 35: canonical feature vector schema (dimension name declarations)
+    vectorSchema: vectors.vectorSchema,
   };
 
   const result = BinderTypeConfigSchema.safeParse(merged);
