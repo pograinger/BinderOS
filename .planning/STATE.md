@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Completed 36-01-PLAN.md
-last_updated: "2026-03-13T19:53:25.096Z"
+stopped_at: Completed 36-02-PLAN.md
+last_updated: "2026-03-13T19:56:04.715Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 13
   completed_phases: 8
   total_plans: 26
-  completed_plans: 23
+  completed_plans: 24
 ---
 
 # Project State
@@ -65,6 +65,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | Phase 35 P01 | 11 | 2 tasks | 13 files |
 | Phase 35 P02 | 18 minutes | 1 tasks | 4 files |
 | Phase 36 P01 | 12 minutes | 2 tasks | 6 files |
+| Phase 36-consensus-wired-gate-and-enrichment P02 | 7 | 1 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -117,6 +118,8 @@ Recent decisions affecting future work:
 - [Phase Phase 36]: SPECIALIST_FEATURE_SLICES derives all indices from TASK/PERSON/CALENDAR_DIMENSION_NAMES — catches mismatches at module load time via indexByName() throw
 - [Phase Phase 36]: Agreement score = agreeing pairs / total pairs; single specialist → 1.0 (no pairs to disagree)
 - [Phase Phase 36]: ConsensusResult imported directly from types (not barrel) in atom-intelligence.ts to avoid circular dependency risk
+- [Phase Phase 36]: ONNX output[1] is probabilities (N,2); output[0] is label (N,) — consensus worker must index result[1] for probability scores
+- [Phase Phase 36]: vectors.json loaded at training runtime for idx() name-based lookups — feature slices never hardcoded integers
 
 ### Roadmap Evolution
 
@@ -142,7 +145,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T19:53:03.712Z
-Stopped at: Completed 36-01-PLAN.md
+Last session: 2026-03-13T19:56:04.712Z
+Stopped at: Completed 36-02-PLAN.md
 Resume file: None
 Next action: `/gsd:plan-phase 30`
