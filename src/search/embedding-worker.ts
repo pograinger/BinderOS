@@ -427,7 +427,9 @@ async function runClassifierOnEmbedding(
     throw new Error(`Classifier ${config.name} not ready`);
   }
 
-  const inputTensor = new ort.Tensor('float32', Float32Array.from(embedding), [1, 384]);
+  // Use embedding.length for tensor shape (not hardcoded 384) — supports 512-dim
+  // concatenated vectors when sequence context is prepended (Phase 33).
+  const inputTensor = new ort.Tensor('float32', Float32Array.from(embedding), [1, embedding.length]);
   const results = await config.session.run({ [config.session.inputNames[0]!]: inputTensor });
 
   const outputNames = config.session.outputNames;

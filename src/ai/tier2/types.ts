@@ -120,6 +120,12 @@ export interface TieredFeatures {
   enrichmentAnswers?: Record<string, string>;
   /** Current maturity score for graduation readiness assessment */
   maturityScore?: number;
+  /**
+   * 128-dim sequence context embedding from the LSTM model.
+   * Concatenated with MiniLM embedding (384-dim) before T2 classifier inference.
+   * Absent or undefined → zero-padded 128-dim (cold-start path).
+   */
+  sequenceContext?: Float32Array;
 }
 
 /**
