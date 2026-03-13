@@ -214,6 +214,12 @@ export function runConsensusForAtom(atomId: string, binderId: string): void {
 
       // --- Persist to sidecar (fire-and-forget) ---
       writeConsensusRisk(atomId, consensus);
+
+      // --- Fire-and-forget EII update after consensus completes ---
+      // Dynamic import keeps EII off the critical consensus path
+      import('../../ai/eii/index').then(({ updateBinderEII }) => {
+        updateBinderEII(binderId);
+      }).catch(() => { /* non-fatal */ });
     } catch (err) {
       console.warn('[specialist-runner] runConsensusForAtom failed (non-fatal):', err);
     }

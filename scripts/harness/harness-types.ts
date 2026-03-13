@@ -11,6 +11,8 @@ import type { Entity, EntityRelation, AtomIntelligence, EntityMention } from '..
 import type { GraphScore } from './score-graph.js';
 import type { CorpusItem } from './generate-corpus.js';
 import type { CycleEVS } from './enrichment-value-score.js';
+import type { ConsensusResult } from '../../src/ai/consensus/types.js';
+import type { EIIResult } from '../../src/ai/eii/types.js';
 
 // ---------------------------------------------------------------------------
 // Graph persistence types
@@ -120,6 +122,10 @@ export interface CycleState {
   enrichmentQualityScore?: number;
   /** Enrichment Value Score — measures how much smarter the stack got from enrichment */
   enrichmentValueScore?: CycleEVS;
+  /** Per-atom consensus results computed during this cycle */
+  consensusResults?: ConsensusResult[];
+  /** EII computed from all atoms processed so far in this cycle */
+  cycleEII?: EIIResult;
 }
 
 // ---------------------------------------------------------------------------
@@ -134,6 +140,8 @@ export interface AblationConfig {
   disableRecencyDecay: boolean;
   /** Human-readable label for reports */
   label: string;
+  /** Specialist names to exclude from consensus re-computation (ablation) */
+  excludeSpecialists?: string[];
 }
 
 // ---------------------------------------------------------------------------
@@ -146,6 +154,8 @@ export interface PersonaAdversarialResult {
   cycles: CycleState[];
   totalDurationMs: number;
   finalScore: GraphScore;
+  /** Per-cycle EII trajectory for this persona */
+  eiiProgression?: EIIResult[];
 }
 
 export interface AggregateScore {
