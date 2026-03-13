@@ -33,6 +33,26 @@ import type { CorpusItem } from './generate-corpus.js';
 // Types
 // ---------------------------------------------------------------------------
 
+/**
+ * Result from sequence context ablation (Phase 33 / SEQ-04).
+ * Records F1 comparison between 384-dim and 512-dim classifiers across window sizes.
+ * Used to validate whether sequence context improves T2 classifier accuracy.
+ */
+export interface SequenceAblationResult {
+  /** Window size tested (N prior atoms used as context) */
+  windowSize: number;
+  /** Baseline F1 per classifier (384-dim, no sequence context) */
+  baselineF1: Record<string, number>;
+  /** F1 per classifier with sequence context at this window size (512-dim) */
+  sequenceF1: Record<string, number>;
+  /** Delta per classifier: sequenceF1 - baselineF1 (positive = improvement) */
+  deltaF1: Record<string, number>;
+  /** Best window size by aggregate mean F1 delta */
+  recommendedN: number;
+  /** Whether to replace 384-dim classifiers with 512-dim */
+  recommendation: 'replace' | 'keep_384';
+}
+
 export interface AblationDelta {
   entityF1Delta: number;
   relationshipF1Delta: number;
@@ -313,7 +333,6 @@ export async function runFullAblationSuite(
   const componentRanking = rankComponents({
     fullRunScores,
     perComponentResults,
-    componentRanking: [],
   });
 
   return {
