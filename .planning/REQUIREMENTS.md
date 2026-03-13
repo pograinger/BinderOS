@@ -17,9 +17,9 @@ Requirements for v5.5 Cortical Intelligence milestone. Each maps to roadmap phas
 
 ### Predictive Enrichment
 
-- [ ] **PRED-01**: Predictive scoring function replaces static `computeSignalRelevance()` with dynamic scoring over entity graph trajectory (recency, mention count deltas) and cognitive signal history window (composite signal trends over last-N atoms)
-- [ ] **PRED-02**: Cognitive signal delta trends computed from windowed query over last-N `CachedCognitiveSignal` records — rising `stress-risk` or `urgent-important` composites influence enrichment question priority ordering
-- [ ] **PRED-03**: Cold-start gate prevents predictions from activating until minimum evidence threshold is met (e.g., 15+ atoms with cognitive signals cached) — avoids wrong predictions eroding user trust in early usage
+- [x] **PRED-01**: Predictive scoring function replaces static `computeSignalRelevance()` with dynamic scoring over entity graph trajectory (recency, mention count deltas) and cognitive signal history window (composite signal trends over last-N atoms)
+- [x] **PRED-02**: Cognitive signal delta trends computed from windowed query over last-N `CachedCognitiveSignal` records — rising `stress-risk` or `urgent-important` composites influence enrichment question priority ordering
+- [x] **PRED-03**: Cold-start gate prevents predictions from activating until minimum evidence threshold is met (e.g., 15+ atoms with cognitive signals cached) — avoids wrong predictions eroding user trust in early usage
 
 ### Sequence Learning
 
@@ -80,9 +80,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GATE-03 | Phase 31 | Complete |
 | GATE-04 | Phase 31 | Complete |
 | GATE-05 | Phase 31 | Complete |
-| PRED-01 | Phase 32 | Pending |
-| PRED-02 | Phase 32 | Pending |
-| PRED-03 | Phase 32 | Pending |
+| PRED-01 | Phase 32 | Complete |
+| PRED-02 | Phase 32 | Complete |
+| PRED-03 | Phase 32 | Complete |
 | SEQ-01 | Phase 33 | Pending |
 | SEQ-02 | Phase 33 | Pending |
 | SEQ-03 | Phase 33 | Pending |
