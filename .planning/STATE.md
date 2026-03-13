@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Phase 33 context gathered
-last_updated: "2026-03-13T07:09:56.977Z"
+stopped_at: Completed 33-02-PLAN.md
+last_updated: "2026-03-13T08:02:08.647Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 13
   completed_phases: 6
-  total_plans: 18
-  completed_plans: 17
+  total_plans: 21
+  completed_plans: 19
 ---
 
 # Project State
@@ -59,6 +59,8 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | Phase 31 P02 | 5 | 2 tasks | 4 files |
 | Phase 32 P01 | 12 | 2 tasks | 8 files |
 | Phase 32 P02 | 14 minutes | 2 tasks | 5 files |
+| Phase 33 P01 | 11 | 3 tasks | 9 files |
+| Phase 33 P02 | 30 | 2 tasks | 50 files |
 
 ## Accumulated Context
 
@@ -95,6 +97,11 @@ Recent decisions affecting future work:
 - [Phase Phase 32]: createEnrichmentSession() remains synchronous — caller computes momentum before calling
 - [Phase Phase 32]: prediction.json merge added to index.ts — was in manifest but not imported
 - [Phase Phase 32]: Re-enrichment call sites use fallback path — momentum ordering set on initial wizard open
+- [Phase 33]: Ring buffer module extracted as ring-buffer.ts for testability — embedding-worker.ts imports and delegates
+- [Phase 33]: Simpler CLASSIFY_ONNX path: accepts optional binderId, worker concatenates sequence context internally — avoids separate GET_SEQUENCE_CONTEXT round-trip
+- [Phase 33]: binderId passed via GateContext.customFields to tier2-handler — avoids changing GateContext interface for execution context data
+- [Phase 33]: dynamo=True with fallback=True is stable LSTM ONNX export path — strict=False and strict=True both fail on dynamic axis, TorchScript legacy succeeds
+- [Phase 33]: 45% zero-padded context training augmentation ensures cold-start robustness via single 512-dim model set
 
 ### Roadmap Evolution
 
@@ -120,7 +127,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T07:09:56.973Z
-Stopped at: Phase 33 context gathered
-Resume file: .planning/phases/33-sequence-context-onnx-model/33-CONTEXT.md
+Last session: 2026-03-13T08:02:08.644Z
+Stopped at: Completed 33-02-PLAN.md
+Resume file: None
 Next action: `/gsd:plan-phase 30`
