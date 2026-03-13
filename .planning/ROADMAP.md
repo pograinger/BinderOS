@@ -82,7 +82,7 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 **Milestone Goal:** Apply HTM cortical organizing principles to the local ONNX agent stack — context gating for efficient activation, predictive enrichment that anticipates user needs, sequence learning across atom history, and a formalized binder-type specialization protocol that turns GTD into the first pluggable column set.
 
 - [x] **Phase 30: Schema + BinderTypeConfig Protocol** - Dexie v10 migration, BinderTypeConfig interface with GTD as first implementation, predicate registry scaffold (completed 2026-03-13)
-- [ ] **Phase 31: Context Gate Evaluator** - ActivationGate pre-dispatch filter, four predicate dimensions (route, time-of-day, binder type, atom history), gate audit logging
+- [x] **Phase 31: Context Gate Evaluator** - ActivationGate pre-dispatch filter, four predicate dimensions (route, time-of-day, binder type, atom history), gate audit logging (completed 2026-03-13)
 - [ ] **Phase 32: Predictive Enrichment Scorer** - Entity trajectory + cognitive signal delta scoring, predictionCache with TTL, cold-start guard, enrichment question reordering
 - [ ] **Phase 33: Sequence Context ONNX Model** - Embedding ring buffer, LSTM training pipeline, sequence context signal wired to T2 classifiers, harness ablation validation
 - [ ] **Phase 34: Harness SDK + Second Binder Type Validation** - Harness parameterized on BinderTypeConfig, non-GTD stub binder type exercised through full adversarial cycle
@@ -252,7 +252,7 @@ Plans:
 | 28. Relationship Inference + Cognitive Harness | v5.0 | 2/2 | Complete | 2026-03-11 |
 | 29. Entity Consumers + Trained Agent Validation | v5.0 | 4/5 | Complete | 2026-03-12 |
 | 30. Schema + BinderTypeConfig Protocol | v5.5 | 3/3 | Complete | 2026-03-13 |
-| 31. Context Gate Evaluator | 1/2 | In Progress|  | - |
+| 31. Context Gate Evaluator | 2/2 | Complete   | 2026-03-13 | - |
 | 32. Predictive Enrichment Scorer | v5.5 | 0/? | Not started | - |
 | 33. Sequence Context ONNX Model | v5.5 | 0/? | Not started | - |
 | 34. Harness SDK + Second Binder Type Validation | v5.5 | 0/? | Not started | - |

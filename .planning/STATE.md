@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Completed 31-01-PLAN.md
-last_updated: "2026-03-13T03:02:30.765Z"
+stopped_at: Completed 31-02-PLAN.md
+last_updated: "2026-03-13T03:13:53.837Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 9
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 16
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # Project State
@@ -56,6 +56,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | Phase 30 P03 | 8 | 2 tasks | 11 files |
 | Phase 30-schema-bindertypeconfig-protocol P02 | 25 | 2 tasks | 9 files |
 | Phase 31-context-gate-evaluator P01 | 9 | 2 tasks | 7 files |
+| Phase 31 P02 | 5 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,9 @@ Recent decisions affecting future work:
 - [Phase 31]: TieredRequest.context is required (not optional) — TypeScript enforces caller migration in Plan 02
 - [Phase 31]: isStale defaults false when lastEnrichedAt undefined — conservative, no re-enrichment without timestamp
 - [Phase 31]: Gate pre-filter: canActivate() before handler loop, blocked returns skip all handlers, gateResult on all responses
+- [Phase 31]: triageInbox() gateContext param is optional at function signature, builds required GateContext internally — backwards compat without leaking TieredRequest types into function signature
+- [Phase 31]: gateBlocked at classify-type level triggers silent continue in item loop, not onError — gate-blocking is intentional flow control
+- [Phase 31]: buildHarnessGateContext() uses fixed timeOfDay=10 — ablation results must be deterministic regardless of wall-clock time
 
 ### Pending Todos
 
@@ -102,7 +106,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T03:02:30.763Z
-Stopped at: Completed 31-01-PLAN.md
+Last session: 2026-03-13T03:13:53.834Z
+Stopped at: Completed 31-02-PLAN.md
 Resume file: None
 Next action: `/gsd:plan-phase 30`
