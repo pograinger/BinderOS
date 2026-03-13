@@ -79,13 +79,17 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 
 ### v5.5 Cortical Intelligence (In Progress)
 
-**Milestone Goal:** Apply HTM cortical organizing principles to the local ONNX agent stack — context gating for efficient activation, predictive enrichment that anticipates user needs, sequence learning across atom history, and a formalized binder-type specialization protocol that turns GTD into the first pluggable column set.
+**Milestone Goal:** Apply HTM cortical organizing principles to the local ONNX agent stack — context gating for efficient activation, predictive enrichment that anticipates user needs, sequence learning across atom history, a formalized binder-type specialization protocol that turns GTD into the first pluggable column set, canonical feature vectors as the structured representation layer, specialist consensus voting that yields emergent intelligence, and risk surfacing as the first user-visible payoff of the cognitive stack.
 
 - [x] **Phase 30: Schema + BinderTypeConfig Protocol** - Dexie v10 migration, BinderTypeConfig interface with GTD as first implementation, predicate registry scaffold (completed 2026-03-13)
 - [x] **Phase 31: Context Gate Evaluator** - ActivationGate pre-dispatch filter, four predicate dimensions (route, time-of-day, binder type, atom history), gate audit logging (completed 2026-03-13)
 - [x] **Phase 32: Predictive Enrichment Scorer** - Entity trajectory + cognitive signal delta scoring, predictionCache with TTL, cold-start guard, enrichment question reordering (completed 2026-03-13)
 - [ ] **Phase 33: Sequence Context ONNX Model** - Embedding ring buffer, LSTM training pipeline, sequence context signal wired to T2 classifiers, harness ablation validation
 - [ ] **Phase 34: Harness SDK + Second Binder Type Validation** - Harness parameterized on BinderTypeConfig, non-GTD stub binder type exercised through full adversarial cycle
+- [ ] **Phase 35: Canonical Feature Vectors** - Structured per-atom-type vectors from metadata + sidecar + entities, cached in atomIntelligence, BinderTypeConfig-driven dimensions
+- [ ] **Phase 36: Specialist Consensus Layer** - Train specialist risk models on non-overlapping vector slices, ONNX export, consensus voter, dispatchTiered wiring
+- [ ] **Phase 37: EII Diagnostic + Consensus Ablation** - Emergent Intelligence Index per binder, consensus vs specialist ablation proof, harness integration
+- [ ] **Phase 38: Risk Surface + Proactive Alerts** - Consensus risk scores surface high-risk atoms, risk badges with explanations, staleness prediction model
 
 ## Phase Details
 
@@ -208,7 +212,11 @@ Plans:
   2. The Python sequence training pipeline (`scripts/train/sequence/`) runs end-to-end producing a `sequence-context.onnx` file that validates successfully against `onnxruntime-node` before any browser deployment
   3. T2 classifiers receive a 512-dim input (384 MiniLM + 128 sequence context) without breaking existing classification for atoms in a binder with fewer than N prior embeddings (cold-start fallback to zero-padded context)
   4. Harness ablation report shows T2 classifier F1 with sequence context vs without across N=3, N=5, N=7 window sizes — production MLP classifiers are only replaced if ablation confirms improvement
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 33-01-PLAN.md — Ring buffer management, LSTM session, TieredFeatures extension, variable-dim classifier input
+- [ ] 33-02-PLAN.md — Python training pipeline: LSTM training, ONNX export, 512-dim classifier retraining
+- [ ] 33-03-PLAN.md — Ablation comparison across N=3,5,7 window sizes, production recommendation
 
 ### Phase 34: Harness SDK + Second Binder Type Validation
 **Goal**: The harness is parameterized on `BinderTypeConfig` so any binder type can run a full adversarial training cycle, and a non-GTD stub binder type exercises the complete pipeline end-to-end — proving the protocol is genuinely pluggable, not GTD-shaped
@@ -256,50 +264,66 @@ Plans:
 | 29. Entity Consumers + Trained Agent Validation | v5.0 | 4/5 | Complete | 2026-03-12 |
 | 30. Schema + BinderTypeConfig Protocol | v5.5 | 3/3 | Complete | 2026-03-13 |
 | 31. Context Gate Evaluator | v5.5 | 2/2 | Complete | 2026-03-13 |
-| 32. Predictive Enrichment Scorer | 2/2 | Complete   | 2026-03-13 | - |
-| 33. Sequence Context ONNX Model | v5.5 | 0/? | Not started | - |
+| 32. Predictive Enrichment Scorer | v5.5 | 2/2 | Complete | 2026-03-13 |
+| 33. Sequence Context ONNX Model | v5.5 | 0/3 | Not started | - |
 | 34. Harness SDK + Second Binder Type Validation | v5.5 | 0/? | Not started | - |
-| 35. Signal Consensus Layer | v5.5 | 0/? | Not started | - |
-| 36. Consensus-Wired Gate and Enrichment | v5.5 | 0/? | Not started | - |
-| 37. Consensus Ablation Harness | v5.5 | 0/? | Not started | - |
-| 38. Staleness Prediction Model | v5.5 | 0/? | Not started | - |
+| 35. Canonical Feature Vectors | v5.5 | 0/? | Not started | - |
+| 36. Specialist Consensus Layer | v5.5 | 0/? | Not started | - |
+| 37. EII Diagnostic + Consensus Ablation | v5.5 | 0/? | Not started | - |
+| 38. Risk Surface + Proactive Alerts | v5.5 | 0/? | Not started | - |
 
-### Phase 35: Signal Consensus Layer
-
-**Goal:** Composite scoring from 10 cognitive ONNX models using Thousand Brains voting — consensus engine evaluates agreement across cognitive signals, produces composite scores, surfaces insights only when multiple models agree
-**Requirements**: TBD
-**Depends on:** Phase 34
-**Plans:** 2/2 plans complete
-
+### Phase 35: Canonical Feature Vectors
+**Goal**: Define and compute structured, sparse, typed feature vectors per atom type (task, person, calendar) from sidecar + metadata + entity data — replacing raw embeddings as the primary input for specialist ONNX models. Vectors are cached in atomIntelligence and invalidated on atom mutation.
+**Depends on**: Phase 34 (BinderTypeConfig protocol proven pluggable)
+**Requirements**: CFVEC-01, CFVEC-02, CFVEC-03, CFVEC-04
+**Success Criteria** (what must be TRUE):
+  1. `computeTaskVector(atom, sidecar, entities)` returns a typed Float32Array from atom metadata (age, staleness, deadline, context, energy, dependencies) — no model inference required
+  2. `computePersonVector(entity, relations)` returns a typed vector from entity registry data (relationship type, responsiveness, reliability, collaboration frequency)
+  3. `computeCalendarVector(calendarAtom)` returns a typed vector from derived calendar atom fields (time pressure, slack, energy cost, overrun risk)
+  4. Vectors are stored in `atomIntelligence.canonicalVector` as a cached snapshot, invalidated on atom save/triage/enrichment
+  5. Vector dimension schemas are defined in `BinderTypeConfig` so non-GTD binder types can define their own canonical dimensions
+**Plans**: TBD
 Plans:
 - [ ] TBD (run /gsd:plan-phase 35 to break down)
 
-### Phase 36: Consensus-Wired Gate and Enrichment
-
-**Goal:** Wire consensus composite scores into context gate predicates and enrichment question selection — combined signal influences real pipeline behavior (gate blocks low-consensus items, enrichment prioritizes high-consensus gaps)
-**Requirements**: TBD
-**Depends on:** Phase 35
-**Plans:** 0 plans
-
+### Phase 36: Specialist Consensus Layer
+**Goal**: Train specialist risk models on non-overlapping slices of canonical feature vectors, deploy as ONNX, and wire a consensus voter that combines their outputs — proving that differentiated specialists in consensus outperform any single model, as validated by the EII experiment (`scripts/eii-experiment.py`)
+**Depends on**: Phase 35 (canonical vectors must exist as input)
+**Requirements**: CONS-01, CONS-02, CONS-03, CONS-04
+**Success Criteria** (what must be TRUE):
+  1. 4+ specialist ONNX models trained on different canonical vector slices (time-pressure, dependency, staleness, energy-context) — each under 20KB
+  2. `computeConsensus(specialistOutputs)` returns weighted-average probability + agreement score + majority vote
+  3. Consensus result stored in `atomIntelligence.consensusRisk` with per-specialist contributions for explainability
+  4. `dispatchTiered()` calls consensus after specialist handlers fire — single composite risk score available to all downstream consumers
+  5. Cold-start guard: consensus not computed until binder has 15+ atoms with canonical vectors
+**Plans**: TBD
 Plans:
 - [ ] TBD (run /gsd:plan-phase 36 to break down)
 
-### Phase 37: Consensus Ablation Harness
-
-**Goal:** Extend ablation engine to measure consensus vs. individual signal quality — prove empirically that ensemble voting outperforms any single cognitive model on triage accuracy, enrichment relevance, and false-positive reduction
-**Requirements**: TBD
-**Depends on:** Phase 36
-**Plans:** 0 plans
-
+### Phase 37: EII Diagnostic + Consensus Ablation
+**Goal**: Compute the Emergent Intelligence Index per binder as a live diagnostic, and prove via ablation that consensus outperforms individual specialists — the EII curve must show monotonic growth with corpus size, matching the synthetic experiment
+**Depends on**: Phase 36 (consensus layer must exist to measure)
+**Requirements**: EII-01, EII-02, EII-03, EII-04
+**Success Criteria** (what must be TRUE):
+  1. `computeEII(binderId)` returns `{ coherence, stability, impact, eii }` from consensus AUC, pairwise agreement, and binder-level recall of surfaced high-risk atoms
+  2. EII is computed after each harness adversarial cycle and stored in the harness report alongside per-persona breakdowns
+  3. Ablation engine measures consensus vs each specialist independently — ablation report includes a `consensus_lift` metric
+  4. EII curve across corpus sizes (10%, 25%, 50%, 75%, 100%) shows positive slope — if not, the report flags which component is flat and why
+  5. Harness personas with 50+ atoms achieve EII > 0.80
+**Plans**: TBD
 Plans:
 - [ ] TBD (run /gsd:plan-phase 37 to break down)
 
-### Phase 38: Staleness Prediction Model
-
-**Goal:** First truly predictive ONNX model — predict when atoms will go stale based on temporal patterns, review cadence, activity signals, and cognitive consensus. Only built after ablation proves consensus value.
-**Requirements**: TBD
-**Depends on:** Phase 37
-**Plans:** 0 plans
-
+### Phase 38: Risk Surface + Proactive Alerts
+**Goal**: Consensus risk scores surface high-risk atoms proactively — the first consumer of the consensus layer that changes user-visible behavior. Tasks that are overdue + blocked + energy-mismatched float to the top without the user asking.
+**Depends on**: Phase 37 (consensus proven via ablation before surfacing to users)
+**Requirements**: RISK-01, RISK-02, RISK-03, RISK-04
+**Success Criteria** (what must be TRUE):
+  1. Inbox/review views sort by consensus risk score when available, falling back to staleness when not
+  2. Tasks above the 0.7 risk threshold show a risk indicator badge with a one-line explanation ("overdue + blocked by slow responder")
+  3. Risk explanations are derived from per-specialist contributions — the system says which risk dimension is driving the score
+  4. Staleness prediction uses temporal patterns from canonical vectors (age, days_since_touched, review cadence) — first predictive model that forecasts when an atom will go stale
+  5. Risk scores decay and refresh: re-computed on triage, enrichment, or entity update — never stale for more than 24h on active binders
+**Plans**: TBD
 Plans:
 - [ ] TBD (run /gsd:plan-phase 38 to break down)
