@@ -134,6 +134,22 @@ export const AtomIntelligenceSchema = z.object({
       schemaVersion: z.number(),
     })
     .optional(),
+  // Phase 36: specialist consensus risk snapshot — non-indexed, no migration needed
+  consensusRisk: z
+    .object({
+      weightedProbability: z.number(),
+      majorityVote: z.boolean(),
+      agreementScore: z.number(),
+      specialistContributions: z.array(
+        z.object({
+          name: z.string(),
+          probability: z.number(),
+          weight: z.number(),
+        }),
+      ),
+      computedAt: z.number(),
+    })
+    .optional(),
 });
 export type AtomIntelligence = z.infer<typeof AtomIntelligenceSchema>;
 

@@ -8,10 +8,13 @@
  *
  * Phase 26: SIDE-01, ENTR-01, ENTR-02
  * Phase 32: writePredictionMomentum, writeEntityMomentum fire-and-forget helpers
+ * Phase 36: writeConsensusRisk fire-and-forget helper
  */
 
 import { db } from './db';
 import type { AtomIntelligence, EnrichmentRecord, CachedCognitiveSignal, EntityMention } from '../types/intelligence';
+// Import ConsensusResult directly from types module (not barrel) to avoid circular dep risk
+import type { ConsensusResult } from '../ai/consensus/types';
 
 /**
  * Create an empty intelligence sidecar row for an atom.
@@ -170,6 +173,33 @@ export function writeEntityMomentum(
       await db.atomIntelligence.put(intel);
     } catch (err) {
       console.warn('[atom-intelligence] writeEntityMomentum failed (non-fatal):', err);
+    }
+  })();
+}
+
+// ---------------------------------------------------------------------------
+// Phase 36: Consensus risk snapshot helper (fire-and-forget)
+// ---------------------------------------------------------------------------
+
+/**
+ * Snapshot-write specialist consensus risk result to the intelligence sidecar.
+ *
+ * Fire-and-forget: non-blocking, non-fatal. Failures are logged to console.warn.
+ * Used after computeConsensus() to persist the result for harness analysis and
+ * UI risk badge consumers.
+ *
+ * Phase 36: CONS-03
+ */
+export function writeConsensusRisk(atomId: string, result: ConsensusResult): void {
+  (async () => {
+    try {
+      const intel = await getOrCreateIntelligence(atomId);
+      intel.consensusRisk = result;
+      intel.version++;
+      intel.lastUpdated = Date.now();
+      await db.atomIntelligence.put(intel);
+    } catch (err) {
+      console.warn('[atom-intelligence] writeConsensusRisk failed (non-fatal):', err);
     }
   })();
 }
