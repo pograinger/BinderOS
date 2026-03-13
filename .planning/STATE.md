@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Phase 35 context gathered
-last_updated: "2026-03-13T17:57:10.026Z"
+stopped_at: Completed 35-01-PLAN.md
+last_updated: "2026-03-13T18:29:23.607Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 13
   completed_phases: 7
-  total_plans: 21
-  completed_plans: 20
+  total_plans: 23
+  completed_plans: 21
 ---
 
 # Project State
@@ -62,6 +62,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | Phase 33 P01 | 11 | 3 tasks | 9 files |
 | Phase 33 P02 | 30 | 2 tasks | 50 files |
 | Phase 33-sequence-context-onnx-model P03 | 20 | 2 tasks | 26 files |
+| Phase 35 P01 | 11 | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -105,6 +106,9 @@ Recent decisions affecting future work:
 - [Phase 33]: 45% zero-padded context training augmentation ensures cold-start robustness via single 512-dim model set
 - [Phase 33]: Ablation result: KEEP 384-dim classifiers — mean F1 delta -0.0020, sequence context does not improve aggregate T2 accuracy
 - [Phase 33]: Biggest sequence losers: collaboration-type (-0.0145) and time-estimate (-0.0202) — these rely on per-item semantics not sequence order
+- [Phase 35]: vectors.json is authoritative dimension source — constants derived via import, never hardcoded
+- [Phase 35]: 'waiting' status maps to status_open slot — waiting is an active state, not dropped
+- [Phase 35]: canonicalVector added to AtomIntelligenceSchema as optional field — no Dexie migration needed (non-indexed)
 
 ### Roadmap Evolution
 
@@ -130,7 +134,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T17:57:10.011Z
-Stopped at: Phase 35 context gathered
-Resume file: .planning/phases/35-signal-consensus-layer/35-CONTEXT.md
+Last session: 2026-03-13T18:29:23.604Z
+Stopped at: Completed 35-01-PLAN.md
+Resume file: None
 Next action: `/gsd:plan-phase 30`

@@ -40,10 +40,10 @@ Requirements for v5.5 Cortical Intelligence milestone. Each maps to roadmap phas
 
 ### Canonical Feature Vectors
 
-- [ ] **CFVEC-01**: `computeTaskVector()` derives a typed Float32Array from atom metadata (age, staleness, deadline, context, energy, dependencies) and sidecar data — pure function, no model inference, deterministic output for same input
-- [ ] **CFVEC-02**: `computePersonVector()` derives a typed vector from entity registry data (relationship type, responsiveness, reliability, collaboration frequency) — sparse one-hot + normalized floats
-- [ ] **CFVEC-03**: `computeCalendarVector()` derives a typed vector from derived calendar atom fields (time pressure, slack windows, energy cost, overrun risk) — same sparse canonical format
-- [ ] **CFVEC-04**: Canonical vectors cached in `atomIntelligence.canonicalVector` as Float32Array snapshots, invalidated on atom save/triage/enrichment — vector dimension schemas defined per `BinderTypeConfig`
+- [x] **CFVEC-01**: `computeTaskVector()` derives a typed Float32Array from atom metadata (age, staleness, deadline, context, energy, dependencies) and sidecar data — pure function, no model inference, deterministic output for same input
+- [x] **CFVEC-02**: `computePersonVector()` derives a typed vector from entity registry data (relationship type, responsiveness, reliability, collaboration frequency) — sparse one-hot + normalized floats
+- [x] **CFVEC-03**: `computeCalendarVector()` derives a typed vector from derived calendar atom fields (time pressure, slack windows, energy cost, overrun risk) — same sparse canonical format
+- [x] **CFVEC-04**: Canonical vectors cached in `atomIntelligence.canonicalVector` as Float32Array snapshots, invalidated on atom save/triage/enrichment — vector dimension schemas defined per `BinderTypeConfig`
 
 ### Specialist Consensus
 
@@ -117,10 +117,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEQ-04 | Phase 33 | Complete |
 | BTYPE-02 | Phase 34 | Pending |
 | BTYPE-03 | Phase 34 | Pending |
-| CFVEC-01 | Phase 35 | Pending |
-| CFVEC-02 | Phase 35 | Pending |
-| CFVEC-03 | Phase 35 | Pending |
-| CFVEC-04 | Phase 35 | Pending |
+| CFVEC-01 | Phase 35 | Complete |
+| CFVEC-02 | Phase 35 | Complete |
+| CFVEC-03 | Phase 35 | Complete |
+| CFVEC-04 | Phase 35 | Complete |
 | CONS-01 | Phase 36 | Pending |
 | CONS-02 | Phase 36 | Pending |
 | CONS-03 | Phase 36 | Pending |

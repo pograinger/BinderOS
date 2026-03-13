@@ -267,7 +267,7 @@ Plans:
 | 32. Predictive Enrichment Scorer | v5.5 | 2/2 | Complete | 2026-03-13 |
 | 33. Sequence Context ONNX Model | 3/3 | Complete    | 2026-03-13 | - |
 | 34. Harness SDK + Second Binder Type Validation | v5.5 | 0/? | Not started | - |
-| 35. Canonical Feature Vectors | v5.5 | 0/2 | Not started | - |
+| 35. Canonical Feature Vectors | 1/2 | In Progress|  | - |
 | 36. Specialist Consensus Layer | v5.5 | 0/? | Not started | - |
 | 37. EII Diagnostic + Consensus Ablation | v5.5 | 0/? | Not started | - |
 | 38. Risk Surface + Proactive Alerts | v5.5 | 0/? | Not started | - |
@@ -284,8 +284,8 @@ Plans:
   5. Vector dimension schemas are defined in `BinderTypeConfig` so non-GTD binder types can define their own canonical dimensions
 **Plans**: 2 plans
 Plans:
-- [ ] 35-01-PLAN.md — Types, schema extensions, vectors.json config, three compute functions (task/person/calendar) with tests
-- [ ] 35-02-PLAN.md — Vector cache module, dirty-check, store.ts invalidation wiring at save/triage/enrichment
+- [ ] 35-01-PLAN.md ï¿½ Types, schema extensions, vectors.json config, three compute functions (task/person/calendar) with tests
+- [ ] 35-02-PLAN.md ï¿½ Vector cache module, dirty-check, store.ts invalidation wiring at save/triage/enrichment
 
 ### Phase 36: Specialist Consensus Layer
 **Goal**: Train specialist risk models on non-overlapping slices of canonical feature vectors, deploy as ONNX, and wire a consensus voter that combines their outputs â€” proving that differentiated specialists in consensus outperform any single model, as validated by the EII experiment (`scripts/eii-experiment.py`)
