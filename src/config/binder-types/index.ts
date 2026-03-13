@@ -47,6 +47,7 @@ import enrichment from './gtd-personal/enrichment.json';
 import relationships from './gtd-personal/relationships.json';
 import gating from './gtd-personal/gating.json';
 import entities from './gtd-personal/entities.json';
+import prediction from './gtd-personal/prediction.json';
 
 // ---------------------------------------------------------------------------
 // Merge and validate at module init
@@ -92,6 +93,12 @@ function mergeGtdPersonalConfig(): ExpandedBinderTypeConfig {
 
     // v5.5 Maturity thresholds
     maturityThresholds: entities.maturityThresholds,
+
+    // Phase 32: prediction config (momentum scorer)
+    predictionConfig: prediction.predictionConfig,
+    signalCategoryMap: prediction.signalCategoryMap,
+    entityCategoryMap: prediction.entityCategoryMap,
+    entityTypePriorityWeights: prediction.entityTypePriorityWeights,
   };
 
   const result = BinderTypeConfigSchema.safeParse(merged);

@@ -69,6 +69,10 @@ import { suggestContextFromEntities } from '../../entity/entity-context-suggesti
 import type { EntityContextCandidate } from '../../entity/entity-context-suggestions';
 import { getBinderConfig } from '../../config/binder-types/index';
 import { db } from '../../storage/db';
+// Phase 32: Predictive enrichment momentum
+import { computeMomentumVector, computeEntityTrajectory, invalidateCache } from '../../ai/enrichment/momentum-builder';
+import type { MomentumVector } from '../../ai/enrichment/predictive-scorer';
+import { writePredictionMomentum, writeEntityMomentum } from '../../storage/atom-intelligence';
 import { logClarification } from '../../storage/classification-log';
 import type { BriefingResult } from '../../ai/analysis';
 import type { ReviewSession } from '../../storage/review-session';
@@ -748,13 +752,64 @@ export async function startEnrichment(inboxItemId: string): Promise<void> {
 
   const intel = await getIntelligence(inboxItemId);
   const sidecarRecords = intel?.enrichment ?? [];
+
+  // Phase 32: Compute predictive momentum for enrichment ordering
+  const binderConfig = getBinderConfig();
+  const predictionConfig = binderConfig.predictionConfig;
+  let momentum: MomentumVector | undefined;
+  let entityScores: Record<string, number> | undefined;
+
+  if (predictionConfig) {
+    const binderId = state.binders[0]?.id;
+    if (binderId) {
+      const result = await computeMomentumVector(binderId, predictionConfig);
+      momentum = result.momentum;
+
+      // Compute entity trajectory from current atom's entity mentions
+      const atomEntityIds = (intel?.entityMentions ?? []).map(m => m.entityId);
+      entityScores = await computeEntityTrajectory(binderId, atomEntityIds, predictionConfig);
+
+      // Fire-and-forget: snapshot momentum to sidecar for harness analysis
+      writePredictionMomentum(inboxItemId, {
+        signalFrequency: momentum.signalFrequency,
+        signalStrength: momentum.signalStrength,
+        categoryOrdering: [],
+        coldStart: momentum.coldStart,
+        computedAt: Date.now(),
+      });
+      if (Object.keys(entityScores).length > 0) {
+        writeEntityMomentum(inboxItemId, {
+          scores: entityScores,
+          computedAt: Date.now(),
+        });
+      }
+    }
+  }
+
+  // Extract cached cognitive signals from intelligence sidecar
+  const cognitiveSignals = (intel?.cognitiveSignals?.length ?? 0) > 0
+    ? {
+        signals: Object.fromEntries(
+          intel!.cognitiveSignals.map(s => [s.modelId, { label: s.label, confidence: s.confidence }])
+        ),
+        composites: [],
+        totalMs: 0,
+        protocolVersion: 1 as const,
+      }
+    : null;
+
   const session = createEnrichmentSession({
     inboxItemId,
     content: item.content,
     atomType: item.type,
     sidecarEnrichment: sidecarRecords,
     depthMap: item.enrichmentDepth ?? {},
-    cognitiveSignals: null, // Future: pass cached cognitive signals when available
+    cognitiveSignals,
+    momentum,
+    entityScores,
+    signalCategoryMap: binderConfig.signalCategoryMap,
+    entityCategoryMap: binderConfig.entityCategoryMap,
+    entityTypePriorityWeights: binderConfig.entityTypePriorityWeights,
   });
 
   // Populate prior answers signal from sidecar for UI display
@@ -989,6 +1044,7 @@ export async function handleAskMore(category: MissingInfoCategory): Promise<void
 
   if (newDepth <= TEMPLATE_TIER_COUNT) {
     // Depths 1-2: use template tiers (sync, zero inference cost)
+    // Re-enrichment: momentum ordering was set on initial wizard open; no re-computation needed
     const newSession = createEnrichmentSession({
       inboxItemId: session.inboxItemId,
       content: item.content,
@@ -1009,6 +1065,7 @@ export async function handleAskMore(category: MissingInfoCategory): Promise<void
     const worker = getEmbeddingWorker();
     if (!worker) {
       // No worker available — fall back to template cycling
+      // Re-enrichment: momentum ordering was set on initial wizard open; no re-computation needed
       const newSession = createEnrichmentSession({
         inboxItemId: session.inboxItemId,
         content: item.content,
@@ -1073,6 +1130,7 @@ async function handleAskMoreFallback(
   const sidecarEnrichment = intel?.enrichment ?? [];
 
   if (newDepth <= TEMPLATE_TIER_COUNT) {
+    // Re-enrichment: momentum ordering was set on initial wizard open; no re-computation needed
     const newSession = createEnrichmentSession({
       inboxItemId: session.inboxItemId,
       content: item.content,
@@ -1092,6 +1150,7 @@ async function handleAskMoreFallback(
     // Depth 3+: semantic selection via MiniLM embeddings
     const worker = getEmbeddingWorker();
     if (!worker) {
+      // Re-enrichment: momentum ordering was set on initial wizard open; no re-computation needed
       const newSession = createEnrichmentSession({
         inboxItemId: session.inboxItemId,
         content: item.content,
@@ -1373,6 +1432,11 @@ export async function startTriageInbox(): Promise<void> {
       { route: window.location.pathname }, // Phase 31: pass route for gate evaluation
     );
     setTriageStatus('complete');
+    // Phase 32: Invalidate prediction cache so next enrichment session gets fresh momentum
+    const triageCompleteBinder = state.binders[0]?.id;
+    if (triageCompleteBinder) {
+      invalidateCache(triageCompleteBinder, 'triage-complete');
+    }
     setOrbState('idle');
   } catch (err) {
     if (err instanceof DOMException && err.name === 'AbortError') {
