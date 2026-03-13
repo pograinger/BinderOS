@@ -83,7 +83,7 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 
 - [x] **Phase 30: Schema + BinderTypeConfig Protocol** - Dexie v10 migration, BinderTypeConfig interface with GTD as first implementation, predicate registry scaffold (completed 2026-03-13)
 - [x] **Phase 31: Context Gate Evaluator** - ActivationGate pre-dispatch filter, four predicate dimensions (route, time-of-day, binder type, atom history), gate audit logging (completed 2026-03-13)
-- [ ] **Phase 32: Predictive Enrichment Scorer** - Entity trajectory + cognitive signal delta scoring, predictionCache with TTL, cold-start guard, enrichment question reordering
+- [x] **Phase 32: Predictive Enrichment Scorer** - Entity trajectory + cognitive signal delta scoring, predictionCache with TTL, cold-start guard, enrichment question reordering (completed 2026-03-13)
 - [ ] **Phase 33: Sequence Context ONNX Model** - Embedding ring buffer, LSTM training pipeline, sequence context signal wired to T2 classifiers, harness ablation validation
 - [ ] **Phase 34: Harness SDK + Second Binder Type Validation** - Harness parameterized on BinderTypeConfig, non-GTD stub binder type exercised through full adversarial cycle
 
@@ -256,7 +256,7 @@ Plans:
 | 29. Entity Consumers + Trained Agent Validation | v5.0 | 4/5 | Complete | 2026-03-12 |
 | 30. Schema + BinderTypeConfig Protocol | v5.5 | 3/3 | Complete | 2026-03-13 |
 | 31. Context Gate Evaluator | v5.5 | 2/2 | Complete | 2026-03-13 |
-| 32. Predictive Enrichment Scorer | 1/2 | In Progress|  | - |
+| 32. Predictive Enrichment Scorer | 2/2 | Complete   | 2026-03-13 | - |
 | 33. Sequence Context ONNX Model | v5.5 | 0/? | Not started | - |
 | 34. Harness SDK + Second Binder Type Validation | v5.5 | 0/? | Not started | - |
 | 35. Signal Consensus Layer | v5.5 | 0/? | Not started | - |
@@ -269,7 +269,7 @@ Plans:
 **Goal:** Composite scoring from 10 cognitive ONNX models using Thousand Brains voting — consensus engine evaluates agreement across cognitive signals, produces composite scores, surfaces insights only when multiple models agree
 **Requirements**: TBD
 **Depends on:** Phase 34
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 35 to break down)
