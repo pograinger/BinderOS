@@ -7,6 +7,7 @@
  * Pure module: imports db only.
  *
  * Phase 26: SIDE-01, ENTR-01, ENTR-02
+ * Phase 32: writePredictionMomentum, writeEntityMomentum fire-and-forget helpers
  */
 
 import { db } from './db';
@@ -108,4 +109,67 @@ export async function writeEntityMentions(
   intel.version++;
   intel.lastUpdated = Date.now();
   await db.atomIntelligence.put(intel);
+}
+
+// ---------------------------------------------------------------------------
+// Phase 32: Prediction momentum snapshot helpers (fire-and-forget)
+// ---------------------------------------------------------------------------
+
+/**
+ * Snapshot-write prediction momentum to the intelligence sidecar.
+ *
+ * Fire-and-forget: non-blocking, non-fatal. Failures are logged to console.warn.
+ * Used by the store caller after computing momentum to preserve state for harness analysis.
+ *
+ * Phase 32: PRED-02
+ */
+export function writePredictionMomentum(
+  atomId: string,
+  snapshot: {
+    signalFrequency: Record<string, number>;
+    signalStrength: Record<string, number>;
+    categoryOrdering: Array<{ category: string; score: number; explanation: string }>;
+    coldStart: boolean;
+    computedAt: number;
+  },
+): void {
+  (async () => {
+    try {
+      const intel = await getOrCreateIntelligence(atomId);
+      intel.predictionMomentum = snapshot;
+      intel.version++;
+      intel.lastUpdated = Date.now();
+      await db.atomIntelligence.put(intel);
+    } catch (err) {
+      console.warn('[atom-intelligence] writePredictionMomentum failed (non-fatal):', err);
+    }
+  })();
+}
+
+/**
+ * Snapshot-write entity momentum scores to the intelligence sidecar.
+ *
+ * Fire-and-forget: non-blocking, non-fatal. Failures are logged to console.warn.
+ * Used by the store caller after computing entity trajectory to preserve state for harness analysis.
+ *
+ * Phase 32: PRED-02
+ */
+export function writeEntityMomentum(
+  atomId: string,
+  snapshot: {
+    scores: Record<string, number>;
+    computedAt: number;
+  },
+): void {
+  (async () => {
+    try {
+      const intel = await getOrCreateIntelligence(atomId);
+      intel.entityMomentum = snapshot;
+      intel.version++;
+      intel.lastUpdated = Date.now();
+      await db.atomIntelligence.put(intel);
+    } catch (err) {
+      console.warn('[atom-intelligence] writeEntityMomentum failed (non-fatal):', err);
+    }
+  })();
 }

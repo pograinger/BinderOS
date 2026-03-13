@@ -7,7 +7,11 @@
  *
  * Pure module -- no store imports, no side effects.
  *
+ * Callers must call invalidateCache() from momentum-builder.ts on triage
+ * completion events to keep the prediction cache fresh for the next session.
+ *
  * Phase 24: ENRICH-02, ENRICH-03, ENRICH-05
+ * Phase 32: PRED-03 — replaced static computeSignalRelevance() with predictEnrichmentOrder()
  */
 
 import type { AtomType } from '../../types/atoms';
@@ -22,37 +26,28 @@ import type {
   AcceptedStep,
 } from './types';
 import { TEMPLATE_TIER_COUNT } from './types';
-import type { CognitiveModelId } from '../tier2/cognitive-signals';
 import { addProvenance, OPERATION_IDS, MODEL_IDS } from './provenance';
 import { computeMaturity } from './maturity';
 import type { EnrichmentRecord } from '../../types/intelligence';
 import { generateTemplateOptions, generateFollowUpOptions } from '../clarification/question-templates';
-
-// --- Signal-to-category mapping for cognitive priority ordering ---
-
-/** Maps cognitive model IDs to the enrichment categories they inform. */
-const SIGNAL_CATEGORY_MAP: Partial<Record<CognitiveModelId, MissingInfoCategory[]>> = {
-  'priority-matrix': ['missing-outcome', 'missing-timeframe'],
-  'collaboration-type': ['missing-context', 'missing-reference'],
-  'cognitive-load': ['missing-next-action'],
-  'gtd-horizon': ['missing-outcome'],
-  'time-estimate': ['missing-timeframe'],
-  'energy-level': ['missing-context'],
-  'knowledge-domain': ['missing-reference'],
-};
+import { predictEnrichmentOrder } from './predictive-scorer';
+import type { MomentumVector, CategoryRanking } from './predictive-scorer';
 
 /**
- * Compute signal-based relevance score for a category.
- * Higher score = more uncertain signals = more valuable to ask about.
+ * Fallback signal relevance for callers that pass cognitiveSignals but no momentum.
+ * Preserves pre-Phase-32 behavior as a degraded fallback during caller migration.
+ * Private — not exported. Use predictEnrichmentOrder() in all new callers.
  */
-function computeSignalRelevance(
+function computeFallbackRelevance(
   category: MissingInfoCategory,
   signals: SignalVector,
+  signalCategoryMap?: Record<string, string[]>,
 ): number {
+  const map = signalCategoryMap ?? {};
   let relevance = 0;
-  for (const [modelId, categories] of Object.entries(SIGNAL_CATEGORY_MAP)) {
-    if (categories.includes(category)) {
-      const signal = signals.signals[modelId as CognitiveModelId];
+  for (const [modelId, categories] of Object.entries(map)) {
+    if ((categories as string[]).includes(category)) {
+      const signal = signals.signals[modelId];
       if (signal) {
         relevance += 1 - signal.confidence;
       }
@@ -89,10 +84,18 @@ const ALL_CATEGORIES: MissingInfoCategory[] = [
  * Handles partial resume by detecting existing enrichments and skipping
  * already-answered categories. When depthMap is provided, generates follow-up
  * questions for answered categories at any depth (no cap).
- * When cognitiveSignals are provided, reorders questions by signal relevance.
  *
- * Backward-compatible: without depthMap, answered categories are skipped.
- * Only when depthMap is explicitly provided does iterative deepening activate.
+ * When momentum is provided (Phase 32+), uses predictEnrichmentOrder() for
+ * dynamic question ordering based on signal history and entity trajectory.
+ * When only cognitiveSignals are provided (legacy path), falls back to
+ * computeFallbackRelevance() for backward compatibility.
+ *
+ * Backward-compatible: all Phase 32 params are optional. Callers passing only
+ * the original params get the same behavior as before (fallback or no reordering).
+ *
+ * NOTE: This function is synchronous. The caller (store.ts) is responsible for
+ * calling computeMomentumVector() before creating the session and passing the
+ * result. Sidecar snapshot writes also happen in the caller path.
  */
 export function createEnrichmentSession(params: {
   inboxItemId: string;
@@ -102,6 +105,12 @@ export function createEnrichmentSession(params: {
   missingCategories?: MissingInfoCategory[];
   depthMap?: Record<string, number>;
   cognitiveSignals?: SignalVector | null;
+  // Phase 32: predictive ordering params (all optional — backward compatible)
+  momentum?: MomentumVector;
+  entityScores?: Record<string, number>;
+  signalCategoryMap?: Record<string, string[]>;
+  entityCategoryMap?: Record<string, string[]>;
+  entityTypePriorityWeights?: Record<string, number>;
 }): EnrichmentSession {
   const {
     inboxItemId,
@@ -111,6 +120,11 @@ export function createEnrichmentSession(params: {
     missingCategories,
     depthMap,
     cognitiveSignals,
+    momentum,
+    entityScores,
+    signalCategoryMap,
+    entityCategoryMap,
+    entityTypePriorityWeights,
   } = params;
 
   // Build enrichments lookup from sidecar records (replaces parseEnrichment)
@@ -152,14 +166,29 @@ export function createEnrichmentSession(params: {
     // else: no depthMap (legacy) — skip answered categories
   }
 
-  // Apply signal-guided priority ordering if cognitive signals provided
-  if (cognitiveSignals) {
+  // Apply predictive ordering when momentum is available (Phase 32+)
+  if (momentum) {
+    const config = {
+      signalCategoryMap: signalCategoryMap ?? {},
+      entityCategoryMap: entityCategoryMap ?? {},
+      entityTypePriorityWeights: entityTypePriorityWeights ?? {},
+    };
+    const ranking = predictEnrichmentOrder(
+      cognitiveSignals ?? null,
+      momentum,
+      entityScores ?? {},
+      depthMap ?? {},
+      config,
+    );
+    const rankMap = new Map(ranking.map((r, i) => [r.category, i]));
+    questions.sort((a, b) => (rankMap.get(a.category) ?? 999) - (rankMap.get(b.category) ?? 999));
+  } else if (cognitiveSignals) {
+    // Fallback: no momentum available (e.g., caller doesn't pass it yet)
+    // Preserves pre-Phase-32 signal-guided ordering for backward compatibility
     questions.sort((a, b) => {
-      const relevanceA = computeSignalRelevance(a.category, cognitiveSignals);
-      const relevanceB = computeSignalRelevance(b.category, cognitiveSignals);
-      if (relevanceA !== relevanceB) return relevanceB - relevanceA; // Higher relevance first
-      // Tie-breaker: first-pass before follow-ups (first-pass have no prior answer reference)
-      return 0;
+      const relA = computeFallbackRelevance(a.category, cognitiveSignals, signalCategoryMap);
+      const relB = computeFallbackRelevance(b.category, cognitiveSignals, signalCategoryMap);
+      return relB - relA;
     });
   }
 

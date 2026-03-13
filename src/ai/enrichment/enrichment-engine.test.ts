@@ -17,6 +17,19 @@ import type { ClarificationAnswer, MissingInfoCategory, DecomposedStep, SignalVe
 import { TEMPLATE_TIER_COUNT } from './types';
 import type { CognitiveSignal } from '../tier2/cognitive-signals';
 import { OPERATION_IDS, MODEL_IDS } from './provenance';
+import type { MomentumVector } from './predictive-scorer';
+
+// --- Signal category map matching the former hardcoded SIGNAL_CATEGORY_MAP ---
+// Used in fallback path tests (cognitiveSignals without momentum)
+const TEST_SIGNAL_CATEGORY_MAP: Record<string, string[]> = {
+  'priority-matrix': ['missing-outcome', 'missing-timeframe'],
+  'collaboration-type': ['missing-context', 'missing-reference'],
+  'cognitive-load': ['missing-next-action'],
+  'gtd-horizon': ['missing-outcome'],
+  'time-estimate': ['missing-timeframe'],
+  'energy-level': ['missing-context'],
+  'knowledge-domain': ['missing-reference'],
+};
 
 // --- Helpers ---
 
@@ -614,7 +627,7 @@ describe('createEnrichmentSession (iterative deepening)', () => {
     expect(session.cognitiveSignals).toEqual(signals);
   });
 
-  it('Test 7: signal-guided reordering puts low-confidence relevant categories first', () => {
+  it('Test 7: signal-guided reordering puts low-confidence relevant categories first (fallback path)', () => {
     // priority-matrix maps to missing-outcome, missing-timeframe
     // cognitive-load maps to missing-next-action
     // Make priority-matrix LOW confidence (0.3) -> high relevance for outcome/timeframe
@@ -629,11 +642,13 @@ describe('createEnrichmentSession (iterative deepening)', () => {
       protocolVersion: 1,
     };
 
+    // Pass signalCategoryMap so fallback path can compute relevance
     const session = createEnrichmentSession({
       inboxItemId: 'item-deep-7',
       content: 'Test',
       missingCategories: ['missing-outcome', 'missing-next-action', 'missing-timeframe'],
       cognitiveSignals: signals,
+      signalCategoryMap: TEST_SIGNAL_CATEGORY_MAP,
     });
 
     // outcome and timeframe should come before next-action
@@ -661,6 +676,123 @@ describe('createEnrichmentSession (iterative deepening)', () => {
       'missing-context',
       'missing-reference',
     ]);
+  });
+});
+
+// --- Phase 32: Predictive scorer wiring tests ---
+
+describe('createEnrichmentSession (Phase 32 predictive scorer)', () => {
+  const warmMomentum: MomentumVector = {
+    signalFrequency: {
+      'priority-matrix': 0.8,
+      'cognitive-load': 0.2,
+      'time-estimate': 0.7,
+    },
+    signalStrength: {
+      'priority-matrix': 0.9,
+      'cognitive-load': 0.1,
+      'time-estimate': 0.8,
+    },
+    entityScores: {},
+    coldStart: false,
+    atomCount: 10,
+  };
+
+  const scorerSignalMap: Record<string, string[]> = {
+    'priority-matrix': ['missing-outcome', 'missing-timeframe'],
+    'cognitive-load': ['missing-next-action'],
+    'time-estimate': ['missing-timeframe'],
+    'gtd-horizon': ['missing-outcome'],
+    'energy-level': ['missing-context'],
+    'knowledge-domain': ['missing-reference'],
+  };
+
+  it('Phase32-1: with warm momentum uses predictEnrichmentOrder for ordering', () => {
+    // Cold-start=false momentum with high frequency/strength for priority-matrix
+    // priority-matrix maps to missing-outcome, missing-timeframe
+    // cognitive-load (low frequency) maps to missing-next-action
+    // Expected: outcome and timeframe ranked higher than next-action
+
+    // Pass LOW-confidence signals for priority-matrix (gap → high self-relevance)
+    // and HIGH-confidence for cognitive-load (present → low self-relevance)
+    const signals: SignalVector = {
+      signals: {
+        'priority-matrix': makeCognitiveSignal('priority-matrix', 0.2), // big gap
+        'cognitive-load': makeCognitiveSignal('cognitive-load', 0.95),  // already known
+      },
+      composites: [],
+      totalMs: 10,
+      protocolVersion: 1,
+    };
+
+    const session = createEnrichmentSession({
+      inboxItemId: 'item-p32-1',
+      content: 'Test task',
+      missingCategories: ['missing-outcome', 'missing-next-action', 'missing-timeframe'],
+      cognitiveSignals: signals,
+      momentum: warmMomentum,
+      entityScores: {},
+      signalCategoryMap: scorerSignalMap,
+      entityCategoryMap: {},
+      entityTypePriorityWeights: {},
+    });
+
+    const categories = session.questions.map((q) => q.category);
+    // predictEnrichmentOrder should boost outcome and timeframe due to signal gap + momentum
+    const outcomeIdx = categories.indexOf('missing-outcome');
+    const timeframeIdx = categories.indexOf('missing-timeframe');
+    const nextActionIdx = categories.indexOf('missing-next-action');
+    expect(outcomeIdx).toBeLessThan(nextActionIdx);
+    expect(timeframeIdx).toBeLessThan(nextActionIdx);
+  });
+
+  it('Phase32-2: without momentum falls back to signal-based ordering (backward compat)', () => {
+    // No momentum passed — should use computeFallbackRelevance (requires signalCategoryMap)
+    const signals: SignalVector = {
+      signals: {
+        'priority-matrix': makeCognitiveSignal('priority-matrix', 0.1), // very low confidence
+        'cognitive-load': makeCognitiveSignal('cognitive-load', 0.99),   // very high confidence
+      },
+      composites: [],
+      totalMs: 10,
+      protocolVersion: 1,
+    };
+
+    const session = createEnrichmentSession({
+      inboxItemId: 'item-p32-2',
+      content: 'Test',
+      missingCategories: ['missing-outcome', 'missing-next-action', 'missing-timeframe'],
+      cognitiveSignals: signals,
+      // No momentum — fallback path
+      signalCategoryMap: scorerSignalMap,
+    });
+
+    const categories = session.questions.map((q) => q.category);
+    const outcomeIdx = categories.indexOf('missing-outcome');
+    const nextActionIdx = categories.indexOf('missing-next-action');
+    // priority-matrix (low conf=0.1 → relevance 0.9) maps to outcome → comes first
+    // cognitive-load (high conf=0.99 → relevance 0.01) maps to next-action → comes last
+    expect(outcomeIdx).toBeLessThan(nextActionIdx);
+  });
+
+  it('Phase32-3: with neither momentum nor signals preserves default ordering safely', () => {
+    // No crash, no reordering — default category order
+    const session = createEnrichmentSession({
+      inboxItemId: 'item-p32-3',
+      content: 'Test',
+      // No cognitiveSignals, no momentum
+    });
+
+    const categories = session.questions.map((q) => q.category);
+    expect(categories).toEqual([
+      'missing-outcome',
+      'missing-next-action',
+      'missing-timeframe',
+      'missing-context',
+      'missing-reference',
+    ]);
+    // No crash is the key assertion — session is well-formed
+    expect(session.phase).toBe('questions');
   });
 });
 
