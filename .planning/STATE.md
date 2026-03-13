@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Completed 33-02-PLAN.md
-last_updated: "2026-03-13T08:02:08.647Z"
+stopped_at: Completed 33-03-PLAN.md
+last_updated: "2026-03-13T08:13:29.009Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 13
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 21
-  completed_plans: 19
+  completed_plans: 20
 ---
 
 # Project State
@@ -61,6 +61,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | Phase 32 P02 | 14 minutes | 2 tasks | 5 files |
 | Phase 33 P01 | 11 | 3 tasks | 9 files |
 | Phase 33 P02 | 30 | 2 tasks | 50 files |
+| Phase 33-sequence-context-onnx-model P03 | 20 | 2 tasks | 26 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,8 @@ Recent decisions affecting future work:
 - [Phase 33]: binderId passed via GateContext.customFields to tier2-handler — avoids changing GateContext interface for execution context data
 - [Phase 33]: dynamo=True with fallback=True is stable LSTM ONNX export path — strict=False and strict=True both fail on dynamic axis, TorchScript legacy succeeds
 - [Phase 33]: 45% zero-padded context training augmentation ensures cold-start robustness via single 512-dim model set
+- [Phase 33]: Ablation result: KEEP 384-dim classifiers — mean F1 delta -0.0020, sequence context does not improve aggregate T2 accuracy
+- [Phase 33]: Biggest sequence losers: collaboration-type (-0.0145) and time-estimate (-0.0202) — these rely on per-item semantics not sequence order
 
 ### Roadmap Evolution
 
@@ -127,7 +130,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T08:02:08.644Z
-Stopped at: Completed 33-02-PLAN.md
+Last session: 2026-03-13T08:13:29.005Z
+Stopped at: Completed 33-03-PLAN.md
 Resume file: None
 Next action: `/gsd:plan-phase 30`
