@@ -24,7 +24,7 @@ Requirements for v5.5 Cortical Intelligence milestone. Each maps to roadmap phas
 ### Sequence Learning
 
 - [x] **SEQ-01**: Embedding ring buffer maintains last N (default 5, tunable) MiniLM embeddings per binder in the embedding worker — capped memory, updated on atom save/triage completion only
-- [ ] **SEQ-02**: Lightweight ONNX sequence model (single-layer LSTM or attention head, <500KB) trained offline via Python pipeline on harness persona corpus, exported via PyTorch `dynamo=True` opset 18
+- [x] **SEQ-02**: Lightweight ONNX sequence model (single-layer LSTM or attention head, <500KB) trained offline via Python pipeline on harness persona corpus, exported via PyTorch `dynamo=True` opset 18
 - [x] **SEQ-03**: Sequence context embedding (128-dim) concatenated with MiniLM embedding (384-dim) before T2 classifier inference via new `sequenceContext` field on `TieredFeatures` — existing classifiers retrained with 512-dim input
 - [ ] **SEQ-04**: Harness ablation compares T2 classifier F1 with and without sequence context across N=3, N=5, N=7 window sizes — production classifiers only replaced after ablation confirms improvement
 
@@ -112,7 +112,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PRED-02 | Phase 32 | Complete |
 | PRED-03 | Phase 32 | Complete |
 | SEQ-01 | Phase 33 | Complete |
-| SEQ-02 | Phase 33 | Pending |
+| SEQ-02 | Phase 33 | Complete |
 | SEQ-03 | Phase 33 | Complete |
 | SEQ-04 | Phase 33 | Pending |
 | BTYPE-02 | Phase 34 | Pending |
