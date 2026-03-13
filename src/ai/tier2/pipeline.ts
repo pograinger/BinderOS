@@ -13,6 +13,12 @@
 import type { TierHandler } from './handler';
 import type { TieredRequest, TieredResponse, TieredResult } from './types';
 import { CONFIDENCE_THRESHOLDS } from './types';
+import type { GateActivationLogEntry, GateResult } from '../../types/gate';
+import { canActivate } from '../context-gate/activation-gate';
+import { getBinderConfig } from '../../config/binder-types';
+import { db } from '../../storage/db';
+// Register core predicates (route, time-of-day, atom-history, binder-type)
+import '../context-gate/predicates';
 
 // --- Handler registry ---
 
@@ -59,6 +65,54 @@ export function getRegisteredHandlers(): readonly TierHandler[] {
   return handlers;
 }
 
+// --- Gate log writer ---
+
+/**
+ * Fire-and-forget gate activation log writer.
+ * Maps each predicate result to a GateActivationLogEntry and bulk-inserts into Dexie.
+ * Failures are logged as warnings — never throws, never blocks dispatch.
+ */
+async function writeGateLog(
+  request: TieredRequest,
+  gateResult: GateResult,
+  configVersion: string
+): Promise<void> {
+  const now = Date.now();
+  const entries: GateActivationLogEntry[] = gateResult.predicateResults.map((r) => ({
+    id: crypto.randomUUID(),
+    predicateName: r.name,
+    outcome: r.activated ? 'activated' : 'blocked',
+    timestamp: now,
+    configVersion,
+    atomId: request.context.atomId,
+    route: request.context.route,
+    timeOfDay: request.context.timeOfDay,
+    binderType: request.context.binderType,
+    enrichmentDepth: request.context.enrichmentDepth,
+    version: 1,
+    deviceId: 'local',
+    updatedAt: now,
+  }));
+
+  try {
+    await db.gateActivationLog.bulkAdd(entries);
+  } catch (err) {
+    console.warn('[context-gate] Failed to write activation log:', err);
+  }
+}
+
+/**
+ * Prune old gate activation log entries.
+ * Deletes entries older than retentionDays. Call lazily (app boot or harness cleanup).
+ * Not in the dispatch path.
+ *
+ * @param retentionDays - How many days to retain log entries (default 30)
+ */
+export async function cleanupGateLogs(retentionDays = 30): Promise<void> {
+  const cutoff = Date.now() - retentionDays * 86400000;
+  await db.gateActivationLog.where('timestamp').below(cutoff).delete();
+}
+
 // --- Escalation pipeline ---
 
 /**
@@ -76,6 +130,34 @@ export async function dispatchTiered(request: TieredRequest): Promise<TieredResp
   const threshold = CONFIDENCE_THRESHOLDS[request.task];
   const attempts: TieredResult[] = [];
   let bestResult: TieredResult | null = null;
+
+  // --- Context gate pre-filter ---
+  // Evaluate all registered predicates before any handler runs.
+  // Fire-and-forget gate log write — never blocks dispatch.
+  const binderConfig = getBinderConfig(request.context.binderType ?? 'gtd-personal');
+  const gateResult = canActivate(request.context, binderConfig);
+  void writeGateLog(request, gateResult, String(binderConfig.schemaVersion));
+
+  if (!gateResult.canActivate) {
+    const blockedReasons = gateResult.predicateResults
+      .filter((r) => !r.activated)
+      .map((r) => `[${r.name}] ${r.reason}`)
+      .join('; ');
+
+    return {
+      result: {
+        tier: 1,
+        confidence: 0,
+        reasoning: `Gate blocked: ${blockedReasons}`,
+      },
+      attempts: [],
+      escalated: false,
+      totalMs: performance.now() - startTime,
+      gateBlocked: true,
+      gateResult,
+    };
+  }
+  // --- End gate pre-filter ---
 
   for (const handler of handlers) {
     // Skip handlers that can't process this task
@@ -102,6 +184,7 @@ export async function dispatchTiered(request: TieredRequest): Promise<TieredResp
           attempts,
           escalated: attempts.length > 1,
           totalMs: performance.now() - startTime,
+          gateResult,
         };
       }
     } catch (err) {
@@ -130,5 +213,6 @@ export async function dispatchTiered(request: TieredRequest): Promise<TieredResp
     attempts,
     escalated: attempts.length > 1,
     totalMs: performance.now() - startTime,
+    gateResult,
   };
 }
