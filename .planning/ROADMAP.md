@@ -7,7 +7,7 @@
 - [x] **v3.0 Local AI + Polish** — Phases 9-11 (18/18 requirements, 8 plans, shipped 2026-03-05) → [Archive](.planning/milestones/v3.0-ROADMAP.md)
 - [x] **v4.0 Device-Adaptive AI** — Phases 12-25 (48/48 requirements, 32 plans, shipped 2026-03-10) → [Archive](.planning/milestones/v4.0-ROADMAP.md)
 - [x] **v5.0 Entity Intelligence & Knowledge Graph** — Phases 26-29 (22 requirements, shipped 2026-03-12)
-- 🚧 **v5.5 Cortical Intelligence** — Phases 30-34 (16 requirements, in progress)
+- 🚧 **v5.5 Cortical Intelligence** — Phases 30-38 (16+ requirements, in progress)
 
 ## Phases
 
@@ -256,3 +256,47 @@ Plans:
 | 32. Predictive Enrichment Scorer | v5.5 | 0/? | Not started | - |
 | 33. Sequence Context ONNX Model | v5.5 | 0/? | Not started | - |
 | 34. Harness SDK + Second Binder Type Validation | v5.5 | 0/? | Not started | - |
+| 35. Signal Consensus Layer | v5.5 | 0/? | Not started | - |
+| 36. Consensus-Wired Gate and Enrichment | v5.5 | 0/? | Not started | - |
+| 37. Consensus Ablation Harness | v5.5 | 0/? | Not started | - |
+| 38. Staleness Prediction Model | v5.5 | 0/? | Not started | - |
+
+### Phase 35: Signal Consensus Layer
+
+**Goal:** Composite scoring from 10 cognitive ONNX models using Thousand Brains voting — consensus engine evaluates agreement across cognitive signals, produces composite scores, surfaces insights only when multiple models agree
+**Requirements**: TBD
+**Depends on:** Phase 34
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 35 to break down)
+
+### Phase 36: Consensus-Wired Gate and Enrichment
+
+**Goal:** Wire consensus composite scores into context gate predicates and enrichment question selection — combined signal influences real pipeline behavior (gate blocks low-consensus items, enrichment prioritizes high-consensus gaps)
+**Requirements**: TBD
+**Depends on:** Phase 35
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 36 to break down)
+
+### Phase 37: Consensus Ablation Harness
+
+**Goal:** Extend ablation engine to measure consensus vs. individual signal quality — prove empirically that ensemble voting outperforms any single cognitive model on triage accuracy, enrichment relevance, and false-positive reduction
+**Requirements**: TBD
+**Depends on:** Phase 36
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 37 to break down)
+
+### Phase 38: Staleness Prediction Model
+
+**Goal:** First truly predictive ONNX model — predict when atoms will go stale based on temporal patterns, review cadence, activity signals, and cognitive consensus. Only built after ablation proves consensus value.
+**Requirements**: TBD
+**Depends on:** Phase 37
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 38 to break down)

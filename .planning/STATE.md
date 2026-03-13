@@ -88,6 +88,13 @@ Recent decisions affecting future work:
 - [Phase 30]: hydrateCompositorRules(configs) parameter pattern — cognitive-signals.ts never imports from binder-types, one-directional dep preserved
 - [Phase 31]: TieredRequest.context is required (not optional) — TypeScript enforces caller migration in Plan 02
 - [Phase 31]: isStale defaults false when lastEnrichedAt undefined — conservative, no re-enrichment without timestamp
+
+### Roadmap Evolution
+
+- Phase 35 added: Signal Consensus Layer — Thousand Brains voting over 10 cognitive ONNX models
+- Phase 36 added: Consensus-Wired Gate and Enrichment — wire composite scores into context gate + enrichment
+- Phase 37 added: Consensus Ablation Harness — prove consensus > individual signals via ablation
+- Phase 38 added: Staleness Prediction Model — first predictive model, gated on ablation proof
 - [Phase 31]: Gate pre-filter: canActivate() before handler loop, blocked returns skip all handlers, gateResult on all responses
 - [Phase 31]: triageInbox() gateContext param is optional at function signature, builds required GateContext internally — backwards compat without leaking TieredRequest types into function signature
 - [Phase 31]: gateBlocked at classify-type level triggers silent continue in item loop, not onError — gate-blocking is intentional flow control
