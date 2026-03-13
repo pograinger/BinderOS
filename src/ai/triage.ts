@@ -212,7 +212,7 @@ export async function triageInbox(
   onSuggestion: (suggestion: TriageSuggestion) => void,
   onError: (itemId: string, error: string) => void,
   useTiered = false,
-  gateContext?: { route?: string },
+  gateContext?: { route?: string; binderId?: string },
 ): Promise<void> {
   // Cancel any previous in-flight triage
   triageAbortController?.abort();
@@ -261,6 +261,8 @@ export async function triageInbox(
           atomId: item.id,
           binderType: 'gtd-personal',
           enrichmentDepth: 0, // triage items are inbox — depth 0
+          // Phase 33: pass binderId so tier2-handler can inject sequence context into CLASSIFY_ONNX
+          ...(gateContext?.binderId ? { customFields: { binderId: gateContext.binderId } } : {}),
         };
 
         const tieredResponse = await dispatchTiered({

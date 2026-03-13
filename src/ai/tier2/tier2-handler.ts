@@ -238,10 +238,15 @@ function classifyViaWorker(
 /**
  * Send an ONNX classification request to the embedding worker and wait for the result.
  * Worker embeds the text via MiniLM, then runs ONNX inference in one round-trip.
+ *
+ * Phase 33: Optional binderId enables the worker to concatenate sequence context
+ * (from its in-memory ring buffer) with the MiniLM embedding before classifier inference.
+ * When absent, falls back to 384-dim-only classification (backward compat).
  */
 function classifyViaONNX(
   worker: Worker,
   text: string,
+  binderId?: string,
 ): Promise<{ scores: Record<string, number>; vector: number[] }> {
   return new Promise((resolve, reject) => {
     const id = crypto.randomUUID();
@@ -259,7 +264,7 @@ function classifyViaONNX(
     };
 
     worker.addEventListener('message', handler);
-    worker.postMessage({ type: 'CLASSIFY_ONNX', id, text });
+    worker.postMessage({ type: 'CLASSIFY_ONNX', id, text, ...(binderId ? { binderId } : {}) });
   });
 }
 
@@ -351,9 +356,12 @@ export function createTier2Handler(
       const text = (features.title ?? '') + ' ' + features.content;
 
       if (task === 'classify-type') {
+        // Phase 33: Extract binderId for sequence context injection (passed via customFields)
+        const binderId = (request.context.customFields?.binderId as string | undefined);
+
         // --- ONNX path (primary when classifier is ready) ---
         if (getClassifierReady()) {
-          const { scores, vector } = await classifyViaONNX(worker, text);
+          const { scores, vector } = await classifyViaONNX(worker, text, binderId);
           _lastVector = vector;
 
           const validTypes: AtomType[] = ['task', 'fact', 'event', 'decision', 'insight'];

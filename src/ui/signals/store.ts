@@ -1429,13 +1429,20 @@ export async function startTriageInbox(): Promise<void> {
         });
       },
       tieredEnabled(),  // Phase 8: use tiered pipeline when initialized
-      { route: window.location.pathname }, // Phase 31: pass route for gate evaluation
+      { route: window.location.pathname, binderId: state.binders[0]?.id }, // Phase 31: route; Phase 33: binderId for sequence context
     );
     setTriageStatus('complete');
     // Phase 32: Invalidate prediction cache so next enrichment session gets fresh momentum
     const triageCompleteBinder = state.binders[0]?.id;
     if (triageCompleteBinder) {
       invalidateCache(triageCompleteBinder, 'triage-complete');
+    }
+    // Phase 33: Update sequence ring buffer after triage completion using last T2 embedding
+    if (triageCompleteBinder && _getTier2LastVector) {
+      const lastEmbedding = _getTier2LastVector();
+      if (lastEmbedding && lastEmbedding.length > 0) {
+        updateSequenceRingBuffer(triageCompleteBinder, lastEmbedding);
+      }
     }
     setOrbState('idle');
   } catch (err) {
@@ -1863,6 +1870,23 @@ export function ensureEmbeddingWorker(): Worker {
           setClassifierLoadProgress(null);
           console.warn('[BinderOS] Classifier load failed:', msg.error);
           break;
+        case 'RING_BUFFER_UPDATED': {
+          // Phase 33: Persist ring buffer state to Dexie sequenceContext table (fire-and-forget)
+          const ringMsg = msg as { type: string; binderId: string; embeddings: number[][] };
+          import('../../storage/db').then(({ db }) => {
+            return db.sequenceContext.put({
+              binderId: ringMsg.binderId,
+              windowSize: ringMsg.embeddings.length,
+              embeddings: new Float32Array(ringMsg.embeddings.flat()),
+              lastUpdated: Date.now(),
+              modelVersion: 'v1',
+              version: 1,
+              deviceId: '',  // filled by CRDT layer in v7.0
+              updatedAt: Date.now(),
+            });
+          }).catch(err => console.warn('[sequence] Dexie persist failed:', err));
+          break;
+        }
       }
     });
   }
@@ -1921,6 +1945,29 @@ export async function initTieredAI(): Promise<void> {
       _sectionCentroids = section;
     };
 
+    // Phase 33: Expose tier2 lastVector getter for ring buffer updates after triage
+    _getTier2LastVector = () => tier2.lastVector();
+
+    // Phase 33: Hydrate ring buffer from Dexie sequenceContext table on startup
+    const activeBinder = state.binders[0]?.id;
+    if (activeBinder) {
+      try {
+        const { db } = await import('../../storage/db');
+        const entry = await db.sequenceContext.get(activeBinder);
+        if (entry && entry.embeddings.length > 0) {
+          const embeddingDim = 384;
+          const count = Math.floor(entry.embeddings.length / embeddingDim);
+          const embeddings: number[][] = [];
+          for (let i = 0; i < count; i++) {
+            embeddings.push(Array.from(entry.embeddings.slice(i * embeddingDim, (i + 1) * embeddingDim)));
+          }
+          worker.postMessage({ type: 'LOAD_RING_BUFFER', binderId: activeBinder, embeddings });
+        }
+      } catch (err) {
+        console.warn('[sequence] Ring buffer hydration failed:', err);
+      }
+    }
+
     setTieredEnabledSignal(true);
     setTier2Status('ready');
   } catch (err) {
@@ -1931,6 +1978,27 @@ export async function initTieredAI(): Promise<void> {
 
 /** Internal: update centroid references after rebuild. Set by initTieredAI. */
 let _updateTier2Centroids: ((type: import('../../ai/tier2/centroid-builder').CentroidSet | null, section: import('../../ai/tier2/centroid-builder').CentroidSet | null) => void) | null = null;
+
+/** Internal: access to tier2 handler's lastVector(). Set by initTieredAI. */
+let _getTier2LastVector: (() => number[] | null) | null = null;
+
+// Phase 33: default window size for ring buffer (ablation may change this)
+const SEQUENCE_WINDOW_SIZE = 5;
+
+/**
+ * Send UPDATE_RING_BUFFER to the embedding worker for a binder.
+ * Fire-and-forget — the worker responds with RING_BUFFER_UPDATED.
+ */
+function updateSequenceRingBuffer(binderId: string, embedding: number[]): void {
+  const worker = getEmbeddingWorker();
+  if (!worker) return;
+  worker.postMessage({
+    type: 'UPDATE_RING_BUFFER',
+    binderId,
+    embedding,
+    windowSize: SEQUENCE_WINDOW_SIZE,
+  });
+}
 
 /**
  * Update Tier 2 centroid references after a classification event triggers a rebuild.
