@@ -898,6 +898,20 @@ export async function handleEnrichmentAnswer(answer: ClarificationAnswer): Promi
     // Write structured enrichment to sidecar (content stays pure user text)
     await writeEnrichmentRecord(session.inboxItemId, enrichRecord);
 
+    // Phase 35: Recompute canonical vector after enrichment answer (enrichment depth changes vector)
+    // Fire-and-forget — uses dynamic import to keep vector-cache out of critical render path
+    {
+      const itemId = session.inboxItemId;
+      const inboxItem = state.inboxItems.find((i) => i.id === itemId);
+      if (inboxItem && (inboxItem.type === 'task' || inboxItem.type === 'event')) {
+        getIntelligence(itemId).then((sidecar) => {
+          import('../../ai/feature-vectors/vector-cache').then(({ recomputeAndCacheVector }) => {
+            recomputeAndCacheVector(inboxItem as import('../../types/atoms').Atom, sidecar, [], []);
+          }).catch(() => {});
+        }).catch(() => {});
+      }
+    }
+
     // Update prior answers signal for UI reactivity
     setEnrichmentPriorAnswers({ ...enrichmentPriorAnswers(), ...enrichments });
 
@@ -1436,6 +1450,20 @@ export async function startTriageInbox(): Promise<void> {
     const triageCompleteBinder = state.binders[0]?.id;
     if (triageCompleteBinder) {
       invalidateCache(triageCompleteBinder, 'triage-complete');
+    }
+    // Phase 35: Recompute canonical vectors for all inbox items that were triaged
+    // Fire-and-forget — runs in background, never blocks triage completion
+    {
+      const triageItems = state.inboxItems.filter((i) => i.type === 'task' || i.type === 'event');
+      if (triageItems.length > 0) {
+        import('../../ai/feature-vectors/vector-cache').then(({ recomputeAndCacheVector }) => {
+          for (const item of triageItems) {
+            getIntelligence(item.id).then((sidecar) => {
+              recomputeAndCacheVector(item as import('../../types/atoms').Atom, sidecar, [], []);
+            }).catch(() => {});
+          }
+        }).catch(() => {});
+      }
     }
     // Phase 33: Update sequence ring buffer after triage completion using last T2 embedding
     if (triageCompleteBinder && _getTier2LastVector) {
@@ -2620,6 +2648,23 @@ export function applyGTDRecommendation(atomId: string, changes: Record<string, u
     type: 'UPDATE_ATOM',
     payload: { id: atomId, changes: changes as Partial<import('../../types/atoms').Atom> },
   });
+
+  // Phase 35: Recompute canonical vector when vector-feeding fields change (status, energy, context, dueDate)
+  // Fire-and-forget — dynamic import keeps vector-cache out of critical render path
+  const vectorFeedingKeys = ['status', 'energy', 'context', 'dueDate', 'links'];
+  const hasVectorChange = vectorFeedingKeys.some((k) => k in changes);
+  if (hasVectorChange) {
+    const atom = state.atoms.find((a) => a.id === atomId);
+    if (atom && (atom.type === 'task' || atom.type === 'event')) {
+      getIntelligence(atomId).then((sidecar) => {
+        import('../../ai/feature-vectors/vector-cache').then(({ recomputeAndCacheVector }) => {
+          // Use the atom with changes merged in (pre-worker update approximation)
+          const updated = { ...atom, ...changes } as import('../../types/atoms').Atom;
+          recomputeAndCacheVector(updated, sidecar, [], []);
+        }).catch(() => {});
+      }).catch(() => {});
+    }
+  }
 }
 
 // --- Phase 19: Clarification completion handler ---

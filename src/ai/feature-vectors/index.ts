@@ -23,3 +23,12 @@ export {
 export { computeTaskVector } from './task-vector';
 export { computePersonVector } from './person-vector';
 export { computeCalendarVector } from './calendar-vector';
+
+// Vector cache helpers (added in Plan 02 — Phase 35: CFVEC-04)
+export {
+  writeCanonicalVector,
+  shouldRecomputeVector,
+  dirtyCheckTaskFields,
+  recomputeAndCacheVector,
+  recomputePersonVector,
+} from './vector-cache';
