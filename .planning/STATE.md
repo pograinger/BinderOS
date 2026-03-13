@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v5.5
 milestone_name: Cortical Intelligence
 status: planning
-stopped_at: Completed 37-01-PLAN.md
-last_updated: "2026-03-13T22:24:30.332Z"
+stopped_at: Completed 37-02-PLAN.md
+last_updated: "2026-03-13T22:43:11.725Z"
 last_activity: 2026-03-12 — Roadmap created for v5.5
 progress:
   total_phases: 13
-  completed_phases: 9
+  completed_phases: 10
   total_plans: 28
-  completed_plans: 26
+  completed_plans: 27
 ---
 
 # Project State
@@ -68,6 +68,7 @@ Last activity: 2026-03-12 — Roadmap created for v5.5
 | Phase 36-consensus-wired-gate-and-enrichment P02 | 7 | 1 tasks | 5 files |
 | Phase 36 P03 | 5 | 2 tasks | 4 files |
 | Phase 37-consensus-ablation-harness P01 | 18 | 2 tasks | 7 files |
+| Phase 37-consensus-ablation-harness P02 | 13 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -128,6 +129,9 @@ Recent decisions affecting future work:
 - [Phase 37]: EII coherence = std-dev of weightedProbability (NOT AUC); EII = equal-weight composite of coherence + stability + impact
 - [Phase 37]: updateBinderEII uses full-recompute strategy — simpler than incremental, correct for small per-binder atomIntelligence tables
 - [Phase 37]: harness-onnx.ts loads only 4 specialist models (not all 14 T2 classifiers) — existing harness pipeline handles T2 classifiers
+- [Phase 37]: buildMinimalVector() zero-pads person/calendar dims in harness vector construction — corpus items lack per-item person/calendar context
+- [Phase 37]: runSpecialistAblation() is post-hoc with zero re-inference — filters stored specialistContributions and re-calls computeConsensus()
+- [Phase 37]: EII > 0.80 is diagnostic flag for 50+ atom personas — not a hard gate (EII-04)
 
 ### Roadmap Evolution
 
@@ -153,7 +157,7 @@ Recent decisions affecting future work:
 
 ## Session Continuity
 
-Last session: 2026-03-13T22:24:30.329Z
-Stopped at: Completed 37-01-PLAN.md
+Last session: 2026-03-13T22:43:11.722Z
+Stopped at: Completed 37-02-PLAN.md
 Resume file: None
 Next action: `/gsd:plan-phase 30`

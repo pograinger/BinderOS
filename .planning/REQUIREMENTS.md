@@ -54,10 +54,10 @@ Requirements for v5.5 Cortical Intelligence milestone. Each maps to roadmap phas
 
 ### Emergent Intelligence Index
 
-- [ ] **EII-01**: `computeEII(binderId)` returns `{ coherence, stability, impact, eii }` — coherence from consensus AUC, stability from pairwise model agreement, impact from binder-level high-risk recall
-- [ ] **EII-02**: EII computed after each harness adversarial cycle, stored in harness report with per-persona breakdowns — EII curve across corpus sizes must show positive slope
-- [ ] **EII-03**: Ablation engine extended to measure consensus vs each specialist independently — report includes `consensus_lift` metric proving ensemble > any single model
-- [ ] **EII-04**: Harness personas with 50+ atoms achieve EII > 0.80 — threshold validates the architecture produces emergent intelligence at realistic corpus sizes
+- [x] **EII-01**: `computeEII(binderId)` returns `{ coherence, stability, impact, eii }` — coherence from consensus AUC, stability from pairwise model agreement, impact from binder-level high-risk recall
+- [x] **EII-02**: EII computed after each harness adversarial cycle, stored in harness report with per-persona breakdowns — EII curve across corpus sizes must show positive slope
+- [x] **EII-03**: Ablation engine extended to measure consensus vs each specialist independently — report includes `consensus_lift` metric proving ensemble > any single model
+- [x] **EII-04**: Harness personas with 50+ atoms achieve EII > 0.80 — threshold validates the architecture produces emergent intelligence at realistic corpus sizes
 
 ### Risk Surfacing
 
@@ -125,10 +125,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONS-02 | Phase 36 | Complete |
 | CONS-03 | Phase 36 | Complete |
 | CONS-04 | Phase 36 | Complete |
-| EII-01 | Phase 37 | Pending |
-| EII-02 | Phase 37 | Pending |
-| EII-03 | Phase 37 | Pending |
-| EII-04 | Phase 37 | Pending |
+| EII-01 | Phase 37 | Complete |
+| EII-02 | Phase 37 | Complete |
+| EII-03 | Phase 37 | Complete |
+| EII-04 | Phase 37 | Complete |
 | RISK-01 | Phase 38 | Pending |
 | RISK-02 | Phase 38 | Pending |
 | RISK-03 | Phase 38 | Pending |

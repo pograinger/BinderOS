@@ -88,7 +88,7 @@ See [Archive](.planning/milestones/v4.0-ROADMAP.md) for full detail.
 - [ ] **Phase 34: Harness SDK + Second Binder Type Validation** - Harness parameterized on BinderTypeConfig, non-GTD stub binder type exercised through full adversarial cycle
 - [x] **Phase 35: Canonical Feature Vectors** - Structured per-atom-type vectors from metadata + sidecar + entities, cached in atomIntelligence, BinderTypeConfig-driven dimensions (completed 2026-03-13)
 - [x] **Phase 36: Specialist Consensus Layer** - Train specialist risk models on non-overlapping vector slices, ONNX export, consensus voter, dispatchTiered wiring (completed 2026-03-13)
-- [ ] **Phase 37: EII Diagnostic + Consensus Ablation** - Emergent Intelligence Index per binder, consensus vs specialist ablation proof, harness integration
+- [x] **Phase 37: EII Diagnostic + Consensus Ablation** - Emergent Intelligence Index per binder, consensus vs specialist ablation proof, harness integration (completed 2026-03-13)
 - [ ] **Phase 38: Risk Surface + Proactive Alerts** - Consensus risk scores surface high-risk atoms, risk badges with explanations, staleness prediction model
 
 ## Phase Details
@@ -269,7 +269,7 @@ Plans:
 | 34. Harness SDK + Second Binder Type Validation | v5.5 | 0/? | Not started | - |
 | 35. Canonical Feature Vectors | 2/2 | Complete    | 2026-03-13 | - |
 | 36. Specialist Consensus Layer | 3/3 | Complete    | 2026-03-13 | - |
-| 37. EII Diagnostic + Consensus Ablation | 1/2 | In Progress|  | - |
+| 37. EII Diagnostic + Consensus Ablation | 2/2 | Complete   | 2026-03-13 | - |
 | 38. Risk Surface + Proactive Alerts | v5.5 | 0/? | Not started | - |
 
 ### Phase 35: Canonical Feature Vectors
