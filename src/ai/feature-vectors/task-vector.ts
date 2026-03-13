@@ -98,7 +98,8 @@ export function computeTaskVector(
   }
 
   // [4-6] status one-hot: open→[4], done→[5], dropped(cancelled/archived)→[6]
-  if (atom.status === 'open' || atom.status === 'in-progress') {
+  // 'waiting' and 'in-progress' are active states → map to status_open slot
+  if (atom.status === 'open' || atom.status === 'in-progress' || atom.status === 'waiting') {
     dims[STATUS_OPEN] = 1.0;
   } else if (atom.status === 'done') {
     dims[STATUS_DONE] = 1.0;
