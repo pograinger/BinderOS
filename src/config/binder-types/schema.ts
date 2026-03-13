@@ -111,6 +111,31 @@ const RelationshipPatternSchema = z.object({
 });
 
 // ---------------------------------------------------------------------------
+// Prediction config schema (Phase 32 — predictive enrichment scorer)
+// ---------------------------------------------------------------------------
+
+/**
+ * Tuning parameters for the momentum-based predictive enrichment scorer.
+ * All fields have defaults so this config is fully optional in binder type manifests.
+ */
+export const PredictionConfigSchema = z.object({
+  /** Number of recent atoms to include in the momentum window */
+  windowSize: z.number().int().positive().default(20),
+  /** Maximum age of atoms (hours) eligible for the momentum window */
+  maxWindowHours: z.number().positive().default(48),
+  /** Half-life (in atoms) for exponential decay weighting in momentum */
+  momentumHalfLife: z.number().positive().default(5),
+  /** Minimum atoms with cognitive signals before momentum is considered warm */
+  coldStartThreshold: z.number().int().positive().default(15),
+  /** Minimum atoms with entity mentions before entity trajectory is enabled */
+  entityColdStartThreshold: z.number().int().positive().default(10),
+  /** Cache TTL in milliseconds for computed momentum vectors */
+  cacheTtlMs: z.number().int().positive().default(300000),
+});
+
+export type PredictionConfig = z.infer<typeof PredictionConfigSchema>;
+
+// ---------------------------------------------------------------------------
 // Full expanded BinderTypeConfig schema
 // ---------------------------------------------------------------------------
 
@@ -200,6 +225,16 @@ export const BinderTypeConfigSchema = z.object({
     /** Maximum enrichment depth before stopping further questions */
     maxEnrichmentDepth: z.number().int().positive(),
   }),
+
+  // --- Phase 32: Predictive enrichment scorer config ---
+  /** Prediction algorithm tuning parameters */
+  predictionConfig: PredictionConfigSchema.optional(),
+  /** Maps cognitive model IDs to enrichment category arrays */
+  signalCategoryMap: z.record(z.string(), z.array(z.string())).optional(),
+  /** Maps NER entity types (PER, LOC, ORG) to enrichment category arrays */
+  entityCategoryMap: z.record(z.string(), z.array(z.string())).optional(),
+  /** Type-level weight multipliers for entity momentum scoring */
+  entityTypePriorityWeights: z.record(z.string(), z.number()).optional(),
 });
 
 /**

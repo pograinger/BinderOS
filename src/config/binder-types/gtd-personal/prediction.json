@@ -1,0 +1,29 @@
+{
+  "predictionConfig": {
+    "windowSize": 20,
+    "maxWindowHours": 48,
+    "momentumHalfLife": 5,
+    "coldStartThreshold": 15,
+    "entityColdStartThreshold": 10,
+    "cacheTtlMs": 300000
+  },
+  "signalCategoryMap": {
+    "priority-matrix": ["missing-outcome", "missing-timeframe"],
+    "collaboration-type": ["missing-context", "missing-reference"],
+    "cognitive-load": ["missing-next-action"],
+    "gtd-horizon": ["missing-outcome"],
+    "time-estimate": ["missing-timeframe"],
+    "energy-level": ["missing-context"],
+    "knowledge-domain": ["missing-reference"]
+  },
+  "entityCategoryMap": {
+    "PER": ["missing-context"],
+    "LOC": ["missing-context"],
+    "ORG": ["missing-context", "missing-reference"]
+  },
+  "entityTypePriorityWeights": {
+    "PER": 1.5,
+    "LOC": 1.0,
+    "ORG": 1.2
+  }
+}

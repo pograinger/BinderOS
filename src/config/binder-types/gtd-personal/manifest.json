@@ -7,5 +7,5 @@
   "category": "productivity",
   "author": "BinderOS",
   "minAppVersion": "5.5.0",
-  "configFiles": ["columns.json", "compositor.json", "enrichment.json", "relationships.json", "gating.json", "entities.json"]
+  "configFiles": ["columns.json", "compositor.json", "enrichment.json", "relationships.json", "gating.json", "entities.json", "prediction.json"]
 }

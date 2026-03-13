@@ -102,6 +102,29 @@ export const AtomIntelligenceSchema = z.object({
   deviceId: z.string(),
   lastUpdated: z.number(),
   schemaVersion: z.number(),
+  // Phase 32: prediction momentum snapshot — stored for harness analysis
+  predictionMomentum: z
+    .object({
+      signalFrequency: z.record(z.string(), z.number()),
+      signalStrength: z.record(z.string(), z.number()),
+      categoryOrdering: z.array(
+        z.object({
+          category: z.string(),
+          score: z.number(),
+          explanation: z.string(),
+        })
+      ),
+      coldStart: z.boolean(),
+      computedAt: z.number(),
+    })
+    .optional(),
+  // Phase 32: entity momentum snapshot — stored for harness analysis
+  entityMomentum: z
+    .object({
+      scores: z.record(z.string(), z.number()),
+      computedAt: z.number(),
+    })
+    .optional(),
 });
 export type AtomIntelligence = z.infer<typeof AtomIntelligenceSchema>;
 
