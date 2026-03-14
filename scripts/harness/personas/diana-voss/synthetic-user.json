@@ -1,0 +1,93 @@
+{
+  "personaName": "Diana Voss",
+  "bio": "Marketing director at Pulse Media in Chicago, IL. Married to Grant Voss. Daughter Zoe is 14 and attends Lakeview Academy. Reports to VP Rachel Torres. Works with designer Kyle Park, copywriter Mei Lin, and analytics lead Tariq Hassan. Key client contacts are Jessica Dunn at Fortune 500 client Meridian Industries and Naveen Kapoor at startup BrightLoop. Dentist is Dr. Okonkwo. Personal trainer Marco Silva at Iron Forge Gym. Best friend Carla Reeves. Mother-in-law Patricia Voss.",
+  "groundTruth": {
+    "entities": [
+      { "canonicalName": "Grant Voss", "type": "PER", "aliases": ["Grant"] },
+      { "canonicalName": "Zoe Voss", "type": "PER", "aliases": ["Zoe"] },
+      { "canonicalName": "Rachel Torres", "type": "PER", "aliases": ["Rachel", "Torres"] },
+      { "canonicalName": "Kyle Park", "type": "PER", "aliases": ["Kyle"] },
+      { "canonicalName": "Mei Lin", "type": "PER", "aliases": ["Mei"] },
+      { "canonicalName": "Tariq Hassan", "type": "PER", "aliases": ["Tariq"] },
+      { "canonicalName": "Jessica Dunn", "type": "PER", "aliases": ["Jessica", "Dunn"] },
+      { "canonicalName": "Naveen Kapoor", "type": "PER", "aliases": ["Naveen"] },
+      { "canonicalName": "Dr. Okonkwo", "type": "PER", "aliases": ["Okonkwo"] },
+      { "canonicalName": "Marco Silva", "type": "PER", "aliases": ["Marco"] },
+      { "canonicalName": "Carla Reeves", "type": "PER", "aliases": ["Carla"] },
+      { "canonicalName": "Patricia Voss", "type": "PER", "aliases": ["Patricia", "Pat"] },
+      { "canonicalName": "Pulse Media", "type": "ORG", "aliases": ["Pulse"] },
+      { "canonicalName": "Meridian Industries", "type": "ORG", "aliases": ["Meridian"] },
+      { "canonicalName": "BrightLoop", "type": "ORG", "aliases": ["Bright Loop"] },
+      { "canonicalName": "Lakeview Academy", "type": "ORG", "aliases": ["Lakeview"] },
+      { "canonicalName": "Iron Forge Gym", "type": "ORG", "aliases": ["Iron Forge"] },
+      { "canonicalName": "Chicago", "type": "LOC", "aliases": ["Chicago IL", "Chicago, IL"] }
+    ],
+    "relationships": [
+      { "entity": "Grant Voss", "type": "spouse", "confidence": 1.0, "note": "Diana's husband" },
+      { "entity": "Zoe Voss", "type": "child", "confidence": 1.0, "note": "Diana's daughter, age 14" },
+      { "entity": "Rachel Torres", "type": "reports-to", "confidence": 1.0, "note": "Diana's VP at Pulse Media" },
+      { "entity": "Kyle Park", "type": "colleague", "confidence": 1.0, "note": "Designer on Diana's team" },
+      { "entity": "Mei Lin", "type": "colleague", "confidence": 1.0, "note": "Copywriter on Diana's team" },
+      { "entity": "Tariq Hassan", "type": "colleague", "confidence": 1.0, "note": "Analytics lead on Diana's team" },
+      { "entity": "Jessica Dunn", "type": "client", "confidence": 1.0, "note": "Fortune 500 client contact at Meridian Industries" },
+      { "entity": "Naveen Kapoor", "type": "client", "confidence": 1.0, "note": "Startup client contact at BrightLoop" },
+      { "entity": "Dr. Okonkwo", "type": "healthcare-provider", "confidence": 1.0, "note": "Diana's dentist" },
+      { "entity": "Marco Silva", "type": "friend", "confidence": 1.0, "note": "Personal trainer at Iron Forge Gym" },
+      { "entity": "Carla Reeves", "type": "friend", "confidence": 1.0, "note": "Best friend" },
+      { "entity": "Patricia Voss", "type": "parent", "confidence": 1.0, "note": "Mother-in-law" },
+      { "entity": "Pulse Media", "type": "works-at", "confidence": 1.0, "note": "Diana's employer" },
+      { "entity": "Chicago", "type": "lives-at", "confidence": 1.0, "note": "Diana's city of residence" }
+    ],
+    "facts": [
+      "lives in Chicago, IL",
+      "works at Pulse Media as marketing director",
+      "married to Grant Voss",
+      "daughter Zoe attends Lakeview Academy, age 14",
+      "reports to VP Rachel Torres",
+      "designer Kyle Park on her team",
+      "copywriter Mei Lin on her team",
+      "analytics lead Tariq Hassan on her team",
+      "Jessica Dunn is Fortune 500 client contact at Meridian Industries",
+      "Naveen Kapoor is startup client contact at BrightLoop",
+      "dentist is Dr. Okonkwo",
+      "personal trainer Marco Silva at Iron Forge Gym",
+      "best friend Carla Reeves",
+      "mother-in-law Patricia Voss"
+    ],
+    "gtdState": {
+      "projects": [
+        { "name": "Meridian Q2 campaign launch", "status": "active", "nextAction": "Finalize hero creative for Jessica's approval", "area": "Work/Clients", "daysSinceLastAction": 0, "totalActions": 12, "completedActions": 9, "deadline": "2026-03-18" },
+        { "name": "BrightLoop brand refresh", "status": "active", "nextAction": "Send revised mood boards to Naveen", "area": "Work/Clients", "daysSinceLastAction": 1, "totalActions": 8, "completedActions": 5, "deadline": "2026-03-20" },
+        { "name": "Board presentation deck", "status": "active", "nextAction": "Pull Tariq's analytics for slide 7", "area": "Work/Strategy", "daysSinceLastAction": 0, "totalActions": 6, "completedActions": 2, "deadline": "2026-03-16" },
+        { "name": "Team performance reviews", "status": "active", "nextAction": "Write Kyle's review draft", "area": "Work/Management", "daysSinceLastAction": 1, "totalActions": 4, "completedActions": 1, "deadline": "2026-03-21" },
+        { "name": "Zoe's spring break planning", "status": "active", "nextAction": "Book flights to Savannah", "area": "Family", "daysSinceLastAction": 2, "totalActions": 5, "completedActions": 2, "deadline": "2026-03-27" },
+        { "name": "Social media strategy overhaul", "status": "active", "nextAction": "Review Mei's content calendar draft", "area": "Work/Strategy", "daysSinceLastAction": 1, "totalActions": 7, "completedActions": 3, "deadline": "2026-03-22" },
+        { "name": "Dental crown follow-up", "status": "waiting", "nextAction": "Schedule permanent crown fitting", "area": "Health", "waitingFor": "Dr. Okonkwo", "daysSinceLastAction": 4, "totalActions": 3, "completedActions": 2 }
+      ],
+      "areas": [
+        { "name": "Work/Clients", "reviewCadence": "weekly" },
+        { "name": "Work/Strategy", "reviewCadence": "weekly" },
+        { "name": "Work/Management", "reviewCadence": "weekly" },
+        { "name": "Family", "reviewCadence": "weekly" },
+        { "name": "Health", "reviewCadence": "biweekly" },
+        { "name": "Finance", "reviewCadence": "monthly" }
+      ],
+      "somedayMaybe": [
+        { "description": "Launch personal branding consultancy on the side", "triggerCondition": "When Meridian contract renews and workload stabilizes" },
+        { "description": "Train for Chicago half-marathon", "triggerCondition": "After spring campaign season wraps in April" },
+        { "description": "Family trip to Costa Rica", "triggerCondition": "Summer break when Zoe is out of school" }
+      ],
+      "daysSinceWeeklyReview": 2
+    },
+    "entityBehaviors": {
+      "Rachel Torres": { "responseSpeed": "fast", "reliability": 0.9, "note": "VP, highly responsive on Slack, expects same from Diana" },
+      "Kyle Park": { "responseSpeed": "normal", "reliability": 0.75, "note": "Solid designer, needs clear briefs" },
+      "Mei Lin": { "responseSpeed": "fast", "reliability": 0.85, "note": "Proactive copywriter, often ahead of schedule" },
+      "Tariq Hassan": { "responseSpeed": "normal", "reliability": 0.7, "note": "Analytics lead, thorough but not fast" },
+      "Jessica Dunn": { "responseSpeed": "slow", "reliability": 0.4, "note": "Demanding Fortune 500 client, late feedback, scope creep" },
+      "Naveen Kapoor": { "responseSpeed": "unpredictable", "reliability": 0.5, "note": "Startup founder, enthusiastic but chaotic" },
+      "Grant Voss": { "responseSpeed": "fast", "reliability": 0.95, "note": "Spouse, always reachable" },
+      "Carla Reeves": { "responseSpeed": "normal", "reliability": 0.8, "note": "Best friend, reliable but busy" }
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "personaName": "River Tate",
+  "bio": "Indie game developer and composer in Portland, OR. Works in waves of inspiration and crashes. Partner is Sage Holloway. Cat named Pixel. Collaborates with artist Yuki Ando, sound designer Felix Marquez, and publisher contact Dana Kim at Starlight Games. Therapist Dr. Amara Wells. Friend and mentor Bo Chen. Landlord Mrs. Patterson. Bandmate Jonah Reeves from side project Driftwood. Brother Cody Tate in San Diego. Neighbor Alma Ortiz.",
+  "groundTruth": {
+    "entities": [
+      { "canonicalName": "Sage Holloway", "type": "PER", "aliases": ["Sage"] },
+      { "canonicalName": "Yuki Ando", "type": "PER", "aliases": ["Yuki"] },
+      { "canonicalName": "Felix Marquez", "type": "PER", "aliases": ["Felix"] },
+      { "canonicalName": "Dana Kim", "type": "PER", "aliases": ["Dana"] },
+      { "canonicalName": "Dr. Amara Wells", "type": "PER", "aliases": ["Dr. Wells", "Amara"] },
+      { "canonicalName": "Bo Chen", "type": "PER", "aliases": ["Bo"] },
+      { "canonicalName": "Mrs. Patterson", "type": "PER", "aliases": ["Patterson"] },
+      { "canonicalName": "Jonah Reeves", "type": "PER", "aliases": ["Jonah"] },
+      { "canonicalName": "Cody Tate", "type": "PER", "aliases": ["Cody"] },
+      { "canonicalName": "Alma Ortiz", "type": "PER", "aliases": ["Alma"] },
+      { "canonicalName": "Starlight Games", "type": "ORG", "aliases": ["Starlight"] },
+      { "canonicalName": "Driftwood", "type": "ORG", "aliases": ["Driftwood band"] },
+      { "canonicalName": "Portland", "type": "LOC", "aliases": ["Portland OR", "Portland, OR"] },
+      { "canonicalName": "San Diego", "type": "LOC", "aliases": ["San Diego CA", "San Diego, CA"] }
+    ],
+    "relationships": [
+      { "entity": "Sage Holloway", "type": "spouse", "confidence": 1.0, "note": "River's partner" },
+      { "entity": "Yuki Ando", "type": "colleague", "confidence": 1.0, "note": "Artist collaborator on game projects" },
+      { "entity": "Felix Marquez", "type": "colleague", "confidence": 1.0, "note": "Sound designer collaborator" },
+      { "entity": "Dana Kim", "type": "client", "confidence": 1.0, "note": "Publisher contact at Starlight Games" },
+      { "entity": "Dr. Amara Wells", "type": "healthcare-provider", "confidence": 1.0, "note": "River's therapist" },
+      { "entity": "Bo Chen", "type": "friend", "confidence": 1.0, "note": "Friend and mentor, experienced game dev" },
+      { "entity": "Mrs. Patterson", "type": "landlord", "confidence": 1.0, "note": "River's landlord" },
+      { "entity": "Jonah Reeves", "type": "friend", "confidence": 1.0, "note": "Bandmate in Driftwood side project" },
+      { "entity": "Cody Tate", "type": "friend", "confidence": 1.0, "note": "River's brother in San Diego" },
+      { "entity": "Alma Ortiz", "type": "neighbor", "confidence": 1.0, "note": "Downstairs neighbor" },
+      { "entity": "Driftwood", "type": "org-member", "confidence": 1.0, "note": "River's side band project" },
+      { "entity": "Portland", "type": "lives-at", "confidence": 1.0, "note": "River's city of residence" }
+    ],
+    "facts": [
+      "lives in Portland, OR",
+      "indie game developer and composer, self-employed",
+      "partner is Sage Holloway",
+      "has a cat named Pixel",
+      "collaborates with artist Yuki Ando on game art",
+      "collaborates with sound designer Felix Marquez",
+      "publisher contact Dana Kim at Starlight Games",
+      "therapist is Dr. Amara Wells",
+      "friend and mentor Bo Chen, experienced game developer",
+      "landlord Mrs. Patterson",
+      "plays in side band Driftwood with Jonah Reeves",
+      "brother Cody Tate lives in San Diego",
+      "downstairs neighbor Alma Ortiz"
+    ],
+    "gtdState": {
+      "projects": [
+        { "name": "Hollow Tides game prototype", "status": "active", "nextAction": "Finish level 3 puzzle mechanic implementation", "area": "Work/GameDev", "daysSinceLastAction": 2, "totalActions": 20, "completedActions": 11 },
+        { "name": "Game soundtrack composition", "status": "stalled", "nextAction": "Compose overworld theme draft", "area": "Work/Music", "daysSinceLastAction": 25, "totalActions": 8, "completedActions": 2 },
+        { "name": "Starlight Games pitch deck", "status": "stalled", "nextAction": "Update revenue projections and send to Dana", "area": "Work/Business", "daysSinceLastAction": 18, "totalActions": 6, "completedActions": 2 },
+        { "name": "Driftwood EP recording", "status": "stalled", "nextAction": "Book studio time with Jonah", "area": "Creative/Music", "daysSinceLastAction": 30, "totalActions": 7, "completedActions": 1 }
+      ],
+      "areas": [
+        { "name": "Work/GameDev", "reviewCadence": "weekly" },
+        { "name": "Work/Music", "reviewCadence": "biweekly" },
+        { "name": "Work/Business", "reviewCadence": "monthly" },
+        { "name": "Creative/Music", "reviewCadence": "monthly" },
+        { "name": "Health", "reviewCadence": "biweekly" },
+        { "name": "Home", "reviewCadence": "monthly" }
+      ],
+      "somedayMaybe": [
+        { "description": "Learn shader programming for custom visual effects", "triggerCondition": "When Hollow Tides core mechanics are locked" },
+        { "description": "Visit Cody in San Diego", "triggerCondition": "When feeling stable and energized enough to travel" },
+        { "description": "Build a modular synth rig", "triggerCondition": "When Driftwood EP generates some income" },
+        { "description": "Apply to IndieCade festival", "triggerCondition": "When Hollow Tides has a playable demo" }
+      ],
+      "daysSinceWeeklyReview": 15
+    },
+    "entityBehaviors": {
+      "Sage Holloway": { "responseSpeed": "fast", "reliability": 0.95, "note": "Partner, emotionally grounding, always present" },
+      "Yuki Ando": { "responseSpeed": "normal", "reliability": 0.7, "note": "Artist collaborator, reliable when engaged but also has own projects" },
+      "Felix Marquez": { "responseSpeed": "unpredictable", "reliability": 0.45, "note": "Sound designer, creative but flaky on scheduling" },
+      "Dana Kim": { "responseSpeed": "slow", "reliability": 0.55, "note": "Publisher contact, interested but cautious, corporate timeline" },
+      "Bo Chen": { "responseSpeed": "normal", "reliability": 0.8, "note": "Mentor, generous with time and advice" },
+      "Jonah Reeves": { "responseSpeed": "unpredictable", "reliability": 0.5, "note": "Bandmate, enthusiastic but inconsistent schedule" },
+      "Dr. Amara Wells": { "responseSpeed": "normal", "reliability": 0.9, "note": "Therapist, scheduled sessions, very reliable" }
+    }
+  }
+}

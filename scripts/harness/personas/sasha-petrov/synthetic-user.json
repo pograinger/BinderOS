@@ -1,0 +1,107 @@
+{
+  "personaName": "Sasha Petrov",
+  "bio": "Freelance UX consultant in Austin, TX. Says yes to everything, perpetually overwhelmed. Spouse is Mira Petrov. Son Leo is 6 and attends Riverside Montessori. Works with 5 simultaneous clients: Hannah Vega at Luminary App, Derek Cho at NovaTech, Fatima Al-Rashid at GreenLeaf Wellness, Craig Holloway at Ironclad Finance, and Simone Baptiste at TrueNorth Media. Accountant Grace Yoo at Precision Tax. Landlord Phil Benton. Friend Aisha Osman. Pediatrician Dr. Navarro. Boss at co-working space Dex Thompson at The Hive. Barber Luis Campos. Neighbor Beth Kowalski.",
+  "groundTruth": {
+    "entities": [
+      { "canonicalName": "Mira Petrov", "type": "PER", "aliases": ["Mira"] },
+      { "canonicalName": "Leo Petrov", "type": "PER", "aliases": ["Leo"] },
+      { "canonicalName": "Hannah Vega", "type": "PER", "aliases": ["Hannah"] },
+      { "canonicalName": "Derek Cho", "type": "PER", "aliases": ["Derek"] },
+      { "canonicalName": "Fatima Al-Rashid", "type": "PER", "aliases": ["Fatima"] },
+      { "canonicalName": "Craig Holloway", "type": "PER", "aliases": ["Craig"] },
+      { "canonicalName": "Simone Baptiste", "type": "PER", "aliases": ["Simone"] },
+      { "canonicalName": "Grace Yoo", "type": "PER", "aliases": ["Grace"] },
+      { "canonicalName": "Phil Benton", "type": "PER", "aliases": ["Phil"] },
+      { "canonicalName": "Aisha Osman", "type": "PER", "aliases": ["Aisha"] },
+      { "canonicalName": "Dr. Navarro", "type": "PER", "aliases": ["Navarro"] },
+      { "canonicalName": "Dex Thompson", "type": "PER", "aliases": ["Dex"] },
+      { "canonicalName": "Luis Campos", "type": "PER", "aliases": ["Luis"] },
+      { "canonicalName": "Beth Kowalski", "type": "PER", "aliases": ["Beth"] },
+      { "canonicalName": "Luminary App", "type": "ORG", "aliases": ["Luminary"] },
+      { "canonicalName": "NovaTech", "type": "ORG", "aliases": ["Nova Tech"] },
+      { "canonicalName": "GreenLeaf Wellness", "type": "ORG", "aliases": ["GreenLeaf"] },
+      { "canonicalName": "Ironclad Finance", "type": "ORG", "aliases": ["Ironclad"] },
+      { "canonicalName": "TrueNorth Media", "type": "ORG", "aliases": ["TrueNorth"] },
+      { "canonicalName": "Precision Tax", "type": "ORG", "aliases": ["Precision"] },
+      { "canonicalName": "The Hive", "type": "ORG", "aliases": ["Hive co-working"] },
+      { "canonicalName": "Riverside Montessori", "type": "ORG", "aliases": ["Riverside"] },
+      { "canonicalName": "Austin", "type": "LOC", "aliases": ["Austin TX", "Austin, TX"] }
+    ],
+    "relationships": [
+      { "entity": "Mira Petrov", "type": "spouse", "confidence": 1.0, "note": "Sasha's wife" },
+      { "entity": "Leo Petrov", "type": "child", "confidence": 1.0, "note": "Sasha's son, age 6" },
+      { "entity": "Hannah Vega", "type": "client", "confidence": 1.0, "note": "Client contact at Luminary App" },
+      { "entity": "Derek Cho", "type": "client", "confidence": 1.0, "note": "Client contact at NovaTech" },
+      { "entity": "Fatima Al-Rashid", "type": "client", "confidence": 1.0, "note": "Client contact at GreenLeaf Wellness" },
+      { "entity": "Craig Holloway", "type": "client", "confidence": 1.0, "note": "Client contact at Ironclad Finance" },
+      { "entity": "Simone Baptiste", "type": "client", "confidence": 1.0, "note": "Client contact at TrueNorth Media" },
+      { "entity": "Grace Yoo", "type": "colleague", "confidence": 1.0, "note": "Accountant at Precision Tax" },
+      { "entity": "Phil Benton", "type": "landlord", "confidence": 1.0, "note": "Sasha's landlord" },
+      { "entity": "Aisha Osman", "type": "friend", "confidence": 1.0, "note": "Close friend" },
+      { "entity": "Dr. Navarro", "type": "healthcare-provider", "confidence": 1.0, "note": "Leo's pediatrician" },
+      { "entity": "Dex Thompson", "type": "colleague", "confidence": 1.0, "note": "Runs The Hive co-working space" },
+      { "entity": "Luis Campos", "type": "friend", "confidence": 1.0, "note": "Barber" },
+      { "entity": "Beth Kowalski", "type": "neighbor", "confidence": 1.0, "note": "Next-door neighbor" },
+      { "entity": "Austin", "type": "lives-at", "confidence": 1.0, "note": "Sasha's city of residence" }
+    ],
+    "facts": [
+      "lives in Austin, TX",
+      "freelance UX consultant, works from The Hive co-working space",
+      "married to Mira Petrov",
+      "son Leo attends Riverside Montessori, age 6",
+      "client Hannah Vega at Luminary App",
+      "client Derek Cho at NovaTech",
+      "client Fatima Al-Rashid at GreenLeaf Wellness",
+      "client Craig Holloway at Ironclad Finance",
+      "client Simone Baptiste at TrueNorth Media",
+      "accountant Grace Yoo at Precision Tax",
+      "landlord Phil Benton",
+      "friend Aisha Osman",
+      "pediatrician Dr. Navarro for Leo",
+      "Dex Thompson runs The Hive co-working space",
+      "barber Luis Campos",
+      "neighbor Beth Kowalski"
+    ],
+    "gtdState": {
+      "projects": [
+        { "name": "Luminary App onboarding redesign", "status": "active", "nextAction": "Deliver wireframes to Hannah", "area": "Work/Luminary", "daysSinceLastAction": 5, "totalActions": 10, "completedActions": 4, "deadline": "2026-03-15" },
+        { "name": "NovaTech dashboard UX audit", "status": "active", "nextAction": "Complete heuristic evaluation report", "area": "Work/NovaTech", "daysSinceLastAction": 3, "totalActions": 6, "completedActions": 1, "deadline": "2026-03-17" },
+        { "name": "GreenLeaf mobile app prototype", "status": "waiting", "nextAction": "Get brand assets from Fatima", "area": "Work/GreenLeaf", "waitingFor": "Fatima Al-Rashid", "daysSinceLastAction": 10, "totalActions": 8, "completedActions": 2, "deadline": "2026-03-22" },
+        { "name": "Ironclad user research interviews", "status": "active", "nextAction": "Schedule 3 remaining participant interviews", "area": "Work/Ironclad", "daysSinceLastAction": 7, "totalActions": 12, "completedActions": 5, "deadline": "2026-03-19" },
+        { "name": "TrueNorth content strategy workshop", "status": "active", "nextAction": "Prepare workshop deck and exercises", "area": "Work/TrueNorth", "daysSinceLastAction": 4, "totalActions": 5, "completedActions": 1, "deadline": "2026-03-16" },
+        { "name": "Quarterly tax filing", "status": "waiting", "nextAction": "Send invoices to Grace for Q1 reconciliation", "area": "Finance", "waitingFor": "Grace Yoo", "daysSinceLastAction": 12, "totalActions": 4, "completedActions": 1, "deadline": "2026-04-15" },
+        { "name": "Leo's soccer league registration", "status": "stalled", "nextAction": "Fill out registration form and pay fee", "area": "Family", "daysSinceLastAction": 14, "totalActions": 3, "completedActions": 0 },
+        { "name": "Apartment lease renewal", "status": "waiting", "nextAction": "Review renewal terms from Phil", "area": "Home", "waitingFor": "Phil Benton", "daysSinceLastAction": 8, "totalActions": 3, "completedActions": 1 },
+        { "name": "Portfolio website update", "status": "stalled", "nextAction": "Add GreenLeaf and NovaTech case studies", "area": "Work/Business", "daysSinceLastAction": 25, "totalActions": 5, "completedActions": 1 }
+      ],
+      "areas": [
+        { "name": "Work/Luminary", "reviewCadence": "weekly" },
+        { "name": "Work/NovaTech", "reviewCadence": "weekly" },
+        { "name": "Work/GreenLeaf", "reviewCadence": "weekly" },
+        { "name": "Work/Ironclad", "reviewCadence": "weekly" },
+        { "name": "Work/TrueNorth", "reviewCadence": "weekly" },
+        { "name": "Work/Business", "reviewCadence": "biweekly" },
+        { "name": "Family", "reviewCadence": "weekly" },
+        { "name": "Finance", "reviewCadence": "monthly" },
+        { "name": "Home", "reviewCadence": "monthly" }
+      ],
+      "somedayMaybe": [
+        { "description": "Build a UX course for Skillshare", "triggerCondition": "When client load drops below 3 simultaneous" },
+        { "description": "Take Leo camping at Big Bend", "triggerCondition": "When a weekend is actually free" },
+        { "description": "Learn 3D prototyping in Spline", "triggerCondition": "When any project finishes early" }
+      ],
+      "daysSinceWeeklyReview": 8
+    },
+    "entityBehaviors": {
+      "Mira Petrov": { "responseSpeed": "fast", "reliability": 0.95, "note": "Spouse, always reachable and supportive" },
+      "Hannah Vega": { "responseSpeed": "slow", "reliability": 0.55, "note": "Client at Luminary, delayed feedback cycles" },
+      "Derek Cho": { "responseSpeed": "unpredictable", "reliability": 0.45, "note": "NovaTech client, cancels meetings frequently" },
+      "Fatima Al-Rashid": { "responseSpeed": "slow", "reliability": 0.4, "note": "GreenLeaf client, hard to reach, missing deliverables" },
+      "Craig Holloway": { "responseSpeed": "slow", "reliability": 0.5, "note": "Ironclad client, corporate bureaucracy slows everything" },
+      "Simone Baptiste": { "responseSpeed": "normal", "reliability": 0.65, "note": "TrueNorth client, reasonable but busy" },
+      "Grace Yoo": { "responseSpeed": "normal", "reliability": 0.8, "note": "Accountant, responsive during tax season" },
+      "Phil Benton": { "responseSpeed": "slow", "reliability": 0.5, "note": "Landlord, slow on repairs and paperwork" },
+      "Aisha Osman": { "responseSpeed": "fast", "reliability": 0.85, "note": "Friend, always responsive" }
+    }
+  }
+}

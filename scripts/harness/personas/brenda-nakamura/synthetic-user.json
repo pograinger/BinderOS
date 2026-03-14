@@ -1,0 +1,94 @@
+{
+  "personaName": "Brenda Nakamura",
+  "bio": "Project manager at Vertex Solutions in Denver, CO. Works through others — most of her tasks depend on people, approvals, or external inputs. Husband is Kenji Nakamura. Son Aiden is 10 and attends Crestview Elementary. Reports to CTO Victor Huang. Manages developers Sam Okafor, Priya Desai, and Marco Vitale. External vendor contact Lisa Chen at CloudOps. Legal counsel James Wright at Sterling Law. HR partner Nicole Adams. Dentist Dr. Feldman. Friend and former colleague Rosa Gutierrez. Neighbor Mike Patterson. Mother Hana Nakamura.",
+  "groundTruth": {
+    "entities": [
+      { "canonicalName": "Kenji Nakamura", "type": "PER", "aliases": ["Kenji"] },
+      { "canonicalName": "Aiden Nakamura", "type": "PER", "aliases": ["Aiden"] },
+      { "canonicalName": "Victor Huang", "type": "PER", "aliases": ["Victor", "Huang"] },
+      { "canonicalName": "Sam Okafor", "type": "PER", "aliases": ["Sam"] },
+      { "canonicalName": "Priya Desai", "type": "PER", "aliases": ["Priya"] },
+      { "canonicalName": "Marco Vitale", "type": "PER", "aliases": ["Marco"] },
+      { "canonicalName": "Lisa Chen", "type": "PER", "aliases": ["Lisa"] },
+      { "canonicalName": "James Wright", "type": "PER", "aliases": ["James", "Wright"] },
+      { "canonicalName": "Nicole Adams", "type": "PER", "aliases": ["Nicole"] },
+      { "canonicalName": "Dr. Feldman", "type": "PER", "aliases": ["Feldman"] },
+      { "canonicalName": "Rosa Gutierrez", "type": "PER", "aliases": ["Rosa"] },
+      { "canonicalName": "Mike Patterson", "type": "PER", "aliases": ["Mike"] },
+      { "canonicalName": "Hana Nakamura", "type": "PER", "aliases": ["Hana", "Mom"] },
+      { "canonicalName": "Vertex Solutions", "type": "ORG", "aliases": ["Vertex"] },
+      { "canonicalName": "CloudOps", "type": "ORG", "aliases": ["Cloud Ops"] },
+      { "canonicalName": "Sterling Law", "type": "ORG", "aliases": ["Sterling"] },
+      { "canonicalName": "Crestview Elementary", "type": "ORG", "aliases": ["Crestview"] },
+      { "canonicalName": "Denver", "type": "LOC", "aliases": ["Denver CO", "Denver, CO"] }
+    ],
+    "relationships": [
+      { "entity": "Kenji Nakamura", "type": "spouse", "confidence": 1.0, "note": "Brenda's husband" },
+      { "entity": "Aiden Nakamura", "type": "child", "confidence": 1.0, "note": "Brenda's son, age 10" },
+      { "entity": "Victor Huang", "type": "reports-to", "confidence": 1.0, "note": "CTO at Vertex Solutions" },
+      { "entity": "Sam Okafor", "type": "colleague", "confidence": 1.0, "note": "Developer on Brenda's team" },
+      { "entity": "Priya Desai", "type": "colleague", "confidence": 1.0, "note": "Developer on Brenda's team" },
+      { "entity": "Marco Vitale", "type": "colleague", "confidence": 1.0, "note": "Developer on Brenda's team" },
+      { "entity": "Lisa Chen", "type": "colleague", "confidence": 1.0, "note": "Vendor contact at CloudOps" },
+      { "entity": "James Wright", "type": "lawyer", "confidence": 1.0, "note": "Legal counsel at Sterling Law" },
+      { "entity": "Nicole Adams", "type": "colleague", "confidence": 1.0, "note": "HR partner at Vertex" },
+      { "entity": "Dr. Feldman", "type": "healthcare-provider", "confidence": 1.0, "note": "Brenda's dentist" },
+      { "entity": "Rosa Gutierrez", "type": "friend", "confidence": 1.0, "note": "Friend and former colleague" },
+      { "entity": "Mike Patterson", "type": "neighbor", "confidence": 1.0, "note": "Next-door neighbor" },
+      { "entity": "Hana Nakamura", "type": "parent", "confidence": 1.0, "note": "Brenda's mother" },
+      { "entity": "Vertex Solutions", "type": "works-at", "confidence": 1.0, "note": "Brenda's employer" },
+      { "entity": "Denver", "type": "lives-at", "confidence": 1.0, "note": "Brenda's city of residence" }
+    ],
+    "facts": [
+      "lives in Denver, CO",
+      "works at Vertex Solutions as project manager",
+      "married to Kenji Nakamura",
+      "son Aiden attends Crestview Elementary, age 10",
+      "reports to CTO Victor Huang",
+      "manages developers Sam Okafor, Priya Desai, Marco Vitale",
+      "vendor contact Lisa Chen at CloudOps",
+      "legal counsel James Wright at Sterling Law",
+      "HR partner Nicole Adams at Vertex",
+      "dentist is Dr. Feldman",
+      "friend Rosa Gutierrez, former colleague",
+      "neighbor Mike Patterson",
+      "mother Hana Nakamura"
+    ],
+    "gtdState": {
+      "projects": [
+        { "name": "Platform migration to CloudOps", "status": "waiting", "nextAction": "Get infrastructure timeline from Lisa Chen", "area": "Work/Engineering", "waitingFor": "Lisa Chen", "daysSinceLastAction": 6, "totalActions": 14, "completedActions": 5 },
+        { "name": "Q2 product roadmap approval", "status": "waiting", "nextAction": "Get Victor's sign-off on revised scope", "area": "Work/Strategy", "waitingFor": "Victor Huang", "daysSinceLastAction": 4, "totalActions": 6, "completedActions": 3 },
+        { "name": "API v3 release", "status": "waiting", "nextAction": "Review Marco's pull request for auth module", "area": "Work/Engineering", "waitingFor": "Marco Vitale", "daysSinceLastAction": 3, "totalActions": 10, "completedActions": 7 },
+        { "name": "Vendor contract renewal", "status": "waiting", "nextAction": "Get redline from James Wright on new terms", "area": "Work/Legal", "waitingFor": "James Wright", "daysSinceLastAction": 8, "totalActions": 5, "completedActions": 2 },
+        { "name": "Team hiring — senior developer", "status": "waiting", "nextAction": "Get interview availability from Nicole for top 3 candidates", "area": "Work/HR", "waitingFor": "Nicole Adams", "daysSinceLastAction": 5, "totalActions": 8, "completedActions": 4 },
+        { "name": "Aiden's science fair project", "status": "active", "nextAction": "Buy supplies for volcano model", "area": "Family", "daysSinceLastAction": 2, "totalActions": 5, "completedActions": 3 }
+      ],
+      "areas": [
+        { "name": "Work/Engineering", "reviewCadence": "weekly" },
+        { "name": "Work/Strategy", "reviewCadence": "weekly" },
+        { "name": "Work/Legal", "reviewCadence": "biweekly" },
+        { "name": "Work/HR", "reviewCadence": "biweekly" },
+        { "name": "Family", "reviewCadence": "weekly" },
+        { "name": "Health", "reviewCadence": "monthly" },
+        { "name": "Home", "reviewCadence": "monthly" }
+      ],
+      "somedayMaybe": [
+        { "description": "Get PMP certification", "triggerCondition": "After platform migration completes" },
+        { "description": "Family ski trip to Breckenridge", "triggerCondition": "When Q2 roadmap is locked and team is stable" },
+        { "description": "Start a project management blog", "triggerCondition": "When work settles into a predictable rhythm" }
+      ],
+      "daysSinceWeeklyReview": 3
+    },
+    "entityBehaviors": {
+      "Victor Huang": { "responseSpeed": "slow", "reliability": 0.6, "note": "CTO, always in meetings, hard to pin down for approvals" },
+      "Sam Okafor": { "responseSpeed": "fast", "reliability": 0.9, "note": "Top developer, delivers on time consistently" },
+      "Priya Desai": { "responseSpeed": "fast", "reliability": 0.85, "note": "Strong developer, proactive communicator" },
+      "Marco Vitale": { "responseSpeed": "unpredictable", "reliability": 0.4, "note": "Developer with inconsistent delivery, often needs follow-up" },
+      "Lisa Chen": { "responseSpeed": "slow", "reliability": 0.35, "note": "CloudOps vendor contact, long response times, vendor bureaucracy" },
+      "James Wright": { "responseSpeed": "slow", "reliability": 0.5, "note": "Legal counsel, thorough but slow on turnaround" },
+      "Nicole Adams": { "responseSpeed": "normal", "reliability": 0.7, "note": "HR partner, responsive but constrained by process" },
+      "Kenji Nakamura": { "responseSpeed": "fast", "reliability": 0.95, "note": "Spouse, always available" },
+      "Rosa Gutierrez": { "responseSpeed": "normal", "reliability": 0.8, "note": "Friend, reliable and helpful" }
+    }
+  }
+}

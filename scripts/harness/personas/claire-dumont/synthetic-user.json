@@ -1,0 +1,84 @@
+{
+  "personaName": "Claire Dumont",
+  "bio": "Senior accountant at Greenfield & Associates in Minneapolis, MN. Disciplined, consistent, low-variance executor. Husband is Paul Dumont. Daughter Emma is 8 and attends Maple Grove Elementary. Reports to partner Robert Shaw. Works with junior accountant Tina Wu and admin Maya Johnson. Key client Sarah Mitchell owns Mitchell Hardware, a small business. Dentist Dr. Kim. Neighbor Dave Lopez. Sister Renee Dumont in St. Paul. Family doctor Dr. Huang. Friend and yoga instructor Nadia Evers.",
+  "groundTruth": {
+    "entities": [
+      { "canonicalName": "Paul Dumont", "type": "PER", "aliases": ["Paul"] },
+      { "canonicalName": "Emma Dumont", "type": "PER", "aliases": ["Emma"] },
+      { "canonicalName": "Robert Shaw", "type": "PER", "aliases": ["Robert", "Shaw"] },
+      { "canonicalName": "Tina Wu", "type": "PER", "aliases": ["Tina"] },
+      { "canonicalName": "Maya Johnson", "type": "PER", "aliases": ["Maya"] },
+      { "canonicalName": "Sarah Mitchell", "type": "PER", "aliases": ["Sarah"] },
+      { "canonicalName": "Dr. Kim", "type": "PER", "aliases": ["Kim"] },
+      { "canonicalName": "Dave Lopez", "type": "PER", "aliases": ["Dave"] },
+      { "canonicalName": "Renee Dumont", "type": "PER", "aliases": ["Renee"] },
+      { "canonicalName": "Dr. Huang", "type": "PER", "aliases": ["Huang"] },
+      { "canonicalName": "Nadia Evers", "type": "PER", "aliases": ["Nadia"] },
+      { "canonicalName": "Greenfield & Associates", "type": "ORG", "aliases": ["Greenfield", "the firm"] },
+      { "canonicalName": "Mitchell Hardware", "type": "ORG", "aliases": ["Mitchell's"] },
+      { "canonicalName": "Maple Grove Elementary", "type": "ORG", "aliases": ["Maple Grove"] },
+      { "canonicalName": "Minneapolis", "type": "LOC", "aliases": ["Minneapolis MN", "Minneapolis, MN"] },
+      { "canonicalName": "St. Paul", "type": "LOC", "aliases": ["St Paul", "Saint Paul"] }
+    ],
+    "relationships": [
+      { "entity": "Paul Dumont", "type": "spouse", "confidence": 1.0, "note": "Claire's husband" },
+      { "entity": "Emma Dumont", "type": "child", "confidence": 1.0, "note": "Claire's daughter, age 8" },
+      { "entity": "Robert Shaw", "type": "reports-to", "confidence": 1.0, "note": "Partner at Greenfield & Associates" },
+      { "entity": "Tina Wu", "type": "colleague", "confidence": 1.0, "note": "Junior accountant at the firm" },
+      { "entity": "Maya Johnson", "type": "colleague", "confidence": 1.0, "note": "Admin assistant at the firm" },
+      { "entity": "Sarah Mitchell", "type": "client", "confidence": 1.0, "note": "Small business client, owns Mitchell Hardware" },
+      { "entity": "Dr. Kim", "type": "healthcare-provider", "confidence": 1.0, "note": "Claire's dentist" },
+      { "entity": "Dave Lopez", "type": "neighbor", "confidence": 1.0, "note": "Next-door neighbor" },
+      { "entity": "Renee Dumont", "type": "friend", "confidence": 1.0, "note": "Claire's sister in St. Paul" },
+      { "entity": "Dr. Huang", "type": "healthcare-provider", "confidence": 1.0, "note": "Family doctor" },
+      { "entity": "Nadia Evers", "type": "friend", "confidence": 1.0, "note": "Friend and yoga instructor" },
+      { "entity": "Greenfield & Associates", "type": "works-at", "confidence": 1.0, "note": "Claire's employer" },
+      { "entity": "Minneapolis", "type": "lives-at", "confidence": 1.0, "note": "Claire's city of residence" }
+    ],
+    "facts": [
+      "lives in Minneapolis, MN",
+      "works at Greenfield & Associates as senior accountant",
+      "married to Paul Dumont",
+      "daughter Emma attends Maple Grove Elementary, age 8",
+      "reports to partner Robert Shaw",
+      "works with junior accountant Tina Wu",
+      "admin Maya Johnson supports the team",
+      "client Sarah Mitchell owns Mitchell Hardware",
+      "dentist is Dr. Kim",
+      "neighbor Dave Lopez",
+      "sister Renee Dumont lives in St. Paul",
+      "family doctor Dr. Huang",
+      "friend and yoga instructor Nadia Evers"
+    ],
+    "gtdState": {
+      "projects": [
+        { "name": "Mitchell Hardware quarterly audit", "status": "active", "nextAction": "Review reconciled bank statements from Tina", "area": "Work/Clients", "daysSinceLastAction": 2, "totalActions": 8, "completedActions": 6 },
+        { "name": "Quarterly tax filing prep", "status": "active", "nextAction": "Compile W-2 summaries for Robert's review", "area": "Work/Tax", "daysSinceLastAction": 1, "totalActions": 6, "completedActions": 4 },
+        { "name": "Emma's piano recital preparation", "status": "active", "nextAction": "Confirm recital venue time with teacher", "area": "Family", "daysSinceLastAction": 3, "totalActions": 4, "completedActions": 3 }
+      ],
+      "areas": [
+        { "name": "Work/Clients", "reviewCadence": "weekly" },
+        { "name": "Work/Tax", "reviewCadence": "weekly" },
+        { "name": "Family", "reviewCadence": "weekly" },
+        { "name": "Health", "reviewCadence": "biweekly" },
+        { "name": "Home", "reviewCadence": "monthly" },
+        { "name": "Finance", "reviewCadence": "monthly" }
+      ],
+      "somedayMaybe": [
+        { "description": "Study for CPA advanced certification", "triggerCondition": "After tax season ends in April" },
+        { "description": "Family trip to Duluth for a long weekend", "triggerCondition": "When Emma's school schedule allows" },
+        { "description": "Start a vegetable garden in the backyard", "triggerCondition": "When spring arrives and snow melts" }
+      ],
+      "daysSinceWeeklyReview": 1
+    },
+    "entityBehaviors": {
+      "Robert Shaw": { "responseSpeed": "fast", "reliability": 0.9, "note": "Partner at firm, decisive and accessible" },
+      "Tina Wu": { "responseSpeed": "fast", "reliability": 0.85, "note": "Junior accountant, diligent and prompt" },
+      "Maya Johnson": { "responseSpeed": "normal", "reliability": 0.8, "note": "Admin, reliable for scheduling and filing" },
+      "Sarah Mitchell": { "responseSpeed": "normal", "reliability": 0.7, "note": "Small business client, responsive but sometimes misses documents" },
+      "Paul Dumont": { "responseSpeed": "fast", "reliability": 0.95, "note": "Spouse, always available" },
+      "Renee Dumont": { "responseSpeed": "normal", "reliability": 0.8, "note": "Sister, regular Sunday calls" },
+      "Nadia Evers": { "responseSpeed": "normal", "reliability": 0.75, "note": "Friend, see each other at weekly yoga" }
+    }
+  }
+}

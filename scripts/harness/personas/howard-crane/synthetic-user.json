@@ -1,0 +1,84 @@
+{
+  "personaName": "Howard Crane",
+  "bio": "Research scientist at Meridian Labs in Seattle, WA. Thoughtful and methodical, slow to act. Partner is Neil Ashford. Cat named Whiskers. Reports to department head Dr. Yuki Tanaka. Collaborates with postdoc Lena Fischer and lab tech Ravi Mehta. Grant officer Carmen Reyes at NSF. Financial advisor Douglas Park at Summit Wealth. Sister is Helen Crane in Boise. Mechanic Tony Russo at Pacific Auto. Neighbor Janet Cole. Optometrist Dr. Simmons.",
+  "groundTruth": {
+    "entities": [
+      { "canonicalName": "Neil Ashford", "type": "PER", "aliases": ["Neil"] },
+      { "canonicalName": "Dr. Yuki Tanaka", "type": "PER", "aliases": ["Yuki", "Tanaka", "Dr. Tanaka"] },
+      { "canonicalName": "Lena Fischer", "type": "PER", "aliases": ["Lena"] },
+      { "canonicalName": "Ravi Mehta", "type": "PER", "aliases": ["Ravi"] },
+      { "canonicalName": "Carmen Reyes", "type": "PER", "aliases": ["Carmen"] },
+      { "canonicalName": "Douglas Park", "type": "PER", "aliases": ["Douglas", "Doug"] },
+      { "canonicalName": "Helen Crane", "type": "PER", "aliases": ["Helen"] },
+      { "canonicalName": "Tony Russo", "type": "PER", "aliases": ["Tony"] },
+      { "canonicalName": "Janet Cole", "type": "PER", "aliases": ["Janet"] },
+      { "canonicalName": "Dr. Simmons", "type": "PER", "aliases": ["Simmons"] },
+      { "canonicalName": "Meridian Labs", "type": "ORG", "aliases": ["Meridian", "the lab"] },
+      { "canonicalName": "NSF", "type": "ORG", "aliases": ["National Science Foundation"] },
+      { "canonicalName": "Summit Wealth", "type": "ORG", "aliases": ["Summit"] },
+      { "canonicalName": "Pacific Auto", "type": "ORG", "aliases": ["Pacific Auto Shop"] },
+      { "canonicalName": "Seattle", "type": "LOC", "aliases": ["Seattle WA", "Seattle, WA"] },
+      { "canonicalName": "Boise", "type": "LOC", "aliases": ["Boise ID", "Boise, ID"] }
+    ],
+    "relationships": [
+      { "entity": "Neil Ashford", "type": "spouse", "confidence": 1.0, "note": "Howard's partner" },
+      { "entity": "Dr. Yuki Tanaka", "type": "reports-to", "confidence": 1.0, "note": "Department head at Meridian Labs" },
+      { "entity": "Lena Fischer", "type": "colleague", "confidence": 1.0, "note": "Postdoc collaborator at the lab" },
+      { "entity": "Ravi Mehta", "type": "colleague", "confidence": 1.0, "note": "Lab technician at Meridian Labs" },
+      { "entity": "Carmen Reyes", "type": "colleague", "confidence": 1.0, "note": "Grant officer at NSF" },
+      { "entity": "Douglas Park", "type": "friend", "confidence": 1.0, "note": "Financial advisor at Summit Wealth" },
+      { "entity": "Helen Crane", "type": "friend", "confidence": 1.0, "note": "Howard's sister in Boise" },
+      { "entity": "Tony Russo", "type": "friend", "confidence": 1.0, "note": "Mechanic at Pacific Auto" },
+      { "entity": "Janet Cole", "type": "neighbor", "confidence": 1.0, "note": "Next-door neighbor" },
+      { "entity": "Dr. Simmons", "type": "healthcare-provider", "confidence": 1.0, "note": "Howard's optometrist" },
+      { "entity": "Meridian Labs", "type": "works-at", "confidence": 1.0, "note": "Howard's employer" },
+      { "entity": "Seattle", "type": "lives-at", "confidence": 1.0, "note": "Howard's city of residence" }
+    ],
+    "facts": [
+      "lives in Seattle, WA",
+      "works at Meridian Labs as a research scientist",
+      "partner is Neil Ashford",
+      "has a cat named Whiskers",
+      "reports to Dr. Yuki Tanaka, department head",
+      "collaborates with postdoc Lena Fischer",
+      "lab tech Ravi Mehta assists on experiments",
+      "grant officer Carmen Reyes at NSF handles funding",
+      "financial advisor Douglas Park at Summit Wealth",
+      "sister Helen Crane lives in Boise",
+      "mechanic Tony Russo at Pacific Auto",
+      "neighbor Janet Cole",
+      "optometrist is Dr. Simmons"
+    ],
+    "gtdState": {
+      "projects": [
+        { "name": "NSF grant proposal revision", "status": "stalled", "nextAction": "Rewrite methodology section with updated data", "area": "Work/Research", "daysSinceLastAction": 45, "totalActions": 10, "completedActions": 3 },
+        { "name": "Literature review on polymer catalysts", "status": "stalled", "nextAction": "Read and annotate remaining 12 papers", "area": "Work/Research", "daysSinceLastAction": 30, "totalActions": 8, "completedActions": 2 },
+        { "name": "Lab equipment upgrade proposal", "status": "waiting", "nextAction": "Get vendor quotes for new spectrometer", "area": "Work/Lab", "waitingFor": "Dr. Yuki Tanaka", "daysSinceLastAction": 22, "totalActions": 5, "completedActions": 1 },
+        { "name": "Retirement portfolio rebalance", "status": "stalled", "nextAction": "Review Douglas's recommended allocation changes", "area": "Finance", "daysSinceLastAction": 35, "totalActions": 4, "completedActions": 1 }
+      ],
+      "areas": [
+        { "name": "Work/Research", "reviewCadence": "weekly" },
+        { "name": "Work/Lab", "reviewCadence": "biweekly" },
+        { "name": "Home", "reviewCadence": "monthly" },
+        { "name": "Finance", "reviewCadence": "monthly" },
+        { "name": "Health", "reviewCadence": "monthly" }
+      ],
+      "somedayMaybe": [
+        { "description": "Write a book on catalysis for popular science audience", "triggerCondition": "After NSF grant is secured and research pace stabilizes" },
+        { "description": "Visit Helen in Boise for a long weekend", "triggerCondition": "When grant proposal is submitted" },
+        { "description": "Build a greenhouse in the backyard", "triggerCondition": "Next spring when weather permits" },
+        { "description": "Learn watercolor painting", "triggerCondition": "When weekend schedule feels less pressured" }
+      ],
+      "daysSinceWeeklyReview": 12
+    },
+    "entityBehaviors": {
+      "Dr. Yuki Tanaka": { "responseSpeed": "normal", "reliability": 0.85, "note": "Department head, supportive but busy with admin" },
+      "Lena Fischer": { "responseSpeed": "fast", "reliability": 0.8, "note": "Postdoc, eager and responsive" },
+      "Ravi Mehta": { "responseSpeed": "normal", "reliability": 0.7, "note": "Lab tech, reliable for routine work" },
+      "Carmen Reyes": { "responseSpeed": "slow", "reliability": 0.5, "note": "NSF grant officer, bureaucratic timelines" },
+      "Douglas Park": { "responseSpeed": "slow", "reliability": 0.6, "note": "Financial advisor, responds when prompted" },
+      "Helen Crane": { "responseSpeed": "normal", "reliability": 0.75, "note": "Sister, keeps in touch regularly" },
+      "Neil Ashford": { "responseSpeed": "fast", "reliability": 0.95, "note": "Partner, always available" }
+    }
+  }
+}
